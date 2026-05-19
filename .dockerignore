@@ -1,0 +1,20 @@
+# Keep the root-context Docker build focused on the web app tree.
+*
+!apps/
+apps/*
+!apps/web/
+!apps/web/**
+!.dockerignore
+
+# Exclude bulky dev artifacts and local-only material from the included tree.
+apps/web/node_modules/
+apps/web/.next/
+apps/web/.next-build/
+apps/web/coverage/
+apps/web/tests/
+apps/web/.env
+apps/web/.env.*
+
+# Exclude repo-local deploy secrets and state even if future builds widen scope.
+infra/deploy/deploy.config.local.json
+infra/deploy/.state/

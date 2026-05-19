@@ -1,0 +1,11 @@
+{
+  "name": "@agentkid/worker",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "echo \"apps/worker build scaffold pending\"",
+    "lint": "echo \"apps/worker lint scaffold pending\"",
+    "test": "echo \"apps/worker test scaffold pending\"",
+    "typecheck": "echo \"apps/worker typecheck scaffold pending\""
+  }
+}

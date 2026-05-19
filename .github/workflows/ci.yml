@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+      - fix/**
+      - chore/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install workspace dependencies
+        shell: pwsh
+        run: ./scripts/checks/install-workspace-deps.ps1
+
+      - name: Check docs structure
+        shell: pwsh
+        run: npm run check:docs
+
+      - name: Lint
+        shell: pwsh
+        run: npm run lint
+
+      - name: Typecheck
+        shell: pwsh
+        run: npm run typecheck
+
+      - name: Test
+        shell: pwsh
+        run: npm run test
+
+      - name: Docker build verification
+        run: docker build --tag agentkid-ci-check --file apps/web/Dockerfile .

@@ -1,0 +1,64 @@
+{
+  "project": {
+    "name": "agentkid",
+    "publicMarketingUrl": "https://agentkid.io.vn",
+    "publicAppUrl": "https://app.agentkid.io.vn"
+  },
+  "dockerHub": {
+    "namespace": "macdaiqua147"
+  },
+  "images": {
+    "web": "macdaiqua147/agentkid-web",
+    "worker": "macdaiqua147/agentkid-worker"
+  },
+  "server": {
+    "sshUser": "navin",
+    "sshHost": "34.55.68.105",
+    "appDir": "/opt/agentkid",
+    "composeProjectName": "agentkid-prod",
+    "os": "ubuntu-22.04"
+  },
+  "proxy": {
+    "type": "caddy",
+    "domains": [
+      "agentkid.io.vn",
+      "app.agentkid.io.vn"
+    ]
+  },
+  "healthchecks": {
+    "publicChecks": [
+      {
+        "label": "marketing-home",
+        "url": "https://agentkid.io.vn/"
+      },
+      {
+        "label": "marketing-login",
+        "url": "https://agentkid.io.vn/login"
+      },
+      {
+        "label": "app-root",
+        "url": "https://app.agentkid.io.vn/"
+      },
+      {
+        "label": "app-dashboard",
+        "url": "https://app.agentkid.io.vn/dashboard"
+      }
+    ],
+    "internalPaths": [
+      "/",
+      "/dashboard"
+    ],
+    "expectedStatusCodes": [
+      200,
+      301,
+      302,
+      307,
+      308
+    ]
+  },
+  "deploy": {
+    "tagStrategy": "git-sha",
+    "serverRollbackStateFile": "/opt/agentkid/.state/last-known-good.json",
+    "localRollbackCacheFile": "infra/deploy/.state/last-known-good.local.json"
+  }
+}

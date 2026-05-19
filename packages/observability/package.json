@@ -1,0 +1,16 @@
+{
+  "name": "@agentkid/observability",
+  "private": true,
+  "version": "0.1.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "npx -p typescript tsc --noEmit",
+    "lint": "npx -p typescript tsc --noEmit",
+    "test": "npx -p typescript tsc --noEmit",
+    "typecheck": "npx -p typescript tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}

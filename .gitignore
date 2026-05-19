@@ -1,0 +1,40 @@
+# Node / frontend
+node_modules/
+.next/
+.next-build/
+.turbo/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local agent overrides
+.agent/
+.agents/
+.claude/
+.codex/
+.claude/settings.local.json
+.mcp.json
+
+# Local deploy config
+infra/deploy/deploy.config.local.json
+infra/deploy/.state/**
+!infra/deploy/.state/.gitkeep

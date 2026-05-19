@@ -1,0 +1,13 @@
+{
+  "name": "@agentkid/integrations",
+  "private": true,
+  "version": "0.1.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "echo \"integrations package build scaffold pending\"",
+    "lint": "echo \"integrations package lint scaffold pending\"",
+    "test": "echo \"integrations package test scaffold pending\"",
+    "typecheck": "echo \"integrations package typecheck scaffold pending\""
+  }
+}

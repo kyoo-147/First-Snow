@@ -1,0 +1,26 @@
+{
+  "name": "@agentkid/web",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "node scripts/next-build.mjs",
+    "lint": "tsc --noEmit -p tsconfig.lint.json",
+    "test": "echo \"web tests pending\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@types/pg": "^8.20.0",
+    "lucide-react": "^0.468.0",
+    "next": "^15.1.0",
+    "pg": "^8.21.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
+    "typescript": "^5.7.2"
+  }
+}

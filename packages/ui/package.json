@@ -1,0 +1,13 @@
+{
+  "name": "@agentkid/ui",
+  "private": true,
+  "version": "0.1.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "echo \"ui package build scaffold pending\"",
+    "lint": "echo \"ui package lint scaffold pending\"",
+    "test": "echo \"ui package test scaffold pending\"",
+    "typecheck": "echo \"ui package typecheck scaffold pending\""
+  }
+}

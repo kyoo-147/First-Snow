@@ -1,0 +1,11 @@
+http://agentkid.io.vn {
+  encode gzip zstd
+
+  reverse_proxy web:3000
+}
+
+http://app.agentkid.io.vn {
+  encode gzip zstd
+
+  reverse_proxy web:3000
+}

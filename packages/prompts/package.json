@@ -1,0 +1,13 @@
+{
+  "name": "@agentkid/prompts",
+  "private": true,
+  "version": "0.1.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "echo \"prompts package build scaffold pending\"",
+    "lint": "echo \"prompts package lint scaffold pending\"",
+    "test": "echo \"prompts package test scaffold pending\"",
+    "typecheck": "echo \"prompts package typecheck scaffold pending\""
+  }
+}

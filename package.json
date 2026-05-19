@@ -1,0 +1,17 @@
+{
+  "name": "agentkid",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "build": "powershell -ExecutionPolicy Bypass -File ./scripts/checks/run-workspace-script.ps1 -ScriptName build",
+    "lint": "powershell -ExecutionPolicy Bypass -File ./scripts/checks/run-workspace-script.ps1 -ScriptName lint",
+    "test": "powershell -ExecutionPolicy Bypass -File ./scripts/checks/run-workspace-script.ps1 -ScriptName test",
+    "typecheck": "powershell -ExecutionPolicy Bypass -File ./scripts/checks/run-workspace-script.ps1 -ScriptName typecheck",
+    "check:docs": "powershell -ExecutionPolicy Bypass -File ./scripts/checks/check-doc-structure.ps1",
+    "check:database-schema": "powershell -ExecutionPolicy Bypass -File ./scripts/checks/check-database-schema.ps1"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  }
+}

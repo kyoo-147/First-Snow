@@ -1,0 +1,13 @@
+{
+  "name": "@agentkid/testing",
+  "private": true,
+  "version": "0.1.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "echo \"testing package build scaffold pending\"",
+    "lint": "echo \"testing package lint scaffold pending\"",
+    "test": "echo \"testing package test scaffold pending\"",
+    "typecheck": "echo \"testing package typecheck scaffold pending\""
+  }
+}
