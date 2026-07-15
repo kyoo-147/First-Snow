@@ -1,51 +1,219 @@
-# AgentKid
+# Snow AI Companion
 
-AgentKid is a production-oriented monorepo foundation for an AI companion web product for Vietnamese children ages 6-10 with ASD, language delay, or both. The repository is organized for long-term maintainability, clear module boundaries, and strong AI continuity.
+> **Public repository notice**
+>
+> The newest Snow implementation is still being developed and upgraded. This public repository may not reflect the latest private product work, safety experiments, child-facing UX research, or deployment configuration.
 
-## Start Here
-- Product context: [PROJECT_OVERVIEW.md](/D:/working/agentkid/PROJECT_OVERVIEW.md)
-- System shape: [ARCHITECTURE.md](/D:/working/agentkid/ARCHITECTURE.md)
-- Interface contracts: [API_SPEC.md](/D:/working/agentkid/API_SPEC.md)
-- Development workflow: [DEVELOPMENT_GUIDE.md](/D:/working/agentkid/DEVELOPMENT_GUIDE.md)
-- AI workflow: [AI_AGENT_GUIDE.md](/D:/working/agentkid/AI_AGENT_GUIDE.md)
+![Snow AI Companion](docs/images/snow-main.png)
 
-## Canonical Document Order
-1. `PROJECT_OVERVIEW.md`
-2. `ARCHITECTURE.md`
-3. `API_SPEC.md`
-4. `CODING_STANDARDS.md`
-5. `DEVELOPMENT_GUIDE.md`
-6. `DEPLOYMENT_GUIDE.md`
-7. `FEATURE_ROADMAP.md`
-8. `TASK_BREAKDOWN.md`
-9. supporting docs under `docs/`
+**Snow AI Companion** is a child-safe AI companion product foundation for children who need structured, gentle, and supervised interaction support.
 
-If two documents conflict, the higher item wins unless a newer ADR in `docs/decisions/` explicitly supersedes it.
+The product focuses on controlled AI conversation, daily routine support, parent oversight, and safety-first system architecture. It is especially oriented toward early research with children in Vietnam, Australia, and similar real-world evaluation contexts.
 
-## Repository Shape
-- `apps/`: runtime applications
-- `packages/`: shared business and technical packages
-- `infra/`: deployment and environment topology
-- `scripts/`: repeatable automation
-- `docs/`: canonical human and AI knowledge
-- `tasks/`: lifecycle-based work tracking
-- `tests/`: unit, integration, e2e, and manual validation layers
+Repository: `github.com/kyoo-147/agentkid_snow`
 
-## Common Checks
-- `npm.cmd run build`: runs build scripts across apps and packages through the repo-local workspace runner.
-- `npm.cmd run check:docs`: validates canonical documentation structure.
-- `npm.cmd run check:database-schema`: validates the checked PostgreSQL migration shape.
+## Why Snow Exists
 
-## Current State
-- `apps/web` has been scaffolded as a Next.js app with the public marketing site, login UI, static dashboard UI shell, and child-facing session prototype route.
-- Product, architecture, API, and workflow decisions are organized for a production build.
-- `TASK-002` domain/config contracts are complete.
-- `TASK-003` PostgreSQL foundation is complete repo-side with Drizzle schema, migrations, connection helpers, ownership helpers, backup helper, and schema checks.
-- `TASK-004` identity foundation is complete for prototype scope with signed session routes; database-backed parent profile persistence is still pending.
-- `TASK-005` child profile management is complete for prototype scope with dedicated dashboard UI and child-owned session entry.
-- `TASK-006` session shell and `TASK-007` media hooks spike are complete as UI/client-side foundation work.
-- `TASK-009` server PostgreSQL apply/smoke test is complete; the server has the canonical schema and required extensions.
-- `TASK-011` child profile API persistence is complete with parent ownership scoping.
-- Conversation, lesson, alert, reporting, real authentication, worker jobs, and provider integrations are still pending.
-- Database provider is selected in `ADR-008`: server-hosted PostgreSQL in Docker. Local development connects to the server database through secure remote access, not a default local database.
-- Legacy plans and source notes are preserved under `docs/archive/`.
+General-purpose chatbots are too open-ended for children, especially children who need predictable, low-pressure, and structured interaction.
+
+Snow explores a different product shape:
+
+- child-facing interaction should be gentle and bounded
+- parents need visibility and control
+- AI should stay inside approved topics and safe response patterns
+- routines should be predictable and repeatable
+- memory should be limited, explainable, and parent-governed
+- the product should support research and evaluation before broad deployment
+
+The core idea is not to replace caregivers or therapists. Snow is a controlled companion surface that can help children practice communication, routines, and emotional check-ins under supervision.
+
+## Current Product Direction
+
+Snow is being developed as a safe AI companion platform with:
+
+- child-friendly companion UI
+- structured chat flow
+- routine support flow
+- parent dashboard flow
+- parent-approved topics
+- safety guardrails
+- controlled memory
+- backend and frontend architecture for long-term product development
+- research and pilot evaluation with children and families
+
+The latest private work may include newer product behavior and safety layers that are not fully represented in this public repository yet.
+
+## Visual Overview
+
+### Main Product Screen
+
+![Snow main UI](docs/images/snow-main.png)
+
+The interface is designed around a calm child-facing experience, with simplified actions and a companion-centered interaction model.
+
+### Chat Flow
+
+![Snow chat flow](docs/images/snow-chat-flow.png)
+
+The chat flow is not intended to be an unrestricted open chatbot.
+
+It is designed around:
+
+- approved topics
+- safe prompt policy
+- child-friendly tone
+- context boundaries
+- parent visibility
+- fallback behavior when the model should not answer
+
+### Routine Flow
+
+![Snow routine flow](docs/images/snow-routine-flow.png)
+
+Routine support is a key product wedge. The system can guide a child through predictable steps such as morning routines, study habits, emotional check-ins, or simple daily tasks.
+
+The goal is to reduce friction through repetition and structure, not to generate surprising or overly creative AI behavior.
+
+### Parent Dashboard Flow
+
+![Snow parent dashboard flow](docs/images/snow-parent-dashboard-flow.png)
+
+The parent dashboard is the control plane for:
+
+- child profile setup
+- approved topics
+- routine configuration
+- session visibility
+- safety limits
+- alerts and summaries
+- review of important interaction patterns
+
+## System Architecture
+
+![Snow system overview](docs/images/snow-system-overview.png)
+
+Snow separates the product into child experience, parent control, domain logic, AI orchestration, and persistence layers.
+
+The high-level architecture includes:
+
+- **Child UI:** guided chat, routines, companion interaction, and feedback states.
+- **Parent UI:** dashboard, configuration, visibility, and safety controls.
+- **API layer:** session, profile, routine, and reporting endpoints.
+- **Domain layer:** child profile, parent ownership, routine rules, safety policy, and consent boundaries.
+- **AI layer:** prompt policy, guardrails, context limits, response checks, and provider boundary.
+- **Data layer:** PostgreSQL-backed persistence, migrations, ownership checks, and audit-friendly records.
+
+### Backend Architecture
+
+![Snow backend architecture](docs/images/snow-backend-architecture.png)
+
+The backend is organized for product safety and maintainability:
+
+- domain packages define core business rules
+- database packages own schema and migrations
+- prompts package owns AI prompt contracts
+- integrations package isolates external providers
+- observability package supports future monitoring and review
+
+### Frontend Architecture
+
+![Snow frontend architecture](docs/images/snow-frontend-architecture.png)
+
+The frontend separates public, parent, and child-facing surfaces. This keeps the child experience simple while preserving richer configuration tools for parents.
+
+### ERD
+
+![Snow ERD](docs/images/snow-erd.png)
+
+The data model is built around parent ownership, child profiles, sessions, routines, and future reporting/alerting entities.
+
+### Use Cases
+
+![Snow use case diagram](docs/images/snow-use-case.png)
+
+Core use cases include:
+
+- parent creates and manages a child profile
+- parent configures topics and routines
+- child starts a guided companion session
+- AI responds inside bounded safety rules
+- parent reviews summaries, routines, and important events
+
+## Repository Layout
+
+```text
+apps/web/          Web product surface and prototype routes
+apps/admin/        Admin-oriented surface for future operations
+apps/worker/       Worker jobs and async processing boundary
+packages/domain/   Product domain contracts and business logic
+packages/database/ Database schema, migrations, and persistence helpers
+packages/prompts/  AI prompt contracts and safety prompt surfaces
+packages/ui/       Shared UI primitives
+packages/testing/  Test helpers
+docs/              Architecture, decisions, and archived planning notes
+docs/images/       Product and architecture visuals used by this README
+tasks/             Task lifecycle and implementation tracking
+```
+
+## Current Implementation Status
+
+Implemented or scaffolded in this repository:
+
+- Next.js web app foundation
+- public marketing surface
+- login UI
+- static parent dashboard UI shell
+- child-facing session prototype route
+- canonical product and architecture documents
+- PostgreSQL schema and migration foundation
+- parent/child profile prototype flows
+- session shell and media hooks spike
+- documentation checks and database schema checks
+
+Still pending or private/in progress:
+
+- newest private product implementation
+- production authentication
+- full AI provider integration
+- production-grade child safety review loop
+- worker jobs and alerts
+- full reporting layer
+- real deployment telemetry
+- field-test reporting and research summaries
+
+## Research And Pilot Direction
+
+Snow is currently being tested and surveyed with children and families in early real-world contexts, including Vietnam and Australia.
+
+The key research questions are:
+
+- Does the child understand and accept the companion interaction?
+- Are routines easier to follow with a structured companion?
+- Can parents configure useful boundaries without too much complexity?
+- Are AI responses predictable, safe, and emotionally appropriate?
+- Which interaction patterns should be blocked, escalated, or summarized?
+
+## Local Development
+
+This repository uses a pnpm monorepo.
+
+```powershell
+pnpm install
+pnpm run build
+```
+
+Common checks:
+
+```powershell
+pnpm run lint
+pnpm run test
+pnpm run typecheck
+pnpm run check:docs
+pnpm run check:database-schema
+```
+
+## Notes For Readers
+
+Snow is a child-facing AI project, so the important work is not only UI or model prompting. The hard parts are product boundaries, safety policies, parent oversight, data handling, and evaluation with real users.
+
+This repository should be read as a product and architecture foundation, while the newest implementation work may remain private until the safety and product direction are ready to publish.
