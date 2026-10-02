@@ -30,8 +30,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files — local overrides are ignored, but .env.example and .env.test are committed
+.env
+.env.local
+.env.*.local
+# .env.example and .env.test are committed intentionally
 
 # vercel
 .vercel
