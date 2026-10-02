@@ -114,7 +114,9 @@ export function createSession(childId: string): Promise<CompanionSession> {
 
 /** GET /api/companion/sessions/:id */
 export function getSession(sessionId: string): Promise<CompanionSession> {
-  return request<CompanionSession>(`/api/companion/sessions/${sessionId}`);
+  return request<CompanionSession>(
+    `/api/companion/sessions/${encodeURIComponent(sessionId)}`,
+  );
 }
 
 /** POST /api/companion/sessions/:id/messages */
@@ -124,7 +126,7 @@ export function sendMessage(
   content: string,
 ): Promise<CompanionMessage> {
   return request<CompanionMessage>(
-    `/api/companion/sessions/${sessionId}/messages`,
+    `/api/companion/sessions/${encodeURIComponent(sessionId)}/messages`,
     {
       method: "POST",
       body: JSON.stringify({ clientMessageId, content }),
@@ -137,9 +139,10 @@ export function getMessages(
   sessionId: string,
   afterId?: string,
 ): Promise<CompanionMessage[]> {
+  const encodedSessionId = encodeURIComponent(sessionId);
   const url = afterId
-    ? `/api/companion/sessions/${sessionId}/messages?afterId=${encodeURIComponent(afterId)}`
-    : `/api/companion/sessions/${sessionId}/messages`;
+    ? `/api/companion/sessions/${encodedSessionId}/messages?afterId=${encodeURIComponent(afterId)}`
+    : `/api/companion/sessions/${encodedSessionId}/messages`;
   return request<CompanionMessage[]>(url);
 }
 

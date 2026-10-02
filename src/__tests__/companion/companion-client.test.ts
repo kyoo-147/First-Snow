@@ -124,6 +124,45 @@ async function main() {
     }
   );
 
+  // T10: getSession encodes sessionId in path segment
+  let capturedGetUrl = "";
+  await withMockFetch(
+    (input) => {
+      capturedGetUrl = typeof input === "string" ? input : input.toString();
+      return new Response(JSON.stringify({ id: "sess/special?1#a", childId: "c1", createdAt: "2026-01-01T00:00:00Z", status: "active" }), { status: 200 });
+    },
+    async () => {
+      await getSession("sess/special?1#a");
+      assert(capturedGetUrl === "/api/companion/sessions/sess%2Fspecial%3F1%23a", "getSession: encodes sessionId in URL path");
+    }
+  );
+
+  // T11: sendMessage encodes sessionId in path segment
+  let capturedPostUrl = "";
+  await withMockFetch(
+    (input) => {
+      capturedPostUrl = typeof input === "string" ? input : input.toString();
+      return new Response(JSON.stringify({ id: "m-1", clientMessageId: "u-1", sessionId: "sess/special?1#a", role: "child", content: "hi", createdAt: "2026-01-01T00:00:00Z" }), { status: 201 });
+    },
+    async () => {
+      await sendMessage("sess/special?1#a", "u-1", "hi");
+      assert(capturedPostUrl === "/api/companion/sessions/sess%2Fspecial%3F1%23a/messages", "sendMessage: encodes sessionId in URL path");
+    }
+  );
+
+  // T12: getMessages encodes sessionId in path segment
+  let capturedPollUrl = "";
+  await withMockFetch(
+    (input) => {
+      capturedPollUrl = typeof input === "string" ? input : input.toString();
+      return new Response(JSON.stringify([]), { status: 200 });
+    },
+    async () => {
+      await getMessages("sess/special?1#a", "msg/1");
+      assert(capturedPollUrl === "/api/companion/sessions/sess%2Fspecial%3F1%23a/messages?afterId=msg%2F1", "getMessages: encodes sessionId and afterId in URL path");
+    }
+  );
+
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);
 }

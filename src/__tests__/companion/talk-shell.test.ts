@@ -32,28 +32,49 @@ async function main() {
   // T3: UUID is valid v4 format
   assert(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id1), "clientMessageId: UUID v4 format");
 
-  // T4: session recovery — 404 triggers new session creation
-  let createdNewSession = false;
-  async function recoverSession(stored: string | null): Promise<string> {
-    if (!stored) { createdNewSession = true; return "new-sess"; }
+  // T4: storage key namespaced by childId
+  function getCompanionSessionStorageKey(childId: string): string {
+    return `companion:sessionId:${encodeURIComponent(childId)}`;
+  }
+  assert(getCompanionSessionStorageKey("minh") === "companion:sessionId:minh", "storageKey: namespaced by childId");
+  assert(getCompanionSessionStorageKey("child/1") === "companion:sessionId:child%2F1", "storageKey: encodes special chars in childId");
+  assert(getCompanionSessionStorageKey("child-a") !== getCompanionSessionStorageKey("child-b"), "storageKey: different children have different keys");
+
+  // T5: session recovery — 404, 401, and 403 trigger new session creation
+  async function recoverSession(stored: string | null, errorStatus: number): Promise<string> {
+    if (!stored) return "new-sess";
     try {
-      // Simulate getSession throwing 404
-      throw new CompanionApiError(404, "Not found");
+      throw new CompanionApiError(errorStatus, "Session error");
     } catch (e) {
-      if (e instanceof CompanionApiError && (e.status === 404 || e.status === 401)) {
-        createdNewSession = true;
+      if (
+        e instanceof CompanionApiError &&
+        (e.status === 404 || e.status === 401 || e.status === 403)
+      ) {
         return "new-sess";
       }
       throw e;
     }
   }
-  await recoverSession("stale-sess-id");
-  assert(createdNewSession, "session recovery: 404 creates new session");
+  const r404 = await recoverSession("stale-sess-id", 404);
+  assert(r404 === "new-sess", "session recovery: 404 creates new session");
 
-  // T5: session recovery — null stored creates new session
-  createdNewSession = false;
-  await recoverSession(null);
-  assert(createdNewSession, "session recovery: null stored creates new session");
+  const r401 = await recoverSession("stale-sess-id", 401);
+  assert(r401 === "new-sess", "session recovery: 401 creates new session");
+
+  const r403 = await recoverSession("stale-sess-id", 403);
+  assert(r403 === "new-sess", "session recovery: 403 creates new session");
+
+  let threw500 = false;
+  try {
+    await recoverSession("stale-sess-id", 500);
+  } catch (e) {
+    if (e instanceof CompanionApiError && e.status === 500) threw500 = true;
+  }
+  assert(threw500, "session recovery: 500 is not recovered and re-throws");
+
+  // T6: session recovery — null stored creates new session
+  const rNull = await recoverSession(null, 404);
+  assert(rNull === "new-sess", "session recovery: null stored creates new session");
 
   // T6: error message extraction — no crash on non-JSON
   function parseApiError(e: unknown): string {

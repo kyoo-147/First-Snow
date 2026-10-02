@@ -47,7 +47,10 @@ const moodData = [
   { label: "Sleepy" as Mood, icon: Moon, bg: "bg-snow-primary/20", color: "text-snow-primary" },
 ];
 
-const SESSION_STORAGE_KEY = "companion:sessionId";
+export function getCompanionSessionStorageKey(childId: string): string {
+  return `companion:sessionId:${encodeURIComponent(childId)}`;
+}
+
 const POLL_INTERVAL_MS = 3000;
 const SEND_TIMEOUT_MS = 30000;
 
@@ -87,9 +90,10 @@ export function TalkShell({ childId }: { childId: string }) {
       setSessionLoading(true);
       setSessionError(null);
 
+      const storageKey = getCompanionSessionStorageKey(childId);
       const stored =
         typeof window !== "undefined"
-          ? sessionStorage.getItem(SESSION_STORAGE_KEY)
+          ? sessionStorage.getItem(storageKey)
           : null;
 
       try {
@@ -98,10 +102,10 @@ export function TalkShell({ childId }: { childId: string }) {
           try {
             sess = await getSession(stored);
           } catch (e) {
-            // Stale / unauthorized session — create fresh one
+            // Stale / unauthorized session (404, 401, 403) — create fresh one
             if (
               e instanceof CompanionApiError &&
-              (e.status === 404 || e.status === 401)
+              (e.status === 404 || e.status === 401 || e.status === 403)
             ) {
               sess = await createSession(childId);
             } else {
@@ -113,7 +117,7 @@ export function TalkShell({ childId }: { childId: string }) {
         }
 
         if (!cancelled) {
-          sessionStorage.setItem(SESSION_STORAGE_KEY, sess.id);
+          sessionStorage.setItem(storageKey, sess.id);
           setSessionId(sess.id);
           // Load existing messages
           const existing = await getMessages(sess.id);
@@ -273,7 +277,8 @@ export function TalkShell({ childId }: { childId: string }) {
   );
 
   const handleReloadSession = useCallback(() => {
-    sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    const storageKey = getCompanionSessionStorageKey(childId);
+    sessionStorage.removeItem(storageKey);
     setSessionId(null);
     setMessages([]);
     setSessionError(null);
@@ -281,7 +286,7 @@ export function TalkShell({ childId }: { childId: string }) {
     // Re-trigger session init
     createSession(childId)
       .then((sess) => {
-        sessionStorage.setItem(SESSION_STORAGE_KEY, sess.id);
+        sessionStorage.setItem(storageKey, sess.id);
         setSessionId(sess.id);
         setSessionLoading(false);
       })
