@@ -108,6 +108,56 @@ async function main() {
     "getAlertSessionLink: returns null when no linkedSessionId",
   );
 
+  // T5: status tiles show unknown/unavailable unless status === 'ready'
+  function formatAlertStatusTiles(
+    status: "loading" | "error" | "ready",
+    alerts: Array<{ severity: "high" | "medium" | "low"; readAt: string | null }>,
+  ) {
+    const isReady = status === "ready";
+    const activeCount = isReady ? alerts.filter((a) => !a.readAt).length : null;
+    const urgentCount = isReady
+      ? alerts.filter((a) => !a.readAt && a.severity === "high").length
+      : null;
+
+    return {
+      active: {
+        value: isReady ? `${activeCount}` : "—",
+        detail: isReady ? "Waiting for parent review" : "Status unavailable",
+      },
+      urgent: {
+        value: isReady ? `${urgentCount}` : "—",
+        detail: isReady
+          ? urgentCount === 0
+            ? "No urgent alerts"
+            : "High priority review"
+          : "Status unavailable",
+      },
+      total: {
+        value: isReady ? `${alerts.length}` : "—",
+        detail: isReady ? "Household records" : "Status unavailable",
+      },
+    };
+  }
+
+  const loadingTiles = formatAlertStatusTiles("loading", []);
+  assert(loadingTiles.urgent.value === "—", "formatAlertStatusTiles: loading shows '—' for urgent");
+  assert(loadingTiles.urgent.detail === "Status unavailable", "formatAlertStatusTiles: loading shows 'Status unavailable'");
+  assert(loadingTiles.active.value === "—", "formatAlertStatusTiles: loading shows '—' for active");
+  assert(loadingTiles.total.value === "—", "formatAlertStatusTiles: loading shows '—' for total");
+
+  const errorTiles = formatAlertStatusTiles("error", []);
+  assert(errorTiles.urgent.value === "—", "formatAlertStatusTiles: error shows '—'");
+  assert(errorTiles.urgent.detail === "Status unavailable", "formatAlertStatusTiles: error does not claim no urgent alerts");
+
+  // T6: status tiles only say 'No urgent alerts' from a successful (ready) response
+  const readyEmptyTiles = formatAlertStatusTiles("ready", []);
+  assert(readyEmptyTiles.urgent.value === "0", "formatAlertStatusTiles: ready 0 shows '0'");
+  assert(readyEmptyTiles.urgent.detail === "No urgent alerts", "formatAlertStatusTiles: ready 0 shows 'No urgent alerts'");
+
+  const readyUrgentTiles = formatAlertStatusTiles("ready", [{ severity: "high", readAt: null }]);
+  assert(readyUrgentTiles.urgent.value === "1", "formatAlertStatusTiles: ready with high severity shows '1'");
+  assert(readyUrgentTiles.urgent.detail === "High priority review", "formatAlertStatusTiles: ready with high severity shows 'High priority review'");
+
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);
 }

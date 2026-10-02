@@ -46,6 +46,32 @@ export function buildSyntheticSessions(grouped: Map<string, ApiTranscriptMessage
   }));
 }
 
+export function formatTranscriptStatusTiles(
+  status: "loading" | "error" | "ready",
+  activeSession: SyntheticSession | null,
+  transcriptsCount: number,
+) {
+  const isReady = status === "ready";
+  return {
+    latestSession: {
+      value: isReady
+        ? activeSession
+          ? `Session ${activeSession.id.slice(-6)}`
+          : "No sessions"
+        : "—",
+      detail: isReady
+        ? activeSession
+          ? formatSnowDateTime(activeSession.firstAt)
+          : "No session records"
+        : "Status unavailable",
+    },
+    storedTranscript: {
+      value: isReady ? `${transcriptsCount} messages` : "—",
+      detail: isReady ? "Records for session" : "Status unavailable",
+    },
+  };
+}
+
 // ── Inner Component ───────────────────────────────────────────────────────────
 
 function ParentTranscriptsContent({
@@ -151,19 +177,21 @@ function ParentTranscriptsContent({
     void handleFetch();
   }
 
+  const tileData = formatTranscriptStatusTiles(status, activeSession, transcripts.length);
+
   return (
     <ParentPageFrame className="space-y-4">
       <PageHeader
         eyebrow="Child records"
         title="Transcripts"
-        description="Review parent-safe conversation excerpts between the child and AgentKid. These notes are for observation and follow-up only."
+        description="Review conversation records between the child and AgentKid available to your parent account. These notes are for observation and follow-up only."
         action={
           <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-snow-muted" />
               <input
                 type="text"
-                aria-label="Search parent-safe conversation records"
+                aria-label="Search conversation records"
                 placeholder="Search conversations..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -193,15 +221,15 @@ function ParentTranscriptsContent({
         />
         <StatusTile
           label="Latest session"
-          value={activeSession ? `Session ${activeSession.id.slice(-6)}` : "No session"}
-          detail={activeSession ? formatSnowDateTime(activeSession.firstAt) : "Select a session"}
+          value={tileData.latestSession.value}
+          detail={tileData.latestSession.detail}
           icon={<CalendarClock className="size-5 text-snow-primary" />}
           tone="bg-snow-ice"
         />
         <StatusTile
           label="Stored transcript"
-          value={`${transcripts.length} messages`}
-          detail="Preview only"
+          value={tileData.storedTranscript.value}
+          detail={tileData.storedTranscript.detail}
           icon={<MessageSquare className="size-5 text-snow-primary" />}
           tone="bg-snow-lavender"
         />
@@ -411,7 +439,7 @@ function ParentTranscriptsContent({
                             Sharing rule
                           </p>
                           <p className="mt-2 text-sm font-semibold leading-6 text-snow-primary-dark">
-                            These excerpts are parent-only and remain observational.
+                            These records are available to your parent account and remain observational.
                           </p>
                         </div>
                       </div>
@@ -439,7 +467,7 @@ function ParentTranscriptsContent({
                 How to read this
               </h2>
               <p className="snow-body-copy snow-font-readable mt-3 font-semibold text-snow-muted">
-                These are parent-safe excerpts. They support follow-up and context, not diagnosis or scoring.
+                These records are available to your parent account to support follow-up and context, not diagnosis or scoring.
               </p>
             </SnowCard>
             <SnowCard className="snow-card-pad">

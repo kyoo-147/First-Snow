@@ -42,6 +42,45 @@ async function main() {
   const keys = Array.from(grouped.keys());
   assert(keys[0] === "s1" && keys[1] === "s2", "groupBySession: session order preserved");
 
+  // Transcript status tiles truthfulness
+  function formatTranscriptStatusTiles(
+    status: "loading" | "error" | "ready",
+    activeSession: { id: string; firstAt: string } | null,
+    transcriptsCount: number,
+  ) {
+    const isReady = status === "ready";
+    return {
+      latestSession: {
+        value: isReady
+          ? activeSession
+            ? `Session ${activeSession.id.slice(-6)}`
+            : "No sessions"
+          : "—",
+        detail: isReady
+          ? activeSession
+            ? activeSession.firstAt
+            : "No session records"
+          : "Status unavailable",
+      },
+      storedTranscript: {
+        value: isReady ? `${transcriptsCount} messages` : "—",
+        detail: isReady ? "Records for session" : "Status unavailable",
+      },
+    };
+  }
+
+  const loadingTiles = formatTranscriptStatusTiles("loading", null, 0);
+  assert(loadingTiles.latestSession.value === "—", "formatTranscriptStatusTiles: loading shows '—'");
+  assert(loadingTiles.latestSession.detail === "Status unavailable", "formatTranscriptStatusTiles: loading shows 'Status unavailable'");
+  assert(loadingTiles.storedTranscript.value === "—", "formatTranscriptStatusTiles: loading shows '—' for stored transcripts");
+
+  const errorTiles = formatTranscriptStatusTiles("error", null, 0);
+  assert(errorTiles.latestSession.value === "—", "formatTranscriptStatusTiles: error shows '—'");
+
+  const readyTiles = formatTranscriptStatusTiles("ready", { id: "sess-abcdef", firstAt: "2026-01-01T00:00:00Z" }, 5);
+  assert(readyTiles.latestSession.value === "Session abcdef", "formatTranscriptStatusTiles: ready shows session slice");
+  assert(readyTiles.storedTranscript.value === "5 messages", "formatTranscriptStatusTiles: ready shows message count");
+
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);
 }

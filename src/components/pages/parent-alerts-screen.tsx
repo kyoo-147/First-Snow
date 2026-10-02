@@ -29,6 +29,40 @@ type ExtendedAlert = ApiAlert & {
   isUpdating?: boolean;
 };
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+export function formatAlertStatusTiles(
+  status: "loading" | "error" | "ready",
+  alerts: ApiAlert[],
+) {
+  const isReady = status === "ready";
+  const activeCount = isReady ? alerts.filter((a) => !a.readAt).length : null;
+  const urgentCount = isReady
+    ? alerts.filter((a) => !a.readAt && a.severity === "high").length
+    : null;
+
+  return {
+    active: {
+      value: isReady ? `${activeCount}` : "—",
+      detail: isReady ? "Waiting for parent review" : "Status unavailable",
+    },
+    urgent: {
+      value: isReady ? `${urgentCount}` : "—",
+      detail: isReady
+        ? urgentCount === 0
+          ? "No urgent alerts"
+          : "High priority review"
+        : "Status unavailable",
+    },
+    total: {
+      value: isReady ? `${alerts.length}` : "—",
+      detail: isReady ? "Household records" : "Status unavailable",
+    },
+  };
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
 export function ParentAlertsScreen() {
   const [status, setStatus] = useState<"loading" | "error" | "ready">("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -119,8 +153,7 @@ export function ParentAlertsScreen() {
     }
   };
 
-  const activeAlertsCount = alerts.filter((a) => !a.readAt).length;
-  const urgentAlertsCount = alerts.filter((a) => !a.readAt && a.severity === "high").length;
+  const tileData = formatAlertStatusTiles(status, alerts);
 
   return (
     <ParentPageFrame>
@@ -134,21 +167,21 @@ export function ParentAlertsScreen() {
       <div className="grid gap-4 md:grid-cols-3">
         <StatusTile
           label="Active alerts"
-          value={`${activeAlertsCount}`}
-          detail="Waiting for parent review"
+          value={tileData.active.value}
+          detail={tileData.active.detail}
           icon={<Bell className="size-5 text-snow-primary" />}
         />
         <StatusTile
           label="Urgent alerts"
-          value={`${urgentAlertsCount}`}
-          detail={urgentAlertsCount === 0 ? "No urgent alerts" : "High priority review"}
+          value={tileData.urgent.value}
+          detail={tileData.urgent.detail}
           icon={<ShieldCheck className="size-5 text-snow-success" />}
           tone="bg-snow-ice"
         />
         <StatusTile
           label="Total alerts"
-          value={`${alerts.length}`}
-          detail="Household records"
+          value={tileData.total.value}
+          detail={tileData.total.detail}
           icon={<ShieldAlert className="size-5 text-snow-primary" />}
           tone="bg-snow-lavender"
         />
