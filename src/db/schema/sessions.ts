@@ -32,7 +32,7 @@ export const sessions = pgTable(
     index('sessions_token_hash_idx').on(t.tokenHash),
     check(
       'sessions_actor_fk_check',
-      sql`("user_id" IS NOT NULL AND "child_id" IS NULL) OR ("user_id" IS NULL AND "child_id" IS NOT NULL)`,
+      sql`(("actor_type" IN ('parent', 'admin') AND "user_id" IS NOT NULL AND "child_id" IS NULL) OR ("actor_type" = 'child' AND "user_id" IS NULL AND "child_id" IS NOT NULL))`,
     ),
   ],
 );

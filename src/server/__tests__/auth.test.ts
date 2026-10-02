@@ -6,6 +6,7 @@ import {
   hashToken,
   PARENT_COOKIE_NAME,
   CHILD_COOKIE_NAME,
+  type ParentSessionPayload,
 } from '@/lib/auth/session';
 
 // Mock server-only and next/headers for unit tests
@@ -227,6 +228,102 @@ describe('Fail-Closed DB-Backed Session Authentication & Server Guards', () => {
       expect(result?.sub).toBe('user-1');
       expect(result?.role).toBe('parent');
       expect(result?.sessionId).toBe(opaqueToken);
+    });
+
+    it('ADMIN SUCCESS: returns session payload when admin session and admin user are active and valid in DB', async () => {
+      const { verifyParentSessionTokenWithDb } = await import('../auth');
+      const opaqueToken = generateOpaqueToken();
+      const token = await createParentSession('admin-1', 'admin', opaqueToken);
+
+      queryResults = [
+        [
+          {
+            id: 'sess-admin-1',
+            actorType: 'admin',
+            userId: 'admin-1',
+            expiresAt: new Date(Date.now() + 86400000),
+            revokedAt: null,
+          },
+        ],
+        [
+          {
+            id: 'admin-1',
+            isActive: true,
+          },
+        ],
+      ];
+
+      const result = await verifyParentSessionTokenWithDb(token);
+      expect(result).not.toBeNull();
+      expect(result?.sub).toBe('admin-1');
+      expect(result?.role).toBe('admin');
+      expect(result?.actorType).toBe('admin');
+      expect(result?.sessionId).toBe(opaqueToken);
+    });
+
+    it('ACTOR/ROLE MISMATCH: returns null when admin user token has actorType parent in DB', async () => {
+      const { verifyParentSessionTokenWithDb } = await import('../auth');
+      const opaqueToken = generateOpaqueToken();
+      const token = await createParentSession('admin-1', 'admin', opaqueToken);
+
+      // Session row in DB was mistakenly inserted with 'parent' instead of 'admin'
+      queryResults = [
+        [
+          {
+            id: 'sess-bad-1',
+            actorType: 'parent', // Mismatch!
+            userId: 'admin-1',
+            expiresAt: new Date(Date.now() + 86400000),
+            revokedAt: null,
+          },
+        ],
+      ];
+
+      const result = await verifyParentSessionTokenWithDb(token);
+      expect(result).toBeNull();
+    });
+
+    it('ACTOR/ROLE MISMATCH: returns null when parent user token has actorType admin in DB', async () => {
+      const { verifyParentSessionTokenWithDb } = await import('../auth');
+      const opaqueToken = generateOpaqueToken();
+      const token = await createParentSession('parent-1', 'parent', opaqueToken);
+
+      queryResults = [
+        [
+          {
+            id: 'sess-bad-2',
+            actorType: 'admin', // Mismatch!
+            userId: 'parent-1',
+            expiresAt: new Date(Date.now() + 86400000),
+            revokedAt: null,
+          },
+        ],
+      ];
+
+      const result = await verifyParentSessionTokenWithDb(token);
+      expect(result).toBeNull();
+    });
+
+    it('ACTOR/FK MISMATCH: returns null when parent token points to a child session row in DB', async () => {
+      const { verifyParentSessionTokenWithDb } = await import('../auth');
+      const opaqueToken = generateOpaqueToken();
+      const token = await createParentSession('user-1', 'parent', opaqueToken);
+
+      queryResults = [
+        [
+          {
+            id: 'sess-child-1',
+            actorType: 'child', // Mismatch!
+            childId: 'child-1',
+            userId: null,
+            expiresAt: new Date(Date.now() + 86400000),
+            revokedAt: null,
+          },
+        ],
+      ];
+
+      const result = await verifyParentSessionTokenWithDb(token);
+      expect(result).toBeNull();
     });
   });
 
@@ -473,6 +570,36 @@ describe('Fail-Closed DB-Backed Session Authentication & Server Guards', () => {
       const result = await requireAdminSession();
       expect(result).toBeInstanceOf(Response);
       expect((result as Response).status).toBe(403);
+    });
+
+    it('ADMIN SUCCESS: requireAdminSession returns payload for valid admin session', async () => {
+      const opaqueToken = generateOpaqueToken();
+      const token = await createParentSession('admin-1', 'admin', opaqueToken);
+      mockCookieValues[PARENT_COOKIE_NAME] = token;
+
+      queryResults = [
+        [
+          {
+            id: 'sess-admin-1',
+            actorType: 'admin',
+            userId: 'admin-1',
+            expiresAt: new Date(Date.now() + 86400000),
+            revokedAt: null,
+          },
+        ],
+        [
+          {
+            id: 'admin-1',
+            isActive: true,
+          },
+        ],
+      ];
+
+      const { requireAdminSession } = await import('../auth');
+      const result = await requireAdminSession();
+      expect(result).not.toBeInstanceOf(Response);
+      expect((result as ParentSessionPayload).role).toBe('admin');
+      expect((result as ParentSessionPayload).sub).toBe('admin-1');
     });
 
     it('requireChildSession returns 401 Response when child cookie is missing or invalid', async () => {

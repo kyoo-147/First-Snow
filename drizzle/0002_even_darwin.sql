@@ -1,0 +1,2 @@
+ALTER TABLE "sessions" DROP CONSTRAINT "sessions_actor_fk_check";--> statement-breakpoint
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_actor_fk_check" CHECK ((("actor_type" IN ('parent', 'admin') AND "user_id" IS NOT NULL AND "child_id" IS NULL) OR ("actor_type" = 'child' AND "user_id" IS NULL AND "child_id" IS NOT NULL)));

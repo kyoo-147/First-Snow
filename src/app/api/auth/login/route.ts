@@ -58,7 +58,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const [dbSession] = await db
       .insert(sessions)
       .values({
-        actorType: 'parent',
+        actorType: user.role,
         userId: user.id,
         tokenHash,
         expiresAt,
