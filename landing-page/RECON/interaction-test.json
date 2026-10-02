@@ -1,0 +1,128 @@
+{
+  "clone": {
+    "typer": {
+      "samples": [
+        "tut",
+        "writing coach.",
+        "homewo"
+      ],
+      "cycles": true,
+      "wordsAttr": "tutor.,writing coach.,homework helper.,study buddy.,code reviewer.,lesson plan helper.,debate partner.,essay reviewer.,curriculum planner."
+    },
+    "faq": {
+      "items": 6,
+      "triggers": 6,
+      "contents": 6,
+      "firstTitle": "What is Khanmigo? How is it different from ChatGPT?",
+      "openTest": {
+        "before": {
+          "title": "What is Khanmigo? How is it different fr",
+          "ariaExpanded": "false",
+          "ariaHidden": "true",
+          "contentHeight": 0,
+          "contentDisplay": "none"
+        },
+        "after": {
+          "title": "What is Khanmigo? How is it different fr",
+          "ariaExpanded": "false",
+          "ariaHidden": "true",
+          "contentHeight": 404,
+          "contentDisplay": "block"
+        },
+        "toggled": true
+      }
+    },
+    "slider": {
+      "before": {
+        "active": 0,
+        "transform": "translateX(0px)",
+        "count": 3,
+        "maskW": 560
+      },
+      "after": {
+        "active": 1,
+        "transform": "translateX(-560px)",
+        "count": 3,
+        "maskW": 560
+      },
+      "advanced": true
+    },
+    "runtime": {
+      "htmlClass": "w-mod-js w-mod-ix wf-lato-n4-active wf-sourceserifpro-n4-active wf-poppins-n4-active wf-montserrat-n4-active wf-sourcesans3-n4-active wf-active",
+      "hasWebflowIx": true,
+      "webflowGlobal": true,
+      "jquery": true,
+      "ix2Instances": true,
+      "webfontActive": true
+    },
+    "mobileNav": {
+      "buttonExists": true,
+      "overlayOpen": "block",
+      "menuVisible": true
+    },
+    "consoleErrors": []
+  },
+  "original": {
+    "typer": {
+      "samples": [
+        "writing",
+        "writin",
+        "homework helper."
+      ],
+      "cycles": true,
+      "wordsAttr": "tutor.,writing coach.,homework helper.,study buddy.,code reviewer.,lesson plan helper.,debate partner.,essay reviewer.,curriculum planner."
+    },
+    "faq": {
+      "items": 6,
+      "triggers": 6,
+      "contents": 6,
+      "firstTitle": "What is Khanmigo? How is it different from ChatGPT?",
+      "openTest": {
+        "before": {
+          "title": "What is Khanmigo? How is it different fr",
+          "ariaExpanded": "false",
+          "ariaHidden": "true",
+          "contentHeight": 0,
+          "contentDisplay": "none"
+        },
+        "after": {
+          "title": "What is Khanmigo? How is it different fr",
+          "ariaExpanded": "false",
+          "ariaHidden": "true",
+          "contentHeight": 404,
+          "contentDisplay": "block"
+        },
+        "toggled": true
+      }
+    },
+    "slider": {
+      "before": {
+        "active": 0,
+        "transform": "translateX(0px)",
+        "count": 3,
+        "maskW": 560
+      },
+      "after": {
+        "active": 1,
+        "transform": "translateX(-560px)",
+        "count": 3,
+        "maskW": 560
+      },
+      "advanced": true
+    },
+    "runtime": {
+      "htmlClass": "w-mod-js w-mod-ix wf-lato-n4-active wf-lato-n7-active wf-lato-i4-active wf-lato-n1-active wf-lato-i1-active wf-lato-n3-active wf-lato-i3-active wf-lato-i7-active wf-lato-n9-active wf-lato-i9-active wf-sourceserifpro-n3-active wf-sourceserifpro-n4-active wf-sourceserifpro-n5-active wf-sourceserifpro-n6-active wf-sourceserifpro-n7-active wf-active",
+      "hasWebflowIx": true,
+      "webflowGlobal": true,
+      "jquery": true,
+      "ix2Instances": true,
+      "webfontActive": true
+    },
+    "mobileNav": {
+      "buttonExists": true,
+      "overlayOpen": "block",
+      "menuVisible": true
+    },
+    "consoleErrors": []
+  }
+}

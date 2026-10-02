@@ -1,0 +1,1203 @@
+{
+  "brand": "AgentKid",
+  "locales": {
+    "en": "site/index.html",
+    "vi": "site/vi/index.html"
+  },
+  "applied": [
+    {
+      "id": "head.title",
+      "area": "head",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "head.description",
+      "area": "head",
+      "locale": "en",
+      "count": 3
+    },
+    {
+      "id": "head.ogtitle",
+      "area": "head",
+      "locale": "en",
+      "count": 2
+    },
+    {
+      "id": "head.lang",
+      "area": "head",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "head.alternate",
+      "area": "head",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "head.alternate2",
+      "area": "head",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "head.alternateEn",
+      "area": "head",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "head.xdefault",
+      "area": "head",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "head.canonical",
+      "area": "head",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.brand",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.learners",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.parents",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.writing",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.districts",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.offerings",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.math",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.science",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.kids",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.sat",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.khanmigo",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.about",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.mastery",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.why",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.cta.hamburger",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "nav.cta.top",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.h1",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.words",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.typed",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.c1.eyebrow",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.c1.copy",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.c1.cta",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.c2.eyebrow",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.c2.copy",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.c2.cta",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.c3.eyebrow",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.c3.copy",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "hero.c3.cta",
+      "area": "hero",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "endorse.1",
+      "area": "endorsers",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "endorse.2",
+      "area": "endorsers",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "endorse.3",
+      "area": "endorsers",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.h2",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b3.eyebrow",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b1.eyebrow",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b1.h3",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b1.p",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b1.cta",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b1.secondary",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b2.eyebrow",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b2.h3",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b2.p",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b2.secondary",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b3.h3",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b3.p",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b3.secondary",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "vp.b2b3.cta",
+      "area": "value-prop",
+      "locale": "en",
+      "count": 2
+    },
+    {
+      "id": "sp.h2",
+      "area": "testimonials",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "sp.q1",
+      "area": "testimonials",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "sp.n1",
+      "area": "testimonials",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "sp.r1",
+      "area": "testimonials",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "sp.q2",
+      "area": "testimonials",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "sp.n2",
+      "area": "testimonials",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "sp.r2",
+      "area": "testimonials",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "sp.q3",
+      "area": "testimonials",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "sp.n3",
+      "area": "testimonials",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "sp.r3",
+      "area": "testimonials",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq.h2",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq.q1",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq.q2",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq.q3",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq.q4",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq.q5",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq.q6",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "video.h2",
+      "area": "ted",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "video.copy",
+      "area": "ted",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "footer.h2",
+      "area": "final-cta",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "footer.cta1",
+      "area": "final-cta",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "footer.cta2",
+      "area": "final-cta",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "footer.l1",
+      "area": "final-cta",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "footer.l2",
+      "area": "final-cta",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "footer.l3",
+      "area": "final-cta",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "footer.l4",
+      "area": "final-cta",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "footer.l5",
+      "area": "final-cta",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq2.q3",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq2.q1",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq2.q4",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq2.q5",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq2.q2",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq2.q6",
+      "area": "faq",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "faq.answers",
+      "area": "faq",
+      "locale": "en",
+      "count": 6
+    },
+    {
+      "id": "faq.answers.duplicate",
+      "area": "faq",
+      "locale": "en",
+      "count": 6
+    },
+    {
+      "id": "media.logo",
+      "area": "media",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "media.hero",
+      "area": "media",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "media.valueProps",
+      "area": "media",
+      "locale": "en",
+      "count": 3
+    },
+    {
+      "id": "media.footer",
+      "area": "media",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "video.staticPreview",
+      "area": "ted",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "brand.favicon",
+      "area": "meta",
+      "locale": "en",
+      "count": 2
+    },
+    {
+      "id": "nav.langswitch",
+      "area": "nav",
+      "locale": "en",
+      "count": 1
+    },
+    {
+      "id": "links.neutralise",
+      "area": "links",
+      "locale": "both",
+      "count": 19
+    },
+    {
+      "id": "links.product",
+      "area": "links",
+      "locale": "en",
+      "count": 6
+    },
+    {
+      "id": "head.title",
+      "area": "head",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "head.description",
+      "area": "head",
+      "locale": "vi",
+      "count": 3
+    },
+    {
+      "id": "head.ogtitle",
+      "area": "head",
+      "locale": "vi",
+      "count": 2
+    },
+    {
+      "id": "head.lang",
+      "area": "head",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "head.alternate",
+      "area": "head",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "head.alternate2",
+      "area": "head",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "head.alternateEn",
+      "area": "head",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "head.xdefault",
+      "area": "head",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "head.canonical",
+      "area": "head",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.brand",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.learners",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.parents",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.writing",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.districts",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.offerings",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.math",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.science",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.kids",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.sat",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.khanmigo",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.about",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.mastery",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.dd.why",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.cta.hamburger",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "nav.cta.top",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.h1",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.words",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.typed",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.c1.eyebrow",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.c1.copy",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.c1.cta",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.c2.eyebrow",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.c2.copy",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.c2.cta",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.c3.eyebrow",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.c3.copy",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "hero.c3.cta",
+      "area": "hero",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "endorse.1",
+      "area": "endorsers",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "endorse.2",
+      "area": "endorsers",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "endorse.3",
+      "area": "endorsers",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.h2",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b3.eyebrow",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b1.eyebrow",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b1.h3",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b1.p",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b1.cta",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b1.secondary",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b2.eyebrow",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b2.h3",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b2.p",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b2.secondary",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b3.h3",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b3.p",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b3.secondary",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "vp.b2b3.cta",
+      "area": "value-prop",
+      "locale": "vi",
+      "count": 2
+    },
+    {
+      "id": "sp.h2",
+      "area": "testimonials",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "sp.q1",
+      "area": "testimonials",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "sp.n1",
+      "area": "testimonials",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "sp.r1",
+      "area": "testimonials",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "sp.q2",
+      "area": "testimonials",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "sp.n2",
+      "area": "testimonials",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "sp.r2",
+      "area": "testimonials",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "sp.q3",
+      "area": "testimonials",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "sp.n3",
+      "area": "testimonials",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "sp.r3",
+      "area": "testimonials",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq.h2",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq.q1",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq.q2",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq.q3",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq.q4",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq.q5",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq.q6",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "video.h2",
+      "area": "ted",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "video.copy",
+      "area": "ted",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "footer.h2",
+      "area": "final-cta",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "footer.cta1",
+      "area": "final-cta",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "footer.cta2",
+      "area": "final-cta",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "footer.l1",
+      "area": "final-cta",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "footer.l2",
+      "area": "final-cta",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "footer.l3",
+      "area": "final-cta",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "footer.l4",
+      "area": "final-cta",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "footer.l5",
+      "area": "final-cta",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq2.q3",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq2.q1",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq2.q4",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq2.q5",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq2.q2",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq2.q6",
+      "area": "faq",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "faq.answers",
+      "area": "faq",
+      "locale": "vi",
+      "count": 6
+    },
+    {
+      "id": "faq.answers.duplicate",
+      "area": "faq",
+      "locale": "vi",
+      "count": 6
+    },
+    {
+      "id": "media.logo",
+      "area": "media",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "media.hero",
+      "area": "media",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "media.valueProps",
+      "area": "media",
+      "locale": "vi",
+      "count": 3
+    },
+    {
+      "id": "media.footer",
+      "area": "media",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "video.staticPreview",
+      "area": "ted",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "brand.favicon",
+      "area": "meta",
+      "locale": "vi",
+      "count": 2
+    },
+    {
+      "id": "nav.langswitch",
+      "area": "nav",
+      "locale": "vi",
+      "count": 1
+    },
+    {
+      "id": "links.neutralise",
+      "area": "links",
+      "locale": "both",
+      "count": 19
+    },
+    {
+      "id": "links.product",
+      "area": "links",
+      "locale": "vi",
+      "count": 6
+    },
+    {
+      "id": "paths.subdirPrefix",
+      "area": "paths",
+      "locale": "vi",
+      "count": 46
+    }
+  ]
+}

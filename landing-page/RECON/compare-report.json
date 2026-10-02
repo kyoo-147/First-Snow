@@ -1,0 +1,6199 @@
+{
+  "original": "https://www.khanmigo.ai/",
+  "clone": "http://127.0.0.1:8124/",
+  "viewports": {
+    "375x812": {
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "scrollHeight": {
+        "original": 5111,
+        "clone": 5111
+      },
+      "counters": {
+        "original": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        },
+        "clone": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        }
+      },
+      "pixel": {
+        "score": 100,
+        "diffPixels": 0,
+        "totalPixels": 2029067,
+        "aSize": [
+          397,
+          5111
+        ],
+        "bSize": [
+          397,
+          5111
+        ]
+      },
+      "consoleErrors": {
+        "original": [],
+        "clone": []
+      },
+      "badResponses": {
+        "original": [],
+        "clone": []
+      },
+      "failedRequests": {
+        "original": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ],
+        "clone": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ]
+      },
+      "sections": {
+        "original": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 702,
+            "w": 375
+          },
+          {
+            "cls": "endorsers",
+            "top": 766,
+            "h": 358,
+            "w": 375
+          },
+          {
+            "cls": "value-prop",
+            "top": 1124,
+            "h": 1763,
+            "w": 375
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1258,
+            "h": 550,
+            "w": 343
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1808,
+            "h": 510,
+            "w": 343
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2318,
+            "h": 569,
+            "w": 343
+          },
+          {
+            "cls": "social-proof",
+            "top": 2887,
+            "h": 632,
+            "w": 375
+          },
+          {
+            "cls": "video",
+            "top": 4161,
+            "h": 378,
+            "w": 375
+          },
+          {
+            "cls": "footer",
+            "top": 4587,
+            "h": 525,
+            "w": 375
+          }
+        ],
+        "clone": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 702,
+            "w": 375
+          },
+          {
+            "cls": "endorsers",
+            "top": 766,
+            "h": 358,
+            "w": 375
+          },
+          {
+            "cls": "value-prop",
+            "top": 1124,
+            "h": 1763,
+            "w": 375
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1258,
+            "h": 550,
+            "w": 343
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1808,
+            "h": 510,
+            "w": 343
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2318,
+            "h": 569,
+            "w": 343
+          },
+          {
+            "cls": "social-proof",
+            "top": 2887,
+            "h": 632,
+            "w": 375
+          },
+          {
+            "cls": "video",
+            "top": 4161,
+            "h": 378,
+            "w": 375
+          },
+          {
+            "cls": "footer",
+            "top": 4587,
+            "h": 525,
+            "w": 375
+          }
+        ]
+      },
+      "h1": {
+        "original": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "28px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 94,
+          "h": 64,
+          "w": 290
+        },
+        "clone": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "28px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 94,
+          "h": 64,
+          "w": 290
+        }
+      },
+      "bodyFont": {
+        "original": "Arial, sans-serif",
+        "clone": "Arial, sans-serif"
+      },
+      "images": {
+        "original": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-500.webp",
+            "w": 375,
+            "h": 84,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1-p-500.webp",
+            "w": 375,
+            "h": 267,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2-p-500.webp",
+            "w": 375,
+            "h": 252,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3-p-500.webp",
+            "w": 375,
+            "h": 290,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-500.webp",
+            "w": 375,
+            "h": 210,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero-p-500.webp",
+            "w": 375,
+            "h": 84,
+            "loaded": true
+          }
+        ],
+        "clone": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-500.webp",
+            "w": 375,
+            "h": 84,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1-p-500.webp",
+            "w": 375,
+            "h": 267,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2-p-500.webp",
+            "w": 375,
+            "h": 252,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3-p-500.webp",
+            "w": 375,
+            "h": 290,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-500.webp",
+            "w": 375,
+            "h": 210,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero-p-500.webp",
+            "w": 375,
+            "h": 84,
+            "loaded": true
+          }
+        ]
+      }
+    },
+    "390x844": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollHeight": {
+        "original": 5128,
+        "clone": 5128
+      },
+      "counters": {
+        "original": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        },
+        "clone": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        }
+      },
+      "pixel": {
+        "score": 100,
+        "diffPixels": 0,
+        "totalPixels": 2076840,
+        "aSize": [
+          405,
+          5128
+        ],
+        "bSize": [
+          405,
+          5128
+        ]
+      },
+      "consoleErrors": {
+        "original": [],
+        "clone": []
+      },
+      "badResponses": {
+        "original": [],
+        "clone": []
+      },
+      "failedRequests": {
+        "original": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ],
+        "clone": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ]
+      },
+      "sections": {
+        "original": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 705,
+            "w": 390
+          },
+          {
+            "cls": "endorsers",
+            "top": 769,
+            "h": 358,
+            "w": 390
+          },
+          {
+            "cls": "value-prop",
+            "top": 1127,
+            "h": 1765,
+            "w": 390
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1261,
+            "h": 560,
+            "w": 358
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1821,
+            "h": 519,
+            "w": 358
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2340,
+            "h": 551,
+            "w": 358
+          },
+          {
+            "cls": "social-proof",
+            "top": 2892,
+            "h": 632,
+            "w": 390
+          },
+          {
+            "cls": "video",
+            "top": 4166,
+            "h": 386,
+            "w": 390
+          },
+          {
+            "cls": "footer",
+            "top": 4600,
+            "h": 528,
+            "w": 390
+          }
+        ],
+        "clone": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 705,
+            "w": 390
+          },
+          {
+            "cls": "endorsers",
+            "top": 769,
+            "h": 358,
+            "w": 390
+          },
+          {
+            "cls": "value-prop",
+            "top": 1127,
+            "h": 1765,
+            "w": 390
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1261,
+            "h": 560,
+            "w": 358
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1821,
+            "h": 519,
+            "w": 358
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2340,
+            "h": 551,
+            "w": 358
+          },
+          {
+            "cls": "social-proof",
+            "top": 2892,
+            "h": 632,
+            "w": 390
+          },
+          {
+            "cls": "video",
+            "top": 4166,
+            "h": 386,
+            "w": 390
+          },
+          {
+            "cls": "footer",
+            "top": 4600,
+            "h": 528,
+            "w": 390
+          }
+        ]
+      },
+      "h1": {
+        "original": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "28px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 94,
+          "h": 64,
+          "w": 290
+        },
+        "clone": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "28px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 94,
+          "h": 64,
+          "w": 290
+        }
+      },
+      "bodyFont": {
+        "original": "Arial, sans-serif",
+        "clone": "Arial, sans-serif"
+      },
+      "images": {
+        "original": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-500.webp",
+            "w": 390,
+            "h": 88,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1-p-500.webp",
+            "w": 390,
+            "h": 278,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2-p-500.webp",
+            "w": 390,
+            "h": 262,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3-p-500.webp",
+            "w": 390,
+            "h": 301,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-500.webp",
+            "w": 390,
+            "h": 219,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero-p-500.webp",
+            "w": 390,
+            "h": 88,
+            "loaded": true
+          }
+        ],
+        "clone": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-500.webp",
+            "w": 390,
+            "h": 88,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1-p-500.webp",
+            "w": 390,
+            "h": 278,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2-p-500.webp",
+            "w": 390,
+            "h": 262,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3-p-500.webp",
+            "w": 390,
+            "h": 301,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-500.webp",
+            "w": 390,
+            "h": 219,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero-p-500.webp",
+            "w": 390,
+            "h": 88,
+            "loaded": true
+          }
+        ]
+      }
+    },
+    "430x932": {
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "scrollHeight": {
+        "original": 5194,
+        "clone": 5194
+      },
+      "counters": {
+        "original": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        },
+        "clone": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        }
+      },
+      "pixel": {
+        "score": 100,
+        "diffPixels": 0,
+        "totalPixels": 2233420,
+        "aSize": [
+          430,
+          5194
+        ],
+        "bSize": [
+          430,
+          5194
+        ]
+      },
+      "consoleErrors": {
+        "original": [],
+        "clone": []
+      },
+      "badResponses": {
+        "original": [],
+        "clone": []
+      },
+      "failedRequests": {
+        "original": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ],
+        "clone": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ]
+      },
+      "sections": {
+        "original": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 714,
+            "w": 430
+          },
+          {
+            "cls": "endorsers",
+            "top": 778,
+            "h": 358,
+            "w": 430
+          },
+          {
+            "cls": "value-prop",
+            "top": 1136,
+            "h": 1816,
+            "w": 430
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1270,
+            "h": 586,
+            "w": 398
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1856,
+            "h": 543,
+            "w": 398
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2399,
+            "h": 553,
+            "w": 398
+          },
+          {
+            "cls": "social-proof",
+            "top": 2952,
+            "h": 606,
+            "w": 430
+          },
+          {
+            "cls": "video",
+            "top": 4200,
+            "h": 409,
+            "w": 430
+          },
+          {
+            "cls": "footer",
+            "top": 4657,
+            "h": 537,
+            "w": 430
+          }
+        ],
+        "clone": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 714,
+            "w": 430
+          },
+          {
+            "cls": "endorsers",
+            "top": 778,
+            "h": 358,
+            "w": 430
+          },
+          {
+            "cls": "value-prop",
+            "top": 1136,
+            "h": 1816,
+            "w": 430
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1270,
+            "h": 586,
+            "w": 398
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1856,
+            "h": 543,
+            "w": 398
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2399,
+            "h": 553,
+            "w": 398
+          },
+          {
+            "cls": "social-proof",
+            "top": 2952,
+            "h": 606,
+            "w": 430
+          },
+          {
+            "cls": "video",
+            "top": 4200,
+            "h": 409,
+            "w": 430
+          },
+          {
+            "cls": "footer",
+            "top": 4657,
+            "h": 537,
+            "w": 430
+          }
+        ]
+      },
+      "h1": {
+        "original": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "28px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 94,
+          "h": 64,
+          "w": 290
+        },
+        "clone": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "28px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 94,
+          "h": 64,
+          "w": 290
+        }
+      },
+      "bodyFont": {
+        "original": "Arial, sans-serif",
+        "clone": "Arial, sans-serif"
+      },
+      "images": {
+        "original": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-500.webp",
+            "w": 430,
+            "h": 97,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1-p-500.webp",
+            "w": 430,
+            "h": 307,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2-p-500.webp",
+            "w": 430,
+            "h": 289,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3-p-500.webp",
+            "w": 430,
+            "h": 332,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-500.webp",
+            "w": 430,
+            "h": 241,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero-p-500.webp",
+            "w": 430,
+            "h": 97,
+            "loaded": true
+          }
+        ],
+        "clone": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 12,
+            "h": 10,
+            "loaded": true
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-500.webp",
+            "w": 430,
+            "h": 97,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1-p-500.webp",
+            "w": 430,
+            "h": 307,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2-p-500.webp",
+            "w": 430,
+            "h": 289,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3-p-500.webp",
+            "w": 430,
+            "h": 332,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-500.webp",
+            "w": 430,
+            "h": 241,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero-p-500.webp",
+            "w": 430,
+            "h": 97,
+            "loaded": true
+          }
+        ]
+      }
+    },
+    "768x1024": {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollHeight": {
+        "original": 5193,
+        "clone": 5193
+      },
+      "counters": {
+        "original": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        },
+        "clone": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        }
+      },
+      "pixel": {
+        "score": 100,
+        "diffPixels": 0,
+        "totalPixels": 3988224,
+        "aSize": [
+          768,
+          5193
+        ],
+        "bSize": [
+          768,
+          5193
+        ]
+      },
+      "consoleErrors": {
+        "original": [],
+        "clone": []
+      },
+      "badResponses": {
+        "original": [],
+        "clone": []
+      },
+      "failedRequests": {
+        "original": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ],
+        "clone": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ]
+      },
+      "sections": {
+        "original": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 662,
+            "w": 768
+          },
+          {
+            "cls": "endorsers",
+            "top": 726,
+            "h": 294,
+            "w": 768
+          },
+          {
+            "cls": "value-prop",
+            "top": 1020,
+            "h": 1402,
+            "w": 768
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1271,
+            "h": 405,
+            "w": 768
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1676,
+            "h": 369,
+            "w": 768
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2045,
+            "h": 377,
+            "w": 768
+          },
+          {
+            "cls": "social-proof",
+            "top": 2422,
+            "h": 870,
+            "w": 768
+          },
+          {
+            "cls": "video",
+            "top": 3903,
+            "h": 610,
+            "w": 768
+          },
+          {
+            "cls": "footer",
+            "top": 4592,
+            "h": 601,
+            "w": 768
+          }
+        ],
+        "clone": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 662,
+            "w": 768
+          },
+          {
+            "cls": "endorsers",
+            "top": 726,
+            "h": 294,
+            "w": 768
+          },
+          {
+            "cls": "value-prop",
+            "top": 1020,
+            "h": 1402,
+            "w": 768
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1271,
+            "h": 405,
+            "w": 768
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1676,
+            "h": 369,
+            "w": 768
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2045,
+            "h": 377,
+            "w": 768
+          },
+          {
+            "cls": "social-proof",
+            "top": 2422,
+            "h": 870,
+            "w": 768
+          },
+          {
+            "cls": "video",
+            "top": 3903,
+            "h": 610,
+            "w": 768
+          },
+          {
+            "cls": "footer",
+            "top": 4592,
+            "h": 601,
+            "w": 768
+          }
+        ]
+      },
+      "h1": {
+        "original": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "40px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 124,
+          "h": 48,
+          "w": 600
+        },
+        "clone": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "40px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 124,
+          "h": 48,
+          "w": 600
+        }
+      },
+      "bodyFont": {
+        "original": "Arial, sans-serif",
+        "clone": "Arial, sans-serif"
+      },
+      "images": {
+        "original": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-800.webp",
+            "w": 768,
+            "h": 172,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1-p-800.webp",
+            "w": 768,
+            "h": 549,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 768,
+            "h": 517,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3-p-800.webp",
+            "w": 768,
+            "h": 594,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-800.webp",
+            "w": 768,
+            "h": 432,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero-p-800.webp",
+            "w": 768,
+            "h": 172,
+            "loaded": true
+          }
+        ],
+        "clone": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-800.webp",
+            "w": 768,
+            "h": 172,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1-p-800.webp",
+            "w": 768,
+            "h": 549,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 768,
+            "h": 517,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3-p-800.webp",
+            "w": 768,
+            "h": 594,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-800.webp",
+            "w": 768,
+            "h": 432,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero-p-800.webp",
+            "w": 768,
+            "h": 172,
+            "loaded": true
+          }
+        ]
+      }
+    },
+    "1024x768": {
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "scrollHeight": {
+        "original": 5844,
+        "clone": 5844
+      },
+      "counters": {
+        "original": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        },
+        "clone": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        }
+      },
+      "pixel": {
+        "score": 100,
+        "diffPixels": 0,
+        "totalPixels": 5984256,
+        "aSize": [
+          1024,
+          5844
+        ],
+        "bSize": [
+          1024,
+          5844
+        ]
+      },
+      "consoleErrors": {
+        "original": [],
+        "clone": []
+      },
+      "badResponses": {
+        "original": [],
+        "clone": []
+      },
+      "failedRequests": {
+        "original": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ],
+        "clone": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ]
+      },
+      "sections": {
+        "original": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 747,
+            "w": 1024
+          },
+          {
+            "cls": "endorsers",
+            "top": 811,
+            "h": 254,
+            "w": 1024
+          },
+          {
+            "cls": "value-prop",
+            "top": 1065,
+            "h": 1599,
+            "w": 1024
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1372,
+            "h": 442,
+            "w": 1024
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1814,
+            "h": 398,
+            "w": 1024
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2212,
+            "h": 432,
+            "w": 1024
+          },
+          {
+            "cls": "social-proof",
+            "top": 2663,
+            "h": 905,
+            "w": 1024
+          },
+          {
+            "cls": "video",
+            "top": 4257,
+            "h": 766,
+            "w": 1024
+          },
+          {
+            "cls": "footer",
+            "top": 5143,
+            "h": 701,
+            "w": 1024
+          }
+        ],
+        "clone": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 747,
+            "w": 1024
+          },
+          {
+            "cls": "endorsers",
+            "top": 811,
+            "h": 254,
+            "w": 1024
+          },
+          {
+            "cls": "value-prop",
+            "top": 1065,
+            "h": 1599,
+            "w": 1024
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1372,
+            "h": 442,
+            "w": 1024
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1814,
+            "h": 398,
+            "w": 1024
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2212,
+            "h": 432,
+            "w": 1024
+          },
+          {
+            "cls": "social-proof",
+            "top": 2663,
+            "h": 905,
+            "w": 1024
+          },
+          {
+            "cls": "video",
+            "top": 4257,
+            "h": 766,
+            "w": 1024
+          },
+          {
+            "cls": "footer",
+            "top": 5143,
+            "h": 701,
+            "w": 1024
+          }
+        ]
+      },
+      "h1": {
+        "original": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 144,
+          "h": 52,
+          "w": 730
+        },
+        "clone": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 144,
+          "h": 52,
+          "w": 730
+        }
+      },
+      "bodyFont": {
+        "original": "Arial, sans-serif",
+        "clone": "Arial, sans-serif"
+      },
+      "images": {
+        "original": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-1080.webp",
+            "w": 1024,
+            "h": 230,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1024,
+            "h": 731,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1024,
+            "h": 690,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1024,
+            "h": 791,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-1080.webp",
+            "w": 1024,
+            "h": 576,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero-p-1080.webp",
+            "w": 1024,
+            "h": 230,
+            "loaded": true
+          }
+        ],
+        "clone": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-1080.webp",
+            "w": 1024,
+            "h": 230,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1024,
+            "h": 731,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1024,
+            "h": 690,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1024,
+            "h": 791,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-1080.webp",
+            "w": 1024,
+            "h": 576,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero-p-1080.webp",
+            "w": 1024,
+            "h": 230,
+            "loaded": true
+          }
+        ]
+      }
+    },
+    "1280x800": {
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "scrollHeight": {
+        "original": 6043,
+        "clone": 6043
+      },
+      "counters": {
+        "original": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        },
+        "clone": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        }
+      },
+      "pixel": {
+        "score": 100,
+        "diffPixels": 0,
+        "totalPixels": 7735040,
+        "aSize": [
+          1280,
+          6043
+        ],
+        "bSize": [
+          1280,
+          6043
+        ]
+      },
+      "consoleErrors": {
+        "original": [],
+        "clone": []
+      },
+      "badResponses": {
+        "original": [],
+        "clone": []
+      },
+      "failedRequests": {
+        "original": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ],
+        "clone": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ]
+      },
+      "sections": {
+        "original": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 858,
+            "w": 1280
+          },
+          {
+            "cls": "endorsers",
+            "top": 922,
+            "h": 254,
+            "w": 1280
+          },
+          {
+            "cls": "value-prop",
+            "top": 1176,
+            "h": 1652,
+            "w": 1280
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1483,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1925,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1280
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1280
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1280
+          }
+        ],
+        "clone": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 858,
+            "w": 1280
+          },
+          {
+            "cls": "endorsers",
+            "top": 922,
+            "h": 254,
+            "w": 1280
+          },
+          {
+            "cls": "value-prop",
+            "top": 1176,
+            "h": 1652,
+            "w": 1280
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1483,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1925,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1280
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1280
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1280
+          }
+        ]
+      },
+      "h1": {
+        "original": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        },
+        "clone": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        }
+      },
+      "bodyFont": {
+        "original": "Arial, sans-serif",
+        "clone": "Arial, sans-serif"
+      },
+      "images": {
+        "original": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-1600.webp",
+            "w": 1280,
+            "h": 288,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-1600.webp",
+            "w": 1280,
+            "h": 720,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1280,
+            "h": 288,
+            "loaded": true
+          }
+        ],
+        "clone": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-1600.webp",
+            "w": 1280,
+            "h": 288,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-1600.webp",
+            "w": 1280,
+            "h": 720,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1280,
+            "h": 288,
+            "loaded": true
+          }
+        ]
+      }
+    },
+    "1366x768": {
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "scrollHeight": {
+        "original": 6043,
+        "clone": 6043
+      },
+      "counters": {
+        "original": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        },
+        "clone": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        }
+      },
+      "pixel": {
+        "score": 100,
+        "diffPixels": 0,
+        "totalPixels": 8254738,
+        "aSize": [
+          1366,
+          6043
+        ],
+        "bSize": [
+          1366,
+          6043
+        ]
+      },
+      "consoleErrors": {
+        "original": [],
+        "clone": []
+      },
+      "badResponses": {
+        "original": [],
+        "clone": []
+      },
+      "failedRequests": {
+        "original": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ],
+        "clone": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ]
+      },
+      "sections": {
+        "original": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 858,
+            "w": 1366
+          },
+          {
+            "cls": "endorsers",
+            "top": 922,
+            "h": 254,
+            "w": 1366
+          },
+          {
+            "cls": "value-prop",
+            "top": 1176,
+            "h": 1652,
+            "w": 1366
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1483,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1925,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1366
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1366
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1366
+          }
+        ],
+        "clone": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 858,
+            "w": 1366
+          },
+          {
+            "cls": "endorsers",
+            "top": 922,
+            "h": 254,
+            "w": 1366
+          },
+          {
+            "cls": "value-prop",
+            "top": 1176,
+            "h": 1652,
+            "w": 1366
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1483,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1925,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1366
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1366
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1366
+          }
+        ]
+      },
+      "h1": {
+        "original": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        },
+        "clone": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        }
+      },
+      "bodyFont": {
+        "original": "Arial, sans-serif",
+        "clone": "Arial, sans-serif"
+      },
+      "images": {
+        "original": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-1600.webp",
+            "w": 1366,
+            "h": 308,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-1600.webp",
+            "w": 1366,
+            "h": 768,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1365,
+            "h": 307,
+            "loaded": true
+          }
+        ],
+        "clone": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-1600.webp",
+            "w": 1366,
+            "h": 308,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-1600.webp",
+            "w": 1366,
+            "h": 768,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1365,
+            "h": 307,
+            "loaded": true
+          }
+        ]
+      }
+    },
+    "1440x900": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "scrollHeight": {
+        "original": 6043,
+        "clone": 6043
+      },
+      "counters": {
+        "original": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        },
+        "clone": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        }
+      },
+      "pixel": {
+        "score": 100,
+        "diffPixels": 0,
+        "totalPixels": 8701920,
+        "aSize": [
+          1440,
+          6043
+        ],
+        "bSize": [
+          1440,
+          6043
+        ]
+      },
+      "consoleErrors": {
+        "original": [],
+        "clone": []
+      },
+      "badResponses": {
+        "original": [],
+        "clone": []
+      },
+      "failedRequests": {
+        "original": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ],
+        "clone": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ]
+      },
+      "sections": {
+        "original": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 858,
+            "w": 1440
+          },
+          {
+            "cls": "endorsers",
+            "top": 922,
+            "h": 254,
+            "w": 1440
+          },
+          {
+            "cls": "value-prop",
+            "top": 1176,
+            "h": 1652,
+            "w": 1440
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1483,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1925,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1440
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1440
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1440
+          }
+        ],
+        "clone": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 858,
+            "w": 1440
+          },
+          {
+            "cls": "endorsers",
+            "top": 922,
+            "h": 254,
+            "w": 1440
+          },
+          {
+            "cls": "value-prop",
+            "top": 1176,
+            "h": 1652,
+            "w": 1440
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1483,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1925,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1440
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1440
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1440
+          }
+        ]
+      },
+      "h1": {
+        "original": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        },
+        "clone": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        }
+      },
+      "bodyFont": {
+        "original": "Arial, sans-serif",
+        "clone": "Arial, sans-serif"
+      },
+      "images": {
+        "original": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-1600.webp",
+            "w": 1440,
+            "h": 324,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-1600.webp",
+            "w": 1440,
+            "h": 810,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1440,
+            "h": 324,
+            "loaded": true
+          }
+        ],
+        "clone": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-1600.webp",
+            "w": 1440,
+            "h": 324,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-1600.webp",
+            "w": 1440,
+            "h": 810,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1440,
+            "h": 324,
+            "loaded": true
+          }
+        ]
+      }
+    },
+    "1512x982": {
+      "viewport": {
+        "width": 1512,
+        "height": 982
+      },
+      "scrollHeight": {
+        "original": 6043,
+        "clone": 6043
+      },
+      "counters": {
+        "original": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        },
+        "clone": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        }
+      },
+      "pixel": {
+        "score": 100,
+        "diffPixels": 0,
+        "totalPixels": 9137016,
+        "aSize": [
+          1512,
+          6043
+        ],
+        "bSize": [
+          1512,
+          6043
+        ]
+      },
+      "consoleErrors": {
+        "original": [],
+        "clone": []
+      },
+      "badResponses": {
+        "original": [],
+        "clone": []
+      },
+      "failedRequests": {
+        "original": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ],
+        "clone": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ]
+      },
+      "sections": {
+        "original": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 858,
+            "w": 1512
+          },
+          {
+            "cls": "endorsers",
+            "top": 922,
+            "h": 254,
+            "w": 1512
+          },
+          {
+            "cls": "value-prop",
+            "top": 1176,
+            "h": 1652,
+            "w": 1512
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1483,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1925,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1512
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1512
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1512
+          }
+        ],
+        "clone": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 858,
+            "w": 1512
+          },
+          {
+            "cls": "endorsers",
+            "top": 922,
+            "h": 254,
+            "w": 1512
+          },
+          {
+            "cls": "value-prop",
+            "top": 1176,
+            "h": 1652,
+            "w": 1512
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1483,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1925,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1512
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1512
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1512
+          }
+        ]
+      },
+      "h1": {
+        "original": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        },
+        "clone": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        }
+      },
+      "bodyFont": {
+        "original": "Arial, sans-serif",
+        "clone": "Arial, sans-serif"
+      },
+      "images": {
+        "original": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-1600.webp",
+            "w": 1512,
+            "h": 341,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-1600.webp",
+            "w": 1512,
+            "h": 850,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1512,
+            "h": 340,
+            "loaded": true
+          }
+        ],
+        "clone": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero-p-1600.webp",
+            "w": 1512,
+            "h": 341,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail-p-1600.webp",
+            "w": 1512,
+            "h": 850,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1512,
+            "h": 340,
+            "loaded": true
+          }
+        ]
+      }
+    },
+    "1728x1117": {
+      "viewport": {
+        "width": 1728,
+        "height": 1117
+      },
+      "scrollHeight": {
+        "original": 6043,
+        "clone": 6043
+      },
+      "counters": {
+        "original": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        },
+        "clone": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        }
+      },
+      "pixel": {
+        "score": 100,
+        "diffPixels": 0,
+        "totalPixels": 10442304,
+        "aSize": [
+          1728,
+          6043
+        ],
+        "bSize": [
+          1728,
+          6043
+        ]
+      },
+      "consoleErrors": {
+        "original": [],
+        "clone": []
+      },
+      "badResponses": {
+        "original": [],
+        "clone": []
+      },
+      "failedRequests": {
+        "original": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ],
+        "clone": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ]
+      },
+      "sections": {
+        "original": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 857,
+            "w": 1728
+          },
+          {
+            "cls": "endorsers",
+            "top": 921,
+            "h": 254,
+            "w": 1728
+          },
+          {
+            "cls": "value-prop",
+            "top": 1175,
+            "h": 1652,
+            "w": 1728
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1482,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1924,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1728
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1728
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1728
+          }
+        ],
+        "clone": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 857,
+            "w": 1728
+          },
+          {
+            "cls": "endorsers",
+            "top": 921,
+            "h": 254,
+            "w": 1728
+          },
+          {
+            "cls": "value-prop",
+            "top": 1175,
+            "h": 1652,
+            "w": 1728
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1482,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1924,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1728
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1728
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1728
+          }
+        ]
+      },
+      "h1": {
+        "original": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        },
+        "clone": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        }
+      },
+      "bodyFont": {
+        "original": "Arial, sans-serif",
+        "clone": "Arial, sans-serif"
+      },
+      "images": {
+        "original": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero.webp",
+            "w": 1728,
+            "h": 389,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail.webp",
+            "w": 1642,
+            "h": 924,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1728,
+            "h": 389,
+            "loaded": true
+          }
+        ],
+        "clone": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero.webp",
+            "w": 1728,
+            "h": 389,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail.webp",
+            "w": 1642,
+            "h": 924,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1728,
+            "h": 389,
+            "loaded": true
+          }
+        ]
+      }
+    },
+    "1920x1080": {
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "scrollHeight": {
+        "original": 6043,
+        "clone": 6043
+      },
+      "counters": {
+        "original": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        },
+        "clone": {
+          "sections": 9,
+          "images": 30,
+          "imagesBroken": 3,
+          "faqItems": 2,
+          "slides": 3,
+          "tabs": 0,
+          "lightbox": 2
+        }
+      },
+      "pixel": {
+        "score": 100,
+        "diffPixels": 0,
+        "totalPixels": 11602560,
+        "aSize": [
+          1920,
+          6043
+        ],
+        "bSize": [
+          1920,
+          6043
+        ]
+      },
+      "consoleErrors": {
+        "original": [],
+        "clone": []
+      },
+      "badResponses": {
+        "original": [],
+        "clone": []
+      },
+      "failedRequests": {
+        "original": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ],
+        "clone": [
+          "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg :: net::ERR_BLOCKED_BY_ORB"
+        ]
+      },
+      "sections": {
+        "original": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 857,
+            "w": 1920
+          },
+          {
+            "cls": "endorsers",
+            "top": 921,
+            "h": 254,
+            "w": 1920
+          },
+          {
+            "cls": "value-prop",
+            "top": 1175,
+            "h": 1652,
+            "w": 1920
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1482,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1924,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1920
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1920
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1920
+          }
+        ],
+        "clone": [
+          {
+            "cls": "hero---home",
+            "top": 64,
+            "h": 857,
+            "w": 1920
+          },
+          {
+            "cls": "endorsers",
+            "top": 921,
+            "h": 254,
+            "w": 1920
+          },
+          {
+            "cls": "value-prop",
+            "top": 1175,
+            "h": 1652,
+            "w": 1920
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 1482,
+            "h": 442,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-right-left",
+            "top": 1924,
+            "h": 418,
+            "w": 1120
+          },
+          {
+            "cls": "value-prop-left-right",
+            "top": 2343,
+            "h": 465,
+            "w": 1120
+          },
+          {
+            "cls": "social-proof",
+            "top": 2828,
+            "h": 861,
+            "w": 1920
+          },
+          {
+            "cls": "video",
+            "top": 4330,
+            "h": 892,
+            "w": 1920
+          },
+          {
+            "cls": "footer",
+            "top": 5342,
+            "h": 701,
+            "w": 1920
+          }
+        ]
+      },
+      "h1": {
+        "original": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        },
+        "clone": {
+          "text": "Khanmigo is your always-available",
+          "fontSize": "48px",
+          "fontFamily": "Lato, sans-serif",
+          "color": "rgb(0, 0, 0)",
+          "top": 184,
+          "h": 52,
+          "w": 730
+        }
+      },
+      "bodyFont": {
+        "original": "Arial, sans-serif",
+        "clone": "Arial, sans-serif"
+      },
+      "images": {
+        "original": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero.webp",
+            "w": 1920,
+            "h": 432,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail.webp",
+            "w": 1642,
+            "h": 924,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1847,
+            "h": 416,
+            "loaded": true
+          }
+        ],
+        "clone": [
+          {
+            "src": "65a1e178aefd9be9305d6476_Khanmigo%20Logo.svg",
+            "w": 96,
+            "h": 47,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "65b16e0ec0050178fbb8516a_Link_out.svg",
+            "w": 13,
+            "h": 13,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e50_KAD_Nav_menu.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49e51_KAD_Nav_close.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "660ae791f86f43648da66a4c_Khanmigo_Home_Hero.webp",
+            "w": 1920,
+            "h": 432,
+            "loaded": true
+          },
+          {
+            "src": "65b1871277ee628b8d682e35_WSJ_Logo.svg",
+            "w": 797,
+            "h": 68,
+            "loaded": true
+          },
+          {
+            "src": "65c651b4f5d7800f4b6e6abb_Khanmigo_CommonSense.svg",
+            "w": 349,
+            "h": 38,
+            "loaded": true
+          },
+          {
+            "src": "65b1871214308b39c036f14d_The_Logo_of_The_Washington_Post_Newspaper.svg",
+            "w": 463,
+            "h": 72,
+            "loaded": true
+          },
+          {
+            "src": "660d8f152574e77bc6502758_Khanmigo_Home_spot1.webp",
+            "w": 1150,
+            "h": 822,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a27_Khanmigo_Home_spot2.webp",
+            "w": 1071,
+            "h": 722,
+            "loaded": true
+          },
+          {
+            "src": "660d8f157e7a5b8031697a2c_Khanmigo_Home_spot3.webp",
+            "w": 1156,
+            "h": 894,
+            "loaded": true
+          },
+          {
+            "src": "660d8f148ef53baa1d191a8e_Khanmigo_Home_testimonial1.webp",
+            "w": 148,
+            "h": 148,
+            "loaded": true
+          },
+          {
+            "src": "660d8f146011c53fb1cf56a0_Khanmigo_Home_testimonial2.webp",
+            "w": 155,
+            "h": 155,
+            "loaded": true
+          },
+          {
+            "src": "placeholder.60f9b1840c.svg",
+            "w": 0,
+            "h": 0,
+            "loaded": false
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49ea7_Caret%20Down.svg",
+            "w": 16,
+            "h": 16,
+            "loaded": true
+          },
+          {
+            "src": "65a1b94fef99d904bb6de0ae_Khanmigo_Sal_TedTalks_thumbnail.webp",
+            "w": 1642,
+            "h": 924,
+            "loaded": true
+          },
+          {
+            "src": "659ee90e075c502b5cc49e47_KAD_thumbnail_playbutton.svg",
+            "w": 75,
+            "h": 75,
+            "loaded": true
+          },
+          {
+            "src": "66034653ef999825b177f101_Khanmigo_Footer_Hero.webp",
+            "w": 1847,
+            "h": 416,
+            "loaded": true
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "en": {
+    "info": {
+      "lang": "en",
+      "title": "AgentKid — A safe learning companion for children, with parent oversight",
+      "h1a": "Small steps for children.",
+      "heroCard1": "For children",
+      "vpH2": "A calm, structured learning companion for ages 6 to 10.",
+      "vpB1": "Four small activities, one calm space.",
+      "socialH2": "The principles behind AgentKid",
+      "faqFirstQ": "What is AgentKid?",
+      "footerH2": "A safe learning companion, with parent oversight",
+      "navItems": [
+        "For children",
+        "For parents",
+        "Research",
+        "Product",
+        "Chat",
+        "About"
+      ],
+      "langSwitchHref": "vi/index.html",
+      "faqCount": 6,
+      "faqDupCount": 6,
+      "slides": 3,
+      "ix2": true,
+      "scrollHeight": 6044,
+      "sections": [
+        {
+          "cls": "hero---home",
+          "top": 83,
+          "h": 890
+        },
+        {
+          "cls": "endorsers",
+          "top": 973,
+          "h": 244
+        },
+        {
+          "cls": "value-prop",
+          "top": 1217,
+          "h": 1676
+        },
+        {
+          "cls": "value-prop-left-right",
+          "top": 1524,
+          "h": 442
+        },
+        {
+          "cls": "value-prop-right-left",
+          "top": 1966,
+          "h": 442
+        },
+        {
+          "cls": "value-prop-left-right",
+          "top": 2408,
+          "h": 465
+        },
+        {
+          "cls": "social-proof",
+          "top": 2893,
+          "h": 797
+        },
+        {
+          "cls": "video",
+          "top": 4331,
+          "h": 892
+        },
+        {
+          "cls": "footer",
+          "top": 5342,
+          "h": 701
+        }
+      ],
+      "imgsBroken": 3,
+      "anyKhanmigo": false
+    },
+    "consoleErrors": [],
+    "bad": []
+  },
+  "vi": {
+    "info": {
+      "lang": "vi",
+      "title": "AgentKid — Trợ lý học tập an toàn cho trẻ, có phụ huynh giám sát",
+      "h1a": "Từng bước nhỏ cho trẻ.",
+      "heroCard1": "Cho trẻ",
+      "vpH2": "Trợ lý học tập bình tĩnh, có cấu trúc, dành cho trẻ 6 đến 10 tuổi.",
+      "vpB1": "Bốn hoạt động nhỏ, một không gian bình tĩnh.",
+      "socialH2": "Nguyên tắc đằng sau AgentKid",
+      "faqFirstQ": "AgentKid là gì?",
+      "footerH2": "Trợ lý học tập an toàn, có phụ huynh giám sát",
+      "navItems": [
+        "Cho trẻ",
+        "Cho phụ huynh",
+        "Nghiên cứu",
+        "Sản phẩm",
+        "Trò chuyện",
+        "Giới thiệu"
+      ],
+      "langSwitchHref": "../index.html",
+      "faqCount": 6,
+      "faqDupCount": 6,
+      "slides": 3,
+      "ix2": true,
+      "scrollHeight": 6196,
+      "sections": [
+        {
+          "cls": "hero---home",
+          "top": 83,
+          "h": 910
+        },
+        {
+          "cls": "endorsers",
+          "top": 993,
+          "h": 254
+        },
+        {
+          "cls": "value-prop",
+          "top": 1247,
+          "h": 1798
+        },
+        {
+          "cls": "value-prop-left-right",
+          "top": 1600,
+          "h": 442
+        },
+        {
+          "cls": "value-prop-right-left",
+          "top": 2042,
+          "h": 518
+        },
+        {
+          "cls": "value-prop-left-right",
+          "top": 2560,
+          "h": 465
+        },
+        {
+          "cls": "social-proof",
+          "top": 3045,
+          "h": 797
+        },
+        {
+          "cls": "video",
+          "top": 4483,
+          "h": 892
+        },
+        {
+          "cls": "footer",
+          "top": 5494,
+          "h": 701
+        }
+      ],
+      "imgsBroken": 3,
+      "anyKhanmigo": false
+    },
+    "consoleErrors": [],
+    "bad": []
+  },
+  "mob": {
+    "info": {
+      "lang": "en",
+      "title": "AgentKid — A safe learning companion for children, with parent oversight",
+      "h1a": "Small steps for children.",
+      "heroCard1": "For children",
+      "vpH2": "A calm, structured learning companion for ages 6 to 10.",
+      "vpB1": "Four small activities, one calm space.",
+      "socialH2": "The principles behind AgentKid",
+      "faqFirstQ": "What is AgentKid?",
+      "footerH2": "A safe learning companion, with parent oversight",
+      "navItems": [
+        "For children",
+        "For parents",
+        "Research",
+        "Product",
+        "Chat",
+        "About"
+      ],
+      "langSwitchHref": "vi/index.html",
+      "faqCount": 6,
+      "faqDupCount": 6,
+      "slides": 3,
+      "ix2": true,
+      "scrollHeight": 5114,
+      "sections": [
+        {
+          "cls": "hero---home",
+          "top": 64,
+          "h": 699
+        },
+        {
+          "cls": "endorsers",
+          "top": 763,
+          "h": 376
+        },
+        {
+          "cls": "value-prop",
+          "top": 1139,
+          "h": 1899
+        },
+        {
+          "cls": "value-prop-left-right",
+          "top": 1273,
+          "h": 586
+        },
+        {
+          "cls": "value-prop-right-left",
+          "top": 1859,
+          "h": 573
+        },
+        {
+          "cls": "value-prop-left-right",
+          "top": 2432,
+          "h": 605
+        },
+        {
+          "cls": "social-proof",
+          "top": 3038,
+          "h": 586
+        },
+        {
+          "cls": "video",
+          "top": 4206,
+          "h": 354
+        },
+        {
+          "cls": "footer",
+          "top": 4608,
+          "h": 506
+        }
+      ],
+      "imgsBroken": 3,
+      "anyKhanmigo": false
+    },
+    "consoleErrors": [],
+    "bad": []
+  }
+}
