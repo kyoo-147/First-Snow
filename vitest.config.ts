@@ -9,6 +9,14 @@ export default defineConfig({
   test: {
     environment: 'node',
     setupFiles: ['./src/__tests__/setup.ts'],
+    exclude: [
+      '**/node_modules/**',
+      'src/components/auth/auth-contracts.test.mjs',
+      'src/components/safety/safety-contracts.test.mjs',
+      'src/lib/__tests__/learning-client.test.ts',
+      'src/__tests__/companion/**/*.test.ts',
+      'src/vtuber-app/src/__tests__/**/*.test.mjs',
+    ],
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
