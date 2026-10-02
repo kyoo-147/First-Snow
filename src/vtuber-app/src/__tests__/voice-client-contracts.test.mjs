@@ -15,6 +15,7 @@ describe("voice-client contracts & safety", () => {
   const originalFetch = globalThis.fetch;
   const originalWindow = globalThis.window;
   const originalLocalStorage = globalThis.localStorage;
+  const originalWebSocket = globalThis.WebSocket;
 
   let mockStorage = {};
 
@@ -47,12 +48,34 @@ describe("voice-client contracts & safety", () => {
       },
       localStorage: globalThis.localStorage,
     };
+
+    // Mock WebSocket in Node to avoid real network attempts to agentkid.snow.test
+    class MockWebSocket {
+      constructor(url) {
+        this.url = url;
+        this.readyState = 1;
+        setTimeout(() => {
+          if (this.onopen) this.onopen();
+        }, 0);
+      }
+      send() {}
+      close() {
+        this.readyState = 3;
+        if (this.onclose) this.onclose();
+      }
+    }
+    MockWebSocket.OPEN = 1;
+    MockWebSocket.CONNECTING = 0;
+    MockWebSocket.CLOSING = 2;
+    MockWebSocket.CLOSED = 3;
+    globalThis.WebSocket = MockWebSocket;
   });
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
     globalThis.window = originalWindow;
     globalThis.localStorage = originalLocalStorage;
+    globalThis.WebSocket = originalWebSocket;
   });
 
   describe("URL and Ticket Safety", () => {
@@ -291,6 +314,7 @@ describe("voice-client contracts & safety", () => {
 
     test("server capability grant message updates client capabilities", () => {
       const client = new VoiceClient();
+      client.handleSocketOpen();
       client.handleServerMessage({
         type: "capabilities",
         capabilities: {
@@ -408,6 +432,169 @@ describe("voice-client contracts & safety", () => {
       assert.equal(client.getCapabilities().live2d, false);
       assert.equal(client.getModelStatus().available, false);
       assert.equal(client.getModelStatus().reason, "Model asset absent; operating in voice & subtitle mode");
+    });
+  });
+
+  describe("Corrective Follow-Up: Strict WSS, Same-Origin, SSR Safety & Capability Lifecycle", () => {
+    test("buildSafeWebSocketUrl strictly requires WSS (rejects ws://) and rejects cross-origin host", () => {
+      // Must allow WSS on same-origin host
+      const valid = buildSafeWebSocketUrl("wss://agentkid.snow.test/api/companion/ws", "valid-ticket");
+      assert.ok(valid.startsWith("wss://agentkid.snow.test/"));
+
+      // Must reject ws://
+      assert.throws(() => {
+        buildSafeWebSocketUrl("ws://agentkid.snow.test/api/companion/ws", "ticket-1");
+      }, /Insecure or invalid protocol|Only wss: is allowed/);
+
+      // Must reject cross-origin host
+      assert.throws(() => {
+        buildSafeWebSocketUrl("wss://attacker.evil.com/api/companion/ws", "ticket-1");
+      }, /Cross-origin WebSocket URL rejected|same-origin/);
+    });
+
+    test("buildSafeWebSocketUrl throws in SSR environment when window is undefined (no localhost fallback)", () => {
+      delete globalThis.window;
+      try {
+        assert.throws(() => {
+          buildSafeWebSocketUrl("/api/companion/ws", "ticket-ssr");
+        }, /Cannot resolve WebSocket URL without browser window|SSR/);
+
+        assert.throws(() => {
+          buildSafeWebSocketUrl("wss://localhost/api/companion/ws", "ticket-ssr");
+        }, /Cannot resolve WebSocket URL without browser window|SSR/);
+      } finally {
+        globalThis.window = {
+          location: {
+            protocol: "https:",
+            host: "agentkid.snow.test",
+            origin: "https://agentkid.snow.test",
+          },
+          localStorage: globalThis.localStorage,
+        };
+      }
+    });
+
+    test("ticket response alone must not enable capture capabilities", async () => {
+      const client = new VoiceClient();
+
+      globalThis.fetch = async () => {
+        return new Response(
+          JSON.stringify({
+            ticket: "ticket-with-caps",
+            wsUrl: "wss://agentkid.snow.test/api/companion/ws",
+            capabilities: {
+              camera: true,
+              screen: true,
+              audio_input: true,
+            },
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      };
+
+      await client.connect();
+
+      // Capabilities must remain fail-closed after ticket response alone!
+      assert.equal(client.canUseCamera(), false, "Camera must remain false after ticket response");
+      assert.equal(client.canUseScreen(), false, "Screen must remain false after ticket response");
+      assert.equal(client.canUseMic(), false, "Mic must remain false after ticket response");
+      assert.equal(client.getCapabilities().camera, false);
+      assert.equal(client.getCapabilities().screen, false);
+      assert.equal(client.getCapabilities().audio_input, false);
+
+      client.handleSocketOpen();
+
+      // Only active authenticated socket capability message can grant capabilities
+      client.handleServerMessage({
+        type: "capabilities",
+        capabilities: {
+          camera: true,
+          audio_input: true,
+        },
+      });
+
+      assert.equal(client.canUseCamera(), true, "Camera granted by active socket capability message");
+      assert.equal(client.canUseMic(), true, "Mic granted by active socket capability message");
+      assert.equal(client.canUseScreen(), false, "Screen still false");
+    });
+
+    test("capabilities reset fail-closed on connect start, error, close, reconnect, and disconnect", async () => {
+      const client = new VoiceClient({ initialBackoffMs: 60000 });
+      client.handleSocketOpen();
+
+      // Grant capabilities via an active socket message
+      client.handleServerMessage({
+        type: "capabilities",
+        capabilities: { camera: true, screen: true, audio_input: true },
+      });
+      assert.equal(client.canUseCamera(), true);
+
+      // Disconnect must immediately reset capabilities fail-closed
+      client.disconnect();
+      assert.equal(client.canUseCamera(), false, "Camera reset to false on disconnect");
+      assert.equal(client.canUseScreen(), false, "Screen reset to false on disconnect");
+      assert.equal(client.canUseMic(), false, "Mic reset to false on disconnect");
+
+      // Reconnect, then re-grant
+      client.handleSocketOpen();
+      client.handleServerMessage({
+        type: "capabilities",
+        capabilities: { camera: true, screen: true, audio_input: true },
+      });
+      assert.equal(client.canUseCamera(), true);
+
+      // Trigger error/close reset
+      client.handleSocketClose();
+      assert.equal(client.canUseCamera(), false, "Camera reset to false on socket close");
+
+      // Reconnect, re-grant, and trigger socket error
+      client.handleSocketOpen();
+      client.handleServerMessage({
+        type: "capabilities",
+        capabilities: { camera: true, screen: true, audio_input: true },
+      });
+      assert.equal(client.canUseCamera(), true);
+      client.handleSocketError();
+      assert.equal(client.canUseCamera(), false, "Camera reset to false on socket error");
+
+      // Clean up background timer
+      client.disconnect();
+    });
+
+    test("prevents duplicate reconnect timers and resets intentional state on replacement", async () => {
+      const client = new VoiceClient({ initialBackoffMs: 60000 });
+      assert.equal(client.getIsIntentionalDisconnect(), false);
+
+      client.disconnect();
+      assert.equal(client.getIsIntentionalDisconnect(), true);
+
+      // Triggering scheduleReconnect during intentional disconnect does nothing
+      client.scheduleReconnect();
+      assert.equal(client.hasPendingReconnectTimer(), false);
+
+      // Re-connecting resets intentional disconnect state
+      globalThis.fetch = async () => {
+        return new Response(
+          JSON.stringify({ ticket: "replacement-ticket", wsUrl: "wss://agentkid.snow.test/ws" }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      };
+
+      await client.connect(true);
+      assert.equal(client.getIsIntentionalDisconnect(), false, "Intentional state reset on replacement");
+
+      // Calling scheduleReconnect twice does not create duplicate timers
+      client.scheduleReconnect();
+      const timer1 = client.getReconnectTimer();
+      assert.ok(timer1 !== null);
+
+      client.scheduleReconnect();
+      const timer2 = client.getReconnectTimer();
+      assert.ok(timer2 !== null);
+      assert.equal(timer1, timer2, "Existing reconnect timer is reused, never duplicated");
+
+      client.disconnect();
+      assert.equal(client.hasPendingReconnectTimer(), false);
     });
   });
 });

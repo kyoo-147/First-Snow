@@ -197,7 +197,7 @@ export async function requestWsTicket(
 
 /**
  * Validates and builds a secure WSS URL with the ticket query parameter.
- * Rejects insecure or dangerous protocols.
+ * Strictly requires WSS protocol and same-origin host; rejects cross-origin and SSR without location.
  */
 export function buildSafeWebSocketUrl(baseUrlOrWsUrl: string, ticket: string): string {
   if (!baseUrlOrWsUrl || typeof baseUrlOrWsUrl !== "string" || !baseUrlOrWsUrl.trim()) {
@@ -207,16 +207,19 @@ export function buildSafeWebSocketUrl(baseUrlOrWsUrl: string, ticket: string): s
     throw new VoiceClientError("Ticket is required to construct WebSocket URL", 400);
   }
 
+  // Same-origin host check requires browser window; no SSR localhost fallback
+  if (typeof window === "undefined" || !window.location || !window.location.host) {
+    throw new VoiceClientError(
+      "Cannot resolve WebSocket URL without browser window location (SSR localhost fallback disabled)",
+      400,
+    );
+  }
+
   let fullUrl = baseUrlOrWsUrl.trim();
 
-  // If relative path, resolve using browser location
+  // If relative path, resolve using browser location with wss:
   if (fullUrl.startsWith("/")) {
-    if (typeof window !== "undefined" && window.location) {
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      fullUrl = `${protocol}//${window.location.host}${fullUrl}`;
-    } else {
-      fullUrl = `wss://localhost${fullUrl}`;
-    }
+    fullUrl = `wss://${window.location.host}${fullUrl}`;
   }
 
   let parsed: URL;
@@ -226,9 +229,18 @@ export function buildSafeWebSocketUrl(baseUrlOrWsUrl: string, ticket: string): s
     throw new VoiceClientError(`Invalid or unsafe WebSocket URL: ${baseUrlOrWsUrl}`, 400);
   }
 
-  if (parsed.protocol !== "wss:" && parsed.protocol !== "ws:") {
+  // Strict requirement: Only wss: protocol is permitted
+  if (parsed.protocol !== "wss:") {
     throw new VoiceClientError(
-      `Invalid or unsafe WebSocket URL scheme: ${parsed.protocol}. Only wss: or ws: are allowed.`,
+      `Invalid or unsafe WebSocket URL: Insecure or invalid protocol: ${parsed.protocol}. Only wss: is allowed.`,
+      400,
+    );
+  }
+
+  // Strict requirement: Must match same-origin host
+  if (parsed.host !== window.location.host) {
+    throw new VoiceClientError(
+      `Invalid or unsafe WebSocket URL: Cross-origin WebSocket URL rejected: ${parsed.host} does not match same-origin ${window.location.host}`,
       400,
     );
   }
@@ -273,6 +285,7 @@ export class VoiceClient {
   private initialBackoffMs: number;
   private maxBackoffMs: number;
   private backoffMultiplier: number;
+  private isIntentionalDisconnect = false;
 
   private seenMessageIds = new Set<string>();
   private messageListeners = new Set<(msg: CompanionServerMessage) => void>();
@@ -299,6 +312,18 @@ export class VoiceClient {
 
   public getCapabilities(): CompanionCapabilities {
     return { ...this.capabilities };
+  }
+
+  public getIsIntentionalDisconnect(): boolean {
+    return this.isIntentionalDisconnect;
+  }
+
+  public hasPendingReconnectTimer(): boolean {
+    return this.reconnectTimer !== null;
+  }
+
+  public getReconnectTimer(): ReturnType<typeof setTimeout> | null {
+    return this.reconnectTimer;
   }
 
   public canUseMic(): boolean {
@@ -352,6 +377,14 @@ export class VoiceClient {
     this.stateListeners.forEach((fn) => fn(newState));
   }
 
+  /**
+   * Resets sensitive capabilities to strictly fail-closed.
+   */
+  public resetCapabilitiesFailClosed() {
+    this.capabilities = { ...FAIL_CLOSED_CAPABILITIES };
+    this.capabilitiesListeners.forEach((fn) => fn({ ...this.capabilities }));
+  }
+
   private updateCapabilities(newCaps: Partial<CompanionCapabilities>) {
     this.capabilities = {
       ...this.capabilities,
@@ -365,23 +398,33 @@ export class VoiceClient {
   /**
    * Connects to the companion WebSocket using a fresh one-time ticket.
    */
-  public async connect(): Promise<void> {
-    if (this.state === "CONNECTED" || this.state === "CONNECTING") {
-      return;
-    }
-
+  public async connect(isReplacement = false): Promise<void> {
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
     }
 
+    // Reset intentional disconnect state on new connect or replacement
+    this.isIntentionalDisconnect = false;
+
+    if (this.ws && (isReplacement || this.state === "CONNECTED" || this.state === "CONNECTING")) {
+      this.ws.onopen = null;
+      this.ws.onmessage = null;
+      this.ws.onclose = null;
+      this.ws.onerror = null;
+      this.ws.close();
+      this.ws = null;
+    } else if (this.state === "CONNECTED" || this.state === "CONNECTING") {
+      return;
+    }
+
+    // Connect start resets sensitive capabilities to fail-closed
+    this.resetCapabilitiesFailClosed();
     this.setState("FETCHING_TICKET");
 
     try {
       const ticketRes = await requestWsTicket(this.ticketEndpoint);
-      if (ticketRes.capabilities) {
-        this.updateCapabilities(ticketRes.capabilities);
-      }
+      // NOTE: Ticket response alone MUST NOT enable capture. Only active socket capabilities message grants capabilities.
 
       const targetWsUrl = ticketRes.wsUrl || this.baseWsUrl || "/api/companion/ws";
       const safeUrl = buildSafeWebSocketUrl(targetWsUrl, ticketRes.ticket);
@@ -398,8 +441,7 @@ export class VoiceClient {
       this.ws = new WebSocket(safeUrl);
 
       this.ws.onopen = () => {
-        this.setState("CONNECTED");
-        this.reconnectAttempt = 0;
+        this.handleSocketOpen();
       };
 
       this.ws.onmessage = (event) => {
@@ -412,25 +454,52 @@ export class VoiceClient {
       };
 
       this.ws.onclose = () => {
-        if (this.state !== "CLOSED") {
-          this.scheduleReconnect();
-        }
+        this.handleSocketClose();
       };
 
       this.ws.onerror = () => {
-        if (this.state !== "CLOSED") {
-          this.scheduleReconnect();
-        }
+        this.handleSocketError();
       };
     } catch (err) {
       console.error("Failed to establish companion connection:", err);
-      if (this.state !== "CLOSED") {
+      this.resetCapabilitiesFailClosed();
+      if (this.state !== "CLOSED" && !this.isIntentionalDisconnect) {
         this.scheduleReconnect();
       }
     }
   }
 
-  private scheduleReconnect() {
+  public handleSocketOpen() {
+    this.isIntentionalDisconnect = false;
+    this.setState("CONNECTED");
+    this.reconnectAttempt = 0;
+  }
+
+  public handleSocketClose() {
+    this.resetCapabilitiesFailClosed();
+    if (this.state !== "CLOSED" && !this.isIntentionalDisconnect) {
+      this.scheduleReconnect();
+    }
+  }
+
+  public handleSocketError() {
+    this.resetCapabilitiesFailClosed();
+    if (this.state !== "CLOSED" && !this.isIntentionalDisconnect) {
+      this.scheduleReconnect();
+    }
+  }
+
+  public scheduleReconnect() {
+    if (this.isIntentionalDisconnect) {
+      return;
+    }
+
+    // An error followed by close is one reconnect event, not two attempts.
+    if (this.reconnectTimer) return;
+
+    // Reconnect resets sensitive capabilities to fail-closed
+    this.resetCapabilitiesFailClosed();
+
     if (this.reconnectAttempt >= this.maxReconnectAttempts) {
       this.setState("DISCONNECTED");
       return;
@@ -446,22 +515,28 @@ export class VoiceClient {
     this.reconnectAttempt += 1;
 
     this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
       this.connect();
     }, delay);
   }
 
   public disconnect() {
+    this.isIntentionalDisconnect = true;
     this.setState("CLOSED");
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
     }
     if (this.ws) {
+      this.ws.onopen = null;
+      this.ws.onmessage = null;
+      this.ws.onclose = null;
+      this.ws.onerror = null;
       this.ws.close();
       this.ws = null;
     }
     this.interrupt();
-    this.capabilities = { ...FAIL_CLOSED_CAPABILITIES };
+    this.resetCapabilitiesFailClosed();
   }
 
   public sendSocketMessage(message: Record<string, unknown>): boolean {
@@ -492,7 +567,12 @@ export class VoiceClient {
     }
 
     // Process capabilities updates
-    if (message.type === "capabilities" && message.capabilities) {
+    if (
+      message.type === "capabilities" &&
+      message.capabilities &&
+      this.state === "CONNECTED" &&
+      !this.isIntentionalDisconnect
+    ) {
       this.updateCapabilities(message.capabilities);
     }
 

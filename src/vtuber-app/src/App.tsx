@@ -54,11 +54,8 @@ function AppContent(): React.JSX.Element {
   const [showSidebar, setShowSidebar] = useState(true);
   const [isFooterCollapsed, setIsFooterCollapsed] = useState(false);
 
-  const [userEmail, setUserEmail] = useState("momo@edu.com");
-  const [activeProfile, setActiveProfile] = useState<{ id: string; name: string } | null>({
-    id: "profile-1",
-    name: "Momo",
-  });
+  const [userEmail, setUserEmail] = useState("");
+  const [activeProfile, setActiveProfile] = useState<{ id: string; name: string } | null>(null);
 
   // Clean up any legacy plaintext keys from previous versions
   useEffect(() => {

@@ -163,6 +163,11 @@ class WebSocketService {
     this.capabilitiesSubject.next({ ...this.capabilities });
   }
 
+  public resetCapabilitiesFailClosed() {
+    this.capabilities = { ...FAIL_CLOSED_CAPABILITIES };
+    this.capabilitiesSubject.next({ ...this.capabilities });
+  }
+
   private initializeConnection() {
     this.sendMessage({
       type: 'fetch-backgrounds',
@@ -189,9 +194,17 @@ class WebSocketService {
       this.reconnectTimeout = null;
     }
 
-    if (this.ws?.readyState === WebSocket.CONNECTING || this.ws?.readyState === WebSocket.OPEN) {
-      this.disconnect();
+    if (this.ws) {
+      this.ws.onopen = null;
+      this.ws.onmessage = null;
+      this.ws.onclose = null;
+      this.ws.onerror = null;
+      this.ws.close();
+      this.ws = null;
     }
+
+    // Connect start: Reset capabilities to strictly fail-closed
+    this.resetCapabilitiesFailClosed();
 
     this.currentState = 'CONNECTING';
     this.stateSubject.next('CONNECTING');
@@ -199,9 +212,7 @@ class WebSocketService {
     try {
       // 1. Request short-lived one-time ticket from backend
       const ticketRes = await requestWsTicket();
-      if (ticketRes.capabilities) {
-        this.updateCapabilities(ticketRes.capabilities);
-      }
+      // NOTE: Ticket response alone MUST NOT enable capture. Only active socket capabilities message grants capabilities.
 
       // 2. Build safe WebSocket URL using ticket query param
       const targetWsUrl = this.customWsUrl || ticketRes.wsUrl || '/api/companion/ws';
@@ -241,7 +252,12 @@ class WebSocketService {
           }
 
           // Handle capabilities grant from server
-          if (message.type === 'capabilities' && message.capabilities) {
+          if (
+            message.type === 'capabilities' &&
+            message.capabilities &&
+            this.currentState === 'OPEN' &&
+            this.ws?.readyState === WebSocket.OPEN
+          ) {
             this.updateCapabilities(message.capabilities);
           }
 
@@ -257,6 +273,7 @@ class WebSocketService {
       };
 
       this.ws.onclose = () => {
+        this.resetCapabilitiesFailClosed();
         this.currentState = 'CLOSED';
         this.stateSubject.next('CLOSED');
         if (!this.isIntentionalDisconnect) {
@@ -266,6 +283,7 @@ class WebSocketService {
 
       this.ws.onerror = (err) => {
         console.error('WebSocket connection error:', err);
+        this.resetCapabilitiesFailClosed();
         this.currentState = 'CLOSED';
         this.stateSubject.next('CLOSED');
         if (!this.isIntentionalDisconnect) {
@@ -274,6 +292,7 @@ class WebSocketService {
       };
     } catch (error) {
       console.error('Failed to connect to WebSocket via ticket:', error);
+      this.resetCapabilitiesFailClosed();
       this.currentState = 'CLOSED';
       this.stateSubject.next('CLOSED');
       if (!this.isIntentionalDisconnect) {
@@ -283,6 +302,16 @@ class WebSocketService {
   }
 
   private scheduleReconnect() {
+    if (this.isIntentionalDisconnect) {
+      return;
+    }
+
+    // Browser error is commonly followed by close; schedule only once.
+    if (this.reconnectTimeout) return;
+
+    // Reconnect resets sensitive capabilities fail-closed
+    this.resetCapabilitiesFailClosed();
+
     if (this.reconnectAttempt >= this.maxReconnectAttempts) {
       console.warn(`[wsService] Reached maximum reconnect attempts (${this.maxReconnectAttempts}). Stopping.`);
       return;
@@ -293,6 +322,7 @@ class WebSocketService {
     console.log(`[wsService] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempt}/${this.maxReconnectAttempts})...`);
 
     this.reconnectTimeout = setTimeout(() => {
+      this.reconnectTimeout = null;
       this.connect();
     }, delay);
   }
@@ -325,9 +355,14 @@ class WebSocketService {
       this.reconnectTimeout = null;
     }
     if (this.ws) {
+      this.ws.onopen = null;
+      this.ws.onmessage = null;
+      this.ws.onclose = null;
+      this.ws.onerror = null;
       this.ws.close();
       this.ws = null;
     }
+    this.resetCapabilitiesFailClosed();
     this.currentState = 'CLOSED';
     this.stateSubject.next('CLOSED');
   }
