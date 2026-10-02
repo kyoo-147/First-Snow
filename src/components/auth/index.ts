@@ -11,3 +11,4 @@ export * from "./logout-view";
 export * from "./session-switch-view";
 export * from "./unauthorized-view";
 export * from "./forbidden-view";
+export * from "./auth-utils";

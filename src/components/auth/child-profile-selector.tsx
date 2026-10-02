@@ -2,19 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Lock, PlusCircle, Sparkles, UserPlus } from "lucide-react";
+import { Lock, PlusCircle, ShieldAlert, Sparkles, UserPlus } from "lucide-react";
 import type { ChildProfileSummary } from "./auth-types";
 
 type ChildProfileSelectorProps = {
   childrenList: ChildProfileSummary[];
   onSelectChild: (child: ChildProfileSummary) => void;
   isLoading?: boolean;
+  authRequired?: boolean;
+  authErrorMessage?: string | null;
 };
 
 export function ChildProfileSelector({
   childrenList,
   onSelectChild,
   isLoading = false,
+  authRequired = false,
+  authErrorMessage,
 }: ChildProfileSelectorProps) {
   if (isLoading) {
     return (
@@ -27,6 +31,41 @@ export function ChildProfileSelector({
     );
   }
 
+  // Surfaced auth requirement state (when 401/403 is received from /api/children)
+  if (authRequired) {
+    return (
+      <div className="py-6 text-center space-y-4">
+        <div className="mx-auto grid size-16 place-items-center rounded-full bg-snow-lavender text-snow-primary">
+          <ShieldAlert className="size-8" />
+        </div>
+        <div>
+          <h2 className="snow-heading font-black text-snow-primary-dark">
+            Guardian Sign-In Required
+          </h2>
+          <p className="snow-body-small snow-font-readable mt-1.5 text-snow-muted font-semibold max-w-[360px] mx-auto">
+            {authErrorMessage ||
+              "Please sign in with your guardian account to load family child profiles and secret PINs."}
+          </p>
+        </div>
+        <div className="pt-2 flex flex-col gap-2.5">
+          <Link
+            href="/login?callbackUrl=/child-login"
+            className="snow-focus-ring inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-snow-primary px-5 text-sm font-black text-white shadow-[var(--shadow-card)] transition hover:brightness-105"
+          >
+            <Lock className="size-4" /> Sign In as Guardian
+          </Link>
+          <Link
+            href="/register"
+            className="snow-focus-ring inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-snow-border bg-snow-surface px-5 text-sm font-extrabold text-snow-primary-dark hover:bg-snow-surface-soft"
+          >
+            Create Guardian Account
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // When successfully authenticated but parent has not registered children yet
   if (childrenList.length === 0) {
     return (
       <div className="py-6 text-center space-y-4">
@@ -43,7 +82,7 @@ export function ChildProfileSelector({
         </div>
         <div className="pt-2 flex flex-col gap-2.5">
           <Link
-            href="/login"
+            href="/parent/children"
             className="snow-focus-ring inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-snow-primary px-5 text-sm font-black text-white shadow-[var(--shadow-card)] transition hover:brightness-105"
           >
             <Lock className="size-4" /> Go to Guardian Portal

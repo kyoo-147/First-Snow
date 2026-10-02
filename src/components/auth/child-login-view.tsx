@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { getChildren } from "./auth-api";
+import { AuthApiError, getChildren } from "./auth-api";
 import { ChildProfileSelector } from "./child-profile-selector";
 import { ChildPinPad } from "./child-pin-pad";
 import type { ChildProfileSummary } from "./auth-types";
@@ -14,12 +14,17 @@ export function ChildLoginView() {
   const [childrenList, setChildrenList] = useState<ChildProfileSummary[]>([]);
   const [selectedChild, setSelectedChild] = useState<ChildProfileSummary | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [authRequired, setAuthRequired] = useState<boolean>(false);
+  const [authErrorMessage, setAuthErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
     async function fetchProfiles() {
       setIsLoading(true);
+      setAuthRequired(false);
+      setAuthErrorMessage(null);
+
       try {
         const list = await getChildren();
         if (isMounted) {
@@ -31,9 +36,13 @@ export function ChildLoginView() {
             }
           }
         }
-      } catch {
+      } catch (err: unknown) {
         if (isMounted) {
           setChildrenList([]);
+          if (err instanceof AuthApiError && (err.statusCode === 401 || err.statusCode === 403)) {
+            setAuthRequired(true);
+            setAuthErrorMessage(err.message);
+          }
         }
       } finally {
         if (isMounted) {
@@ -58,6 +67,8 @@ export function ChildLoginView() {
       childrenList={childrenList}
       onSelectChild={(child) => setSelectedChild(child)}
       isLoading={isLoading}
+      authRequired={authRequired}
+      authErrorMessage={authErrorMessage}
     />
   );
 }

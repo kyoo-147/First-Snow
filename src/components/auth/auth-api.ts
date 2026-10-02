@@ -1,19 +1,93 @@
 import type { AuthSessionData, AuthUser, ChildProfileSummary } from "./auth-types";
 
+export type ApiErrorDetails = Record<string, string[] | string>;
+
 export class AuthApiError extends Error {
   statusCode: number;
-  details?: Record<string, string[]>;
+  code?: string;
+  details?: ApiErrorDetails;
+  requestId?: string;
 
-  constructor(message: string, statusCode = 500, details?: Record<string, string[]>) {
+  constructor(
+    message: string,
+    statusCode = 500,
+    options?: {
+      code?: string;
+      details?: ApiErrorDetails;
+      requestId?: string;
+    },
+  ) {
     super(message);
     this.name = "AuthApiError";
     this.statusCode = statusCode;
-    this.details = details;
+    this.code = options?.code;
+    this.details = options?.details;
+    this.requestId = options?.requestId;
   }
 }
 
+export function parseApiError(
+  data: unknown,
+  status: number,
+  statusText?: string,
+): AuthApiError {
+  let errorMsg: string | undefined;
+  let code: string | undefined;
+  let details: ApiErrorDetails | undefined;
+  let requestId: string | undefined;
+
+  if (data && typeof data === "object") {
+    const obj = data as Record<string, unknown>;
+
+    // Case 1: Nested error contract { error: { code, message, details, requestId } }
+    if (obj.error && typeof obj.error === "object" && !Array.isArray(obj.error)) {
+      const nested = obj.error as Record<string, unknown>;
+      if (typeof nested.message === "string") errorMsg = nested.message;
+      if (typeof nested.code === "string") code = nested.code;
+      if (nested.details && typeof nested.details === "object") {
+        details = nested.details as ApiErrorDetails;
+      }
+      if (typeof nested.requestId === "string") requestId = nested.requestId;
+    } else if (typeof obj.error === "string") {
+      // Case 2: Simple string error { error: "..." }
+      errorMsg = obj.error;
+    }
+
+    // Case 3: Simple message { message: "..." }
+    if (!errorMsg && typeof obj.message === "string") {
+      errorMsg = obj.message;
+    }
+
+    if (!code && typeof obj.code === "string") {
+      code = obj.code;
+    }
+    if (!details && obj.details && typeof obj.details === "object") {
+      details = obj.details as ApiErrorDetails;
+    }
+    if (!requestId && typeof obj.requestId === "string") {
+      requestId = obj.requestId;
+    }
+  }
+
+  // Safe fallback per status code
+  if (!errorMsg) {
+    errorMsg =
+      status === 401
+        ? "Invalid credentials or session expired. Please sign in."
+        : status === 403
+          ? "Access denied. Guardian permission required."
+          : status === 404
+            ? "Account or profile not found."
+            : status === 409
+              ? "An account with this email already exists."
+              : statusText || `Request failed (${status}). Please try again.`;
+  }
+
+  return new AuthApiError(errorMsg, status, { code, details, requestId });
+}
+
 async function handleResponse<T>(res: Response): Promise<T> {
-  let data: Record<string, unknown> | null = null;
+  let data: unknown = null;
   const contentType = res.headers.get("content-type");
   if (contentType && contentType.includes("application/json")) {
     try {
@@ -24,21 +98,7 @@ async function handleResponse<T>(res: Response): Promise<T> {
   }
 
   if (!res.ok) {
-    const errorMsg =
-      (typeof data?.message === "string" && data.message) ||
-      (typeof data?.error === "string" && data.error) ||
-      (res.status === 401
-        ? "Invalid email or password. Please try again."
-        : res.status === 403
-          ? "Access denied. Guardian permission required."
-          : res.status === 404
-            ? "Account or profile not found."
-            : res.status === 409
-              ? "An account with this email already exists."
-              : `Request failed (${res.status}). Please try again.`);
-
-    const details = data?.details as Record<string, string[]> | undefined;
-    throw new AuthApiError(errorMsg, res.status, details);
+    throw parseApiError(data, res.status, res.statusText);
   }
 
   return (data as T) ?? ({} as T);
@@ -145,9 +205,7 @@ export async function getChildren(): Promise<ChildProfileSummary[]> {
       headers: { Accept: "application/json" },
       credentials: "include",
     });
-    if (res.status === 401 || res.status === 403) {
-      return [];
-    }
+    // Do NOT swallow 401/403; handleResponse will throw AuthApiError with status code
     const data = await handleResponse<{ children?: ChildProfileSummary[] } | ChildProfileSummary[]>(res);
     if (Array.isArray(data)) {
       return data;

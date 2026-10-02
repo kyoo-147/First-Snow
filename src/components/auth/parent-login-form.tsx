@@ -7,11 +7,12 @@ import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { SnowButton } from "@/components/ui/snow-button";
 import { AuthErrorBanner } from "./auth-error-banner";
 import { loginParent } from "./auth-api";
+import { sanitizeCallbackUrl } from "./auth-utils";
 
 export function ParentLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/parent";
+  const callbackUrl = sanitizeCallbackUrl(searchParams.get("callbackUrl"), "/parent");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
