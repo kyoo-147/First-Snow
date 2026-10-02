@@ -1,50 +1,312 @@
 "use client";
 
-import { Bell, PhoneCall, ShieldCheck, UserPlus } from "lucide-react";
-import { ParentPageFrame, PageHeader, SettingsSection, StatusTile } from "@/components/layout/snow-page-frame";
+import { useEffect, useState } from "react";
+import {
+  Bell,
+  CheckCircle2,
+  Edit2,
+  PhoneCall,
+  Plus,
+  RefreshCw,
+  ShieldCheck,
+  Star,
+  UserPlus,
+} from "lucide-react";
+import { PageHeader, ParentPageFrame, SettingsSection, StatusTile } from "@/components/layout/snow-page-frame";
+import {
+  EmergencyContactDialog,
+  SafetyEmptyState,
+  SafetyErrorBanner,
+  SafetyLoadingSkeleton,
+} from "@/components/safety";
 import { SnowButton } from "@/components/ui/snow-button";
-import { mockEmergencyContacts } from "@/data";
+import {
+  type CreateEmergencyContactPayload,
+  createEmergencyContact,
+  deleteEmergencyContact,
+  type EmergencyContactRecord,
+  getEmergencyContacts,
+  SafetyApiError,
+  updateEmergencyContact,
+} from "@/lib/safety-client";
+import { cn } from "@/lib/utils";
 
 export function ParentEmergencyScreen() {
+  const [contacts, setContacts] = useState<EmergencyContactRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | undefined>(undefined);
+  const [requestId, setRequestId] = useState<string | undefined>(undefined);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Dialog state
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<EmergencyContactRecord | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [dialogError, setDialogError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadContacts();
+  }, []);
+
+  async function loadContacts() {
+    setIsLoading(true);
+    setErrorMessage(null);
+    setErrorCode(undefined);
+    setRequestId(undefined);
+
+    try {
+      const data = await getEmergencyContacts();
+      setContacts(data);
+    } catch (err: unknown) {
+      if (err instanceof SafetyApiError) {
+        setErrorMessage(err.message);
+        setErrorCode(err.code);
+        setRequestId(err.requestId);
+      } else {
+        setErrorMessage("Failed to load emergency contacts from the safety service.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function handleOpenCreate() {
+    setSelectedContact(null);
+    setDialogError(null);
+    setIsDialogOpen(true);
+  }
+
+  function handleOpenEdit(contact: EmergencyContactRecord) {
+    setSelectedContact(contact);
+    setDialogError(null);
+    setIsDialogOpen(true);
+  }
+
+  async function handleSaveContact(payload: CreateEmergencyContactPayload) {
+    setIsSaving(true);
+    setDialogError(null);
+
+    try {
+      if (selectedContact) {
+        // Edit
+        const res = await updateEmergencyContact(selectedContact.id, payload);
+        setContacts((prev) =>
+          prev.map((c) => (c.id === selectedContact.id ? res.contact : c)),
+        );
+        setSuccessMessage(`Updated emergency contact ${res.contact.name}.`);
+      } else {
+        // Create
+        const res = await createEmergencyContact(payload);
+        setContacts((prev) => [...prev, res.contact]);
+        setSuccessMessage(`Added emergency contact ${res.contact.name}.`);
+      }
+
+      setIsDialogOpen(false);
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err: unknown) {
+      if (err instanceof SafetyApiError) {
+        setDialogError(err.message);
+      } else {
+        setDialogError("Failed to save emergency contact. Please try again.");
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function handleDeleteContact(id: string) {
+    setIsDeleting(true);
+    setDialogError(null);
+
+    try {
+      await deleteEmergencyContact(id);
+      setContacts((prev) => prev.filter((c) => c.id !== id));
+      setSuccessMessage("Emergency contact removed successfully.");
+      setIsDialogOpen(false);
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err: unknown) {
+      if (err instanceof SafetyApiError) {
+        setDialogError(err.message);
+      } else {
+        setDialogError("Failed to delete contact.");
+      }
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
+  const primaryContact = contacts.find((c) => c.isPrimary);
+
   return (
     <ParentPageFrame>
       <PageHeader
-        eyebrow="Parent-only safety"
+        eyebrow="Parent-Only Safety"
         title="Emergency contacts"
-        description="Choose who AgentKid should surface to a parent during a serious support moment. These controls never appear in child sessions."
+        description="Specify authorized guardians and emergency responders who should be surfaced during acute support moments. These details are strictly hidden from child sessions."
         action={
-          <SnowButton>
-            <UserPlus className="mr-2 size-4" />
-            Add contact
-          </SnowButton>
+          <div className="flex items-center gap-2">
+            <SnowButton
+              variant="ghost"
+              onClick={loadContacts}
+              disabled={isLoading}
+              className="text-xs font-bold"
+            >
+              <RefreshCw className={cn("mr-1.5 size-3.5", isLoading && "animate-spin")} />
+              Sync Contacts
+            </SnowButton>
+            <SnowButton onClick={handleOpenCreate} className="text-xs font-bold">
+              <UserPlus className="mr-1.5 size-4" />
+              Add Contact
+            </SnowButton>
+          </div>
         }
       />
 
+      {errorMessage ? (
+        <SafetyErrorBanner
+          message={errorMessage}
+          code={errorCode}
+          requestId={requestId}
+          onRetry={loadContacts}
+        />
+      ) : null}
+
+      {successMessage ? (
+        <div
+          role="status"
+          className="flex items-center gap-2 rounded-[var(--radius-md)] border border-snow-success/30 bg-snow-success/10 px-4 py-2.5 text-xs font-bold text-snow-success snow-enter-soft"
+        >
+          <CheckCircle2 className="size-4" />
+          <span>{successMessage}</span>
+        </div>
+      ) : null}
+
       <div className="grid gap-4 md:grid-cols-3">
-        <StatusTile label="Contacts saved" value={`${mockEmergencyContacts.length}`} detail="Parent-only" icon={<PhoneCall className="size-5 text-snow-primary" />} />
-        <StatusTile label="Alert routing" value="Enabled" detail="Parent portal and notifications" icon={<Bell className="size-5 text-snow-primary" />} tone="bg-snow-ice" />
-        <StatusTile label="Child visibility" value="Hidden" detail="Not shown in session UI" icon={<ShieldCheck className="size-5 text-snow-primary" />} tone="bg-snow-lavender" />
+        <StatusTile
+          label="Contacts saved"
+          value={isLoading ? "..." : `${contacts.length}`}
+          detail={primaryContact ? `Primary: ${primaryContact.name}` : "No primary contact"}
+          icon={<PhoneCall className="size-5 text-snow-primary" />}
+        />
+        <StatusTile
+          label="Alert routing"
+          value="Enabled"
+          detail="Instant SMS & push escalation"
+          icon={<Bell className="size-5 text-snow-primary" />}
+          tone="bg-snow-ice"
+        />
+        <StatusTile
+          label="Child visibility"
+          value="Hidden"
+          detail="Strict parent route boundary"
+          icon={<ShieldCheck className="size-5 text-snow-primary" />}
+          tone="bg-snow-lavender"
+        />
       </div>
 
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
-        <SettingsSection title="Contact list" description="Use people who are allowed to help review child support moments.">
-          {mockEmergencyContacts.map((contact, index) => (
-            <div key={contact.id} className="flex items-center justify-between gap-4 rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft px-4 py-3">
-              <div>
-                <p className="text-sm font-black text-snow-primary-dark">{contact.name}</p>
-                <p className="mt-1 text-xs font-semibold text-snow-muted">{contact.relation} - {contact.phone}</p>
-              </div>
-              <span className="rounded-full bg-snow-primary-soft px-3 py-1 text-xs font-black text-snow-primary-dark">{index === 0 ? "Primary" : "Backup"}</span>
+        <SettingsSection
+          title="Authorized Emergency Contacts"
+          description="Guardians and verified emergency contacts to notify in order of priority."
+        >
+          {isLoading ? (
+            <SafetyLoadingSkeleton label="Loading verified emergency contacts..." count={3} />
+          ) : contacts.length === 0 ? (
+            <SafetyEmptyState
+              title="No emergency contacts configured"
+              description="Add at least one guardian contact so AgentKid knows who to reach during urgent safety escalations."
+              action={
+                <SnowButton onClick={handleOpenCreate} className="text-xs font-bold">
+                  <Plus className="mr-1.5 size-3.5" />
+                  Add Primary Guardian
+                </SnowButton>
+              }
+            />
+          ) : (
+            <div className="space-y-3">
+              {contacts.map((contact) => (
+                <div
+                  key={contact.id}
+                  className="flex flex-col justify-between gap-3 rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft p-4 sm:flex-row sm:items-center"
+                >
+                  <div className="flex items-start gap-3.5">
+                    <div className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-snow-primary border border-snow-border">
+                      <PhoneCall className="size-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-black text-snow-primary-dark">{contact.name}</p>
+                        {contact.isPrimary ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-snow-primary-soft px-2 py-0.5 text-[10px] font-black text-snow-primary-dark">
+                            <Star className="size-3 fill-snow-primary text-snow-primary" />
+                            Primary
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-snow-surface px-2 py-0.5 text-[10px] font-bold text-snow-muted border border-snow-border">
+                            Backup
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-1 text-xs font-semibold text-snow-muted">
+                        {contact.relation} • {contact.phone}
+                        {contact.email ? ` • ${contact.email}` : ""}
+                      </p>
+                      {contact.notifyOnAlert ? (
+                        <p className="mt-1 text-[11px] font-semibold text-snow-success">
+                          ✓ Receives priority alerts
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div className="flex shrink-0 items-center justify-end gap-2">
+                    <SnowButton
+                      variant="ghost"
+                      onClick={() => handleOpenEdit(contact)}
+                      className="min-h-8 px-3 text-xs font-bold"
+                    >
+                      <Edit2 className="mr-1 size-3" />
+                      Edit
+                    </SnowButton>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </SettingsSection>
 
-        <SettingsSection title="Alert settings">
-          {["Notify primary contact first", "Use calm parent-facing language", "Keep child UI focused on calm break actions"].map((item) => (
-            <div key={item} className="rounded-[var(--radius-md)] bg-snow-surface-soft px-4 py-3 text-sm font-bold leading-6 text-snow-primary-dark">{item}</div>
-          ))}
-        </SettingsSection>
+        <aside className="space-y-4">
+          <SettingsSection title="Escalation Protocol">
+            {[
+              "Primary contact receives immediate notification when urgent support is triggered.",
+              "Backup contacts are notified if primary contact is unavailable.",
+              "Child session interface transitions to calm breathing exercises during review.",
+              "No clinical diagnoses or alarming messages are shown to child or guardian.",
+            ].map((rule, idx) => (
+              <div
+                key={idx}
+                className="flex items-start gap-2.5 rounded-[var(--radius-md)] bg-snow-surface-soft p-3 text-xs font-semibold leading-5 text-snow-primary-dark"
+              >
+                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-snow-success" />
+                <span>{rule}</span>
+              </div>
+            ))}
+          </SettingsSection>
+        </aside>
       </div>
+
+      <EmergencyContactDialog
+        isOpen={isDialogOpen}
+        contact={selectedContact}
+        isSaving={isSaving}
+        isDeleting={isDeleting}
+        errorMessage={dialogError}
+        onSave={handleSaveContact}
+        onDelete={handleDeleteContact}
+        onClose={() => setIsDialogOpen(false)}
+      />
     </ParentPageFrame>
   );
 }
