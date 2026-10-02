@@ -6,6 +6,7 @@ import { CreateChildSchema } from '@/server/contracts/auth';
 import { ERRORS } from '@/lib/api/errors';
 import { type NextRequest, NextResponse } from 'next/server';
 import { and, eq } from 'drizzle-orm';
+import { auditEvents } from '@/db/schema';
 
 // GET /api/children
 // List all active children in the authenticated parent's household
@@ -95,6 +96,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (!child) {
       return ERRORS.internal('Failed to create child profile.');
     }
+
+    await db.insert(auditEvents).values({
+      eventType: 'child.created', actorId: session.sub, actorType: 'parent',
+      resourceType: 'child', resourceId: child.id,
+    } as typeof auditEvents.$inferInsert);
 
     return NextResponse.json(
       {
