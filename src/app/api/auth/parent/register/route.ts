@@ -47,7 +47,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         displayName,
         passwordHash,
         role: 'parent',
-      })
+      } as any)
       .returning({ id: users.id, role: users.role });
 
     if (!user) {

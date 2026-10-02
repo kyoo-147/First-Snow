@@ -1,8 +1,9 @@
 import 'server-only';
 import { SignJWT, jwtVerify } from 'jose';
+import { createHash, randomBytes } from 'crypto';
 import { env } from '@/server/env';
 
-// ── Payload types ────────────────────────────────────────────────────────────
+// ── Payload types ─────────────────────────────────────────────────────────────
 
 export type ParentSessionPayload = {
   sub: string; // userId
@@ -22,12 +23,12 @@ export type ChildSessionPayload = {
   exp?: number;
 };
 
-// ── Cookie name constants ────────────────────────────────────────────────────
+// ── Cookie name constants ──────────────────────────────────────────────────────
 
 export const PARENT_COOKIE_NAME = 'snow_parent_session';
 export const CHILD_COOKIE_NAME = 'snow_child_session';
 
-// ── Cookie options ───────────────────────────────────────────────────────────
+// ── Cookie options ─────────────────────────────────────────────────────────────
 
 export const PARENT_COOKIE_OPTIONS = {
   name: PARENT_COOKIE_NAME,
@@ -47,7 +48,26 @@ export const CHILD_COOKIE_OPTIONS = {
   maxAge: 12 * 60 * 60, // 12 hours in seconds
 };
 
-// ── Key derivation ───────────────────────────────────────────────────────────
+// ── Opaque token helpers (for DB-backed session tokenHash) ────────────────────
+
+/**
+ * Generate a cryptographically-random 64-char hex opaque token.
+ * Used as the session ID stored in the JWT `sessionId` claim,
+ * and hashed to produce the DB session row's token_hash.
+ */
+export function generateOpaqueToken(): string {
+  return randomBytes(32).toString('hex');
+}
+
+/**
+ * Hash an opaque token with SHA-256 for at-rest storage.
+ * Returns a 64-char lowercase hex string.
+ */
+export function hashToken(token: string): string {
+  return createHash('sha256').update(token).digest('hex');
+}
+
+// ── Key derivation ─────────────────────────────────────────────────────────────
 
 function parentSecretKey(): Uint8Array {
   return new TextEncoder().encode(env.SESSION_SECRET);
@@ -57,10 +77,11 @@ function childSecretKey(): Uint8Array {
   return new TextEncoder().encode(env.CHILD_SESSION_SECRET);
 }
 
-// ── Parent session ───────────────────────────────────────────────────────────
+// ── Parent session ─────────────────────────────────────────────────────────────
 
 /**
  * Create a signed JWT for a parent or admin user.
+ * Embeds sessionId (opaque token) for DB revocation checks.
  * Expires in 7 days.
  */
 export async function createParentSession(
@@ -91,11 +112,12 @@ export async function verifyParentSession(
   }
 }
 
-// ── Child session ────────────────────────────────────────────────────────────
+// ── Child session ──────────────────────────────────────────────────────────────
 
 /**
  * Create a signed JWT for a child session.
  * Uses a SEPARATE secret key from parent sessions.
+ * Embeds sessionId (opaque token) for DB revocation checks.
  * Expires in 12 hours.
  */
 export async function createChildSession(
@@ -114,7 +136,7 @@ export async function createChildSession(
 /**
  * Verify a child session JWT.
  * Returns null for expired, invalid, or tampered tokens.
- * A token signed with the parent key will return null here (different key).
+ * A token signed with the parent key will return null (different key).
  */
 export async function verifyChildSession(
   token: string,
