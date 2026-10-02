@@ -20,12 +20,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-    // Run tests sequentially to avoid DB connection conflicts
-    pool: 'forks',
-    poolOptions: {
-      forks: {
-        singleFork: true,
-      },
-    },
+    // Run tests sequentially to avoid DB connection conflicts.
+    maxWorkers: 1,
+    fileParallelism: false,
   },
 });
