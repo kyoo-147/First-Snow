@@ -1,8 +1,22 @@
-# Snow AI Companion
+<div align="center">
 
-> **Public repository notice**
->
-> The newest Snow implementation is still being developed and upgraded. This public repository may not reflect the latest private product work, safety experiments, child-facing UX research, or deployment configuration.
+<img src="assets/agentkid-logo.png" alt="AgentKid" width="520">
+
+[![Current Product](https://img.shields.io/badge/Current%20Product-main-16a34a?style=flat-square)](https://github.com/kyoo-147/agentkid_snow)
+[![Legacy Branch](https://img.shields.io/badge/Branch-legacy--before--snow--ui-64748b?style=flat-square)](https://github.com/kyoo-147/agentkid_snow/tree/legacy-before-snow-ui)
+[![Live App](https://img.shields.io/badge/Live%20App-app.agentkid.io.vn-2563eb?style=flat-square)](https://app.agentkid.io.vn/)
+
+<p><strong>Preserved AgentKid architecture and monorepo foundation</strong></p>
+
+Earlier product, API, domain, persistence, and safety-oriented implementation retained for reference and migration work.
+
+[Current product](https://github.com/kyoo-147/agentkid_snow) · [Architecture](#system-architecture) · [Repository layout](#repository-layout) · [Local development](#local-development)
+
+</div>
+
+# Snow AI Companion — Legacy Foundation
+
+> **Branch notice:** this is the preserved `legacy-before-snow-ui` branch. It is not the source currently deployed at `app.agentkid.io.vn`. Use `main` for the current Snow UI and `landing-page` for the production marketing website.
 
 ![Snow AI Companion](docs/images/snow-main.png)
 
@@ -10,7 +24,7 @@
 
 The product focuses on controlled AI conversation, daily routine support, parent oversight, and safety-first system architecture. It is especially oriented toward early research with children in Vietnam, Australia, and similar real-world evaluation contexts.
 
-Repository: `github.com/kyoo-147/agentkid_snow`
+Repository: <https://github.com/kyoo-147/agentkid_snow>
 
 ## Why Snow Exists
 
@@ -41,7 +55,7 @@ Snow is being developed as a safe AI companion platform with:
 - backend and frontend architecture for long-term product development
 - research and pilot evaluation with children and families
 
-The latest private work may include newer product behavior and safety layers that are not fully represented in this public repository yet.
+The current product interface has moved to `main`. This branch remains available because its API, domain, database, architecture, and safety work may still inform future integration.
 
 ## Visual Overview
 
@@ -183,7 +197,7 @@ Still pending or private/in progress:
 
 ## Research And Pilot Direction
 
-Snow is currently being tested and surveyed with children and families in early real-world contexts, including Vietnam and Australia.
+This branch documents research questions intended for future supervised evaluation. It does not by itself prove completed field testing, clinical validation, or production safety.
 
 The key research questions are:
 
@@ -195,10 +209,13 @@ The key research questions are:
 
 ## Local Development
 
-This repository uses a pnpm monorepo.
+This branch uses a pnpm monorepo and PowerShell-based workspace scripts.
 
 ```powershell
-pnpm install
+git clone --branch legacy-before-snow-ui https://github.com/kyoo-147/agentkid_snow.git
+cd agentkid_snow
+corepack enable
+pnpm install --frozen-lockfile
 pnpm run build
 ```
 
@@ -216,4 +233,20 @@ pnpm run check:database-schema
 
 Snow is a child-facing AI project, so the important work is not only UI or model prompting. The hard parts are product boundaries, safety policies, parent oversight, data handling, and evaluation with real users.
 
-This repository should be read as a product and architecture foundation, while the newest implementation work may remain private until the safety and product direction are ready to publish.
+This branch should be read as a product and architecture foundation. Current visual product development lives on `main`; the production marketing website lives on `landing-page`.
+
+## Repository Branches
+
+| Branch | Purpose |
+| --- | --- |
+| `main` | Current Snow UI deployed to `app.agentkid.io.vn` |
+| `landing-page` | Bilingual static website deployed to `agentkid.io.vn` |
+| `legacy-before-snow-ui` | This preserved monorepo and architecture foundation |
+
+## Security And Secrets
+
+Do not commit credentials, child data, private evaluation records, production environment files, SSH keys, or certificates. Treat screenshots, transcripts, emotion records, audio, video, and session data as sensitive unless explicitly approved for publication.
+
+## License
+
+No repository-wide license is currently declared. All rights are reserved unless a file or bundled third-party component states otherwise. Review dependency and asset licenses before redistribution or commercial release.
