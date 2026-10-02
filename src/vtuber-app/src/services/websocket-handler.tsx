@@ -17,16 +17,19 @@ import { useChatHistory } from '@/context/chat-history-context';
 import { toaster } from '@/components/ui/toaster';
 import { useVAD } from '@/context/vad-context';
 import { AiState, useAiState } from "@/context/ai-state-context";
-import { useLocalStorage } from '@/hooks/utils/use-local-storage';
 import { useGroup } from '@/context/group-context';
 import { useInterrupt } from '@/hooks/utils/use-interrupt';
 import { useBrowser } from '@/context/browser-context';
+import { CompanionCapabilities } from '@/lib/voice-client';
 
 function WebSocketHandler({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const [wsState, setWsState] = useState<string>('CLOSED');
-  const [wsUrl, setWsUrl] = useLocalStorage<string>('wsUrl', defaultWsUrl);
-  const [baseUrl, setBaseUrl] = useLocalStorage<string>('baseUrl', defaultBaseUrl);
+  const [wsUrl, setWsUrl] = useState<string>(defaultWsUrl);
+  const [baseUrl, setBaseUrl] = useState<string>(defaultBaseUrl);
+  const [capabilities, setCapabilities] = useState<CompanionCapabilities>(
+    () => wsService.getCapabilities(),
+  );
   const { aiState, setAiState, backendSynthComplete, setBackendSynthComplete } = useAiState();
   const { setModelInfo } = useLive2DConfig();
   const { setSubtitleText } = useSubtitle();
@@ -298,9 +301,11 @@ function WebSocketHandler({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const stateSubscription = wsService.onStateChange(setWsState);
     const messageSubscription = wsService.onMessage(handleWebSocketMessage);
+    const capsSubscription = wsService.onCapabilitiesChange(setCapabilities);
     return () => {
       stateSubscription.unsubscribe();
       messageSubscription.unsubscribe();
+      capsSubscription.unsubscribe();
     };
   }, [wsUrl, handleWebSocketMessage]);
 
@@ -312,7 +317,11 @@ function WebSocketHandler({ children }: { children: React.ReactNode }) {
     setWsUrl,
     baseUrl,
     setBaseUrl,
-  }), [wsState, wsUrl, baseUrl]);
+    capabilities,
+    canUseMic: capabilities.audio_input === true,
+    canUseCamera: capabilities.camera === true,
+    canUseScreen: capabilities.screen === true,
+  }), [wsState, wsUrl, baseUrl, capabilities]);
 
   return (
     <WebSocketContext.Provider value={webSocketContextValue}>

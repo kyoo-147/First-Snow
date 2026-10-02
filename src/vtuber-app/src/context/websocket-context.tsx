@@ -1,10 +1,13 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { wsService } from '@/services/websocket-service';
-import { useLocalStorage } from '@/hooks/utils/use-local-storage';
+import {
+  CompanionCapabilities,
+  FAIL_CLOSED_CAPABILITIES,
+} from '@/lib/voice-client';
 
-const DEFAULT_WS_URL = 'ws://127.0.0.1:12393/client-ws';
-const DEFAULT_BASE_URL = 'http://127.0.0.1:12393';
+const DEFAULT_WS_URL = '/api/companion/ws';
+const DEFAULT_BASE_URL = '';
 
 export interface HistoryInfo {
   uid: string;
@@ -24,6 +27,10 @@ interface WebSocketContextProps {
   setWsUrl: (url: string) => void;
   baseUrl: string;
   setBaseUrl: (url: string) => void;
+  capabilities: CompanionCapabilities;
+  canUseMic: boolean;
+  canUseCamera: boolean;
+  canUseScreen: boolean;
 }
 
 export const WebSocketContext = React.createContext<WebSocketContextProps>({
@@ -34,6 +41,10 @@ export const WebSocketContext = React.createContext<WebSocketContextProps>({
   setWsUrl: () => {},
   baseUrl: DEFAULT_BASE_URL,
   setBaseUrl: () => {},
+  capabilities: { ...FAIL_CLOSED_CAPABILITIES },
+  canUseMic: false,
+  canUseCamera: false,
+  canUseScreen: false,
 });
 
 export function useWebSocket() {
@@ -48,12 +59,21 @@ export const defaultWsUrl = DEFAULT_WS_URL;
 export const defaultBaseUrl = DEFAULT_BASE_URL;
 
 export function WebSocketProvider({ children }: { children: React.ReactNode }) {
-  const [wsUrl, setWsUrl] = useLocalStorage('wsUrl', DEFAULT_WS_URL);
-  const [baseUrl, setBaseUrl] = useLocalStorage('baseUrl', DEFAULT_BASE_URL);
-  const handleSetWsUrl = useCallback((url: string) => {
+  const [wsUrl, setWsUrl] = useState(DEFAULT_WS_URL);
+  const [baseUrl, setBaseUrl] = useState(DEFAULT_BASE_URL);
+  const [capabilities, setCapabilities] = useState<CompanionCapabilities>(
+    () => wsService.getCapabilities(),
+  );
+
+  useEffect(() => {
+    const sub = wsService.onCapabilitiesChange(setCapabilities);
+    return () => sub.unsubscribe();
+  }, []);
+
+  const handleSetWsUrl = (url: string) => {
     setWsUrl(url);
     wsService.connect(url);
-  }, [setWsUrl]);
+  };
 
   const value = {
     sendMessage: wsService.sendMessage.bind(wsService),
@@ -63,6 +83,10 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
     setWsUrl: handleSetWsUrl,
     baseUrl,
     setBaseUrl,
+    capabilities,
+    canUseMic: capabilities.audio_input === true,
+    canUseCamera: capabilities.camera === true,
+    canUseScreen: capabilities.screen === true,
   };
 
   return (

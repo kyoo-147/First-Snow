@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { Box, Text } from '@chakra-ui/react';
-import { FiCamera } from 'react-icons/fi';
+import { Box, Text, VStack } from '@chakra-ui/react';
+import { FiCamera, FiLock } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@/components/ui/tooltip';
 import { sidebarStyles } from './sidebar-styles';
@@ -37,12 +37,36 @@ function CameraPlaceholder() {
   );
 }
 
+function CameraFailClosedNotice() {
+  return (
+    <VStack
+      position="absolute"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      gap={2}
+      p={3}
+      textAlign="center"
+    >
+      <Box p={2} borderRadius="full" bg="whiteAlpha.200" color="orange.300">
+        <FiLock size={20} />
+      </Box>
+      <Text color="whiteAlpha.900" fontSize="xs" fontWeight="bold">
+        Camera Unavailable
+      </Text>
+      <Text color="whiteAlpha.600" fontSize="10px" lineHeight="1.3">
+        Fail-closed: Awaiting server capability grant (parental consent & safety policy required)
+      </Text>
+    </VStack>
+  );
+}
+
 function VideoStream({
   videoRef,
   isStreaming,
 }: {
-  videoRef: React.RefObject<HTMLVideoElement>
-  isStreaming: boolean
+  videoRef: React.RefObject<HTMLVideoElement>;
+  isStreaming: boolean;
 }) {
   return (
     <video
@@ -64,6 +88,7 @@ function CameraPanel(): React.JSX.Element {
     error,
     isHovering,
     isStreaming,
+    isCameraGranted,
     stream,
     toggleCamera,
     handleMouseEnter,
@@ -84,21 +109,29 @@ function CameraPanel(): React.JSX.Element {
 
       <Tooltip
         showArrow
-        content={isStreaming ? t('footer.cameraStopping') : t('footer.cameraControl')}
+        content={
+          !isCameraGranted
+            ? 'Camera unavailable: Server grant required'
+            : isStreaming
+              ? t('footer.cameraStopping')
+              : t('footer.cameraControl')
+        }
         open={isHovering && !error}
       >
         <Box
           {...sidebarStyles.cameraPanel.videoContainer}
-          onClick={toggleCamera}
+          onClick={isCameraGranted ? toggleCamera : undefined}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          cursor="pointer"
+          cursor={isCameraGranted ? 'pointer' : 'not-allowed'}
           position="relative"
           _hover={{
-            bg: 'whiteAlpha.100',
+            bg: isCameraGranted ? 'whiteAlpha.100' : 'transparent',
           }}
         >
-          {error ? (
+          {!isCameraGranted ? (
+            <CameraFailClosedNotice />
+          ) : error ? (
             <Text color="red.300" fontSize="sm" textAlign="center">
               {error}
             </Text>

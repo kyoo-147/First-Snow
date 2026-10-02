@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useCamera } from '@/context/camera-context';
 import { useScreenCaptureContext } from '@/context/screen-capture-context';
 import { toaster } from "@/components/ui/toaster";
+import { wsService } from '@/services/websocket-service';
 import {
   IMAGE_COMPRESSION_QUALITY_KEY,
   DEFAULT_IMAGE_COMPRESSION_QUALITY,
@@ -100,9 +101,10 @@ export function useMediaCapture() {
 
   const captureAllMedia = useCallback(async () => {
     const images: ImageData[] = [];
+    const caps = wsService.getCapabilities();
 
-    // Capture camera frame
-    if (cameraStream) {
+    // Capture camera frame only if server grant is verified
+    if (caps.camera && cameraStream) {
       const cameraFrame = await captureFrame(cameraStream, 'camera');
       if (cameraFrame) {
         images.push({
@@ -113,8 +115,8 @@ export function useMediaCapture() {
       }
     }
 
-    // Capture screen frame
-    if (screenStream) {
+    // Capture screen frame only if server grant is verified
+    if (caps.screen && screenStream) {
       const screenFrame = await captureFrame(screenStream, 'screen');
       if (screenFrame) {
         images.push({
@@ -124,8 +126,6 @@ export function useMediaCapture() {
         });
       }
     }
-
-    console.log("images: ", images);
 
     return images;
   }, [cameraStream, screenStream, captureFrame]);

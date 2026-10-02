@@ -23,14 +23,19 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps): React.J
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Pre-populate users in localStorage if empty
+  // In-memory mock demo user store (no localStorage credential storage)
+  const [inMemoryUsers, setInMemoryUsers] = useState([
+    { email: "momo@edu.com", password: "password123", username: "Momo Fan" }
+  ]);
+
+  // Clean up any legacy plaintext keys from previous versions
   useEffect(() => {
-    const users = localStorage.getItem("kid_app_users");
-    if (!users) {
-      const defaultUsers = [
-        { email: "momo@edu.com", password: "password123", username: "Momo Fan" }
-      ];
-      localStorage.setItem("kid_app_users", JSON.stringify(defaultUsers));
+    try {
+      localStorage.removeItem("kid_app_users");
+      localStorage.removeItem("kid_app_current_user");
+      localStorage.removeItem("kid_active_profile");
+    } catch {
+      // ignore
     }
   }, []);
 
@@ -48,16 +53,12 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps): React.J
     setLoading(true);
 
     setTimeout(() => {
-      const usersStr = localStorage.getItem("kid_app_users") || "[]";
-      const users = JSON.parse(usersStr);
-
       if (isLogin) {
         // Login Logic
-        const foundUser = users.find(
-          (u: any) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+        const foundUser = inMemoryUsers.find(
+          (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
         );
         if (foundUser) {
-          localStorage.setItem("kid_app_current_user", JSON.stringify(foundUser));
           toaster.create({
             title: `Đăng nhập thành công! Chào ${foundUser.username || foundUser.email}`,
             type: "success",
@@ -92,7 +93,7 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps): React.J
           return;
         }
 
-        const userExists = users.some((u: any) => u.email.toLowerCase() === email.toLowerCase());
+        const userExists = inMemoryUsers.some((u) => u.email.toLowerCase() === email.toLowerCase());
         if (userExists) {
           toaster.create({
             title: "Email này đã được đăng ký!",
@@ -101,9 +102,7 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps): React.J
           });
         } else {
           const newUser = { email, password, username };
-          users.push(newUser);
-          localStorage.setItem("kid_app_users", JSON.stringify(users));
-          localStorage.setItem("kid_app_current_user", JSON.stringify(newUser));
+          setInMemoryUsers((prev) => [...prev, newUser]);
           toaster.create({
             title: "Đăng ký thành công!",
             type: "success",

@@ -1,6 +1,5 @@
-/* eslint-disable */
-import { Box, Text } from "@chakra-ui/react";
-import { FiMonitor } from "react-icons/fi";
+import { Box, Text, VStack } from "@chakra-ui/react";
+import { FiMonitor, FiLock } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { Tooltip } from "@/components/ui/tooltip";
 import { sidebarStyles } from "./sidebar-styles";
@@ -43,6 +42,30 @@ function ScreenPlaceholder() {
   );
 }
 
+function ScreenFailClosedNotice() {
+  return (
+    <VStack
+      position="absolute"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      gap={2}
+      p={3}
+      textAlign="center"
+    >
+      <Box p={2} borderRadius="full" bg="whiteAlpha.200" color="orange.300">
+        <FiLock size={20} />
+      </Box>
+      <Text color="whiteAlpha.900" fontSize="xs" fontWeight="bold">
+        Screen Sharing Unavailable
+      </Text>
+      <Text color="whiteAlpha.600" fontSize="10px" lineHeight="1.3">
+        Fail-closed: Awaiting server capability grant (parental consent & safety policy required)
+      </Text>
+    </VStack>
+  );
+}
+
 function VideoStream({
   videoRef,
   isStreaming,
@@ -69,6 +92,7 @@ function ScreenPanel(): React.JSX.Element {
     error,
     isHovering,
     isStreaming,
+    isScreenGranted,
     toggleCapture,
     handleMouseEnter,
     handleMouseLeave,
@@ -83,24 +107,28 @@ function ScreenPanel(): React.JSX.Element {
       <Tooltip
         showArrow
         content={
-          isStreaming
-            ? t('footer.screenStopping')
-            : t('footer.screenControl')
+          !isScreenGranted
+            ? 'Screen sharing unavailable: Server grant required'
+            : isStreaming
+              ? t('footer.screenStopping')
+              : t('footer.screenControl')
         }
         open={isHovering && !error}
       >
         <Box
           {...sidebarStyles.screenPanel.screenContainer}
-          onClick={toggleCapture}
+          onClick={isScreenGranted ? toggleCapture : undefined}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          cursor="pointer"
+          cursor={isScreenGranted ? "pointer" : "not-allowed"}
           position="relative"
           _hover={{
-            bg: "whiteAlpha.100",
+            bg: isScreenGranted ? "whiteAlpha.100" : "transparent",
           }}
         >
-          {error ? (
+          {!isScreenGranted ? (
+            <ScreenFailClosedNotice />
+          ) : error ? (
             <Text color="red.300" fontSize="sm" textAlign="center">
               {error}
             </Text>

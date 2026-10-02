@@ -116,7 +116,11 @@ export function VtuberApp() {
 
   useEffect(() => {
     const loadLive2DCore = () => {
-      return new Promise<void>((resolve, reject) => {
+      return new Promise<void>((resolve) => {
+        if (typeof document === "undefined") {
+          resolve();
+          return;
+        }
         if (document.getElementById("live2dcore")) {
           resolve();
           return;
@@ -125,21 +129,35 @@ export function VtuberApp() {
         script.id = "live2dcore";
         script.src = "/libs/live2dcubismcore.js";
         script.onload = () => {
-          import("@/vtuber-app/WebSDK/src/lappadapter").then(({ LAppAdapter }) => {
-            window.getLAppAdapter = () => LAppAdapter.getInstance();
-            resolve();
-          });
+          import("@/vtuber-app/WebSDK/src/lappadapter")
+            .then(({ LAppAdapter }) => {
+              window.getLAppAdapter = () => LAppAdapter.getInstance();
+              resolve();
+            })
+            .catch(() => resolve());
         };
-        script.onerror = reject;
+        script.onerror = () => {
+          console.warn("Live2D engine assets unavailable. Operating in voice & subtitle mode.");
+          resolve();
+        };
         document.head.appendChild(script);
       });
     };
 
-    loadLive2DCore().then(() => setIsLoaded(true));
+    loadLive2DCore()
+      .then(() => setIsLoaded(true))
+      .catch(() => setIsLoaded(true));
   }, []);
 
   if (!isLoaded) {
-    return <div className="p-10 text-center text-white">Loading Live2D Engine...</div>;
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center p-10 text-white">
+        <div className="size-8 animate-spin rounded-full border-3 border-snow-primary-soft border-t-white" />
+        <p className="mt-4 text-sm font-semibold tracking-wide text-white/90">
+          Initializing voice companion...
+        </p>
+      </div>
+    );
   }
 
   return (

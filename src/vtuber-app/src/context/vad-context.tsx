@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import {
-  createContext, useContext, useRef, useCallback, useEffect, useReducer, useMemo,
+  createContext, useContext, useRef, useCallback, useEffect, useState, useReducer, useMemo,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MicVAD } from '@ricky0123/vad-web';
@@ -11,6 +11,7 @@ import { SubtitleContext } from './subtitle-context';
 import { AiStateContext, AiState } from './ai-state-context';
 import { useLocalStorage } from '@/hooks/utils/use-local-storage';
 import { toaster } from '@/components/ui/toaster';
+import { wsService } from '@/services/websocket-service';
 
 /**
  * VAD settings configuration interface
@@ -37,6 +38,9 @@ interface VADState {
 
   /** Microphone active state */
   micOn: boolean;
+
+  /** Server capability grant for microphone */
+  isMicGranted: boolean;
 
   /** Set microphone state */
   setMicOn: (value: boolean) => void;
@@ -183,6 +187,25 @@ export function VADProvider({ children }: { children: React.ReactNode }) {
     autoStartMicOnConvEndRef.current = autoStartMicOnConvEnd;
   }, []);
 
+  const [isMicGranted, setIsMicGranted] = useState(
+    () => wsService.getCapabilities().audio_input,
+  );
+
+  useEffect(() => {
+    const sub = wsService.onCapabilitiesChange((caps) => {
+      setIsMicGranted(caps.audio_input);
+      if (!caps.audio_input) {
+        if (vadRef.current) {
+          vadRef.current.pause();
+          vadRef.current.destroy();
+          vadRef.current = null;
+        }
+        setMicOn(false);
+      }
+    });
+    return () => sub.unsubscribe();
+  }, [setMicOn]);
+
   /**
    * Update previous triggered probability and force re-render
    */
@@ -300,6 +323,16 @@ export function VADProvider({ children }: { children: React.ReactNode }) {
    */
   const startMic = useCallback(async () => {
     try {
+      if (!wsService.getCapabilities().audio_input) {
+        const errorMsg = 'Microphone unavailable: server capability grant required';
+        toaster.create({
+          title: errorMsg,
+          type: 'error',
+          duration: 3000,
+        });
+        return;
+      }
+
       if (!vadRef.current) {
         console.log('Initializing VAD');
         await initVAD();
@@ -362,6 +395,7 @@ export function VADProvider({ children }: { children: React.ReactNode }) {
     () => ({
       autoStopMic: autoStopMicRef.current,
       micOn,
+      isMicGranted,
       setMicOn,
       setAutoStopMic,
       startMic,
@@ -377,6 +411,7 @@ export function VADProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       micOn,
+      isMicGranted,
       startMic,
       stopMic,
       settings,

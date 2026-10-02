@@ -3,12 +3,14 @@ import {
   useContext,
   useRef,
   useState,
+  useEffect,
   useMemo,
   useCallback,
   ReactNode,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toaster } from '@/components/ui/toaster';
+import { wsService } from '@/services/websocket-service';
 
 /**
  * Camera configuration interface
@@ -25,6 +27,7 @@ interface CameraConfig {
  */
 interface CameraContextState {
   isStreaming: boolean;
+  isCameraGranted: boolean;
   stream: MediaStream | null;
   startCamera: () => Promise<void>;
   stopCamera: () => void;
@@ -67,9 +70,42 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const backgroundStreamRef = useRef<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const [isCameraGranted, setIsCameraGranted] = useState(
+    () => wsService.getCapabilities().camera,
+  );
+
+  useEffect(() => {
+    const sub = wsService.onCapabilitiesChange((caps) => {
+      setIsCameraGranted(caps.camera);
+      if (!caps.camera) {
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((track) => track.stop());
+          streamRef.current = null;
+          setIsStreaming(false);
+        }
+        if (backgroundStreamRef.current) {
+          backgroundStreamRef.current.getTracks().forEach((track) => track.stop());
+          backgroundStreamRef.current = null;
+          setIsBackgroundStreaming(false);
+        }
+      }
+    });
+    return () => sub.unsubscribe();
+  }, []);
+
   // Start camera stream
   const startCamera = useCallback(async () => {
     try {
+      if (!wsService.getCapabilities().camera) {
+        const errorMsg = 'Camera unavailable: server capability grant required (parent consent & safety policy)';
+        toaster.create({
+          title: errorMsg,
+          type: 'error',
+          duration: 3000,
+        });
+        throw new Error(errorMsg);
+      }
+
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error(t('error.cameraApiNotSupported'));
       }
@@ -115,6 +151,16 @@ export function CameraProvider({ children }: { children: ReactNode }) {
 
   const startBackgroundCamera = useCallback(async () => {
     try {
+      if (!wsService.getCapabilities().camera) {
+        const errorMsg = 'Camera unavailable: server capability grant required (parent consent & safety policy)';
+        toaster.create({
+          title: errorMsg,
+          type: 'error',
+          duration: 3000,
+        });
+        throw new Error(errorMsg);
+      }
+
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error(t('error.cameraApiNotSupported'));
       }
@@ -157,6 +203,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const contextValue = useMemo(
     () => ({
       isStreaming,
+      isCameraGranted,
       stream: streamRef.current,
       startCamera,
       stopCamera,
@@ -168,7 +215,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
       stopBackgroundCamera,
       isBackgroundStreaming,
     }),
-    [isStreaming, startCamera, stopCamera, cameraConfig, isBackgroundStreaming, startBackgroundCamera, stopBackgroundCamera],
+    [isStreaming, isCameraGranted, startCamera, stopCamera, cameraConfig, isBackgroundStreaming, startBackgroundCamera, stopBackgroundCamera],
   );
 
   return (

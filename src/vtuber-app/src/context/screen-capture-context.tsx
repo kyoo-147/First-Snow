@@ -1,10 +1,12 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toaster } from "@/components/ui/toaster";
+import { wsService } from '@/services/websocket-service';
 
 interface ScreenCaptureContextType {
   stream: MediaStream | null;
   isStreaming: boolean;
+  isScreenGranted: boolean;
   error: string;
   startCapture: () => Promise<void>;
   stopCapture: () => void;
@@ -16,10 +18,35 @@ export function ScreenCaptureProvider({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isScreenGranted, setIsScreenGranted] = useState(
+    () => wsService.getCapabilities().screen,
+  );
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const sub = wsService.onCapabilitiesChange((caps) => {
+      setIsScreenGranted(caps.screen);
+      if (!caps.screen && stream) {
+        stream.getTracks().forEach((track) => track.stop());
+        setStream(null);
+        setIsStreaming(false);
+      }
+    });
+    return () => sub.unsubscribe();
+  }, [stream]);
 
   const startCapture = async () => {
     try {
+      if (!wsService.getCapabilities().screen) {
+        const errMsg = 'Screen capture unavailable: server capability grant required (parent consent & safety policy)';
+        setError(errMsg);
+        toaster.create({
+          title: errMsg,
+          type: 'error',
+          duration: 3000,
+        });
+        return;
+      }
       let mediaStream: MediaStream;
 
       if (window.electron) {
@@ -78,6 +105,7 @@ export function ScreenCaptureProvider({ children }: { children: ReactNode }) {
       value={{
         stream,
         isStreaming,
+        isScreenGranted,
         error,
         startCapture,
         stopCapture,

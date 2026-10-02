@@ -54,25 +54,18 @@ export default function ChildProfilesScreen({
   const [newAge, setNewAge] = useState("");
   const [selectedAvatar, setSelectedAvatar] = useState("./images/leo_avatar.png");
 
-  // Load profiles from localStorage or seed with defaults
+  // Initialize profiles in memory
   useEffect(() => {
-    const saved = localStorage.getItem("kid_profiles");
-    if (saved) {
-      try {
-        setProfiles(JSON.parse(saved));
-      } catch (e) {
-        setProfiles(DEFAULT_PROFILES);
-      }
-    } else {
-      localStorage.setItem("kid_profiles", JSON.stringify(DEFAULT_PROFILES));
-      setProfiles(DEFAULT_PROFILES);
+    try {
+      localStorage.removeItem("kid_active_profile");
+      localStorage.removeItem("kid_profiles");
+    } catch {
+      // ignore
     }
+    setProfiles(DEFAULT_PROFILES);
   }, []);
 
   const handleSelectProfile = (profile: KidProfile) => {
-    // Save active profile to localStorage
-    localStorage.setItem("kid_active_profile", JSON.stringify(profile));
-    
     // Toast notification
     toaster.create({
       title: `Đã kết nối với ${profile.name}`,
@@ -115,7 +108,6 @@ export default function ChildProfilesScreen({
     };
 
     const updated = [...profiles, newProfile];
-    localStorage.setItem("kid_profiles", JSON.stringify(updated));
     setProfiles(updated);
 
     // Reset state

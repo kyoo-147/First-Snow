@@ -7,10 +7,15 @@ export const useCameraPanel = () => {
   const [error, setError] = useState<string>('');
   const [isHovering, setIsHovering] = useState(false);
   const {
-    isStreaming, stream, startCamera, stopCamera,
+    isStreaming, stream, isCameraGranted, startCamera, stopCamera,
   } = useCamera();
 
   const toggleCamera = async (): Promise<void> => {
+    if (!isCameraGranted) {
+      setError('Camera unavailable: server capability grant required (parent consent & safety policy)');
+      return;
+    }
+
     try {
       if (isStreaming) {
         stopCamera();
@@ -35,6 +40,7 @@ export const useCameraPanel = () => {
     error,
     isHovering,
     isStreaming,
+    isCameraGranted,
     stream,
     toggleCamera,
     handleMouseEnter,

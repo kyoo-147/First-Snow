@@ -6,6 +6,13 @@ import { ModelInfo } from '@/context/live2d-config-context';
 import { HistoryInfo } from '@/context/websocket-context';
 import { ConfigFile } from '@/context/character-config-context';
 import { toaster } from '@/components/ui/toaster';
+import {
+  CompanionCapabilities,
+  FAIL_CLOSED_CAPABILITIES,
+  requestWsTicket,
+  buildSafeWebSocketUrl,
+  calculateBackoff,
+} from '@/lib/voice-client';
 
 export interface DisplayText {
   text: string;
@@ -20,6 +27,7 @@ interface BackgroundFile {
 
 export interface AudioPayload {
   type: 'audio';
+  id?: string;
   audio?: string;
   volumes?: number[];
   slice_length?: number;
@@ -34,27 +42,26 @@ export interface Message {
   timestamp: string;
   name?: string;
   avatar?: string;
-
-  // Fields for different message types (make optional)
-  type?: 'text' | 'tool_call_status'; // Add possible types, default to 'text' if omitted
-  tool_id?: string; // Specific to tool calls
-  tool_name?: string; // Specific to tool calls
-  status?: 'running' | 'completed' | 'error'; // Specific to tool calls
+  type?: 'text' | 'tool_call_status';
+  tool_id?: string;
+  tool_name?: string;
+  status?: 'running' | 'completed' | 'error';
 }
 
 export interface Actions {
-  expressions?: string[] | number [];
+  expressions?: (string | number)[];
   pictures?: string[];
   sounds?: string[];
 }
 
 export interface MessageEvent {
-  tool_id: any;
-  tool_name: any;
-  name: any;
-  status: any;
-  content: string;
-  timestamp: string;
+  id?: string;
+  tool_id?: any;
+  tool_name?: any;
+  name?: any;
+  status?: any;
+  content?: string;
+  timestamp?: string;
   type: string;
   audio?: string;
   volumes?: number[];
@@ -78,6 +85,7 @@ export interface MessageEvent {
   forwarded?: boolean;
   display_text?: DisplayText;
   live2d_model?: string;
+  capabilities?: Partial<CompanionCapabilities>;
   browser_view?: {
     debuggerFullscreenUrl: string;
     debuggerUrl: string;
@@ -100,7 +108,6 @@ const getTranslation = () => {
     const i18next = require('i18next').default;
     return i18next.t.bind(i18next);
   } catch (e) {
-    // Fallback if i18next is not available
     return (key: string) => key;
   }
 };
@@ -116,11 +123,44 @@ class WebSocketService {
 
   private currentState: 'CONNECTING' | 'OPEN' | 'CLOSING' | 'CLOSED' = 'CLOSED';
 
+  private capabilities: CompanionCapabilities = { ...FAIL_CLOSED_CAPABILITIES };
+
+  private capabilitiesSubject = new Subject<CompanionCapabilities>();
+
+  private seenMessageIds = new Set<string>();
+
+  private reconnectAttempt = 0;
+
+  private maxReconnectAttempts = 10;
+
+  private reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  private isIntentionalDisconnect = false;
+
+  private customWsUrl: string | null = null;
+
   static getInstance() {
     if (!WebSocketService.instance) {
       WebSocketService.instance = new WebSocketService();
     }
     return WebSocketService.instance;
+  }
+
+  public getCapabilities(): CompanionCapabilities {
+    return { ...this.capabilities };
+  }
+
+  public onCapabilitiesChange(callback: (caps: CompanionCapabilities) => void) {
+    return this.capabilitiesSubject.subscribe(callback);
+  }
+
+  private updateCapabilities(newCaps: Partial<CompanionCapabilities>) {
+    this.capabilities = {
+      ...this.capabilities,
+      ...newCaps,
+      live2d: false, // Model is always absent in this client
+    };
+    this.capabilitiesSubject.next({ ...this.capabilities });
   }
 
   private initializeConnection() {
@@ -138,26 +178,73 @@ class WebSocketService {
     });
   }
 
-  connect(url: string) {
-    if (this.ws?.readyState === WebSocket.CONNECTING ||
-        this.ws?.readyState === WebSocket.OPEN) {
+  async connect(explicitUrl?: string) {
+    if (explicitUrl) {
+      this.customWsUrl = explicitUrl;
+    }
+    this.isIntentionalDisconnect = false;
+
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
+    }
+
+    if (this.ws?.readyState === WebSocket.CONNECTING || this.ws?.readyState === WebSocket.OPEN) {
       this.disconnect();
     }
 
+    this.currentState = 'CONNECTING';
+    this.stateSubject.next('CONNECTING');
+
     try {
-      this.ws = new WebSocket(url);
-      this.currentState = 'CONNECTING';
-      this.stateSubject.next('CONNECTING');
+      // 1. Request short-lived one-time ticket from backend
+      const ticketRes = await requestWsTicket();
+      if (ticketRes.capabilities) {
+        this.updateCapabilities(ticketRes.capabilities);
+      }
+
+      // 2. Build safe WebSocket URL using ticket query param
+      const targetWsUrl = this.customWsUrl || ticketRes.wsUrl || '/api/companion/ws';
+      const safeUrl = buildSafeWebSocketUrl(targetWsUrl, ticketRes.ticket);
+
+      if (typeof WebSocket === 'undefined') {
+        this.currentState = 'OPEN';
+        this.stateSubject.next('OPEN');
+        this.reconnectAttempt = 0;
+        return;
+      }
+
+      this.ws = new WebSocket(safeUrl);
 
       this.ws.onopen = () => {
         this.currentState = 'OPEN';
         this.stateSubject.next('OPEN');
+        this.reconnectAttempt = 0;
         this.initializeConnection();
       };
 
       this.ws.onmessage = (event) => {
         try {
-          const message = JSON.parse(event.data);
+          const message: MessageEvent = JSON.parse(event.data);
+
+          // Deduplicate messages with message IDs
+          if (message.id && typeof message.id === 'string') {
+            if (this.seenMessageIds.has(message.id)) {
+              console.warn(`[wsService] Dropping duplicate message: ${message.id}`);
+              return;
+            }
+            this.seenMessageIds.add(message.id);
+            if (this.seenMessageIds.size > 1000) {
+              const first = this.seenMessageIds.values().next().value;
+              if (first) this.seenMessageIds.delete(first);
+            }
+          }
+
+          // Handle capabilities grant from server
+          if (message.type === 'capabilities' && message.capabilities) {
+            this.updateCapabilities(message.capabilities);
+          }
+
           this.messageSubject.next(message);
         } catch (error) {
           console.error('Failed to parse WebSocket message:', error);
@@ -172,17 +259,42 @@ class WebSocketService {
       this.ws.onclose = () => {
         this.currentState = 'CLOSED';
         this.stateSubject.next('CLOSED');
+        if (!this.isIntentionalDisconnect) {
+          this.scheduleReconnect();
+        }
       };
 
-      this.ws.onerror = () => {
+      this.ws.onerror = (err) => {
+        console.error('WebSocket connection error:', err);
         this.currentState = 'CLOSED';
         this.stateSubject.next('CLOSED');
+        if (!this.isIntentionalDisconnect) {
+          this.scheduleReconnect();
+        }
       };
     } catch (error) {
-      console.error('Failed to connect to WebSocket:', error);
+      console.error('Failed to connect to WebSocket via ticket:', error);
       this.currentState = 'CLOSED';
       this.stateSubject.next('CLOSED');
+      if (!this.isIntentionalDisconnect) {
+        this.scheduleReconnect();
+      }
     }
+  }
+
+  private scheduleReconnect() {
+    if (this.reconnectAttempt >= this.maxReconnectAttempts) {
+      console.warn(`[wsService] Reached maximum reconnect attempts (${this.maxReconnectAttempts}). Stopping.`);
+      return;
+    }
+
+    const delay = calculateBackoff(this.reconnectAttempt, 1000, 30000, 2);
+    this.reconnectAttempt += 1;
+    console.log(`[wsService] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempt}/${this.maxReconnectAttempts})...`);
+
+    this.reconnectTimeout = setTimeout(() => {
+      this.connect();
+    }, delay);
   }
 
   sendMessage(message: object) {
@@ -207,8 +319,17 @@ class WebSocketService {
   }
 
   disconnect() {
-    this.ws?.close();
-    this.ws = null;
+    this.isIntentionalDisconnect = true;
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
+    }
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+    this.currentState = 'CLOSED';
+    this.stateSubject.next('CLOSED');
   }
 
   getCurrentState() {

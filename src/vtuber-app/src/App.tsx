@@ -54,18 +54,28 @@ function AppContent(): React.JSX.Element {
   const [showSidebar, setShowSidebar] = useState(true);
   const [isFooterCollapsed, setIsFooterCollapsed] = useState(false);
 
-  const [userEmail, setUserEmail] = useState(() => {
-    const u = localStorage.getItem("kid_app_current_user");
-    return u ? JSON.parse(u).email : "";
+  const [userEmail, setUserEmail] = useState("momo@edu.com");
+  const [activeProfile, setActiveProfile] = useState<{ id: string; name: string } | null>({
+    id: "profile-1",
+    name: "Momo",
   });
+
+  // Clean up any legacy plaintext keys from previous versions
+  useEffect(() => {
+    try {
+      localStorage.removeItem("kid_app_users");
+      localStorage.removeItem("kid_app_current_user");
+      localStorage.removeItem("kid_active_profile");
+    } catch {
+      // ignore
+    }
+  }, []);
 
   // Route protection guard
   useEffect(() => {
-    const hasUser = localStorage.getItem("kid_app_current_user");
-    const activeProfile = localStorage.getItem("kid_active_profile");
     const path = location.pathname;
 
-    if (!hasUser) {
+    if (!userEmail) {
       if (path !== "/login") {
         navigate("/login");
       }
@@ -79,7 +89,7 @@ function AppContent(): React.JSX.Element {
         navigate("/dashboard");
       }
     }
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, userEmail, activeProfile]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -136,9 +146,8 @@ function AppContent(): React.JSX.Element {
       <DashboardLayout
         onChangeProfile={() => navigate("/profiles")}
         onLogout={() => {
-          localStorage.removeItem("kid_app_current_user");
-          localStorage.removeItem("kid_active_profile");
           setUserEmail("");
+          setActiveProfile(null);
           navigate("/login");
         }}
       >
@@ -172,9 +181,8 @@ function AppContent(): React.JSX.Element {
               navigate("/dashboard");
             }}
             onLogout={() => {
-              localStorage.removeItem("kid_app_current_user");
-              localStorage.removeItem("kid_active_profile");
               setUserEmail("");
+              setActiveProfile(null);
               navigate("/login");
             }}
           />
