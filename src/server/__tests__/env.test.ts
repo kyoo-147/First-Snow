@@ -15,7 +15,7 @@ describe('env validation', () => {
       'test-session-secret-do-not-use-in-production-32ch';
     process.env.CHILD_SESSION_SECRET =
       'test-child-session-secret-do-not-use-prod-32c';
-    process.env.NODE_ENV = 'test';
+    (process.env as Record<string, string | undefined>).NODE_ENV = 'test';
   });
 
   afterEach(() => {
