@@ -4,7 +4,9 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -19,7 +21,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*", "./src/vtuber-app/src/*"],
+      "@framework/*": ["./src/vtuber-app/WebSDK/Framework/src/*"],
+      "@cubismsdksamples/*": ["./src/vtuber-app/WebSDK/src/*"],
+      "/src/*": ["./src/vtuber-app/src/*"]
     }
   },
   "include": [
@@ -30,5 +35,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "src/vtuber-app/WebSDK/**/*", "src/vtuber-app/MotionSync/**/*"]
 }

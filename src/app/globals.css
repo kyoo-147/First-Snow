@@ -1,26 +1,257 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: var(--snow-bg);
+  --foreground: var(--snow-foreground);
+  --font-geist-sans: "Geist", "Noto Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-geist-mono: "Geist Mono", "SFMono-Regular", Consolas, "Liberation Mono", ui-monospace, monospace;
+  --font-atkinson: "Atkinson Hyperlegible", "Noto Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-noto-sans: "Noto Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-snow-bg: var(--snow-bg);
+  --color-snow-foreground: var(--snow-foreground);
+  --color-snow-muted: var(--snow-muted);
+  --color-snow-surface: var(--snow-surface);
+  --color-snow-surface-soft: var(--snow-surface-soft);
+  --color-snow-border: var(--snow-border);
+  --color-snow-border-strong: var(--snow-border-strong);
+  --color-snow-primary: var(--snow-primary);
+  --color-snow-primary-dark: var(--snow-primary-dark);
+  --color-snow-primary-soft: var(--snow-primary-soft);
+  --color-snow-ice: var(--snow-ice);
+  --color-snow-aqua: var(--snow-aqua);
+  --color-snow-lavender: var(--snow-lavender);
+  --color-snow-peach: var(--snow-peach);
+  --color-snow-pink: var(--snow-pink);
+  --color-snow-success: var(--snow-success);
+  --color-snow-warning: var(--snow-warning);
+  --color-snow-danger: var(--snow-danger);
+  --color-snow-mint: var(--snow-mint);
+  --color-snow-blush: var(--snow-blush);
+  --color-snow-cream: var(--snow-cream);
+  --color-snow-chart-purple: var(--snow-chart-purple);
+  --color-snow-chart-teal: var(--snow-chart-teal);
+  --color-snow-grid: var(--snow-grid);
+  --color-snow-soft-blue: var(--snow-soft-blue);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-child-readable: var(--font-atkinson);
+  --font-fallback-sans: var(--font-noto-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
+  min-width: 320px;
+  overflow-x: hidden;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), var(--font-noto-sans), system-ui, sans-serif;
+  font-size: var(--text-body);
+  line-height: var(--text-body-leading);
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: var(--snow-primary-soft);
+  color: var(--snow-primary-dark);
+}
+
+.snow-page-bg {
+  background:
+    radial-gradient(circle at 18% 10%, color-mix(in srgb, var(--snow-ice) 72%, transparent), transparent 28%),
+    radial-gradient(circle at 82% 8%, color-mix(in srgb, var(--snow-lavender) 82%, transparent), transparent 32%),
+    linear-gradient(135deg, var(--snow-bg), var(--snow-surface-soft));
+}
+
+.snow-font-ui {
+  font-family: var(--font-geist-sans), var(--font-noto-sans), system-ui, sans-serif;
+}
+
+.snow-font-child {
+  font-family: var(--font-geist-sans), var(--font-noto-sans), system-ui, sans-serif;
+}
+
+.snow-font-readable {
+  font-family: var(--font-atkinson), var(--font-noto-sans), system-ui, sans-serif;
+}
+
+.snow-font-mono {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+.snow-body-copy {
+  font-size: var(--text-body);
+  line-height: var(--text-body-leading);
+}
+
+.snow-body-small {
+  font-size: var(--text-body-small);
+  line-height: var(--text-body-small-leading);
+}
+
+.snow-title {
+  font-size: var(--text-title);
+  line-height: var(--text-title-leading);
+}
+
+.snow-title-compact {
+  font-size: var(--text-title-compact);
+  line-height: var(--text-title-leading);
+}
+
+.snow-heading {
+  font-size: var(--text-heading);
+  line-height: var(--text-heading-leading);
+}
+
+.snow-card-pad {
+  padding: var(--card-pad);
+}
+
+.snow-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--snow-border) transparent;
+}
+
+.agentkid-nav-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.agentkid-nav-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.agentkid-nav-active {
+  font-weight: 700;
+}
+
+.snow-float-soft {
+  animation: snow-float-soft 7s ease-in-out infinite;
+}
+
+.snow-enter-soft {
+  animation: snow-enter-soft 260ms ease-out both;
+}
+
+.snow-pop-soft {
+  animation: snow-pop-soft 220ms ease-out both;
+}
+
+.snow-calm-pulse {
+  animation: snow-calm-pulse 3.2s ease-in-out infinite;
+}
+
+.snow-interactive-card {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    filter 180ms ease,
+    background-color 180ms ease;
+}
+
+.snow-interactive-card:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.01);
+}
+
+.snow-interactive-card:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.snow-focus-ring {
+  outline: none;
+}
+
+.snow-focus-ring:focus-visible {
+  box-shadow:
+    0 0 0 3px var(--snow-bg),
+    0 0 0 6px var(--snow-primary-soft);
+}
+
+@keyframes snow-float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes snow-enter-soft {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes snow-pop-soft {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes snow-calm-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--snow-primary-soft) 70%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--snow-primary-soft) 0%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .snow-float-soft,
+  .snow-enter-soft,
+  .snow-pop-soft,
+  .snow-calm-pulse {
+    animation: none;
+  }
+
+  .snow-interactive-card,
+  .snow-interactive-card:hover,
+  .snow-interactive-card:active {
+    transform: none;
+  }
 }

@@ -1,0 +1,31 @@
+:root {
+  --snow-bg: #f7faff;
+  --snow-foreground: #20165f;
+  --snow-muted: #6b6a93;
+  --snow-surface: #ffffff;
+  --snow-surface-soft: #f2f5ff;
+  --snow-border: #e2e7ff;
+
+  --snow-primary: #6d5dfb;
+  --snow-primary-dark: #24146f;
+  --snow-primary-soft: #e9e4ff;
+  --snow-ice: #ddf3ff;
+  --snow-aqua: #7de3ea;
+  --snow-lavender: #e9e4ff;
+  --snow-peach: #ffc7a8;
+  --snow-pink: #ff9bc1;
+  --snow-success: #27c884;
+  --snow-warning: #ffb84d;
+  --snow-danger: #ff6b7a;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-2xl: 40px;
+  --radius-full: 9999px;
+
+  --shadow-soft: 0 16px 40px rgba(60, 70, 130, 0.10);
+  --shadow-card: 0 10px 30px rgba(67, 56, 202, 0.10);
+  --shadow-stage: 0 24px 70px rgba(92, 94, 180, 0.18);
+}

@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Generated visual QA and design-export artifacts
+/reports/
+/ui_mockup/
+/home-check*.png
+/settings-check*.png
+/home-fullscreen-check.png

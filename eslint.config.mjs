@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Open LLM VTuber Web wrapper is vendored upstream code. Keep it isolated
+    // so Snow-owned lint remains strict without rewriting the companion app.
+    "src/vtuber-app/**",
   ]),
 ]);
 

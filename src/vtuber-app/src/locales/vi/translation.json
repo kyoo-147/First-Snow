@@ -1,0 +1,139 @@
+{
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "settings": "Cài đặt",
+    "close": "Đóng",
+    "accept": "Xác nhận"
+  },
+  "settings": {
+    "tabs": {
+      "general": "Chung",
+      "live2d": "Live2D",
+      "asr": "Nhận dạng giọng nói (ASR)",
+      "tts": "Giọng nói (TTS)",
+      "agent": "Trợ lý AI",
+      "about": "Giới thiệu"
+    },
+    "general": {
+      "language": "Ngôn ngữ",
+      "useCameraBackground": "Sử dụng nền camera",
+      "showSubtitle": "Hiển thị phụ đề",
+      "backgroundImage": "Hình nền",
+      "customBgUrlPlaceholder": "Nhập URL hình ảnh",
+      "customBgUrl": "Hoặc nhập URL hình nền tùy chỉnh",
+      "characterPreset": "Nhân vật mẫu",
+      "wsUrl": "WebSocket URL",
+      "baseUrl": "Base URL",
+      "imageCompressionQuality": "Chất lượng nén ảnh",
+      "imageCompressionQualityPlaceholder": "Nhập chất lượng nén (0-100)",
+      "imageCompressionQualityHelp": "Chất lượng nén JPEG (0.1-1.0). Mặc định là 0.8 để giảm dung lượng file khi gửi tới mô hình AI.",
+      "imageMaxWidth": "Chiều rộng ảnh tối đa",
+      "imageMaxWidthPlaceholder": "Nhập chiều rộng tối đa bằng pixel",
+      "imageMaxWidthHelp": "Chiều rộng tối đa để thay đổi kích thước ảnh. Ảnh lớn hơn sẽ được thu nhỏ theo tỷ lệ. Đặt về 0 để không giới hạn."
+    },
+    "live2d": {
+      "pointerInteractive": "Tương tác theo con trỏ",
+      "scrollToResize": "Cuộn chuột để thu phóng"
+    },
+    "asr": {
+      "autoStopMic": "Tự động tắt Mic khi AI nói",
+      "autoStopMicDesc": "Tự động dừng ghi âm mic khi AI bắt đầu nói để tránh tiếng vang phản hồi",
+      "autoStartMicOnConvEnd": "Tự động bật Mic khi kết thúc hội thoại",
+      "autoStartMicOnConvEndDesc": "Tự động mở lại mic khi AI nói xong để trò chuyện liên tục",
+      "autoStartMicOn": "Tự động bật Mic khi AI bị ngắt lời",
+      "autoStartMicOnDesc": "Tự động mở lại mic khi bạn ngắt lời AI để tiếp tục tương tác",
+      "positiveSpeechThreshold": "Ngưỡng phát hiện tiếng nói (VAD)",
+      "positiveSpeechThresholdDesc": "Độ tin cậy tối thiểu (1-100) để phát hiện tiếng nói. Giá trị cao giúp giảm kích hoạt nhầm do tiếng ồn",
+      "negativeSpeechThreshold": "Ngưỡng tắt tiếng nói",
+      "negativeSpeechThresholdDesc": "Độ tin cậy (0-100) mà dưới đó hệ thống dừng phát hiện tiếng nói. Giá trị thấp làm hệ thống kém nhạy hơn",
+      "redemptionFrames": "Khung hình chờ (Redemption Frames)",
+      "redemptionFramesDesc": "Số lượng khung hình liên tục (1-100) cần để xác nhận tiếng nói đã dừng. Giá trị cao tránh việc ngắt lời do tiếng ồn"
+    },
+    "agent": {
+      "allowProactiveSpeak": "Cho phép AI chủ động nói",
+      "idleSecondsToSpeak": "Thời gian chờ (giây) trước khi AI chủ động nói",
+      "allowButtonTrigger": "Kích hoạt AI nói bằng cách nhấn nút giơ tay"
+    },
+    "about": {
+      "title": "Open LLM VTuber Frontend",
+      "version": "Phiên bản",
+      "projectLinks": "Liên kết dự án",
+      "github": "GitHub",
+      "documentation": "Tài liệu hướng dẫn",
+      "license": "Giấy phép",
+      "copyright": "Bản quyền",
+      "viewLicense": "Xem giấy phép"
+    }
+  },
+  "footer": {
+    "typeYourMessage": "Nhập tin nhắn của bạn...",
+    "cameraControl": "Nhấp để bật camera",
+    "cameraStopping": "Nhấp để tắt camera",
+    "screenControl": "Nhấp để bắt đầu chia sẻ màn hình",
+    "screenStopping": "Nhấp để dừng chia sẻ màn hình"
+  },
+  "sidebar": {
+    "camera": "Camera",
+    "screen": "Màn hình",
+    "browser": "Trình duyệt",
+    "live": "Trực tiếp",
+    "noMessages": "Chưa có tin nhắn nào. Hãy bắt đầu trò chuyện nhé!",
+    "noBrowserSession": "Không có phiên trình duyệt nào đang hoạt động",
+    "browserSession": "Phiên trình duyệt"
+  },
+  "group": {
+    "management": "Quản lý nhóm",
+    "yourUuid": "UUID của bạn",
+    "inviteMember": "Mời thành viên",
+    "enterMemberUuid": "Nhập UUID thành viên",
+    "invite": "Mời",
+    "members": "Thành viên",
+    "you": "Bạn",
+    "leaveGroup": "Rời nhóm",
+    "removeMember": "Xóa thành viên",
+    "leave": "Rời đi"
+  },
+  "history": {
+    "chatHistoryList": "Danh sách lịch sử chat",
+    "noMessages": "Không có tin nhắn"
+  },
+  "notification": {
+    "characterLoaded": "Đã tải nhân vật mới",
+    "characterSwitched": "Đã chuyển đổi nhân vật",
+    "historyLoaded": "Đã tải lịch sử trò chuyện",
+    "newConversation": "Cuộc trò chuyện mới bắt đầu",
+    "newChatHistory": "Đã tạo lịch sử chat mới",
+    "historyDeleteSuccess": "Đã xóa lịch sử thành công",
+    "historyDeleteFail": "Xóa lịch sử thất bại"
+  },
+  "error": {
+    "cameraApiNotSupported": "API Camera không được hỗ trợ trên thiết bị này",
+    "noCameraFound": "Không tìm thấy camera trên thiết bị",
+    "failedStartCamera": "Bật camera thất bại",
+    "failedStartBackgroundCamera": "Bật camera nền thất bại",
+    "failedStartScreenCapture": "Chia sẻ màn hình thất bại",
+    "failedStartVAD": "Khởi động VAD (Phát hiện giọng nói) thất bại",
+    "llmCantHear": "AI chưa nghe rõ bạn nói.",
+    "audioPlayback": "Lỗi phát âm thanh",
+    "enterValidUuid": "Vui lòng nhập UUID hợp lệ",
+    "cannotDeleteCurrentHistory": "Không thể xóa lịch sử chat đang hoạt động",
+    "failedCapture": "Không thể chụp khung hình {{source}}",
+    "failedParseWebSocket": "Phân tích gói tin WebSocket thất bại",
+    "websocketNotOpen": "Kết nối WebSocket chưa được mở.",
+    "vadMisfire": "Phát hiện tiếng nói quá ngắn. Hãy nói to hơn/dài hơn hoặc điều chỉnh ngưỡng nhạy thấp xuống."
+  },
+  "aiState": {
+    "idle": "Đang rảnh",
+    "thinking-speaking": "Đang nghĩ/nói",
+    "interrupted": "Bị ngắt lời",
+    "loading": "Đang tải",
+    "listening": "Đang nghe",
+    "waiting": "Đang chờ"
+  },
+  "wsStatus": {
+    "connected": "Đã kết nối",
+    "connecting": "Đang kết nối",
+    "clickToReconnect": "Nhấp để kết nối lại"
+  }
+}

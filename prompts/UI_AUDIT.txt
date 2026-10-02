@@ -1,0 +1,12 @@
+Audit this UI screen against Snow UI Governance Pack.
+
+Return:
+1. Visual mismatches
+2. Layout mismatches
+3. Component mismatches
+4. Token violations
+5. Copy violations
+6. Accessibility issues
+7. Recommended fixes ordered by impact
+
+Do not code until the audit is approved.

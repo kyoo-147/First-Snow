@@ -1,0 +1,10 @@
+---
+description: Snow UI governance rules
+alwaysApply: true
+---
+
+Before making UI changes, read the Snow UI governance files. Use Snow design tokens only. Do not create one-off colors or shadows.
+
+AI Companion must follow Open LLM VTuber structure: settings panel, 2D character stage, connection status, subtitle overlay, bottom control bar. Chat history is secondary.
+
+Child screens must be low-density, large-touch, and gentle. Parent screens may be denser but must use observational language only.

@@ -1,0 +1,48 @@
+import type { LessonCardData } from "@/types/snow";
+
+export const mockLessons: LessonCardData[] = [
+  {
+    id: "magic-word-box",
+    title: "The Magic Word Box",
+    subtitle: "Letters and sounds",
+    subject: "English",
+    duration: "15 min",
+    rating: "4.8",
+    image: "/images/lesson-abc.png",
+    accent: "primary",
+    progress: 72,
+  },
+  {
+    id: "baby-penguins",
+    title: "Count with Baby Penguins",
+    subtitle: "Numbers 1-10",
+    subject: "Math",
+    duration: "12 min",
+    rating: "4.9",
+    image: "/images/lesson-math.png",
+    accent: "aqua",
+    progress: 46,
+  },
+  {
+    id: "brave-little-fox",
+    title: "The Brave Little Fox",
+    subtitle: "Kindness story",
+    subject: "Story Time",
+    duration: "18 min",
+    rating: "4.8",
+    image: "/images/lesson-story.png",
+    accent: "peach",
+    progress: 55,
+  },
+  {
+    id: "sharing-caring",
+    title: "Sharing is Caring",
+    subtitle: "Friendship",
+    subject: "Social Skills",
+    duration: "10 min",
+    rating: "4.7",
+    image: "/images/lesson-social.png",
+    accent: "pink",
+    progress: 30,
+  },
+];

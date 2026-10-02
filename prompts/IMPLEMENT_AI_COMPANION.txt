@@ -1,0 +1,15 @@
+Implement the Snow AI Companion UI.
+
+Read first:
+- 01_DESIGN.md
+- 08_TOKENS.md
+- 07_COMPONENTS.md
+- 06_AI_COMPANION_UI_SPEC.md
+- references/OPEN_LLM_VTUBER_MAPPING.md
+- 15_OPEN_LLM_VTUBER_COMPATIBILITY.md
+- 13_IMPLEMENTATION_CHECKLIST.md
+
+Requirement:
+Use Open LLM VTuber Web Mode structure as the base: settings panel, tabs, 2D stage, connection badge, subtitle overlay, bottom control bar, mic, input, stop, WebSocket URL and Base URL.
+
+Replace the anime character with Snow 2D mascot. Keep chat history secondary. Use Snow tokens only. Port the interaction structure and contracts; do not import the Chakra/Electron shell directly.
