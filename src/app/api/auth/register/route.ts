@@ -48,7 +48,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         displayName: resolvedName,
         passwordHash,
         role: 'parent',
-      } as any)
+      } as unknown as typeof users.$inferInsert)
       .returning({ id: users.id, role: users.role });
 
     if (!user) {
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           householdId: household.id,
           userId: user.id,
           role: 'owner',
-        } as any)
+        } as unknown as typeof householdMembers.$inferInsert)
         .onConflictDoNothing();
     }
 
@@ -87,13 +87,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         userId: user.id,
         tokenHash,
         expiresAt,
-      } as any)
+      } as unknown as typeof sessions.$inferInsert)
       .returning({ id: sessions.id });
 
-    const sessionId = dbSession?.id ?? opaqueToken;
+    if (!dbSession) {
+      return ERRORS.internal('Failed to create session.');
+    }
 
-    // JWT in cookie contains sessionId for revocation lookup
-    const token = await createParentSession(user.id, user.role, sessionId);
+    // JWT in cookie carries the opaqueToken in its sessionId claim
+    const token = await createParentSession(user.id, user.role, opaqueToken);
     const cookieStore = await cookies();
     cookieStore.set(PARENT_COOKIE_OPTIONS.name, token, PARENT_COOKIE_OPTIONS);
 

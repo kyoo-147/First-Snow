@@ -62,12 +62,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         userId: user.id,
         tokenHash,
         expiresAt,
-      } as any)
+      } as unknown as typeof sessions.$inferInsert)
       .returning({ id: sessions.id });
 
-    const sessionId = dbSession?.id ?? opaqueToken;
+    if (!dbSession) {
+      return ERRORS.internal('Failed to create session.');
+    }
 
-    const token = await createParentSession(user.id, user.role, sessionId);
+    const token = await createParentSession(user.id, user.role, opaqueToken);
     const cookieStore = await cookies();
     cookieStore.set(PARENT_COOKIE_OPTIONS.name, token, PARENT_COOKIE_OPTIONS);
 

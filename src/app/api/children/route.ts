@@ -81,7 +81,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         pinHash,
         age: age ?? null,
         gradeLevel: (gradeLevel ?? grade)?.trim() ?? null,
-      } as any)
+      } as unknown as typeof children.$inferInsert)
       .returning({
         id: children.id,
         displayName: children.displayName,

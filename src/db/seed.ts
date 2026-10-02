@@ -25,7 +25,7 @@ export async function runSeed(databaseUrl?: string) {
       displayName: 'System Admin',
       passwordHash: adminPasswordHash,
       role: 'admin',
-    } as any)
+    } as unknown as typeof schema.users.$inferInsert)
     .onConflictDoNothing()
     .returning({ id: schema.users.id });
 
@@ -42,7 +42,7 @@ export async function runSeed(databaseUrl?: string) {
       displayName: 'Test Parent',
       passwordHash: parentPasswordHash,
       role: 'parent',
-    } as any)
+    } as unknown as typeof schema.users.$inferInsert)
     .onConflictDoNothing()
     .returning({ id: schema.users.id });
 
@@ -57,7 +57,7 @@ export async function runSeed(databaseUrl?: string) {
       .values({
         name: 'Snow Family',
         ownerId: parent.id,
-      } as any)
+      } as unknown as typeof schema.households.$inferInsert)
       .onConflictDoNothing()
       .returning({ id: schema.households.id });
 
@@ -73,7 +73,7 @@ export async function runSeed(databaseUrl?: string) {
           householdId,
           userId: parent.id,
           role: 'owner',
-        } as any)
+        } as unknown as typeof schema.householdMembers.$inferInsert)
         .onConflictDoNothing();
 
       // 5. Seed 2 children (Alice & Bob)
@@ -97,7 +97,7 @@ export async function runSeed(databaseUrl?: string) {
             gradeLevel: '1st',
             age: 6,
           },
-        ] as any)
+        ] as unknown as (typeof schema.children.$inferInsert)[])
         .onConflictDoNothing();
 
       console.log('[seed] Created 2 children: Alice and Bob');

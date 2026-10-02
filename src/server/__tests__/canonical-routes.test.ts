@@ -208,4 +208,36 @@ describe('Canonical Auth Contracts & Opaque Session Architecture', () => {
       expect(payload?.sessionId).toBe(sessionId);
     });
   });
+
+  describe('Legacy Auth Route Equivalence (Zero Insecure Bypass)', () => {
+    it('legacy parent/register re-exports canonical register POST handler', async () => {
+      const canonical = await import('@/app/api/auth/register/route');
+      const legacy = await import('@/app/api/auth/parent/register/route');
+      expect(legacy.POST).toBe(canonical.POST);
+    });
+
+    it('legacy parent/login re-exports canonical login POST handler', async () => {
+      const canonical = await import('@/app/api/auth/login/route');
+      const legacy = await import('@/app/api/auth/parent/login/route');
+      expect(legacy.POST).toBe(canonical.POST);
+    });
+
+    it('legacy parent/logout re-exports canonical logout POST handler', async () => {
+      const canonical = await import('@/app/api/auth/logout/route');
+      const legacy = await import('@/app/api/auth/parent/logout/route');
+      expect(legacy.POST).toBe(canonical.POST);
+    });
+
+    it('legacy child/login re-exports canonical child-login POST handler', async () => {
+      const canonical = await import('@/app/api/auth/child-login/route');
+      const legacy = await import('@/app/api/auth/child/login/route');
+      expect(legacy.POST).toBe(canonical.POST);
+    });
+
+    it('legacy child/logout re-exports canonical logout POST handler', async () => {
+      const canonical = await import('@/app/api/auth/logout/route');
+      const legacy = await import('@/app/api/auth/child/logout/route');
+      expect(legacy.POST).toBe(canonical.POST);
+    });
+  });
 });

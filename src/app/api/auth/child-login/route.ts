@@ -5,10 +5,9 @@ import {
   createChildSession,
   generateOpaqueToken,
   hashToken,
-  verifyParentSession,
-  PARENT_COOKIE_NAME,
   CHILD_COOKIE_OPTIONS,
 } from '@/lib/auth/session';
+import { getParentSession } from '@/server/auth';
 import { ChildLoginSchema } from '@/server/contracts/auth';
 import { ERRORS } from '@/lib/api/errors';
 import { cookies } from 'next/headers';
@@ -17,19 +16,12 @@ import { eq, or } from 'drizzle-orm';
 
 // POST /api/auth/child-login
 // Body: { childId, pin }
-// SECURITY: requires active authenticated parent/guardian session cookie.
+// SECURITY: requires active authenticated parent/guardian session cookie (DB-backed, fail-closed).
 // Child must belong to parent's household. Returns: { child: { id, name } }
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    // ── 1. Require parent session ─────────────────────────────────────────────
-    const cookieStore = await cookies();
-    const parentToken = cookieStore.get(PARENT_COOKIE_NAME)?.value;
-
-    if (!parentToken) {
-      return ERRORS.parentSessionRequired();
-    }
-
-    const parentSession = await verifyParentSession(parentToken);
+    // ── 1. Require DB-backed active parent session ────────────────────────────
+    const parentSession = await getParentSession();
     if (!parentSession) {
       return ERRORS.parentSessionRequired();
     }
@@ -108,12 +100,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         childId: child.id,
         tokenHash,
         expiresAt,
-      } as any)
+      } as unknown as typeof sessions.$inferInsert)
       .returning({ id: sessions.id });
 
-    const sessionId = dbSession?.id ?? opaqueToken;
+    if (!dbSession) {
+      return ERRORS.internal('Failed to create session.');
+    }
 
-    const token = await createChildSession(child.id, child.householdId, sessionId);
+    const token = await createChildSession(child.id, child.householdId, opaqueToken);
+    const cookieStore = await cookies();
     cookieStore.set(CHILD_COOKIE_OPTIONS.name, token, CHILD_COOKIE_OPTIONS);
 
     return NextResponse.json({
