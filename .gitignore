@@ -46,3 +46,6 @@ next-env.d.ts
 /home-check*.png
 /settings-check*.png
 /home-fullscreen-check.png
+
+# Private worker orchestration records
+/.pi/
