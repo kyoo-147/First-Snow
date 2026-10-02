@@ -22,6 +22,26 @@ The interface is designed for young and neurodiverse learners who benefit from s
 
 > **Project status:** `main` contains the UI currently deployed at `app.agentkid.io.vn`. The interface, routes, responsive layouts, mock data, and selected companion assets are available. Production authentication, authoritative persistence, live AI orchestration, and complete backend integration are not yet shipped in this branch.
 
+## Product preview
+
+### Child learning home
+
+![AgentKid Snow child learning dashboard](docs/images/child-home.png)
+
+### Parent portal
+
+![AgentKid Snow parent dashboard](docs/images/parent-dashboard.png)
+
+### Lessons
+
+![AgentKid Snow lessons library](docs/images/lessons.png)
+
+### AI companion
+
+![AgentKid Snow AI companion interface](docs/images/ai-companion.png)
+
+The screenshots above show the current UI implementation. Displayed progress, sessions, observations, and alerts are demonstration data unless connected to an authoritative backend.
+
 ## What is available
 
 ### Child experience
