@@ -11,7 +11,16 @@ export function ParentAccountScreen() {
         eyebrow="Account"
         title="Parent account"
         description="Manage guardian profile details, protected access, and the selected child context for AgentKid."
-        action={<SnowButton variant="soft">Save account</SnowButton>}
+        action={
+          <div className="flex items-center gap-2">
+            <a href="/session-switch">
+              <SnowButton variant="soft" className="text-xs">Switch Profile</SnowButton>
+            </a>
+            <a href="/logout">
+              <SnowButton variant="ghost" className="text-xs text-snow-danger hover:bg-snow-danger/10 hover:text-snow-danger">Sign Out</SnowButton>
+            </a>
+          </div>
+        }
       />
 
       <div className="grid gap-4 md:grid-cols-3">

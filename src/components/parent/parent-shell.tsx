@@ -7,6 +7,7 @@ import {
   Bell,
   ChevronDown,
   ChevronRight,
+  LogOut,
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
@@ -133,7 +134,7 @@ export function ParentShell({
             </div>
           </nav>
 
-          <div className="shrink-0 border-t border-snow-border p-2">
+          <div className="shrink-0 border-t border-snow-border p-2 space-y-1">
             <Link
               href="/parent/settings/account"
               title={!showLabels ? "Account" : undefined}
@@ -149,6 +150,17 @@ export function ParentShell({
                 <span className="block truncate text-[11px] text-snow-muted">Parent account</span>
               </span>
               <ChevronRight className={cn("size-4 shrink-0 text-snow-muted", !showLabels && "md:hidden")} />
+            </Link>
+            <Link
+              href="/logout"
+              title={!showLabels ? "Sign Out" : undefined}
+              className={cn(
+                "snow-focus-ring flex min-h-8 items-center rounded-[var(--radius-md)] text-snow-muted transition hover:bg-snow-danger/10 hover:text-snow-danger",
+                showLabels ? "gap-3 px-2 text-[12px] font-semibold" : "md:justify-center md:px-0",
+              )}
+            >
+              <LogOut className="size-4 shrink-0" />
+              <span className={cn("truncate", !showLabels && "md:hidden")}>Sign Out</span>
             </Link>
           </div>
         </aside>

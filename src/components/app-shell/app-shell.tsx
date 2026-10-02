@@ -78,6 +78,14 @@ export function AppShell({
               <Link href="/parent" className="snow-focus-ring hidden min-h-11 items-center gap-2 rounded-full border border-snow-border bg-snow-surface px-4 text-sm font-extrabold text-snow-primary-dark transition hover:bg-snow-surface-soft md:inline-flex">
                 Parent portal <Lock className="size-4" />
               </Link>
+              <Link
+                href="/session-switch"
+                aria-label="Switch profile"
+                title="Switch profile"
+                className="snow-focus-ring hidden min-h-11 items-center gap-1.5 rounded-full border border-snow-border bg-snow-surface px-3 text-xs font-bold text-snow-muted transition hover:bg-snow-surface-soft hover:text-snow-primary-dark lg:inline-flex"
+              >
+                Switch
+              </Link>
               <Link href="/session/activities" aria-label="Open feelings check-in" className="snow-focus-ring grid size-10 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-primary-dark transition hover:bg-snow-surface-soft">
                 <Bell className="size-5" />
               </Link>
