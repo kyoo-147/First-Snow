@@ -30,11 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files — local overrides are ignored, but .env.example and .env.test are committed
-.env
-.env.local
-.env.*.local
-# .env.example and .env.test are committed intentionally
+# Environment files may contain credentials. Only the documented template is tracked.
+.env*
+!.env.example
 
 # vercel
 .vercel
