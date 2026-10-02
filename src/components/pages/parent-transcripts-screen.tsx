@@ -6,7 +6,6 @@ import Image from "next/image";
 import {
   AlertCircle,
   CalendarClock,
-  CheckCircle2,
   Download,
   Loader2,
   MessageSquare,
@@ -47,16 +46,13 @@ export function buildSyntheticSessions(grouped: Map<string, ApiTranscriptMessage
   }));
 }
 
-// Hardcoded child — auth is not in scope per task constraints
-const CHILD = { name: "Minh", age: 8, grade: "Grade 3", avatarUrl: "/images/snow-avatar-final.png" };
-
 // ── Inner Component ───────────────────────────────────────────────────────────
 
 function ParentTranscriptsContent({
-  childId = "minh",
+  childId,
   initialSessionId,
 }: {
-  childId?: string;
+  childId: string;
   initialSessionId?: string;
 }) {
   const searchParams = useSearchParams();
@@ -66,10 +62,14 @@ function ParentTranscriptsContent({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [allMessages, setAllMessages] = useState<ApiTranscriptMessage[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
-  const [reviewedSessionIds, setReviewedSessionIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleFetch = async () => {
+    if (!childId || !childId.trim()) {
+      setErrorMessage("childId is required to fetch transcripts");
+      setStatus("error");
+      return;
+    }
     setStatus("loading");
     setErrorMessage(null);
     try {
@@ -99,6 +99,13 @@ function ParentTranscriptsContent({
     let cancelled = false;
 
     async function loadTranscripts() {
+      if (!childId || !childId.trim()) {
+        if (cancelled) return;
+        setErrorMessage("childId is required to fetch transcripts");
+        setStatus("error");
+        return;
+      }
+
       try {
         const msgs = await getTranscripts(childId);
         if (cancelled) return;
@@ -134,7 +141,6 @@ function ParentTranscriptsContent({
   const sessions = buildSyntheticSessions(grouped);
   const activeSession = sessions.find((s) => s.id === activeSessionId) ?? sessions[0] ?? null;
   const transcripts = activeSession ? (grouped.get(activeSession.id) ?? []) : [];
-  const activeReviewed = activeSession ? reviewedSessionIds.includes(activeSession.id) : false;
 
   // Client-side search filter
   const filteredTranscripts = searchQuery.trim()
@@ -148,9 +154,9 @@ function ParentTranscriptsContent({
   return (
     <ParentPageFrame className="space-y-4">
       <PageHeader
-        eyebrow={`${CHILD.name}'s records`}
+        eyebrow="Child records"
         title="Transcripts"
-        description={`Review parent-safe conversation excerpts between ${CHILD.name} and AgentKid. These notes are for observation and follow-up only.`}
+        description="Review parent-safe conversation excerpts between the child and AgentKid. These notes are for observation and follow-up only."
         action={
           <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
             <div className="relative">
@@ -164,7 +170,12 @@ function ParentTranscriptsContent({
                 className="snow-font-readable h-11 w-full min-w-[260px] rounded-full border border-snow-border bg-snow-surface pl-9 pr-4 text-sm font-semibold outline-none transition focus:border-snow-primary focus:ring-2 focus:ring-snow-primary-soft"
               />
             </div>
-            <SnowButton variant="soft">
+            <SnowButton
+              variant="soft"
+              disabled
+              aria-disabled="true"
+              title="Export not yet available"
+            >
               <Download className="mr-2 size-4" />
               Export
             </SnowButton>
@@ -175,9 +186,9 @@ function ParentTranscriptsContent({
       {/* Status tiles */}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatusTile
-          label="Selected child"
-          value={`${CHILD.name}, age ${CHILD.age}`}
-          detail={CHILD.grade}
+          label="Child profile"
+          value={childId ? `Child (${childId})` : "Unspecified"}
+          detail="Route profile"
           icon={<ShieldCheck className="size-5 text-snow-primary" />}
         />
         <StatusTile
@@ -238,7 +249,7 @@ function ParentTranscriptsContent({
           <MessageSquare className="size-10 text-snow-muted/60" />
           <h2 className="snow-heading text-lg font-black text-snow-primary-dark">No transcripts yet</h2>
           <p className="snow-body-copy snow-font-readable max-w-[420px] font-semibold text-snow-muted">
-            Conversation records between {CHILD.name} and AgentKid will appear here once sessions take place.
+            Conversation records between the child and AgentKid will appear here once sessions take place.
           </p>
         </div>
       )}
@@ -263,7 +274,6 @@ function ParentTranscriptsContent({
             <div className="snow-scrollbar mt-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1">
               {sessions.map((session) => {
                 const isActive = session.id === activeSessionId;
-                const isReviewed = reviewedSessionIds.includes(session.id);
 
                 return (
                   <button
@@ -281,7 +291,6 @@ function ParentTranscriptsContent({
                       <span className="text-sm font-black text-snow-primary-dark">
                         {formatSnowDateTime(session.firstAt)}
                       </span>
-                      {isReviewed ? <CheckCircle2 className="size-4 text-snow-success" /> : null}
                     </span>
                     <span className="snow-body-small snow-font-readable font-semibold text-snow-muted">
                       Session ID: …{session.id.slice(-8)}
@@ -317,20 +326,6 @@ function ParentTranscriptsContent({
                         Session ID: {activeSession.id}
                       </p>
                     </div>
-                    <SnowButton
-                      variant={activeReviewed ? "soft" : "primary"}
-                      className="min-h-9 px-3 text-xs"
-                      onClick={() =>
-                        setReviewedSessionIds((ids) =>
-                          activeReviewed
-                            ? ids.filter((id) => id !== activeSession.id)
-                            : [...ids, activeSession.id],
-                        )
-                      }
-                    >
-                      <CheckCircle2 className="size-4" />
-                      {activeReviewed ? "Reviewed" : "Mark reviewed"}
-                    </SnowButton>
                   </div>
                   <div className="mt-4 grid gap-3 sm:grid-cols-3">
                     {[
@@ -359,21 +354,25 @@ function ParentTranscriptsContent({
                             >
                               <div
                                 className={cn(
-                                  "relative mt-1 size-8 shrink-0 overflow-hidden rounded-full border border-snow-border",
-                                  isSnow && "bg-white",
+                                  "relative mt-1 size-8 shrink-0 overflow-hidden rounded-full border border-snow-border grid place-items-center text-xs font-black",
+                                  isSnow ? "bg-white" : "bg-snow-primary-soft text-snow-primary-dark",
                                 )}
                               >
-                                <Image
-                                  src={isSnow ? "/images/snow-avatar-final.png" : CHILD.avatarUrl}
-                                  alt={isSnow ? "AgentKid" : CHILD.name}
-                                  fill
-                                  sizes="32px"
-                                  className="object-cover"
-                                />
+                                {isSnow ? (
+                                  <Image
+                                    src="/images/snow-avatar-final.png"
+                                    alt="AgentKid"
+                                    fill
+                                    sizes="32px"
+                                    className="object-cover"
+                                  />
+                                ) : (
+                                  <span>C</span>
+                                )}
                               </div>
                               <div className={cn("flex max-w-[78%] flex-col", !isSnow && "order-first items-end")}>
                                 <span className={cn("text-xs font-bold text-snow-muted", isSnow ? "ml-1" : "mr-1")}>
-                                  {isSnow ? "AgentKid" : CHILD.name}
+                                  {isSnow ? "AgentKid" : "Child"}
                                 </span>
                                 <div
                                   className={cn(
@@ -458,7 +457,7 @@ function ParentTranscriptsContent({
   );
 }
 
-export function ParentTranscriptsScreen(props: { childId?: string; initialSessionId?: string }) {
+export function ParentTranscriptsScreen(props: { childId: string; initialSessionId?: string }) {
   return (
     <Suspense
       fallback={

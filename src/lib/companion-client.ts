@@ -148,16 +148,20 @@ export function getMessages(
 
 /** GET /api/children/:childId/transcripts */
 export function getTranscripts(childId: string): Promise<ApiTranscriptMessage[]> {
+  if (!childId || !childId.trim()) {
+    throw new Error("childId is required to fetch transcripts");
+  }
   return request<ApiTranscriptMessage[]>(
-    `/api/children/${encodeURIComponent(childId)}/transcripts`,
+    `/api/children/${encodeURIComponent(childId.trim())}/transcripts`,
   );
 }
 
-/** GET /api/alerts?childId=... */
-export function getAlerts(childId: string): Promise<ApiAlert[]> {
-  return request<ApiAlert[]>(
-    `/api/alerts?childId=${encodeURIComponent(childId)}`,
-  );
+/** GET /api/alerts or /api/alerts?childId=... */
+export function getAlerts(childId?: string): Promise<ApiAlert[]> {
+  const url = childId
+    ? `/api/alerts?childId=${encodeURIComponent(childId.trim())}`
+    : "/api/alerts";
+  return request<ApiAlert[]>(url);
 }
 
 /** PATCH /api/alerts/:id */

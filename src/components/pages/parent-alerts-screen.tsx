@@ -24,9 +24,6 @@ import type { ApiAlert } from "@/lib/companion-client";
 import { formatSnowDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-// Hardcoded child — auth is not in scope per task constraints
-const CHILD = { id: "minh", name: "Minh", age: 8, grade: "Grade 3" };
-
 type ExtendedAlert = ApiAlert & {
   warning?: string;
   isUpdating?: boolean;
@@ -41,7 +38,7 @@ export function ParentAlertsScreen() {
     setStatus("loading");
     setErrorMessage(null);
     try {
-      const data = await getAlerts(CHILD.id);
+      const data = await getAlerts();
       setAlerts(data);
       setStatus("ready");
     } catch (e: unknown) {
@@ -61,7 +58,7 @@ export function ParentAlertsScreen() {
 
     async function loadAlerts() {
       try {
-        const data = await getAlerts(CHILD.id);
+        const data = await getAlerts();
         if (cancelled) return;
         setAlerts(data);
         setStatus("ready");
@@ -144,14 +141,14 @@ export function ParentAlertsScreen() {
         <StatusTile
           label="Urgent alerts"
           value={`${urgentAlertsCount}`}
-          detail={urgentAlertsCount === 0 ? "No immediate action flagged" : "High priority review"}
+          detail={urgentAlertsCount === 0 ? "No urgent alerts" : "High priority review"}
           icon={<ShieldCheck className="size-5 text-snow-success" />}
           tone="bg-snow-ice"
         />
         <StatusTile
-          label="Selected child"
-          value={`${CHILD.name}, age ${CHILD.age}`}
-          detail={CHILD.grade}
+          label="Total alerts"
+          value={`${alerts.length}`}
+          detail="Household records"
           icon={<ShieldAlert className="size-5 text-snow-primary" />}
           tone="bg-snow-lavender"
         />
@@ -196,7 +193,7 @@ export function ParentAlertsScreen() {
                 <CheckCircle2 className="size-10 text-snow-success" />
                 <h2 className="snow-heading text-lg font-black text-snow-primary-dark">No alerts</h2>
                 <p className="snow-body-copy snow-font-readable max-w-[420px] font-semibold text-snow-muted">
-                  AgentKid has not flagged any moments for review. Everything looks calm and healthy.
+                  No alerts were returned for your account.
                 </p>
               </div>
             ) : (
@@ -256,9 +253,9 @@ export function ParentAlertsScreen() {
                         Review details
                       </Link>
 
-                      {alert.linkedSessionId ? (
+                      {alert.linkedSessionId && alert.childId ? (
                         <Link
-                          href={`/parent/children/${CHILD.id}/transcripts?session=${encodeURIComponent(alert.linkedSessionId)}`}
+                          href={`/parent/children/${encodeURIComponent(alert.childId)}/transcripts?session=${encodeURIComponent(alert.linkedSessionId)}`}
                           className="snow-focus-ring inline-flex min-h-10 items-center gap-1.5 rounded-full border border-snow-border px-4 text-sm font-black text-snow-primary-dark hover:bg-snow-surface-soft"
                         >
                           View session
@@ -302,24 +299,6 @@ export function ParentAlertsScreen() {
                 AgentKid surfaces moments worth reviewing. The parent decides whether any follow-up
                 is needed.
               </p>
-            </SnowCard>
-            <SnowCard className="p-5">
-              <h2 className="text-lg font-black text-snow-primary-dark">Current safety posture</h2>
-              <div className="mt-4 space-y-3">
-                {[
-                  "Camera preview is off",
-                  "Emergency settings are parent-only",
-                  "No urgent alerts today",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-center gap-3 rounded-[var(--radius-md)] bg-snow-surface-soft px-4 py-3"
-                  >
-                    <CheckCircle2 className="size-4 text-snow-success" />
-                    <span className="text-sm font-bold text-snow-primary-dark">{item}</span>
-                  </div>
-                ))}
-              </div>
             </SnowCard>
             <SnowCard className="p-5">
               <h2 className="text-lg font-black text-snow-primary-dark">Review posture</h2>

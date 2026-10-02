@@ -93,6 +93,21 @@ async function main() {
     },
   );
 
+  // T4: alert link helper uses alert.childId (no hardcoded child)
+  function getAlertSessionLink(alert: { childId: string; linkedSessionId?: string }): string | null {
+    if (!alert.linkedSessionId || !alert.childId) return null;
+    return `/parent/children/${encodeURIComponent(alert.childId)}/transcripts?session=${encodeURIComponent(alert.linkedSessionId)}`;
+  }
+  const link = getAlertSessionLink({ childId: "child-abc", linkedSessionId: "sess-xyz" });
+  assert(
+    link === "/parent/children/child-abc/transcripts?session=sess-xyz",
+    "getAlertSessionLink: uses alert.childId and linkedSessionId",
+  );
+  assert(
+    getAlertSessionLink({ childId: "child-abc" }) === null,
+    "getAlertSessionLink: returns null when no linkedSessionId",
+  );
+
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);
 }

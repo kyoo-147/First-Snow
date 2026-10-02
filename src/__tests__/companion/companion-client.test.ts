@@ -1,7 +1,16 @@
 // src/__tests__/companion/companion-client.test.ts
 // Run: npx ts-node --skipProject --compilerOptions '{"module":"commonjs","esModuleInterop":true,"skipLibCheck":true,"lib":["ES2020","DOM"]}' src/__tests__/companion/companion-client.test.ts
 // Requires: global fetch (Node 18+)
-import { createSession, getSession, sendMessage, getMessages, getAlerts, markAlertRead, CompanionApiError } from "../../lib/companion-client";
+import {
+  createSession,
+  getSession,
+  sendMessage,
+  getMessages,
+  getTranscripts,
+  getAlerts,
+  markAlertRead,
+  CompanionApiError,
+} from "../../lib/companion-client";
 
 let passed = 0;
 let failed = 0;
@@ -114,13 +123,22 @@ async function main() {
     }
   );
 
-  // T9: getAlerts returns array
+  // T9: getAlerts returns array (child-specific and household-wide)
+  let capturedAlertsUrl = "";
   await withMockFetch(
-    () => new Response(JSON.stringify([{ id: "a-1", childId: "c1", title: "Alert", description: "desc", severity: "low", createdAt: "2026-01-01T00:00:00Z", readAt: null }]), { status: 200 }),
+    (input) => {
+      capturedAlertsUrl = typeof input === "string" ? input : input.toString();
+      return new Response(JSON.stringify([{ id: "a-1", childId: "c1", title: "Alert", description: "desc", severity: "low", createdAt: "2026-01-01T00:00:00Z", readAt: null }]), { status: 200 });
+    },
     async () => {
       const alerts = await getAlerts("c1");
       assert(Array.isArray(alerts), "getAlerts: returns array");
       assert(alerts[0].id === "a-1", "getAlerts: first alert id matches");
+      assert(capturedAlertsUrl === "/api/alerts?childId=c1", "getAlerts: queries by childId when supplied");
+
+      // Household alerts: no childId argument
+      await getAlerts();
+      assert(capturedAlertsUrl === "/api/alerts", "getAlerts: calls household endpoint /api/alerts when childId omitted");
     }
   );
 
@@ -162,6 +180,31 @@ async function main() {
       assert(capturedPollUrl === "/api/companion/sessions/sess%2Fspecial%3F1%23a/messages?afterId=msg%2F1", "getMessages: encodes sessionId and afterId in URL path");
     }
   );
+
+  // T13: getTranscripts requires childId and calls /api/children/:childId/transcripts
+  let capturedTranscriptsUrl = "";
+  await withMockFetch(
+    (input) => {
+      capturedTranscriptsUrl = typeof input === "string" ? input : input.toString();
+      return new Response(JSON.stringify([{ id: "tm-1", sessionId: "s-1", role: "assistant", content: "hello", createdAt: "2026-01-01T00:00:00Z" }]), { status: 200 });
+    },
+    async () => {
+      const msgs = await getTranscripts("child-123");
+      assert(Array.isArray(msgs), "getTranscripts: returns array");
+      assert(capturedTranscriptsUrl === "/api/children/child-123/transcripts", "getTranscripts: calls /api/children/:childId/transcripts with route childId");
+    }
+  );
+
+  // T14: getTranscripts throws Error when childId is missing or empty
+  let threwMissingChildId = false;
+  try {
+    await getTranscripts("");
+  } catch (e) {
+    if (e instanceof Error && e.message.includes("childId is required")) {
+      threwMissingChildId = true;
+    }
+  }
+  assert(threwMissingChildId, "getTranscripts: throws error when childId is empty");
 
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);
