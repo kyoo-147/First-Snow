@@ -1,5 +1,5 @@
 // src/__tests__/companion/companion-client.test.ts
-// Run: npx ts-node --skipProject --compiler-options '{"module":"commonjs","esModuleInterop":true}' src/__tests__/companion/companion-client.test.ts
+// Run: npx ts-node --skipProject --compilerOptions '{"module":"commonjs","esModuleInterop":true,"skipLibCheck":true,"lib":["ES2020","DOM"]}' src/__tests__/companion/companion-client.test.ts
 // Requires: global fetch (Node 18+)
 import { createSession, getSession, sendMessage, getMessages, getAlerts, markAlertRead, CompanionApiError } from "../../lib/companion-client";
 
@@ -102,6 +102,25 @@ async function main() {
         assert(e instanceof CompanionApiError, "markAlertRead: 404 throws CompanionApiError");
         assert((e as CompanionApiError).status === 404, "markAlertRead: status 404");
       }
+    }
+  );
+
+  // T8: getSession happy path
+  await withMockFetch(
+    () => new Response(JSON.stringify({ id: "sess-1", childId: "c1", createdAt: "2026-01-01T00:00:00Z", status: "active" }), { status: 200 }),
+    async () => {
+      const s = await getSession("sess-1");
+      assert(s.id === "sess-1", "getSession: returns session id");
+    }
+  );
+
+  // T9: getAlerts returns array
+  await withMockFetch(
+    () => new Response(JSON.stringify([{ id: "a-1", childId: "c1", title: "Alert", description: "desc", severity: "low", createdAt: "2026-01-01T00:00:00Z", readAt: null }]), { status: 200 }),
+    async () => {
+      const alerts = await getAlerts("c1");
+      assert(Array.isArray(alerts), "getAlerts: returns array");
+      assert(alerts[0].id === "a-1", "getAlerts: first alert id matches");
     }
   );
 

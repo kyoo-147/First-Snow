@@ -1,6 +1,6 @@
 // src/__tests__/companion/talk-shell.test.ts
 // Tests the session lifecycle logic extracted as pure functions (no DOM rendering).
-// Run: npx ts-node --project src/__tests__/tsconfig.test.json src/__tests__/companion/talk-shell.test.ts
+// Run: npx ts-node --skipProject --compilerOptions '{"module":"commonjs","esModuleInterop":true,"skipLibCheck":true,"lib":["ES2020","DOM"]}' src/__tests__/companion/talk-shell.test.ts
 
 import { CompanionApiError } from "../../lib/companion-client";
 
