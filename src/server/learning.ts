@@ -218,7 +218,7 @@ export async function completeLessonAttempt(childId: string, attemptId: string) 
           completionCount: sql`${lessonProgress.completionCount} + 1`,
           lastAttemptAt: now,
           updatedAt: now,
-        } as Partial<typeof lessonProgress.$inferInsert>,
+        },
       });
     await tx.insert(rewards).values({
       childId,
