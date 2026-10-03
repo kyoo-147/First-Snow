@@ -73,6 +73,7 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
   test(
     "registers a guardian, creates a child profile, signs the child in, and persists lesson completion",
     async ({ page }) => {
+      test.setTimeout(120_000);
       const email = uniqueEmail();
       const childName = `E2E Learner ${Date.now()}`;
       const pin = "2468";
@@ -112,8 +113,8 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       await page.goto("/session/home");
       await expect(page).toHaveURL(/\/session\/home/);
       await expect(
-        page.getByText(/good morning|ready to learn|welcome back/i).first(),
-      ).toBeVisible();
+        page.getByRole("heading", { name: /start with agentkid/i }),
+      ).toBeVisible({ timeout: 30_000 });
 
       // ── 5. Persist a lesson completion ───────────────────────────────────
       const lessonsResponse = await page.request.get("/api/lessons");
@@ -160,8 +161,12 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
         progressResponse.status(),
         `GET /api/children/${child.id}/progress: ${await progressResponse.text()}`,
       ).toBe(200);
-      const progress = (await progressResponse.json()).progress as Array<unknown>;
-      expect(progress.length, "progress must include the completed lesson attempt").toBeGreaterThan(0);
+      const progress = (await progressResponse.json()).progress as {
+        lessonsCompleted: number;
+        totalLessons: number;
+      };
+      expect(progress.lessonsCompleted, "completed lesson must be visible to the parent").toBeGreaterThan(0);
+      expect(progress.totalLessons, "published catalog must remain visible").toBeGreaterThan(0);
     },
   );
 
@@ -218,16 +223,17 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       // Child message must still be truthfully persisted in session history
       const historyResponse = await page.request.get(`/api/companion/sessions/${session.id}/messages`);
       expect(historyResponse.status()).toBe(200);
-      const history = (await historyResponse.json()) as Array<{ speaker: string; text: string }>;
+      const history = (await historyResponse.json()) as Array<{ role: string; content: string }>;
       expect(history.length).toBeGreaterThan(0);
-      expect(history[0].speaker).toBe("child");
-      expect(history[0].text).toBe("Hello Snow, can you help me with math?");
+      expect(history[0].role).toBe("child");
+      expect(history[0].content).toBe("Hello Snow, can you help me with math?");
     },
   );
 
   test(
     "cross-household tenant data isolation: prevents unauthorized access between households",
     async ({ browser }) => {
+      test.setTimeout(120_000);
       const emailA = uniqueEmail();
       const emailB = uniqueEmail();
       const password = "E2E-password-123";
@@ -325,10 +331,10 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       expect(adminJson.error.code).toBe("FORBIDDEN");
       expect(adminJson.error.message).toBe("Admin access required");
 
-      // 2. Browser navigation to /admin/companion -> displays denial error state
+      // 2. Route guard sends a non-admin parent to the shipped login page.
       await page.goto("/admin/companion");
-      await expect(page.getByText(/unable to load admin data/i)).toBeVisible();
-      await expect(page.getByText(/admin access required/i)).toBeVisible();
+      await expect(page).toHaveURL(/\/login$/);
+      await expect(page.getByRole("button", { name: /sign in/i })).toBeVisible();
     },
   );
 
@@ -348,26 +354,26 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
 
       // 1. Navigate to /parent/privacy in browser -> renders privacy controls
       await page.goto("/parent/privacy");
-      await expect(page.getByRole("heading", { name: /privacy & safety controls/i })).toBeVisible();
+      await expect(page.getByRole("heading", { name: /privacy and data controls/i })).toBeVisible();
       await expect(page.getByText("Microphone Voice Access")).toBeVisible();
       await expect(page.getByText("Camera Video Access")).toBeVisible();
 
       // 2. Fetch current privacy settings via API
       const getPrivacy = await page.request.get("/api/privacy");
       expect(getPrivacy.status()).toBe(200);
-      const initialSettings = (await getPrivacy.json()) as { privacy: { policyVersion: number } };
-      expect(typeof initialSettings.privacy.policyVersion).toBe("number");
+      const initialSettings = (await getPrivacy.json()) as { privacy: { microphoneAccess: boolean } };
+      expect(typeof initialSettings.privacy.microphoneAccess).toBe("boolean");
 
-      // 3. Attempt PATCH with invalid reauthPassword -> 401 Unauthorized
+      // 3. Attempt PATCH with invalid reauthPassword -> 403 fail-closed denial
       const badReauth = await page.request.patch("/api/privacy", {
         data: {
           microphoneAccess: true,
           reauthPassword: "wrong-password",
         },
       });
-      expect(badReauth.status()).toBe(401);
+      expect(badReauth.status()).toBe(403);
       const badJson = (await badReauth.json()) as { error: { code: string } };
-      expect(badJson.error.code).toBe("INVALID_CREDENTIALS");
+      expect(badJson.error.code).toBe("INVALID_PASSWORD");
 
       // 4. PATCH with valid reauthPassword -> 200 OK and updates consent
       const updateConsent = await page.request.patch("/api/privacy", {

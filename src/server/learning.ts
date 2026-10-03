@@ -214,7 +214,9 @@ export async function completeLessonAttempt(childId: string, attemptId: string) 
         target: [lessonProgress.childId, lessonProgress.lessonId],
         set: {
           status: 'completed',
-          bestScore: sql`case when ${score} is null then ${lessonProgress.bestScore} when ${lessonProgress.bestScore} is null then ${score} else greatest(${lessonProgress.bestScore}, ${score}) end`,
+          bestScore: score === null
+            ? sql`${lessonProgress.bestScore}`
+            : sql`greatest(coalesce(${lessonProgress.bestScore}, ${score}), ${score})`,
           completionCount: sql`${lessonProgress.completionCount} + 1`,
           lastAttemptAt: now,
           updatedAt: now,
