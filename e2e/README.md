@@ -22,7 +22,7 @@ E2E_BASE_URL=https://staging.example.com npx playwright test
 
 ### Full Authenticated Flows (Mutating)
 
-Mutating tests write records to the target database (guardian registration, child profiles, lesson attempts). They **require** explicit mutation permission and disposable DB attestation:
+Mutating tests write records to the target database (guardian registration, child profiles, lesson attempts, companion sessions, privacy settings). They **require** explicit mutation permission and disposable DB attestation:
 
 ```bash
 # 1. Apply migrations + seed lessons on disposable database
@@ -40,26 +40,36 @@ E2E_ALLOW_MUTATIONS=1 E2E_DISPOSABLE_DB=1 npx tsx scripts/e2e/run.ts
 
 | File | Description |
 |------|-------------|
-| `e2e/critical-flow.e2e.ts` | Public smoke tests (read-only), authenticated release flow (mutating), and explicit blocked test annotations |
+| `e2e/critical-flow.e2e.ts` | Public smoke tests (read-only), authenticated critical flows (registration, lesson completion, companion-unavailable, cross-household isolation, parent admin denial, privacy consent), and genuinely blocked external flow annotations |
 
-## Blocked Flows (Not Covered)
+## Executable Flows Covered
 
-The following flows cannot be executed in browser E2E without additional mock or environment infrastructure. They are documented in detail in [docs/verification/BLOCKED.md](../docs/verification/BLOCKED.md):
+- **Public Smoke (Read-Only):**
+  - Unauthenticated redirect from `/session/home` to `/child-login`.
+  - Public `/register` form rendering.
+- **Authenticated Flows (Mutating — requires `E2E_ALLOW_MUTATIONS=1` and `E2E_DISPOSABLE_DB=1`):**
+  - Guardian registration, child creation, child sign-in, and lesson completion.
+  - **Companion Provider-Unavailable:** Child initiates companion session, verifies truthful HTTP 503 `PROVIDER_UNAVAILABLE` when external AI is unconfigured, and confirms child message persistence.
+  - **Cross-Household Tenant Isolation:** Provisions two separate households across independent browser contexts; verifies HTTP 403 `FORBIDDEN` across cross-household transcripts, alerts, and companion messages.
+  - **Parent Admin Denial:** Strictly rejects non-admin parents from administrative API (`GET /api/admin/dashboard` returns 403) and displays denial state in `/admin/companion` UI.
+  - **Privacy Consent & Safety:** Verifies `/parent/privacy` UI controls, enforces password re-authentication (401 on failure), updates capability consents via `PATCH /api/privacy`, and validates database persistence.
+
+## Genuinely Blocked Flows (Not Covered)
+
+The following flows require external third-party runtimes or physical hardware and remain **BLOCKED**. Documented in full in [docs/verification/BLOCKED.md](../docs/verification/BLOCKED.md):
 
 | Flow | Status | Reason & Rationale |
 |------|--------|--------------------|
-| Companion voice & chat sessions | 🚫 BLOCKED (NOT COVERED) | Requires live browser audio hardware, VAD Web ONNX runtime, and WebSocket streaming server |
-| Multi-household tenant data isolation | 🚫 BLOCKED (NOT COVERED) | Requires multi-household test fixture and cross-account probe credentials |
-| Admin dashboard & controls | 🚫 BLOCKED (NOT COVERED) | Requires privileged administrator role provisioning outside public registration |
-| Privacy controls & data deletion | 🚫 BLOCKED (NOT COVERED) | Destructive data purge and parent safety re-auth modal verification |
-| PIN pad UI button clicks | 🚫 BLOCKED | Runtime digit button selectors unverified in static CI; authenticated API fallback used |
-| Test-owned DB cleanup | 🚫 BLOCKED | No public delete API; requires disposable test database |
+| Live2D visual model rendering & character assets | 🚫 BLOCKED | Requires external Live2D Cubism WebGL runtime and model assets |
+| Live external voice streaming & hardware microphone | 🚫 BLOCKED | Requires physical microphone device permissions and external speech synthesis service |
+| PIN pad UI button clicks | 🚫 BLOCKED | Runtime digit selectors unverified in static CI; authenticated API fallback used |
+| Direct DB teardown / bulk tenant purge | 🚫 BLOCKED | No public delete API; requires disposable test database |
 
 ## Environment Variables
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `E2E_ALLOW_MUTATIONS` | unset / `0` | Set to `1` to authorize mutating tests (guardian registration, child creation, lesson completion) |
+| `E2E_ALLOW_MUTATIONS` | unset / `0` | Set to `1` to authorize mutating tests (registration, child creation, lesson completion, privacy updates) |
 | `E2E_DISPOSABLE_DB` / `E2E_DISPOSABLE_DB_ATTESTATION` | unset / `0` | Set to `1` to attest that the target database is disposable and safe for test writes |
 | `E2E_BASE_URL` | `http://127.0.0.1:3000` | Base URL of the target server. When omitted, Playwright starts local dev server |
 | `DATABASE_URL` | from `.env.local` | Database connection string for the dev server started by Playwright |

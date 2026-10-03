@@ -8,17 +8,17 @@ Config: `playwright.config.ts` (testDir: `./e2e`)
 
 ## Overview & Safety Policy
 
-The Snow browser E2E suite is designed to validate critical release workflows while protecting shared environments from unintended data corruption.
+The Snow browser E2E suite validates critical release workflows while protecting shared environments from unintended data corruption.
 
 ### Read-Only vs. Mutating Tests
 
 1. **Public Smoke (Read-Only):**
    - Executed by default when running `npx playwright test`.
-   - Exercises publicly accessible routes (`/register`, `/session/home` redirect to `/child-login`).
+   - Exercises unauthenticated public routes (`/register`, `/session/home` redirect to `/child-login`).
    - Performs zero mutations against the target database.
 
 2. **Authenticated Flows (Mutating):**
-   - Exercises real user registration, child creation, session tokens, and lesson attempts.
+   - Exercises real user registration, child creation, session tokens, lesson attempts, companion sessions, cross-household isolation boundaries, admin RBAC denial, and privacy consent updates.
    - **Strictly requires BOTH environment flags:**
      - `E2E_ALLOW_MUTATIONS=1`: Explicit authorization to write records.
      - `E2E_DISPOSABLE_DB=1` (or `E2E_DISPOSABLE_DB_ATTESTATION=1`): Attestation that the target database is a dedicated throwaway test environment.
@@ -27,62 +27,47 @@ The Snow browser E2E suite is designed to validate critical release workflows wh
 
 ---
 
-## Blocked Flows (Not Covered in E2E)
+## Executable Flows Converted from Previous Blocks
 
-The following four major application subsystems are **NOT COVERED** by browser E2E tests and are explicitly marked **BLOCKED**:
+Where current product contracts permit without external third-party dependencies, previously blocked areas have been converted into executable real API/browser tests:
 
-### 1. Companion Flows (Voice & Chat)
-- **Routes / Components:** `/companion`, `/companion/talk`, `/companion/avatar`, `/api/companion/sessions`, `/api/companion/ws-ticket`, `/api/alerts`, `/api/children/[childId]/transcripts`
-- **Status:** 🚫 **BLOCKED — NOT COVERED in browser E2E**
-- **Why Blocked:**
-  - Full voice companion interaction requires live browser audio capture permissions (`getUserMedia`), WebAudio processing, and the ONNX / `@ricky0123/vad-web` voice activity detection model.
-  - Requires a persistent WebSocket connection to an active companion streaming server with real-time speech/LLM synthesis.
-  - Headless browser runners cannot reliably instantiate audio devices or emulate bi-directional voice streams without a specialized audio fixture.
-- **Current Coverage:** Verified at the unit and contract test level via `src/__tests__/companion/*.test.ts` and `src/vtuber-app/src/__tests__/*.test.mjs`.
-- **To Unblock for E2E:** Implement a mock audio input stream injector in Playwright or an HTTP-mocked WebSocket sidecar for the companion voice protocol.
+### 1. Companion Provider-Unavailable Flow
+- **Coverage:** Executable in `e2e/critical-flow.e2e.ts`.
+- **Contract Tested:** When a child initiates a companion session (`POST /api/companion/sessions`) and submits a message (`POST /api/companion/sessions/:id/messages`) without an external AI provider configured, the server truthfully responds with HTTP 503 `PROVIDER_UNAVAILABLE` while persisting the child message in session history.
 
-### 2. Multi-Household Tenant Data Isolation
-- **Routes / Components:** Cross-household data boundaries (`src/server/__tests__/cross-household.test.ts`), household-scoped API endpoints (`/api/children`, `/api/alerts`, `/api/privacy`).
-- **Status:** 🚫 **BLOCKED — NOT COVERED in browser E2E**
-- **Why Blocked:**
-  - Validating tenant isolation requires setting up multiple distinct guardian accounts with separate households, maintaining independent authenticated browser contexts in parallel, and attempting cross-household reads/writes to assert `403 Forbidden` responses.
-  - Single-user smoke flows cannot attest to multi-tenant safety without an orchestrator for cross-household credential exchange.
-- **Current Coverage:** Enforced at the database and server route handler level; verified via integration tests in `src/server/__tests__/cross-household.test.ts`.
-- **To Unblock for E2E:** Create a dedicated multi-tenant fixture that provisions Household A and Household B and asserts forbidden cross-access across two browser contexts.
+### 2. Cross-Household Tenant Data Isolation
+- **Coverage:** Executable in `e2e/critical-flow.e2e.ts`.
+- **Contract Tested:** Multi-tenant isolation verified by provisioning two independent guardian households (Household A and Household B) with distinct child profiles across separate browser contexts. Probes from Household B to Household A's transcripts (`/api/children/:id/transcripts`), alerts (`/api/alerts?childId=:id`), and companion messages (`/api/companion/sessions/:id/messages`) all receive HTTP 403 `FORBIDDEN`.
 
-### 3. Admin Dashboard & Privileged Controls
-- **Routes / Components:** `/admin/companion`, `src/components/admin/admin-shell.tsx`, `src/components/pages/admin-dashboard-screen.tsx`
-- **Status:** 🚫 **BLOCKED — NOT COVERED in browser E2E**
-- **Why Blocked:**
-  - Admin surfaces require pre-provisioned administrator role credentials and session cookies.
-  - There is no public self-service registration route for administrative accounts.
-  - Seeding admin users and credentials into live test databases requires direct database access or administrative auth fixtures that are out of scope for public smoke testing.
-- **Current Coverage:** Covered via component tests and server middleware unit tests.
-- **To Unblock for E2E:** Provide an administrative seed profile or an environment-gated admin SSO mock in staging.
+### 3. Parent Admin Access Denial (Strict RBAC)
+- **Coverage:** Executable in `e2e/critical-flow.e2e.ts`.
+- **Contract Tested:** Authenticated parents (role: `parent`) attempting to access administrative API endpoints (`GET /api/admin/dashboard`) receive HTTP 403 `FORBIDDEN` with `"Admin access required"`. Navigating to `/admin/companion` in the browser renders the truthful error denial state (`"Unable to load admin data"` / `"Admin access required"`).
 
-### 4. Privacy Controls & Account Deletion
-- **Routes / Components:** `/parent/privacy`, `/api/privacy`, `src/components/safety/deletion-request-dialog.tsx`, `src/components/safety/reauth-modal.tsx`
-- **Status:** 🚫 **BLOCKED — NOT COVERED in browser E2E**
-- **Why Blocked:**
-  - Privacy flows involve irreversible data deletion (purging guardian, child, and lesson progress records).
-  - Executing real deletion during an E2E run destroys the test subject and invalidates subsequent test assertions.
-  - Deletion requests require parent safety re-authentication (password confirmation modal), which requires dedicated modal and asynchronous job testing fixtures.
-- **Current Coverage:** Verified via server-level safety tests in `src/server/safety/safety.test.ts`.
-- **To Unblock for E2E:** Build an isolated teardown verification test that runs strictly as the final step of a disposable container run.
+### 4. Privacy Consent & Re-Authentication Flows
+- **Coverage:** Executable in `e2e/critical-flow.e2e.ts`.
+- **Contract Tested:** Authenticated guardians navigate to `/parent/privacy`, verifying that capability consent controls (Microphone, Camera) render. The test executes `GET /api/privacy`, asserts rejection of consent modifications with invalid password (`401 INVALID_CREDENTIALS`), and persists updated capability consents with valid password verification (`200 OK` on `PATCH /api/privacy`), confirming database persistence.
 
 ---
 
-## Infrastructure Blockers in Authenticated Flows
+## Genuinely Blocked External Flows
 
-### 5. PIN Pad UI Interaction
-- **Status:** 🚫 **BLOCKED — Handled via API Fallback**
-- **Why Blocked:** Digit buttons in `ChildLoginView` depend on dynamic runtime ARIA labels that could not be verified against a live UI server at commit time.
-- **Mitigation:** The child session is authenticated deterministically via `POST /api/auth/child-login` using the real database session API (no mocking).
+The following flows cannot be executed in browser E2E without real hardware or third-party external services and remain **BLOCKED**:
 
-### 6. Test-Owned Database Cleanup
-- **Status:** 🚫 **BLOCKED — Relies on Disposable DB Attestation**
-- **Why Blocked:** The application exposes no administrative bulk-deletion API endpoint. Direct SQL connection from the Playwright process is intentionally avoided to keep the test runner decoupled from database internals.
-- **Mitigation:** Test records use unique timestamped emails (`e2e-<timestamp>-<rand>@example.test`) and mutating runs are gated on disposable DB attestation (`E2E_DISPOSABLE_DB=1`).
+### 1. Live2D Visual Canvas & Character Assets
+- **Status:** 🚫 **BLOCKED (GENUINELY EXTERNAL)**
+- **Why Blocked:** Requires the proprietary Live2D Cubism WebGL canvas runtime and external character model assets (`.moc3` / textures) that are unconfigured in headless CI.
+
+### 2. Live External Voice Streaming & Hardware Microphone Capture
+- **Status:** 🚫 **BLOCKED (GENUINELY EXTERNAL)**
+- **Why Blocked:** End-to-end voice loopback requires physical operating system microphone hardware access and an active upstream speech synthesis/transcription provider.
+
+### 3. PIN Pad UI Button Clicks
+- **Status:** 🚫 **BLOCKED (Handled via API Session Fallback)**
+- **Why Blocked:** Sourced from runtime dynamic component attributes not statically verifiable without visual inspect tooling; the critical path child login is executed via authenticated API (`POST /api/auth/child-login`).
+
+### 4. Direct Database-Owned Teardown / Bulk Tenant Purge
+- **Status:** 🚫 **BLOCKED (Relies on Disposable DB Attestation)**
+- **Why Blocked:** The application exposes no administrative bulk-deletion endpoint. Decoupled Playwright runs must run against disposable databases.
 
 ---
 
@@ -101,8 +86,10 @@ The following four major application subsystems are **NOT COVERED** by browser E
 | Lesson attempt creation & completion | Authenticated | ✅ COVERED | `e2e/critical-flow.e2e.ts` (gated by `E2E_ALLOW_MUTATIONS=1`) |
 | Child logout & Guardian re-login | Authenticated | ✅ COVERED | `e2e/critical-flow.e2e.ts` (gated by `E2E_ALLOW_MUTATIONS=1`) |
 | Parent views child learning progress | Authenticated | ✅ COVERED | `e2e/critical-flow.e2e.ts` (gated by `E2E_ALLOW_MUTATIONS=1`) |
-| Test-owned DB cleanup | Teardown | 🚫 BLOCKED | No public delete API; requires disposable DB |
-| Companion voice & chat interactions | Companion | 🚫 BLOCKED (NOT COVERED) | Audio/VAD/WebSocket infrastructure required |
-| Cross-household tenant isolation | Security | 🚫 BLOCKED (NOT COVERED) | Multi-tenant browser test fixture required |
-| Admin dashboard & system configuration | Admin | 🚫 BLOCKED (NOT COVERED) | Privileged admin credential seeding required |
-| Privacy controls & data deletion | Safety | 🚫 BLOCKED (NOT COVERED) | Destructive deletion & safety reauth required |
+| Companion provider-unavailable truthful error | Companion | ✅ COVERED | `e2e/critical-flow.e2e.ts` (503 response & message persistence) |
+| Multi-household tenant data isolation | Security | ✅ COVERED | `e2e/critical-flow.e2e.ts` (403 on cross-household transcripts/alerts/sessions) |
+| Parent admin access denial (strict RBAC) | Admin | ✅ COVERED | `e2e/critical-flow.e2e.ts` (403 on `/api/admin/dashboard` & UI denial) |
+| Privacy consent & re-authentication | Privacy / Safety | ✅ COVERED | `e2e/critical-flow.e2e.ts` (UI, 401 on bad reauth, 200 on consent PATCH) |
+| Live2D visual model rendering | External | 🚫 BLOCKED | Requires external Live2D runtime and model assets |
+| Live external voice streaming & hardware mic | External | 🚫 BLOCKED | Requires physical microphone and external voice provider |
+| Test-owned DB cleanup | Teardown | 🚫 BLOCKED | No public delete API; requires disposable test database |

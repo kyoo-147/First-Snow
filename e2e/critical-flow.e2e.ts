@@ -6,15 +6,15 @@
  *
  * SAFETY & MUTATION POLICY:
  *   - Public smoke tests are strictly read-only and run against unauthenticated pages.
- *   - Mutating tests write real rows to the DB (guardians, children, attempts).
+ *   - Mutating tests write real rows to the DB (guardians, children, attempts, consents).
  *     They REQUIRE BOTH:
  *       1. E2E_ALLOW_MUTATIONS=1
  *       2. Disposable DB attestation (E2E_DISPOSABLE_DB=1 or E2E_DISPOSABLE_DB_ATTESTATION=1)
  *     If either is missing, mutating tests are skipped to protect non-disposable databases.
  *
- * BLOCKED FLOWS:
- *   Companion, cross-household isolation, admin, and privacy/deletion flows are
- *   explicitly BLOCKED and documented in docs/verification/BLOCKED.md.
+ * GENUINELY BLOCKED FLOWS:
+ *   Live2D model rendering, live external audio streaming, and test-owned direct DB teardown
+ *   remain genuinely blocked and documented in docs/verification/BLOCKED.md.
  */
 
 import { expect, test } from "playwright/test";
@@ -44,8 +44,8 @@ test.describe("Snow release critical paths – public smoke (read-only)", () => 
 });
 
 // ---------------------------------------------------------------------------
-// Full registration → child creation → child sign-in → lesson completion flow
-// Mutating: requires E2E_ALLOW_MUTATIONS=1 and disposable DB attestation.
+// Authenticated Critical Release Flows (Mutating)
+// Requires E2E_ALLOW_MUTATIONS=1 and disposable DB attestation.
 // ---------------------------------------------------------------------------
 const allowMutations = process.env.E2E_ALLOW_MUTATIONS === "1";
 const hasDisposableDbAttestation =
@@ -79,11 +79,6 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
 
       // ── 1. Register guardian via the UI ─────────────────────────────────
       await page.goto("/register");
-
-      // Labels come from the real ParentRegisterForm component:
-      //   htmlFor="parent-register-name"  → "Guardian Full Name"
-      //   htmlFor="parent-register-email" → "Guardian Email"
-      //   htmlFor="parent-register-password" → "Password"
       await page.getByLabel("Guardian Full Name").fill("E2E Guardian");
       await page.getByLabel("Guardian Email").fill(email);
       await page.getByLabel("Password").fill("E2E-password-123");
@@ -102,21 +97,7 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       expect(child.name).toBe(childName);
 
       // ── 3. Navigate to child login (parent still signed in — required by API) ──
-      //
-      // SECURITY NOTE: /api/auth/child-login requires an active parent session.
-      // The guardian cookie set during registration is still present so the
-      // child PIN login will be authorised.
       await page.goto(`/child-login?childId=${encodeURIComponent(child.id)}`);
-
-      // BLOCKED: child-login UI via PIN pad buttons
-      // ──────────────────────────────────────────────────────────────────────
-      // The ChildLoginView renders a PIN pad. The exact ARIA labels for the
-      // digit buttons depend on the runtime component implementation which was
-      // not verified against a live server at commit time. Falling back to the
-      // direct API approach which is deterministic and not a mock.
-      //
-      // See docs/verification/BLOCKED.md § "PIN pad UI interaction"
-      // ──────────────────────────────────────────────────────────────────────
 
       // Sign the child in via the API directly (no mocking; real DB session).
       const childLoginResponse = await page.request.post("/api/auth/child-login", {
@@ -128,7 +109,6 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       ).toBe(200);
 
       // ── 4. Verify child session grants access to the session home ────────
-      // Navigate now that the child cookie has been set by the API response.
       await page.goto("/session/home");
       await expect(page).toHaveURL(/\/session\/home/);
       await expect(
@@ -182,52 +162,266 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       ).toBe(200);
       const progress = (await progressResponse.json()).progress as Array<unknown>;
       expect(progress.length, "progress must include the completed lesson attempt").toBeGreaterThan(0);
+    },
+  );
 
-      // ── CLEANUP NOTE ─────────────────────────────────────────────────────
-      // The guardian account, household, child profile, session rows, and
-      // lesson attempt rows created above are left in the disposable test DB.
-      // See docs/verification/BLOCKED.md § "Test-owned cleanup".
+  test(
+    "companion-unavailable: surfaces truthful 503 provider unavailable when external AI is unconfigured",
+    async ({ page }) => {
+      const email = uniqueEmail();
+      const childName = `Companion Kid ${Date.now()}`;
+      const pin = "3579";
+
+      // Register guardian
+      await page.goto("/register");
+      await page.getByLabel("Guardian Full Name").fill("Companion Guardian");
+      await page.getByLabel("Guardian Email").fill(email);
+      await page.getByLabel("Password").fill("E2E-password-123");
+      await page.getByRole("button", { name: /create guardian account/i }).click();
+      await expect(page).toHaveURL(/\/parent\/children/, { timeout: 15_000 });
+
+      // Create child
+      const createChild = await page.request.post("/api/children", {
+        data: { name: childName, pin, age: 7, grade: "Grade 2" },
+      });
+      expect(createChild.status()).toBe(201);
+      const child = (await createChild.json()).child as { id: string };
+
+      // Authenticate child
+      const childLogin = await page.request.post("/api/auth/child-login", {
+        data: { childId: child.id, pin },
+      });
+      expect(childLogin.status()).toBe(200);
+
+      // Create companion session
+      const sessionResponse = await page.request.post("/api/companion/sessions", {
+        data: { childId: child.id },
+      });
+      expect(sessionResponse.status()).toBe(201);
+      const session = (await sessionResponse.json()) as { id: string; status: string };
+      expect(session.status).toBe("active");
+
+      // Send message to companion session without external AI provider configured
+      const messageResponse = await page.request.post(`/api/companion/sessions/${session.id}/messages`, {
+        data: {
+          clientMessageId: `msg-${Date.now()}`,
+          content: "Hello Snow, can you help me with math?",
+        },
+      });
+
+      // Product contract: 503 PROVIDER_UNAVAILABLE
+      expect(messageResponse.status()).toBe(503);
+      const errorJson = (await messageResponse.json()) as { error: { code: string; message: string } };
+      expect(errorJson.error.code).toBe("PROVIDER_UNAVAILABLE");
+      expect(errorJson.error.message).toContain("temporarily unavailable");
+
+      // Child message must still be truthfully persisted in session history
+      const historyResponse = await page.request.get(`/api/companion/sessions/${session.id}/messages`);
+      expect(historyResponse.status()).toBe(200);
+      const history = (await historyResponse.json()) as Array<{ speaker: string; text: string }>;
+      expect(history.length).toBeGreaterThan(0);
+      expect(history[0].speaker).toBe("child");
+      expect(history[0].text).toBe("Hello Snow, can you help me with math?");
+    },
+  );
+
+  test(
+    "cross-household tenant data isolation: prevents unauthorized access between households",
+    async ({ browser }) => {
+      const emailA = uniqueEmail();
+      const emailB = uniqueEmail();
+      const password = "E2E-password-123";
+
+      // ── Context A: Household A ───────────────────────────────────────────
+      const contextA = await browser.newContext();
+      const pageA = await contextA.newPage();
+
+      await pageA.goto("/register");
+      await pageA.getByLabel("Guardian Full Name").fill("Guardian A");
+      await pageA.getByLabel("Guardian Email").fill(emailA);
+      await pageA.getByLabel("Password").fill(password);
+      await pageA.getByRole("button", { name: /create guardian account/i }).click();
+      await expect(pageA).toHaveURL(/\/parent\/children/, { timeout: 15_000 });
+
+      const createChildA = await pageA.request.post("/api/children", {
+        data: { name: "Child A", pin: "1111", age: 7, grade: "Grade 2" },
+      });
+      expect(createChildA.status()).toBe(201);
+      const childA = (await createChildA.json()).child as { id: string };
+
+      // ── Context B: Household B ───────────────────────────────────────────
+      const contextB = await browser.newContext();
+      const pageB = await contextB.newPage();
+
+      await pageB.goto("/register");
+      await pageB.getByLabel("Guardian Full Name").fill("Guardian B");
+      await pageB.getByLabel("Guardian Email").fill(emailB);
+      await pageB.getByLabel("Password").fill(password);
+      await pageB.getByRole("button", { name: /create guardian account/i }).click();
+      await expect(pageB).toHaveURL(/\/parent\/children/, { timeout: 15_000 });
+
+      const createChildB = await pageB.request.post("/api/children", {
+        data: { name: "Child B", pin: "2222", age: 9, grade: "Grade 4" },
+      });
+      expect(createChildB.status()).toBe(201);
+
+      // ── Isolation Check 1: Guardian B probes Child A's transcripts ────────
+      const probeTranscripts = await pageB.request.get(`/api/children/${childA.id}/transcripts`);
+      expect(probeTranscripts.status()).toBe(403);
+      const transcriptsJson = (await probeTranscripts.json()) as { error: { code: string } };
+      expect(transcriptsJson.error.code).toBe("FORBIDDEN");
+
+      // ── Isolation Check 2: Guardian B probes Child A's alerts ─────────────
+      const probeAlerts = await pageB.request.get(`/api/alerts?childId=${childA.id}`);
+      expect(probeAlerts.status()).toBe(403);
+      const alertsJson = (await probeAlerts.json()) as { error: { code: string } };
+      expect(alertsJson.error.code).toBe("FORBIDDEN");
+
+      // ── Isolation Check 3: Child B probes Child A's companion session ─────
+      const childALogin = await pageA.request.post("/api/auth/child-login", {
+        data: { childId: childA.id, pin: "1111" },
+      });
+      expect(childALogin.status()).toBe(200);
+
+      const sessionAResponse = await pageA.request.post("/api/companion/sessions", {
+        data: { childId: childA.id },
+      });
+      expect(sessionAResponse.status()).toBe(201);
+      const sessionA = (await sessionAResponse.json()) as { id: string };
+
+      const childBLogin = await pageB.request.post("/api/auth/child-login", {
+        data: { childId: (await createChildB.json()).child.id, pin: "2222" },
+      });
+      expect(childBLogin.status()).toBe(200);
+
+      const probeSession = await pageB.request.get(`/api/companion/sessions/${sessionA.id}/messages`);
+      expect(probeSession.status()).toBe(403);
+      const sessionJson = (await probeSession.json()) as { error: { code: string } };
+      expect(sessionJson.error.code).toBe("FORBIDDEN");
+
+      await contextA.close();
+      await contextB.close();
+    },
+  );
+
+  test(
+    "parent admin denial: strictly denies non-admin parent from admin dashboard and telemetry",
+    async ({ page }) => {
+      const email = uniqueEmail();
+      const password = "E2E-password-123";
+
+      // Register guardian (assigned role: 'parent', NOT 'admin')
+      await page.goto("/register");
+      await page.getByLabel("Guardian Full Name").fill("Normal Parent");
+      await page.getByLabel("Guardian Email").fill(email);
+      await page.getByLabel("Password").fill(password);
+      await page.getByRole("button", { name: /create guardian account/i }).click();
+      await expect(page).toHaveURL(/\/parent\/children/, { timeout: 15_000 });
+
+      // 1. Direct API call to admin dashboard -> 403 Forbidden
+      const adminApiResponse = await page.request.get("/api/admin/dashboard");
+      expect(adminApiResponse.status()).toBe(403);
+      const adminJson = (await adminApiResponse.json()) as { error: { code: string; message: string } };
+      expect(adminJson.error.code).toBe("FORBIDDEN");
+      expect(adminJson.error.message).toBe("Admin access required");
+
+      // 2. Browser navigation to /admin/companion -> displays denial error state
+      await page.goto("/admin/companion");
+      await expect(page.getByText(/unable to load admin data/i)).toBeVisible();
+      await expect(page.getByText(/admin access required/i)).toBeVisible();
+    },
+  );
+
+  test(
+    "privacy consent: verifies consent settings, enforces re-auth, and persists capability updates",
+    async ({ page }) => {
+      const email = uniqueEmail();
+      const password = "E2E-password-123";
+
+      // Register guardian
+      await page.goto("/register");
+      await page.getByLabel("Guardian Full Name").fill("Privacy Guardian");
+      await page.getByLabel("Guardian Email").fill(email);
+      await page.getByLabel("Password").fill(password);
+      await page.getByRole("button", { name: /create guardian account/i }).click();
+      await expect(page).toHaveURL(/\/parent\/children/, { timeout: 15_000 });
+
+      // 1. Navigate to /parent/privacy in browser -> renders privacy controls
+      await page.goto("/parent/privacy");
+      await expect(page.getByRole("heading", { name: /privacy & safety controls/i })).toBeVisible();
+      await expect(page.getByText("Microphone Voice Access")).toBeVisible();
+      await expect(page.getByText("Camera Video Access")).toBeVisible();
+
+      // 2. Fetch current privacy settings via API
+      const getPrivacy = await page.request.get("/api/privacy");
+      expect(getPrivacy.status()).toBe(200);
+      const initialSettings = (await getPrivacy.json()) as { privacy: { policyVersion: number } };
+      expect(typeof initialSettings.privacy.policyVersion).toBe("number");
+
+      // 3. Attempt PATCH with invalid reauthPassword -> 401 Unauthorized
+      const badReauth = await page.request.patch("/api/privacy", {
+        data: {
+          microphoneAccess: true,
+          reauthPassword: "wrong-password",
+        },
+      });
+      expect(badReauth.status()).toBe(401);
+      const badJson = (await badReauth.json()) as { error: { code: string } };
+      expect(badJson.error.code).toBe("INVALID_CREDENTIALS");
+
+      // 4. PATCH with valid reauthPassword -> 200 OK and updates consent
+      const updateConsent = await page.request.patch("/api/privacy", {
+        data: {
+          microphoneAccess: true,
+          cameraAccess: false,
+          reauthPassword: password,
+        },
+      });
+      expect(updateConsent.status()).toBe(200);
+      const updatedSettings = (await updateConsent.json()) as {
+        privacy: { microphoneAccess: boolean; cameraAccess: boolean };
+      };
+      expect(updatedSettings.privacy.microphoneAccess).toBe(true);
+      expect(updatedSettings.privacy.cameraAccess).toBe(false);
+
+      // 5. Verify GET /api/privacy reflects persisted changes
+      const verifyGet = await page.request.get("/api/privacy");
+      expect(verifyGet.status()).toBe(200);
+      const verifiedSettings = (await verifyGet.json()) as {
+        privacy: { microphoneAccess: boolean; cameraAccess: boolean };
+      };
+      expect(verifiedSettings.privacy.microphoneAccess).toBe(true);
+      expect(verifiedSettings.privacy.cameraAccess).toBe(false);
     },
   );
 });
 
 // ---------------------------------------------------------------------------
-// Blocked flows – explicitly marked BLOCKED (NOT covered in browser E2E)
+// Genuinely Blocked External Flows
+// External-provider, live audio capture hardware, and direct DB teardown
 // ---------------------------------------------------------------------------
-test.describe("Snow release critical paths – blocked flows (not covered)", () => {
-  test("companion voice/chat interactions (BLOCKED)", () => {
+test.describe("Snow release critical paths – genuinely blocked external flows", () => {
+  test("Live2D visual canvas model rendering & character assets (BLOCKED)", () => {
     test.skip(
       true,
-      "BLOCKED: Companion voice/chat requires live audio device permissions, " +
-        "WebAudio / VAD Web ONNX runtime, and WebSocket companion backend. " +
-        "See docs/verification/BLOCKED.md § Companion Flow.",
+      "BLOCKED: Live2D visual canvas rendering requires external Live2D Cubism runtime " +
+        "and character model assets unconfigured in headless CI. See docs/verification/BLOCKED.md.",
     );
   });
 
-  test("cross-household tenant data isolation (BLOCKED)", () => {
+  test("Live external voice streaming & hardware microphone capture (BLOCKED)", () => {
     test.skip(
       true,
-      "BLOCKED: Multi-tenant household data isolation requires multi-account " +
-        "browser fixtures and cross-tenant probing credentials. " +
-        "See docs/verification/BLOCKED.md § Isolation Flow.",
+      "BLOCKED: Live voice streaming requires physical microphone device permissions and " +
+        "active upstream speech synthesis service. See docs/verification/BLOCKED.md.",
     );
   });
 
-  test("admin dashboard and privileged controls (BLOCKED)", () => {
+  test("Direct database-owned teardown / bulk tenant purge API (BLOCKED)", () => {
     test.skip(
       true,
-      "BLOCKED: Admin dashboard requires pre-provisioned administrator role credentials " +
-        "outside standard guardian self-service registration. " +
-        "See docs/verification/BLOCKED.md § Admin Flow.",
-    );
-  });
-
-  test("privacy controls and data deletion requests (BLOCKED)", () => {
-    test.skip(
-      true,
-      "BLOCKED: Privacy workflows trigger destructive account/child data deletion " +
-        "and require parent safety re-auth modal verification. " +
-        "See docs/verification/BLOCKED.md § Privacy Flow.",
+      "BLOCKED: Application exposes no administrative bulk-deletion endpoint; " +
+        "relies on disposable DB attestation. See docs/verification/BLOCKED.md.",
     );
   });
 });
