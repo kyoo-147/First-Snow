@@ -6,7 +6,7 @@
 [![Parent Portal](https://img.shields.io/badge/Parent%20Portal-Open-2563eb?style=flat-square)](https://app.agentkid.io.vn/parent)
 [![Landing Page](https://img.shields.io/badge/Website-agentkid.io.vn-475569?style=flat-square)](https://agentkid.io.vn/)
 [![Next.js](https://img.shields.io/badge/Next.js-16-111827?style=flat-square)](https://nextjs.org/)
-[![Status](https://img.shields.io/badge/Status-UI%20prototype-f59e0b?style=flat-square)](#project-status)
+[![Status](https://img.shields.io/badge/Status-Integrated%20beta-2563eb?style=flat-square)](#project-status)
 
 <p><strong>A calm, parent-guided AI learning companion for children</strong></p>
 
@@ -20,7 +20,7 @@ AgentKid Snow is the current product-interface repository for AgentKid. It combi
 
 The interface is designed for young and neurodiverse learners who benefit from short prompts, visual choices, calm pacing, and predictable interaction. Parents and caregivers receive observational summaries and controls without clinical or diagnostic claims.
 
-> **Project status:** `main` contains the UI currently deployed at `app.agentkid.io.vn`. The interface, routes, responsive layouts, mock data, and selected companion assets are available. Production authentication, authoritative persistence, live AI orchestration, and complete backend integration are not yet shipped in this branch.
+> **Project status:** `main` contains the integrated Snow beta: database-backed authentication and authorization, household-owned learning and routine workflows, companion and safety APIs, privacy jobs, an authenticated WebSocket gateway, and real-data parent/admin surfaces. Deployment still requires PostgreSQL migrations and environment configuration. External AI, ASR/TTS, object storage, email, push, and Live2D model availability remain environment-dependent and fail closed when absent.
 
 ## Product preview
 
@@ -40,7 +40,7 @@ The interface is designed for young and neurodiverse learners who benefit from s
 
 ![AgentKid Snow AI companion interface](docs/images/ai-companion.png)
 
-The screenshots above show the current UI implementation. Displayed progress, sessions, observations, and alerts are demonstration data unless connected to an authoritative backend.
+The screenshots above document the visual product. Runtime progress, sessions, alerts, and account data are loaded from authenticated APIs; unavailable data is shown as unavailable rather than replaced with demonstration results.
 
 ## What is available
 
@@ -71,7 +71,7 @@ The screenshots above show the current UI implementation. Displayed progress, se
 
 AgentKid is a support and learning product. It is not a medical device, therapist, diagnostic system, or replacement for parents, teachers, caregivers, or qualified professionals.
 
-The current repository uses mock data for many screens. UI copy such as progress, emotion observations, alerts, and recommendations demonstrates product behavior; it is not evidence of live measurement or production AI analysis.
+Some legacy design-reference modules remain under `src/data/mock-*.ts`, but production account, dashboard, learning, routine, companion transcript/alert, privacy, and admin flows must not silently fall back to them. Provider-backed AI, emotion, media, delivery, export, and deletion states are not claimed as available until their configured adapters acknowledge and verify the work.
 
 ## Live environments
 
