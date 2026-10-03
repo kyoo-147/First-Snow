@@ -16,6 +16,8 @@ export default defineConfig({
       'src/lib/__tests__/learning-client.test.ts',
       'src/__tests__/companion/**/*.test.ts',
       'src/vtuber-app/src/__tests__/**/*.test.mjs',
+      'src/vtuber-app/src/__tests__/**/*.test.mjs',
+      'tests/e2e/**/*.spec.ts',
     ],
     alias: {
       '@': path.resolve(__dirname, './src'),
