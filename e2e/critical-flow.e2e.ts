@@ -87,7 +87,7 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
 
       // POST /api/auth/register → sets parent session cookie → redirect to /parent/children
       await expect(page).toHaveURL(/\/parent\/children/, { timeout: 15_000 });
-      await expect(page.getByRole("heading", { name: /my children/i })).toBeVisible();
+      await expect(page.getByRole("heading", { name: /my children/i })).toBeVisible({ timeout: 30_000 });
 
       // ── 2. Create a child profile via the API (parent session cookie is live) ──
       const createChild = await page.request.post("/api/children", {

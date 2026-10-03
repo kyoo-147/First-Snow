@@ -33,7 +33,7 @@ export interface DeletionRequestDialogProps {
 function DeletionRequestDialogInner({
   onClose,
   childId,
-  childName = "Minh",
+  childName = "your child",
 }: Omit<DeletionRequestDialogProps, "isOpen">) {
   const [deletionsList, setDeletionsList] = useState<DeletionRequestRecord[]>([]);
   const [isLoadingDeletions, setIsLoadingDeletions] = useState(true);

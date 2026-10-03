@@ -17,6 +17,7 @@ import {
 import { parentNavGroups } from "@/data/snow-data";
 import { SnowLogo } from "@/components/ui/snow-logo";
 import { cn } from "@/lib/utils";
+import { fetchDashboardSession, fetchHouseholdChildren, type DashboardChild } from "@/lib/dashboard-client";
 
 const SIDEBAR_STORAGE_KEY = "agentkid:parent-sidebar-collapsed";
 
@@ -29,6 +30,8 @@ export function ParentShell({
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [parentName, setParentName] = useState<string | null>(null);
+  const [childrenProfiles, setChildrenProfiles] = useState<DashboardChild[]>([]);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(SIDEBAR_STORAGE_KEY);
@@ -37,6 +40,25 @@ export function ParentShell({
     });
 
     return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([fetchDashboardSession(), fetchHouseholdChildren()])
+      .then(([session, children]) => {
+        if (cancelled) return;
+        if (session?.actorType === "parent" || session?.actorType === "admin") setParentName(session.user.name);
+        setChildrenProfiles(children);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setParentName(null);
+          setChildrenProfiles([]);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   function toggleSidebar() {
@@ -48,6 +70,7 @@ export function ParentShell({
   }
 
   const showLabels = !isCollapsed || isMobileMenuOpen;
+  const primaryChild = childrenProfiles[0] ?? null;
 
   return (
     <div className="snow-page-bg h-[100dvh] overflow-hidden text-snow-foreground">
@@ -111,7 +134,11 @@ export function ParentShell({
                       return (
                         <Link
                           key={item.key}
-                          href={item.href}
+                          href={item.href.includes(":childId")
+                            ? primaryChild
+                              ? item.href.replace(":childId", encodeURIComponent(primaryChild.id))
+                              : "/parent/children"
+                            : item.href}
                           title={!showLabels ? item.label : undefined}
                           aria-current={active ? "page" : undefined}
                           onClick={() => setIsMobileMenuOpen(false)}
@@ -146,7 +173,7 @@ export function ParentShell({
             >
               <Image src="/images/nana_avatar.png" alt="" width={30} height={30} className="size-[30px] shrink-0 rounded-[var(--radius-md)] object-cover" />
               <span className={cn("min-w-0 flex-1", !showLabels && "md:hidden")}>
-                <strong className="block truncate text-[13px] font-semibold text-snow-foreground">Linh Nguyen</strong>
+                <strong className="block truncate text-[13px] font-semibold text-snow-foreground">{parentName ?? "Parent account"}</strong>
                 <span className="block truncate text-[11px] text-snow-muted">Parent account</span>
               </span>
               <ChevronRight className={cn("size-4 shrink-0 text-snow-muted", !showLabels && "md:hidden")} />
@@ -180,8 +207,8 @@ export function ParentShell({
             </div>
             <div className="hidden md:block" />
             <div className="ml-auto flex min-w-0 items-center gap-2 sm:gap-3">
-              <Link href="/session/home" className="snow-focus-ring hidden min-h-11 items-center gap-2 rounded-full bg-snow-primary px-5 text-sm font-extrabold text-white shadow-[var(--shadow-card)] transition hover:brightness-105 lg:inline-flex">
-                Open Minh&apos;s app <Sparkles className="size-4" />
+              <Link href="/session-switch" className="snow-focus-ring hidden min-h-11 items-center gap-2 rounded-full bg-snow-primary px-5 text-sm font-extrabold text-white shadow-[var(--shadow-card)] transition hover:brightness-105 lg:inline-flex">
+                Open child app <Sparkles className="size-4" />
               </Link>
               <Link href="/parent/alerts" aria-label="Open parent alerts" className="snow-focus-ring grid size-10 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-primary-dark">
                 <Bell className="size-5" />
@@ -189,15 +216,15 @@ export function ParentShell({
               <Link href="/parent/settings/account" className="snow-focus-ring hidden min-h-[52px] items-center gap-3 rounded-full border border-snow-border bg-snow-surface px-3 shadow-[var(--shadow-card)] md:flex">
                 <Image src="/images/nana_avatar.png" alt="" width={40} height={40} className="rounded-full object-cover" />
                 <span className="text-sm leading-tight">
-                  <strong className="block font-black text-snow-primary-dark">Linh Nguyen</strong>
+                  <strong className="block font-black text-snow-primary-dark">{parentName ?? "Parent account"}</strong>
                   <span className="font-bold text-snow-muted">Parent</span>
                 </span>
                 <ChevronDown className="size-4 text-snow-primary-dark" />
               </Link>
-              <Link href="/session/home" aria-label="Open Minh's child app" className="snow-focus-ring flex min-h-[52px] min-w-0 items-center gap-3 rounded-full border border-snow-border bg-snow-primary-soft px-3 shadow-[var(--shadow-card)]">
+              <Link href="/session-switch" aria-label="Open child profile selector" className="snow-focus-ring flex min-h-[52px] min-w-0 items-center gap-3 rounded-full border border-snow-border bg-snow-primary-soft px-3 shadow-[var(--shadow-card)]">
                 <Image src="/images/snow-avatar-final.png" alt="" width={40} height={40} className="rounded-full object-cover" />
                 <span className="hidden text-sm leading-tight sm:block">
-                  <strong className="block font-black text-snow-primary-dark">Minh</strong>
+                  <strong className="block font-black text-snow-primary-dark">{primaryChild?.name ?? "Choose child"}</strong>
                   <span className="font-bold text-snow-muted">Open child app</span>
                 </span>
               </Link>

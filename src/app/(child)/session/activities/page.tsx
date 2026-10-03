@@ -3,7 +3,7 @@ import { ChildActivitiesScreen } from "@/components/pages/child-activities-scree
 
 export default function Page() {
   return (
-    <AppShell activeNav="activities" childName="Minh" childLevel="Level 3">
+    <AppShell activeNav="activities">
       <ChildActivitiesScreen />
     </AppShell>
   );

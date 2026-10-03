@@ -6,7 +6,7 @@ export default async function Page({ params }: { params: Promise<{ lessonId: str
   const { lessonId } = await params;
 
   return (
-    <AppShell activeNav="lessons" childName="Minh" childLevel="Level 3" rightPanel={<LessonRightRail />}>
+    <AppShell activeNav="lessons" rightPanel={<LessonRightRail />}>
       <InteractiveLessonRunner lessonId={lessonId} />
     </AppShell>
   );

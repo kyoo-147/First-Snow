@@ -3,7 +3,7 @@ import { ChildPreferencesScreen } from "@/components/pages/child-preferences-scr
 
 export default function Page() {
   return (
-    <AppShell activeNav="settings" childName="Minh" childLevel="Level 3">
+    <AppShell activeNav="settings">
       <ChildPreferencesScreen />
     </AppShell>
   );

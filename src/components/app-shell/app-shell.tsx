@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Bell,
@@ -9,6 +12,7 @@ import {
 import { topNavItems } from "@/data/snow-data";
 import { SnowLogo } from "@/components/ui/snow-logo";
 import { cn } from "@/lib/utils";
+import { fetchDashboardSession } from "@/lib/dashboard-client";
 
 type AppShellProps = {
   activeNav:
@@ -23,21 +27,27 @@ type AppShellProps = {
     | "explore"
     | "rewards"
     | "create";
-  childName: string;
-  childLevel: string;
   children: React.ReactNode;
   rightPanel?: React.ReactNode;
   backHref?: string;
 };
 
-export function AppShell({
-  activeNav,
-  childName,
-  childLevel,
-  children,
-  rightPanel,
-  backHref,
-}: AppShellProps) {
+export function AppShell({ activeNav, children, rightPanel, backHref }: AppShellProps) {
+  const [childName, setChildName] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchDashboardSession()
+      .then((session) => {
+        if (!cancelled && session?.actorType === "child") setChildName(session.child.name);
+      })
+      .catch(() => {
+        if (!cancelled) setChildName(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   return (
     <div className="snow-page-bg h-[100dvh] overflow-hidden text-snow-foreground">
       <div className="flex h-full w-full overflow-hidden bg-snow-surface/82 backdrop-blur">
@@ -92,8 +102,8 @@ export function AppShell({
               <Link href="/session/settings" aria-label="Open child settings" className="snow-focus-ring flex min-h-12 min-w-0 items-center gap-2 rounded-full border border-snow-border bg-snow-surface px-2 shadow-[var(--shadow-card)] transition hover:bg-snow-surface-soft sm:min-h-[52px] sm:gap-3 sm:px-3">
                 <Image src="/images/snow-avatar-final.png" alt="" width={40} height={40} className="rounded-full object-cover" />
                 <span className="hidden text-sm leading-tight sm:block">
-                  <strong className="block font-black text-snow-primary-dark">{childName}</strong>
-                  <span className="font-bold text-snow-muted">{childLevel}</span>
+                  <strong className="block font-black text-snow-primary-dark">{childName ?? "Child profile"}</strong>
+                  <span className="font-bold text-snow-muted">Signed in</span>
                 </span>
                 <Settings className="hidden size-4 text-snow-muted sm:block" />
               </Link>

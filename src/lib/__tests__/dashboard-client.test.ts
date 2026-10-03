@@ -10,6 +10,7 @@ import {
   fetchHouseholdChildren,
   getErrorMessage,
   localDateKey,
+  markDashboardAlertRead,
 } from "../dashboard-client";
 
 describe("dashboard-client", () => {
@@ -110,6 +111,16 @@ describe("dashboard-client", () => {
         body: JSON.stringify({ name: "Harper", pin: "1234", age: 6, grade: "1st Grade" }),
       }),
     );
+  });
+
+  it("marks a safety alert as reviewed", async () => {
+    const updated = { id: "alert-1", childId: "child-1", title: "Review", description: "Check in", severity: "high", createdAt: "2026-10-03", readAt: "2026-10-03T12:00:00Z" };
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json(updated)));
+    await expect(markDashboardAlertRead("alert-1")).resolves.toEqual(updated);
+    expect(fetch).toHaveBeenCalledWith("/api/alerts/alert-1", {
+      credentials: "same-origin",
+      method: "PATCH",
+    });
   });
 
   it("formats error messages accurately", () => {

@@ -4,7 +4,7 @@ import { TalkScreen } from "@/components/pages/talk-screen";
 
 export default function CompanionPage() {
   return (
-    <AppShell activeNav="companion" childName="Minh" childLevel="Level 3" rightPanel={<TalkRightRail />}>
+    <AppShell activeNav="companion" rightPanel={<TalkRightRail />}>
       <TalkScreen />
     </AppShell>
   );

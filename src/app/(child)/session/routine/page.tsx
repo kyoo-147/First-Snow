@@ -3,7 +3,7 @@ import { ChildRoutineScreen } from "@/components/pages/child-routine-screen";
 
 export default function Page() {
   return (
-    <AppShell activeNav="routine" childName="Minh" childLevel="Level 3">
+    <AppShell activeNav="routine">
       <ChildRoutineScreen />
     </AppShell>
   );

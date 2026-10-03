@@ -405,13 +405,13 @@ export function ParentPrivacyScreen() {
       <DataExportDialog
         isOpen={isExportOpen}
         onClose={() => setIsExportOpen(false)}
-        childName="Minh"
+        childName="your household"
       />
 
       <DeletionRequestDialog
         isOpen={isDeletionOpen}
         onClose={() => setIsDeletionOpen(false)}
-        childName="Minh"
+        childName="your household"
       />
     </ParentPageFrame>
   );

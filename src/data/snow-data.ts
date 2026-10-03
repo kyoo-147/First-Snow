@@ -43,11 +43,11 @@ export const parentNavGroups: ParentNavGroup[] = [
     items: [
       { label: "Dashboard", href: "/parent", icon: Home, key: "dashboard" },
       { label: "My Child", href: "/parent/children", icon: User, key: "children" },
-      { label: "Sessions", href: "/parent/children/minh/sessions", icon: History, key: "sessions" },
-      { label: "Emotions", href: "/parent/children/minh/timeline", icon: Heart, key: "timeline" },
-      { label: "Transcripts", href: "/parent/children/minh/transcripts", icon: MessageSquare, key: "transcripts" },
-      { label: "Learning", href: "/parent/children/minh/learning", icon: GraduationCap, key: "learning" },
-      { label: "Routines", href: "/parent/children/minh/routines", icon: CalendarCheck, key: "routines" },
+      { label: "Sessions", href: "/parent/children/:childId/sessions", icon: History, key: "sessions" },
+      { label: "Activity", href: "/parent/children/:childId/timeline", icon: Heart, key: "timeline" },
+      { label: "Transcripts", href: "/parent/children/:childId/transcripts", icon: MessageSquare, key: "transcripts" },
+      { label: "Learning", href: "/parent/children/:childId/learning", icon: GraduationCap, key: "learning" },
+      { label: "Routines", href: "/parent/children/:childId/routines", icon: CalendarCheck, key: "routines" },
     ],
   },
   {

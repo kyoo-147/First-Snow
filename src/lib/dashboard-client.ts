@@ -159,6 +159,10 @@ export async function fetchDashboardAlerts(childId?: string): Promise<DashboardA
   return Array.isArray(data.alerts) ? data.alerts : [];
 }
 
+export async function markDashboardAlertRead(alertId: string): Promise<DashboardAlert> {
+  return request<DashboardAlert>(`/api/alerts/${encodeURIComponent(alertId)}`, { method: "PATCH" });
+}
+
 export async function createHouseholdChild(input: CreateChildInput): Promise<DashboardChild> {
   const data = await request<{ child: DashboardChild }>("/api/children", {
     method: "POST",

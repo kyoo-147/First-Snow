@@ -34,7 +34,7 @@ export interface DataExportDialogProps {
 function DataExportDialogInner({
   onClose,
   childId,
-  childName = "Minh",
+  childName = "your child",
 }: Omit<DataExportDialogProps, "isOpen">) {
   const [exportsList, setExportsList] = useState<DataExportRecord[]>([]);
   const [isLoadingExports, setIsLoadingExports] = useState(true);
