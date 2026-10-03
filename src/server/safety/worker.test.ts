@@ -11,6 +11,7 @@ class FakeRepository implements SafetyWorkerRepository {
   notifications = [notification];
   completedExports: unknown[] = [];
   failedExports: string[] = [];
+  failedDeletions: string[] = [];
   deletionState: 'completed' | 'failed' | 'blocked' = 'completed';
   notificationState: 'sent' | 'failed' | 'skipped' = 'sent';
   queuedAlerts = 0;
@@ -23,8 +24,9 @@ class FakeRepository implements SafetyWorkerRepository {
   async failExport(_job: ExportJob, reason: string) { this.failedExports.push(reason); }
   async claimDeletions() { return [{ id: 'delete-1', householdId: 'household-1', requestedByUserId: 'parent-1' }]; }
   async processDeletion() { return this.deletionState; }
+  async failDeletion(_job: { id: string }, reason: string) { this.deletionState = 'failed'; this.failedDeletions.push(reason); }
   async listPendingNotifications() { return this.notifications; }
-  async deliverNotification(_job: NotificationJob, adapter: DeliveryAdapter | undefined) {
+  async deliverNotification(_job: NotificationJob, adapter: DeliveryAdapter | undefined): Promise<'sent' | 'failed' | 'skipped'> {
     if (!adapter) { this.notificationState = 'failed'; return this.notificationState; }
     try { await adapter.send({ recipientId: _job.recipientId, subject: _job.subject, body: _job.body }, _job.id); this.notificationState = 'sent'; }
     catch { this.notificationState = 'failed'; }
@@ -102,6 +104,14 @@ describe('safety worker orchestration', () => {
     expect(repository.notificationState).toBe('failed');
   });
 
+  it('records a deletion failure when repository processing throws', async () => {
+    const repository = new FakeRepository();
+    repository.processDeletion = async () => { throw new Error('stage transaction failed'); };
+    const result = await runSafetyJobsOnce({ repository, adapters: {} });
+    expect(result.deletions.failed).toBe(1);
+    expect(repository.failedDeletions).toEqual(['stage transaction failed']);
+  });
+
   it('preserves failed deletion state and queued alert count in run results', async () => {
     const repository = new FakeRepository();
     repository.deletionState = 'blocked';
@@ -119,5 +129,56 @@ describe('safety worker orchestration', () => {
     const result = await runSafetyJobsOnce({ repository, adapters: { objectStore: store } });
     expect(result.exports.completed).toBe(0);
     expect(repository.completedExports).toHaveLength(0);
+  });
+
+  it('calls failDeletion and increments failed count when processDeletion throws', async () => {
+    const repository = new FakeRepository();
+    repository.processDeletion = async () => { throw new Error('Database connection lost.'); };
+    const result = await runSafetyJobsOnce({ repository, adapters: {} });
+    expect(result.deletions.failed).toBe(1);
+    expect(repository.failedDeletions).toHaveLength(1);
+    expect(repository.failedDeletions[0]).toContain('Database connection lost');
+  });
+
+  it('does not call failDeletion when processDeletion returns a terminal state', async () => {
+    const repository = new FakeRepository();
+    repository.deletionState = 'completed';
+    const result = await runSafetyJobsOnce({ repository, adapters: {} });
+    expect(result.deletions.completed).toBe(1);
+    expect(repository.failedDeletions).toHaveLength(0);
+  });
+
+  it('does not double-count a notification whose deliverNotification returns skipped', async () => {
+    const repository = new FakeRepository();
+    repository.deliverNotification = async () => 'skipped';
+    const result = await runSafetyJobsOnce({ repository, adapters: {} });
+    expect(result.notifications.sent).toBe(0);
+    expect(result.notifications.failed).toBe(0);
+  });
+});
+
+describe('safety worker CLI: no DATABASE_URL', () => {
+  it('throws a human-readable error immediately when DATABASE_URL is absent', async () => {
+    const original = process.env.DATABASE_URL;
+    delete process.env.DATABASE_URL;
+    try {
+      // Importing the constructor directly keeps this a unit-level check
+      // without spawning a subprocess — the constructor throws synchronously.
+      const { DatabaseSafetyWorkerRepository } = await import('./worker-repository');
+      expect(() => new DatabaseSafetyWorkerRepository()).toThrow('DATABASE_URL is required');
+    } finally {
+      if (original !== undefined) process.env.DATABASE_URL = original;
+    }
+  });
+
+  it('main() propagates a DATABASE_URL error that causes process.exitCode to be set', async () => {
+    const original = process.env.DATABASE_URL;
+    delete process.env.DATABASE_URL;
+    try {
+      const { main } = await import('./run-worker');
+      await expect(main([])).rejects.toThrow('DATABASE_URL is required');
+    } finally {
+      if (original !== undefined) process.env.DATABASE_URL = original;
+    }
   });
 });

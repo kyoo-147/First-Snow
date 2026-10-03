@@ -1,4 +1,3 @@
-import 'server-only';
 import { asc, and, eq, inArray, lt } from 'drizzle-orm';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
