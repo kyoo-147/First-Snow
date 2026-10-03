@@ -81,7 +81,7 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       await page.goto("/register");
       await page.getByLabel("Guardian Full Name").fill("E2E Guardian");
       await page.getByLabel("Guardian Email").fill(email);
-      await page.getByLabel("Password").fill("E2E-password-123");
+      await page.getByRole("textbox", { name: "Password", exact: true }).fill("E2E-password-123");
       await page.getByRole("button", { name: /create guardian account/i }).click();
 
       // POST /api/auth/register → sets parent session cookie → redirect to /parent/children
@@ -176,7 +176,7 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       await page.goto("/register");
       await page.getByLabel("Guardian Full Name").fill("Companion Guardian");
       await page.getByLabel("Guardian Email").fill(email);
-      await page.getByLabel("Password").fill("E2E-password-123");
+      await page.getByRole("textbox", { name: "Password", exact: true }).fill("E2E-password-123");
       await page.getByRole("button", { name: /create guardian account/i }).click();
       await expect(page).toHaveURL(/\/parent\/children/, { timeout: 15_000 });
 
@@ -239,7 +239,7 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       await pageA.goto("/register");
       await pageA.getByLabel("Guardian Full Name").fill("Guardian A");
       await pageA.getByLabel("Guardian Email").fill(emailA);
-      await pageA.getByLabel("Password").fill(password);
+      await pageA.getByRole("textbox", { name: "Password", exact: true }).fill(password);
       await pageA.getByRole("button", { name: /create guardian account/i }).click();
       await expect(pageA).toHaveURL(/\/parent\/children/, { timeout: 15_000 });
 
@@ -256,7 +256,7 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       await pageB.goto("/register");
       await pageB.getByLabel("Guardian Full Name").fill("Guardian B");
       await pageB.getByLabel("Guardian Email").fill(emailB);
-      await pageB.getByLabel("Password").fill(password);
+      await pageB.getByRole("textbox", { name: "Password", exact: true }).fill(password);
       await pageB.getByRole("button", { name: /create guardian account/i }).click();
       await expect(pageB).toHaveURL(/\/parent\/children/, { timeout: 15_000 });
 
@@ -314,7 +314,7 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       await page.goto("/register");
       await page.getByLabel("Guardian Full Name").fill("Normal Parent");
       await page.getByLabel("Guardian Email").fill(email);
-      await page.getByLabel("Password").fill(password);
+      await page.getByRole("textbox", { name: "Password", exact: true }).fill(password);
       await page.getByRole("button", { name: /create guardian account/i }).click();
       await expect(page).toHaveURL(/\/parent\/children/, { timeout: 15_000 });
 
@@ -342,7 +342,7 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       await page.goto("/register");
       await page.getByLabel("Guardian Full Name").fill("Privacy Guardian");
       await page.getByLabel("Guardian Email").fill(email);
-      await page.getByLabel("Password").fill(password);
+      await page.getByRole("textbox", { name: "Password", exact: true }).fill(password);
       await page.getByRole("button", { name: /create guardian account/i }).click();
       await expect(page).toHaveURL(/\/parent\/children/, { timeout: 15_000 });
 
