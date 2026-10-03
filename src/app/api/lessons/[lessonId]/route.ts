@@ -2,10 +2,13 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { ERRORS } from '@/lib/api/errors';
 import { getPublishedLesson } from '@/server/learning';
+import { authorizeLessonCatalog } from '@/server/learning-access';
 
 const uuid = z.string().uuid();
 
 export async function GET(_request: Request, context: { params: Promise<{ lessonId: string }> }) {
+  const denied = await authorizeLessonCatalog();
+  if (denied) return denied;
   const { lessonId } = await context.params;
   if (!uuid.safeParse(lessonId).success) return ERRORS.validationFailed({ lessonId: 'Invalid lesson ID.' });
   try {

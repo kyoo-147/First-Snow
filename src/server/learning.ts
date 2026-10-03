@@ -260,7 +260,7 @@ export async function getChildAttempts(childId: string) {
 }
 
 export async function getChildProgress(childId: string) {
-  const [counts, time] = await Promise.all([
+  const [counts, catalog, time] = await Promise.all([
     db
       .select({
         lessonsCompleted: sql<number>`count(*) filter (where ${lessonProgress.status} = 'completed')::int`,
@@ -268,6 +268,10 @@ export async function getChildProgress(childId: string) {
       })
       .from(lessonProgress)
       .where(eq(lessonProgress.childId, childId)),
+    db
+      .select({ totalLessons: sql<number>`count(*)::int` })
+      .from(lessons)
+      .where(eq(lessons.isPublished, true)),
     db
       .select({
         practiceTimeMinutes: sql<number>`coalesce(sum(${lessons.estimatedMinutes}), 0)::int`,
@@ -279,7 +283,7 @@ export async function getChildProgress(childId: string) {
   return {
     childId,
     lessonsCompleted: counts[0]?.lessonsCompleted ?? 0,
-    totalLessons: counts[0]?.totalLessons ?? 0,
+    totalLessons: catalog[0]?.totalLessons ?? 0,
     practiceTimeMinutes: time[0]?.practiceTimeMinutes ?? 0,
     skills: [],
   };

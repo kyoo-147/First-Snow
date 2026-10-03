@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   requireChildSession: vi.fn(),
+  getChildSession: vi.fn(),
+  getParentSession: vi.fn(),
   listPublishedLessons: vi.fn(),
   getPublishedLesson: vi.fn(),
   createOrResumeLessonAttempt: vi.fn(),
@@ -10,9 +12,14 @@ const mocks = vi.hoisted(() => ({
   authorizeChildLearning: vi.fn(),
   getChildProgress: vi.fn(),
   getChildAttempts: vi.fn(),
+  authorizeLessonCatalog: vi.fn(),
 }));
 
-vi.mock('@/server/auth', () => ({ requireChildSession: mocks.requireChildSession }));
+vi.mock('@/server/auth', () => ({
+  requireChildSession: mocks.requireChildSession,
+  getChildSession: mocks.getChildSession,
+  getParentSession: mocks.getParentSession,
+}));
 vi.mock('@/server/learning', () => ({
   listPublishedLessons: mocks.listPublishedLessons,
   getPublishedLesson: mocks.getPublishedLesson,
@@ -22,7 +29,10 @@ vi.mock('@/server/learning', () => ({
   getChildProgress: mocks.getChildProgress,
   getChildAttempts: mocks.getChildAttempts,
 }));
-vi.mock('@/server/learning-access', () => ({ authorizeChildLearning: mocks.authorizeChildLearning }));
+vi.mock('@/server/learning-access', () => ({
+  authorizeChildLearning: mocks.authorizeChildLearning,
+  authorizeLessonCatalog: mocks.authorizeLessonCatalog,
+}));
 
 const childId = '11111111-1111-4111-8111-111111111111';
 const lessonId = '22222222-2222-4222-8222-222222222222';
@@ -33,7 +43,10 @@ describe('learning API routes', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mocks.requireChildSession.mockResolvedValue({ sub: childId });
+    mocks.getChildSession.mockResolvedValue({ sub: childId });
+    mocks.getParentSession.mockResolvedValue(null);
     mocks.authorizeChildLearning.mockResolvedValue(null);
+    mocks.authorizeLessonCatalog.mockResolvedValue(null);
   });
 
   it('returns published lesson catalog and detail', async () => {
@@ -44,6 +57,20 @@ describe('learning API routes', () => {
     expect((await (await catalog.GET()).json()).lessons).toHaveLength(1);
     const response = await detail.GET(new Request('http://local'), { params: Promise.resolve({ lessonId }) });
     expect((await response.json()).lesson.id).toBe(lessonId);
+  });
+
+  it('denies anonymous catalog and detail requests before querying lessons', async () => {
+    mocks.getChildSession.mockResolvedValue(null);
+    mocks.getParentSession.mockResolvedValue(null);
+    mocks.authorizeLessonCatalog.mockResolvedValue(new Response(JSON.stringify({ error: { code: 'UNAUTHORIZED' } }), { status: 401 }));
+    const catalog = await import('@/app/api/lessons/route');
+    const detail = await import('@/app/api/lessons/[lessonId]/route');
+    const listResponse = await catalog.GET();
+    const detailResponse = await detail.GET(new Request('http://local'), { params: Promise.resolve({ lessonId }) });
+    expect(listResponse.status).toBe(401);
+    expect(detailResponse.status).toBe(401);
+    expect(mocks.listPublishedLessons).not.toHaveBeenCalled();
+    expect(mocks.getPublishedLesson).not.toHaveBeenCalled();
   });
 
   it('creates or resumes an attempt for the authenticated child and persists answers', async () => {
