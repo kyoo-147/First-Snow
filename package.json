@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:gateway": "esbuild src/server/companion/gateway-cli.ts --bundle --platform=node --format=cjs --target=node20 --outfile=dist/companion-gateway.cjs",
     "start": "next start",
+    "start:gateway": "node dist/companion-gateway.cjs",
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -44,6 +46,7 @@
     "rxjs": "^7.8.2",
     "server-only": "^0.0.1",
     "tailwind-merge": "^3.6.0",
+    "ws": "^8.22.0",
     "zod": "^3.24.1",
     "zustand": "^5.0.14"
   },
@@ -53,8 +56,10 @@
     "@types/node": "^24.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/ws": "^8.18.2",
     "@vitest/coverage-v8": "^5.0.3",
     "drizzle-kit": "^0.31.11",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "^16.3.8",
     "playwright": "^1.60.0",

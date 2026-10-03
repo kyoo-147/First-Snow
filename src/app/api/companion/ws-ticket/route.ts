@@ -6,7 +6,7 @@ import { children } from '@/db/schema/children';
 import { companionSessions, type NewCompanionSession } from '@/db/schema/companion';
 import { ERRORS } from '@/lib/api/errors';
 import { requireChildSession } from '@/server/auth';
-import { secureWebSocketRequest } from '@/server/companion/contracts';
+import { resolveCompanionPublicOrigin } from '@/server/companion/contracts';
 
 const TICKET_TTL_SECONDS = 60;
 const TICKET_PATH = '/api/companion/ws';
@@ -15,11 +15,11 @@ const digest = (token: string) => createHash('sha256').update(token).digest('hex
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const actor = await requireChildSession();
   if (actor instanceof Response) return actor as NextResponse;
-  if (!secureWebSocketRequest(request.url, process.env.NODE_ENV === 'production')) {
-    return ERRORS.forbidden('A secure HTTPS connection is required to issue a websocket ticket.');
-  }
-
-  const requestOrigin = request.nextUrl.origin;
+  const production = process.env.NODE_ENV === 'production';
+  const requestOrigin = resolveCompanionPublicOrigin(request.url, process.env.COMPANION_PUBLIC_ORIGIN, production);
+  if (!requestOrigin) return ERRORS.internal('Companion public origin is not configured safely.');
+  const browserOrigin = request.headers.get('origin');
+  if ((production && browserOrigin !== requestOrigin) || (browserOrigin && browserOrigin !== requestOrigin)) return ERRORS.forbidden('Request origin does not match the companion origin.');
   const token = randomBytes(32).toString('base64url');
   const expiresAt = Date.now() + TICKET_TTL_SECONDS * 1000;
 

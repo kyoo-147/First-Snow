@@ -52,3 +52,23 @@ export function secureWebSocketRequest(requestUrl: string, production: boolean):
     return production ? protocol === 'https:' : protocol === 'https:' || protocol === 'http:';
   } catch { return false; }
 }
+
+export function resolveCompanionPublicOrigin(
+  requestUrl: string,
+  configuredOrigin: string | undefined,
+  production: boolean,
+): string | null {
+  try {
+    if (configuredOrigin) {
+      const parsed = new URL(configuredOrigin);
+      if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password || parsed.pathname !== '/' || parsed.search || parsed.hash) return null;
+      if (production && parsed.protocol !== 'https:') return null;
+      return parsed.origin;
+    }
+    if (production) return null;
+    const reqParsed = new URL(requestUrl);
+    if (!['http:', 'https:'].includes(reqParsed.protocol) || reqParsed.username || reqParsed.password) return null;
+    return reqParsed.origin;
+  } catch { return null; }
+}
+

@@ -5,7 +5,7 @@ import { db } from '@/db/client';
 import { companionSessions, type NewCompanionSession } from '@/db/schema/companion';
 import { ERRORS } from '@/lib/api/errors';
 import { requireChildSession } from '@/server/auth';
-import { secureWebSocketRequest } from '@/server/companion/contracts';
+import { resolveCompanionPublicOrigin } from '@/server/companion/contracts';
 
 const TICKET_PATH = '/api/companion/ws';
 const digest = (token: string) => createHash('sha256').update(token).digest('hex');
@@ -13,9 +13,11 @@ const digest = (token: string) => createHash('sha256').update(token).digest('hex
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const actor = await requireChildSession();
   if (actor instanceof Response) return actor as NextResponse;
-  if (!secureWebSocketRequest(request.url, process.env.NODE_ENV === 'production')) {
-    return ERRORS.forbidden('A secure HTTPS connection is required to consume a websocket ticket.');
-  }
+  const production = process.env.NODE_ENV === 'production';
+  const requestOrigin = resolveCompanionPublicOrigin(request.url, process.env.COMPANION_PUBLIC_ORIGIN, production);
+  if (!requestOrigin) return ERRORS.internal('Companion public origin is not configured safely.');
+  const browserOrigin = request.headers.get('origin');
+  if ((production && browserOrigin !== requestOrigin) || (browserOrigin && browserOrigin !== requestOrigin)) return ERRORS.forbidden('Request origin does not match the companion origin.');
   let body: unknown;
   try { body = await request.json(); } catch { return ERRORS.validationFailed({ body: 'Invalid JSON.' }); }
   const values = body && typeof body === 'object' ? body as Record<string, unknown> : {};
@@ -23,7 +25,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return ERRORS.validationFailed({ ticket: 'sessionId and ticket are required.' });
   }
 
-  const requestOrigin = request.nextUrl.origin;
   try {
     const [session] = await db.select().from(companionSessions).where(and(
       eq(companionSessions.id, values.sessionId),
