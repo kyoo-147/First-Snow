@@ -61,11 +61,7 @@ The following flows cannot be executed in browser E2E without real hardware or t
 - **Status:** 🚫 **BLOCKED (GENUINELY EXTERNAL)**
 - **Why Blocked:** End-to-end voice loopback requires physical operating system microphone hardware access and an active upstream speech synthesis/transcription provider.
 
-### 3. PIN Pad UI Button Clicks
-- **Status:** 🚫 **BLOCKED (Handled via API Session Fallback)**
-- **Why Blocked:** Sourced from runtime dynamic component attributes not statically verifiable without visual inspect tooling; the critical path child login is executed via authenticated API (`POST /api/auth/child-login`).
-
-### 4. Direct Database-Owned Teardown / Bulk Tenant Purge
+### 3. Direct Database-Owned Teardown / Bulk Tenant Purge
 - **Status:** 🚫 **BLOCKED (Relies on Disposable DB Attestation)**
 - **Why Blocked:** The application exposes no administrative bulk-deletion endpoint. Decoupled Playwright runs must run against disposable databases.
 
@@ -79,8 +75,7 @@ The following flows cannot be executed in browser E2E without real hardware or t
 | Guardian registration page render | Public Smoke | ✅ COVERED | `e2e/critical-flow.e2e.ts` (read-only) |
 | Guardian registration submission | Authenticated | ✅ COVERED | `e2e/critical-flow.e2e.ts` (gated by `E2E_ALLOW_MUTATIONS=1`) |
 | Child profile creation | Authenticated | ✅ COVERED | `e2e/critical-flow.e2e.ts` (gated by `E2E_ALLOW_MUTATIONS=1`) |
-| Child PIN authentication (API) | Authenticated | ✅ COVERED | `e2e/critical-flow.e2e.ts` (gated by `E2E_ALLOW_MUTATIONS=1`) |
-| Child PIN pad UI button click | Authenticated | 🚫 BLOCKED | Sourced from runtime component; API fallback used |
+| Child PIN authentication and accessible PIN pad buttons | Authenticated | ✅ COVERED | `e2e/critical-flow.e2e.ts` clicks the real PIN pad and verifies the database-backed session redirect |
 | Child session home access | Authenticated | ✅ COVERED | `e2e/critical-flow.e2e.ts` (gated by `E2E_ALLOW_MUTATIONS=1`) |
 | Lesson list retrieval | Authenticated | ✅ COVERED | `e2e/critical-flow.e2e.ts` (gated by `E2E_ALLOW_MUTATIONS=1`) |
 | Lesson attempt creation & completion | Authenticated | ✅ COVERED | `e2e/critical-flow.e2e.ts` (gated by `E2E_ALLOW_MUTATIONS=1`) |

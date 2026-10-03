@@ -100,18 +100,13 @@ test.describe("Snow release critical paths – authenticated flows (mutating)", 
       // ── 3. Navigate to child login (parent still signed in — required by API) ──
       await page.goto(`/child-login?childId=${encodeURIComponent(child.id)}`);
 
-      // Sign the child in via the API directly (no mocking; real DB session).
-      const childLoginResponse = await page.request.post("/api/auth/child-login", {
-        data: { childId: child.id, pin },
-      });
-      expect(
-        childLoginResponse.status(),
-        `POST /api/auth/child-login: ${await childLoginResponse.text()}`,
-      ).toBe(200);
+      // Use the real accessible PIN pad. The fourth digit submits and creates
+      // the database-backed child session; no route interception is used.
+      await expect(page.getByText(/enter your 4-digit secret pin/i)).toBeVisible({ timeout: 30_000 });
+      for (const digit of pin) await page.getByRole("button", { name: `Digit ${digit}` }).click();
 
       // ── 4. Verify child session grants access to the session home ────────
-      await page.goto("/session/home");
-      await expect(page).toHaveURL(/\/session\/home/);
+      await expect(page).toHaveURL(/\/session\/home/, { timeout: 30_000 });
       await expect(
         page.getByRole("heading", { name: /start with agentkid/i }),
       ).toBeVisible({ timeout: 30_000 });
