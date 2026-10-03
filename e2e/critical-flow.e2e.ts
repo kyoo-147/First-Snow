@@ -38,7 +38,7 @@ test.describe("Snow release critical paths – public smoke (read-only)", () => 
     await page.goto("/register");
     await expect(page.getByLabel("Guardian Full Name")).toBeVisible();
     await expect(page.getByLabel("Guardian Email")).toBeVisible();
-    await expect(page.getByLabel("Password")).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Password", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: /create guardian account/i })).toBeVisible();
   });
 });

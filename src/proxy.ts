@@ -21,12 +21,12 @@ export async function proxy(req: NextRequest): Promise<NextResponse> {
   if (ADMIN_ROUTES.some((route) => pathname.startsWith(route))) {
     const parentToken = req.cookies.get(PARENT_COOKIE_NAME)?.value;
     if (!parentToken) {
-      return NextResponse.redirect(new URL('/auth/parent/login', req.url));
+      return NextResponse.redirect(new URL('/login', req.url));
     }
 
     const payload = await verifyParentSession(parentToken);
     if (!payload || payload.role !== 'admin') {
-      return NextResponse.redirect(new URL('/auth/parent/login', req.url));
+      return NextResponse.redirect(new URL('/login', req.url));
     }
 
     return NextResponse.next();
@@ -36,12 +36,12 @@ export async function proxy(req: NextRequest): Promise<NextResponse> {
   if (PARENT_ROUTES.some((route) => pathname.startsWith(route))) {
     const parentToken = req.cookies.get(PARENT_COOKIE_NAME)?.value;
     if (!parentToken) {
-      return NextResponse.redirect(new URL('/auth/parent/login', req.url));
+      return NextResponse.redirect(new URL('/login', req.url));
     }
 
     const payload = await verifyParentSession(parentToken);
     if (!payload) {
-      return NextResponse.redirect(new URL('/auth/parent/login', req.url));
+      return NextResponse.redirect(new URL('/login', req.url));
     }
 
     return NextResponse.next();
@@ -51,12 +51,12 @@ export async function proxy(req: NextRequest): Promise<NextResponse> {
   if (CHILD_ROUTES.some((route) => pathname.startsWith(route))) {
     const childToken = req.cookies.get(CHILD_COOKIE_NAME)?.value;
     if (!childToken) {
-      return NextResponse.redirect(new URL('/auth/child/login', req.url));
+      return NextResponse.redirect(new URL('/child-login', req.url));
     }
 
     const payload = await verifyChildSession(childToken);
     if (!payload) {
-      return NextResponse.redirect(new URL('/auth/child/login', req.url));
+      return NextResponse.redirect(new URL('/child-login', req.url));
     }
 
     return NextResponse.next();

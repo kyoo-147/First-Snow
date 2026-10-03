@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { NextRequest, NextResponse } from 'next/server';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { NextRequest } from 'next/server';
 import { proxy } from '../proxy';
 import {
   createParentSession,
@@ -28,20 +28,20 @@ describe('src/proxy.ts Route Guards', () => {
   }
 
   describe('Admin route guard (/admin/*)', () => {
-    it('redirects unauthenticated user to /auth/parent/login', async () => {
+    it('redirects unauthenticated user to /login', async () => {
       const req = createMockRequest('/admin/users');
       const res = await proxy(req);
       expect(res.status).toBe(307);
-      expect(res.headers.get('location')).toBe('http://localhost:3000/auth/parent/login');
+      expect(res.headers.get('location')).toBe('http://localhost:3000/login');
     });
 
-    it('redirects non-admin parent to /auth/parent/login', async () => {
+    it('redirects non-admin parent to /login', async () => {
       const req = createMockRequest('/admin/users', {
         [PARENT_COOKIE_NAME]: parentToken,
       });
       const res = await proxy(req);
       expect(res.status).toBe(307);
-      expect(res.headers.get('location')).toBe('http://localhost:3000/auth/parent/login');
+      expect(res.headers.get('location')).toBe('http://localhost:3000/login');
     });
 
     it('allows admin access with valid admin session', async () => {
@@ -49,18 +49,17 @@ describe('src/proxy.ts Route Guards', () => {
         [PARENT_COOKIE_NAME]: adminToken,
       });
       const res = await proxy(req);
-      // NextResponse.next() returns a 200 response with x-middleware-next header
       expect(res.status).toBe(200);
       expect(res.headers.get('location')).toBeNull();
     });
   });
 
   describe('Parent route guard (/parent/*)', () => {
-    it('redirects unauthenticated request to /auth/parent/login', async () => {
+    it('redirects unauthenticated request to /login', async () => {
       const req = createMockRequest('/parent/dashboard');
       const res = await proxy(req);
       expect(res.status).toBe(307);
-      expect(res.headers.get('location')).toBe('http://localhost:3000/auth/parent/login');
+      expect(res.headers.get('location')).toBe('http://localhost:3000/login');
     });
 
     it('allows authenticated parent access', async () => {
@@ -78,30 +77,30 @@ describe('src/proxy.ts Route Guards', () => {
       });
       const res = await proxy(req);
       expect(res.status).toBe(307);
-      expect(res.headers.get('location')).toBe('http://localhost:3000/auth/parent/login');
+      expect(res.headers.get('location')).toBe('http://localhost:3000/login');
     });
   });
 
   describe('Child route guard (/session, /companion, /lessons, etc.)', () => {
-    it('redirects unauthenticated request on /session to /auth/child/login', async () => {
+    it('redirects unauthenticated request on /session to /child-login', async () => {
       const req = createMockRequest('/session/active');
       const res = await proxy(req);
       expect(res.status).toBe(307);
-      expect(res.headers.get('location')).toBe('http://localhost:3000/auth/child/login');
+      expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
     });
 
-    it('redirects unauthenticated request on /companion to /auth/child/login', async () => {
+    it('redirects unauthenticated request on /companion to /child-login', async () => {
       const req = createMockRequest('/companion/snow');
       const res = await proxy(req);
       expect(res.status).toBe(307);
-      expect(res.headers.get('location')).toBe('http://localhost:3000/auth/child/login');
+      expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
     });
 
-    it('redirects unauthenticated request on /lessons to /auth/child/login', async () => {
+    it('redirects unauthenticated request on /lessons to /child-login', async () => {
       const req = createMockRequest('/lessons/math-1');
       const res = await proxy(req);
       expect(res.status).toBe(307);
-      expect(res.headers.get('location')).toBe('http://localhost:3000/auth/child/login');
+      expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
     });
 
     it('allows authenticated child access to /session', async () => {
@@ -115,11 +114,11 @@ describe('src/proxy.ts Route Guards', () => {
 
     it('rejects child accessing /session with parent token (separate secret key)', async () => {
       const req = createMockRequest('/session/active', {
-        [CHILD_COOKIE_NAME]: parentToken, // Child verifier fails on parent token
+        [CHILD_COOKIE_NAME]: parentToken,
       });
       const res = await proxy(req);
       expect(res.status).toBe(307);
-      expect(res.headers.get('location')).toBe('http://localhost:3000/auth/child/login');
+      expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
     });
   });
 
@@ -132,7 +131,7 @@ describe('src/proxy.ts Route Guards', () => {
     });
 
     it('allows access to public login page without authentication', async () => {
-      const req = createMockRequest('/auth/parent/login');
+      const req = createMockRequest('/login');
       const res = await proxy(req);
       expect(res.status).toBe(200);
       expect(res.headers.get('location')).toBeNull();
