@@ -144,6 +144,17 @@ describe('companion route contracts', () => {
     expect(dbState.inserts).toBe(1);
   });
 
+  it('blocks unsafe provider output instead of persisting it', async () => {
+    const { POST } = await import('@/app/api/companion/sessions/[sessionId]/messages/route');
+    setTestCompanionProvider(async () => 'You should kill yourself.');
+    dbState.rows = [[session], [], [message], [message]];
+    const request = new NextRequest('http://localhost/api/companion/sessions/session-1/messages', { method: 'POST', body: JSON.stringify({ clientMessageId: 'client-1', content: 'hello' }) });
+    const response = await POST(request, { params: Promise.resolve({ sessionId: 'session-1' }) });
+    expect(response.status).toBe(502);
+    expect(await response.json()).toMatchObject({ error: { code: 'PROVIDER_UNSAFE_OUTPUT' } });
+    expect(dbState.inserts).toBe(1);
+  });
+
   it('consumes a matching database ticket once and rejects an expired ticket', async () => {
     const { POST } = await import('@/app/api/companion/ws-ticket/consume/route');
     const token = 'one-time-secret';

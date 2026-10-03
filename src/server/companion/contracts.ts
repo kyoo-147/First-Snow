@@ -1,4 +1,5 @@
-export type Provider = (input: { content: string; history: Array<{ role: 'child' | 'assistant'; content: string }> }) => Promise<string>;
+export type ProviderInput = { content: string; history: Array<{ role: 'child' | 'assistant'; content: string }> };
+export type Provider = (input: ProviderInput) => Promise<string>;
 
 let testProvider: Provider | null = null;
 
@@ -6,16 +7,22 @@ export function setTestCompanionProvider(provider: Provider | null): void {
   testProvider = provider;
 }
 
-export async function generateReply(input: Parameters<Provider>[0]): Promise<string> {
+export async function generateReply(input: ProviderInput): Promise<string> {
   const provider = testProvider;
   if (provider) return provider(input);
+  const { readOpenAiProviderConfig, createOpenAiCompanionProvider } = await import('./openai-provider');
+  const config = readOpenAiProviderConfig();
+  if (config) {
+    const openAiProvider = createOpenAiCompanionProvider(config);
+    return openAiProvider(input);
+  }
   throw new Error('COMPANION_PROVIDER_UNAVAILABLE');
 }
 
 export function checkSafety(content: string): { flagged: boolean; reason: string | null; codes: string[] } {
   const text = content.toLowerCase();
   const checks: Array<[string, RegExp]> = [
-    ['self_harm', /\b(kill myself|hurt myself|suicid|self[- ]harm)\b/],
+    ['self_harm', /\b(kill (?:my|your)self|hurt (?:my|your)self|suicid|self[- ]harm)\b/],
     ['abuse_disclosure', /\b(hitting me|touching me|abusing me|hurt me at home)\b/],
     ['immediate_danger', /\b(in danger|someone is hurting me|unsafe right now)\b/],
   ];

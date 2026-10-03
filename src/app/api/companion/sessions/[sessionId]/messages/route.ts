@@ -62,6 +62,11 @@ export async function POST(request: NextRequest, context: Context): Promise<Next
       return NextResponse.json({ error: { code: 'PROVIDER_ERROR', message: 'Companion could not respond. Please retry.' } }, { status: 502 });
     }
     if (!reply) return NextResponse.json({ error: { code: 'PROVIDER_ERROR', message: 'Companion returned an empty response.' } }, { status: 502 });
+    const replySafety = checkSafety(reply);
+    if (replySafety.flagged) {
+      console.error('[companion/provider] Blocked unsafe provider output', { codes: replySafety.codes });
+      return NextResponse.json({ error: { code: 'PROVIDER_UNSAFE_OUTPUT', message: 'Companion could not provide a safe response. Please try a different question.' } }, { status: 502 });
+    }
     const assistantMessage = { sessionId, childId: actor.sub, speaker: 'snow' as const, text: reply, isFlagged: false, safetyScore: 0 } as unknown as NewCompanionMessage;
     const [assistant] = await db.insert(companionMessages).values(assistantMessage).returning();
     if (!assistant) return ERRORS.internal('Could not save companion response.');

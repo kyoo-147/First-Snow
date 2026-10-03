@@ -1,0 +1,338 @@
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
+import {
+  readOpenAiProviderConfig,
+  createOpenAiCompanionProvider,
+  DEFAULT_OPENAI_BASE_URL,
+  DEFAULT_OPENAI_MODEL,
+  DEFAULT_PROVIDER_TIMEOUT_MS,
+  DEFAULT_PROVIDER_MAX_BYTES,
+  type OpenAiProviderConfig,
+} from '@/server/companion/openai-provider';
+import { generateReply, setTestCompanionProvider } from '@/server/companion/contracts';
+
+const VALID_CONFIG: OpenAiProviderConfig = {
+  apiKey: 'sk-test-secret-key-12345678',
+  baseUrl: 'https://api.openai.com/v1',
+  model: 'gpt-4o-mini',
+  timeoutMs: 15_000,
+  maxBytes: 65_536,
+};
+
+describe('OpenAI-compatible text companion provider adapter', () => {
+  describe('readOpenAiProviderConfig', () => {
+    it('returns null when API key is missing or blank', () => {
+      assert.equal(readOpenAiProviderConfig({}), null);
+      assert.equal(readOpenAiProviderConfig({ OPENAI_API_KEY: '' }), null);
+      assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: '   ' }), null);
+      assert.equal(readOpenAiProviderConfig({ OPENAI_API_KEY: 'unscoped-key' }), null);
+    });
+
+    it('reads configuration with sensible defaults via COMPANION_OPENAI_API_KEY', () => {
+      const config = readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-test-key' });
+      assert.ok(config);
+      assert.equal(config.apiKey, 'sk-test-key');
+      assert.equal(config.baseUrl, DEFAULT_OPENAI_BASE_URL);
+      assert.equal(config.model, DEFAULT_OPENAI_MODEL);
+      assert.equal(config.timeoutMs, DEFAULT_PROVIDER_TIMEOUT_MS);
+      assert.equal(config.maxBytes, DEFAULT_PROVIDER_MAX_BYTES);
+    });
+
+    it('supports COMPANION_PROVIDER_API_KEY as alternate alias', () => {
+      const config = readOpenAiProviderConfig({ COMPANION_PROVIDER_API_KEY: 'sk-alias-key' });
+      assert.ok(config);
+      assert.equal(config.apiKey, 'sk-alias-key');
+    });
+
+    it('supports OPENAI_API_KEY when COMPANION_PROVIDER=openai is explicitly enabled', () => {
+      const config = readOpenAiProviderConfig({
+        COMPANION_PROVIDER: 'openai',
+        OPENAI_API_KEY: 'sk-explicit-openai',
+      });
+      assert.ok(config);
+      assert.equal(config.apiKey, 'sk-explicit-openai');
+    });
+
+    it('prefers COMPANION_ prefixed environment variables', () => {
+      const config = readOpenAiProviderConfig({
+        OPENAI_API_KEY: 'key-standard',
+        COMPANION_OPENAI_API_KEY: 'key-companion',
+        OPENAI_BASE_URL: 'https://api.standard.com/v1',
+        COMPANION_OPENAI_BASE_URL: 'https://api.companion.com/v1/',
+        OPENAI_MODEL: 'model-standard',
+        COMPANION_OPENAI_MODEL: 'model-companion',
+        COMPANION_PROVIDER_TIMEOUT_MS: '8000',
+        COMPANION_PROVIDER_MAX_BYTES: '32768',
+      });
+      assert.ok(config);
+      assert.equal(config.apiKey, 'key-companion');
+      assert.equal(config.baseUrl, 'https://api.companion.com/v1'); // Stripped trailing slash
+      assert.equal(config.model, 'model-companion');
+      assert.equal(config.timeoutMs, 8000);
+      assert.equal(config.maxBytes, 32768);
+    });
+
+    it('rejects invalid or unsafe base URLs', () => {
+      assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-key', COMPANION_OPENAI_BASE_URL: 'not-a-url' }), null);
+      assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-key', COMPANION_OPENAI_BASE_URL: 'ftp://api.example.com' }), null);
+    });
+
+    it('requires TLS except for loopback providers and rejects URL credentials or query data', () => {
+      assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-key', COMPANION_OPENAI_BASE_URL: 'http://api.example.com/v1' }), null);
+      assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-key', COMPANION_OPENAI_BASE_URL: 'https://user:pass@api.example.com/v1' }), null);
+      assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-key', COMPANION_OPENAI_BASE_URL: 'https://api.example.com/v1?token=unsafe' }), null);
+      assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-key', COMPANION_OPENAI_BASE_URL: 'http://127.0.0.1:8080/v1' })?.baseUrl, 'http://127.0.0.1:8080/v1');
+    });
+
+    it('falls back to defaults when numeric bounds are violated', () => {
+      const config = readOpenAiProviderConfig({
+        COMPANION_OPENAI_API_KEY: 'sk-key',
+        COMPANION_PROVIDER_TIMEOUT_MS: 'invalid',
+        COMPANION_PROVIDER_MAX_BYTES: '-500',
+      });
+      assert.ok(config);
+      assert.equal(config.timeoutMs, DEFAULT_PROVIDER_TIMEOUT_MS);
+      assert.equal(config.maxBytes, DEFAULT_PROVIDER_MAX_BYTES);
+    });
+  });
+
+  describe('createOpenAiCompanionProvider execution', () => {
+    it('formats OpenAI chat messages with history and system prompt and returns assistant reply', async () => {
+      let capturedUrl = '';
+      let capturedHeaders: HeadersInit | undefined;
+      let capturedBody: string | undefined;
+
+      const mockFetch: typeof fetch = async (input, init) => {
+        capturedUrl = String(input);
+        capturedHeaders = init?.headers;
+        capturedBody = init?.body as string;
+
+        const responsePayload = {
+          choices: [
+            {
+              message: {
+                role: 'assistant',
+                content: 'Hello! I am Snow. What would you like to explore today?',
+              },
+            },
+          ],
+        };
+
+        return new Response(JSON.stringify(responsePayload), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      };
+
+      const provider = createOpenAiCompanionProvider(VALID_CONFIG, { fetch: mockFetch });
+      const reply = await provider({
+        content: 'Hi Snow!',
+        history: [
+          { role: 'child', content: 'What is a volcano?' },
+          { role: 'assistant', content: 'A volcano is a mountain that opens downward to a pool of molten rock!' },
+        ],
+      });
+
+      assert.equal(reply, 'Hello! I am Snow. What would you like to explore today?');
+      assert.equal(capturedUrl, 'https://api.openai.com/v1/chat/completions');
+
+      const headers = capturedHeaders as Record<string, string>;
+      assert.equal(headers['Authorization'], 'Bearer sk-test-secret-key-12345678');
+      assert.equal(headers['Content-Type'], 'application/json');
+
+      const parsedBody = JSON.parse(capturedBody || '{}') as {
+        model: string;
+        messages: Array<{ role: string; content: string }>;
+      };
+      assert.equal(parsedBody.model, 'gpt-4o-mini');
+      assert.equal(parsedBody.messages.length, 4);
+      assert.equal(parsedBody.messages[0].role, 'system');
+      assert.ok(parsedBody.messages[0].content.includes('Snow'));
+      assert.deepEqual(parsedBody.messages[1], { role: 'user', content: 'What is a volcano?' });
+      assert.deepEqual(parsedBody.messages[2], { role: 'assistant', content: 'A volcano is a mountain that opens downward to a pool of molten rock!' });
+      assert.deepEqual(parsedBody.messages[3], { role: 'user', content: 'Hi Snow!' });
+    });
+
+    it('rejects upstream HTTP errors without returning fake responses', async () => {
+      const mockFetch: typeof fetch = async () => {
+        return new Response(JSON.stringify({ error: { message: 'Rate limit exceeded' } }), {
+          status: 429,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      };
+
+      const provider = createOpenAiCompanionProvider(VALID_CONFIG, { fetch: mockFetch });
+      await assert.rejects(
+        () => provider({ content: 'Test prompt', history: [] }),
+        (err: Error) => {
+          assert.equal(err.message, 'COMPANION_PROVIDER_HTTP_429');
+          return true;
+        },
+      );
+    });
+
+    it('rejects empty or whitespace-only assistant content without fake answers', async () => {
+      const mockFetch: typeof fetch = async () => {
+        return new Response(JSON.stringify({ choices: [{ message: { content: '   ' } }] }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      };
+
+      const provider = createOpenAiCompanionProvider(VALID_CONFIG, { fetch: mockFetch });
+      await assert.rejects(
+        () => provider({ content: 'Test prompt', history: [] }),
+        (err: Error) => {
+          assert.equal(err.message, 'COMPANION_PROVIDER_EMPTY_REPLY');
+          return true;
+        },
+      );
+    });
+
+    it('rejects assistant replies that exceed the persisted message limit', async () => {
+      const mockFetch: typeof fetch = async () => new Response(
+        JSON.stringify({ choices: [{ message: { content: 'a'.repeat(8_001) } }] }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+      const provider = createOpenAiCompanionProvider(VALID_CONFIG, { fetch: mockFetch });
+      await assert.rejects(
+        () => provider({ content: 'Test prompt', history: [] }),
+        (err: Error) => {
+          assert.equal(err.message, 'COMPANION_PROVIDER_REPLY_TOO_LARGE');
+          return true;
+        },
+      );
+    });
+
+    it('enforces request timeout bounds via AbortController', async () => {
+      const mockFetch: typeof fetch = async (_input, init) => {
+        return new Promise<Response>((_resolve, reject) => {
+          const signal = init?.signal;
+          if (signal) {
+            signal.addEventListener('abort', () => {
+              reject(new Error('The operation was aborted.'));
+            });
+          }
+        });
+      };
+
+      const provider = createOpenAiCompanionProvider(
+        { ...VALID_CONFIG, timeoutMs: 50 },
+        { fetch: mockFetch },
+      );
+
+      await assert.rejects(
+        () => provider({ content: 'Test timeout', history: [] }),
+        (err: Error) => {
+          assert.equal(err.message, 'COMPANION_PROVIDER_TIMEOUT');
+          return true;
+        },
+      );
+    });
+
+    it('enforces payload size limits via content-length header', async () => {
+      const mockFetch: typeof fetch = async () => {
+        return new Response('{}', {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': '70000', // exceeds maxBytes: 65536
+          },
+        });
+      };
+
+      const provider = createOpenAiCompanionProvider(VALID_CONFIG, { fetch: mockFetch });
+      await assert.rejects(
+        () => provider({ content: 'Test size limit', history: [] }),
+        (err: Error) => {
+          assert.equal(err.message, 'COMPANION_PROVIDER_PAYLOAD_TOO_LARGE');
+          return true;
+        },
+      );
+    });
+
+    it('enforces payload size limits while consuming stream chunks', async () => {
+      const mockFetch: typeof fetch = async () => {
+        const stream = new ReadableStream({
+          start(controller) {
+            // Push a chunk larger than maxBytes
+            controller.enqueue(new Uint8Array(100));
+            controller.close();
+          },
+        });
+
+        return new Response(stream, {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      };
+
+      const provider = createOpenAiCompanionProvider(
+        { ...VALID_CONFIG, maxBytes: 50 },
+        { fetch: mockFetch },
+      );
+
+      await assert.rejects(
+        () => provider({ content: 'Test stream size', history: [] }),
+        (err: Error) => {
+          assert.equal(err.message, 'COMPANION_PROVIDER_PAYLOAD_TOO_LARGE');
+          return true;
+        },
+      );
+    });
+
+    it('redacts sensitive API keys from error messages and logs', async () => {
+      const secret = 'super-secret-production-key-999';
+      const mockFetch: typeof fetch = async () => {
+        throw new Error(`Failed to reach upstream with authorization Bearer ${secret}`);
+      };
+
+      const provider = createOpenAiCompanionProvider(
+        { ...VALID_CONFIG, apiKey: secret },
+        { fetch: mockFetch },
+      );
+
+      await assert.rejects(
+        () => provider({ content: 'Secret leakage test', history: [] }),
+        (err: Error) => {
+          assert.ok(!err.message.includes(secret), 'Secret key must NEVER appear in error messages');
+          assert.ok(err.message.includes('[REDACTED]'), 'Secret should be redacted with [REDACTED]');
+          return true;
+        },
+      );
+    });
+  });
+
+  describe('generateReply contracts integration', () => {
+    it('throws COMPANION_PROVIDER_UNAVAILABLE when no testProvider and no env config is set', async () => {
+      setTestCompanionProvider(null);
+      const originalKey = process.env.OPENAI_API_KEY;
+      const originalCompanionKey = process.env.COMPANION_OPENAI_API_KEY;
+      delete process.env.OPENAI_API_KEY;
+      delete process.env.COMPANION_OPENAI_API_KEY;
+
+      try {
+        await assert.rejects(
+          () => generateReply({ content: 'Hello', history: [] }),
+          (err: Error) => {
+            assert.equal(err.message, 'COMPANION_PROVIDER_UNAVAILABLE');
+            return true;
+          },
+        );
+      } finally {
+        if (originalKey !== undefined) process.env.OPENAI_API_KEY = originalKey;
+        if (originalCompanionKey !== undefined) process.env.COMPANION_OPENAI_API_KEY = originalCompanionKey;
+      }
+    });
+
+    it('uses injected test provider when set via setTestCompanionProvider', async () => {
+      setTestCompanionProvider(async ({ content }) => `Injected echo: ${content}`);
+      try {
+        const reply = await generateReply({ content: 'Testing injection', history: [] });
+        assert.equal(reply, 'Injected echo: Testing injection');
+      } finally {
+        setTestCompanionProvider(null);
+      }
+    });
+  });
+});
