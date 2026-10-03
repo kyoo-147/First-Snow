@@ -7,3 +7,4 @@ export * from './learning';
 export * from './companion';
 export * from './privacy';
 export * from './notifications';
+export * from './routines';
