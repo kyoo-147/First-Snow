@@ -29,7 +29,7 @@ vi.mock('next/headers', () => ({
 
 let dbShouldThrow = false;
 let updateShouldThrow = false;
-let mockQueryQueue: any[][] = [];
+let mockQueryQueue: unknown[][] = [];
 
 vi.mock('@/db/client', () => ({
   db: {

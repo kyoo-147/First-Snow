@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Delete, Loader2, RotateCcw } from "lucide-react";
@@ -21,23 +21,61 @@ export function ChildPinPad({ child, onBack }: ChildPinPadProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  function handleDigit(digit: string) {
-    if (isLoading || pin.length >= PIN_LENGTH) return;
-    setErrorMessage(null);
-    setPin((prev) => prev + digit);
-  }
+  const submitPin = useCallback(
+    async (submittedPin: string) => {
+      setIsLoading(true);
+      setErrorMessage(null);
 
-  function handleBackspace() {
+      try {
+        await loginChild({
+          childId: child.id,
+          pin: submittedPin,
+        });
+        // Redirect to child home on success
+        router.push("/session/home");
+        router.refresh();
+      } catch (err: unknown) {
+        setPin("");
+        if (err instanceof Error) {
+          setErrorMessage(
+            err.message.includes("401") || err.message.toLowerCase().includes("invalid")
+              ? "That PIN did not match. Let's try together, or ask your grown-up for help!"
+              : err.message,
+          );
+        } else {
+          setErrorMessage("Let's try together. Ask your grown-up if you need help with your PIN.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [child.id, router],
+  );
+
+  const handleDigit = useCallback(
+    (digit: string) => {
+      if (isLoading || pin.length >= PIN_LENGTH) return;
+      setErrorMessage(null);
+      const nextPin = pin + digit;
+      setPin(nextPin);
+      if (nextPin.length === PIN_LENGTH) {
+        void submitPin(nextPin);
+      }
+    },
+    [isLoading, pin, submitPin],
+  );
+
+  const handleBackspace = useCallback(() => {
     if (isLoading || pin.length === 0) return;
     setErrorMessage(null);
     setPin((prev) => prev.slice(0, -1));
-  }
+  }, [isLoading, pin]);
 
-  function handleClear() {
+  const handleClear = useCallback(() => {
     if (isLoading) return;
     setErrorMessage(null);
     setPin("");
-  }
+  }, [isLoading]);
 
   // Keyboard accessibility: listen for digit keys, Backspace, Escape
   useEffect(() => {
@@ -58,42 +96,7 @@ export function ChildPinPad({ child, onBack }: ChildPinPadProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isLoading, pin]);
-
-  // When PIN reaches 4 digits, automatically submit
-  useEffect(() => {
-    if (pin.length === PIN_LENGTH && !isLoading) {
-      submitPin(pin);
-    }
-  }, [pin]);
-
-  async function submitPin(submittedPin: string) {
-    setIsLoading(true);
-    setErrorMessage(null);
-
-    try {
-      await loginChild({
-        childId: child.id,
-        pin: submittedPin,
-      });
-      // Redirect to child home on success
-      router.push("/session/home");
-      router.refresh();
-    } catch (err: unknown) {
-      setPin("");
-      if (err instanceof Error) {
-        setErrorMessage(
-          err.message.includes("401") || err.message.toLowerCase().includes("invalid")
-            ? "That PIN did not match. Let's try together, or ask your grown-up for help!"
-            : err.message,
-        );
-      } else {
-        setErrorMessage("Let's try together. Ask your grown-up if you need help with your PIN.");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  }, [handleBackspace, handleClear, handleDigit, isLoading]);
 
   return (
     <div className="space-y-5">

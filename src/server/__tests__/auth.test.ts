@@ -3,9 +3,7 @@ import {
   createParentSession,
   createChildSession,
   generateOpaqueToken,
-  hashToken,
   PARENT_COOKIE_NAME,
-  CHILD_COOKIE_NAME,
   type ParentSessionPayload,
 } from '@/lib/auth/session';
 
@@ -25,7 +23,7 @@ vi.mock('next/headers', () => ({
   }),
 }));
 
-let queryResults: any[][] = [];
+let queryResults: unknown[][] = [];
 let dbShouldThrow = false;
 
 vi.mock('@/db/client', () => ({

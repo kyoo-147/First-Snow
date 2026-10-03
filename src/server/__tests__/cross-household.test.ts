@@ -5,7 +5,7 @@ import type { ChildSessionPayload } from '@/lib/auth/session';
 vi.mock('server-only', () => ({}));
 
 // Configurable mock query results
-let queryResults: any[][] = [];
+let queryResults: unknown[][] = [];
 
 vi.mock('@/db/client', () => ({
   db: {
