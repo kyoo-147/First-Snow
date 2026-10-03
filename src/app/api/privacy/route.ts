@@ -7,7 +7,7 @@ import { audit, consentCapabilities, context, latestConsents, POLICY_VERSION, pr
 import { z } from 'zod';
 
 export async function GET() {
-  try { const session = await requireParentSession(); if (session instanceof Response) return session; const { household } = await context(session); return NextResponse.json({ privacy: { ...(await privacySettings(household.id)), updatedAt: new Date().toISOString() } }); }
+  try { const session = await requireParentSession(); if (session instanceof Response) return session; const { household } = await context(session); return NextResponse.json({ privacy: await privacySettings(household.id) }); }
   catch (e) { return safetyErrorResponse(e); }
 }
 
@@ -16,16 +16,18 @@ export async function PATCH(request: Request) {
   try {
     const session = await requireParentSession(); if (session instanceof Response) return session;
     const body = schema.safeParse(await request.json()); if (!body.success) throw new SafetyError(400, 'VALIDATION_FAILED', 'Invalid privacy settings.', body.error.flatten().fieldErrors as Record<string, string[]>);
-    const { household } = await context(session); const input = body.data;
+    const input = body.data;
+    if (input.cameraPreview === true) throw new SafetyError(503, 'CAPABILITY_UNAVAILABLE', 'Camera preview is unavailable because it is not separately persisted or enforced.');
+    const { household } = await context(session);
     const values = Object.entries(consentCapabilities).filter(([key]) => {
-      if (key === 'camera') return typeof input.cameraAccess === 'boolean' || typeof input.cameraPreview === 'boolean';
+      if (key === 'camera') return typeof input.cameraAccess === 'boolean';
       const field = key === 'microphone' ? 'microphoneAccess' : key === 'vision' ? 'visionAiAccess' : 'screenCaptureAccess';
       return typeof input[field] === 'boolean';
     });
-    if (values.length || input.cameraPreview !== undefined || input.emotionTimelineStorage !== undefined || input.transcriptStorageDays !== undefined) await reauthenticate(session.sub, input.reauthPassword);
+    if (values.length || input.emotionTimelineStorage !== undefined || input.transcriptStorageDays !== undefined) await reauthenticate(session.sub, input.reauthPassword);
     for (const [scope, capability] of values) {
       const granted = scope === 'camera'
-        ? input.cameraAccess !== false && input.cameraPreview !== false && (input.cameraAccess === true || input.cameraPreview === true)
+        ? input.cameraAccess === true
         : Boolean(input[`${scope === 'microphone' ? 'microphoneAccess' : scope === 'vision' ? 'visionAiAccess' : 'screenCaptureAccess'}` as keyof typeof input]);
       const [latest] = (await latestConsents(household.id)).filter((row) => row.capability === capability).slice(0, 1);
       await db.insert(capabilityConsents).values({ householdId: household.id, capability, version: (latest?.version ?? 0) + 1, granted, grantedAt: granted ? new Date() : null, revokedAt: granted ? null : new Date(), grantedByUserId: session.sub, metadata: { policyVersion: POLICY_VERSION } } as typeof capabilityConsents.$inferInsert);
@@ -39,6 +41,6 @@ export async function PATCH(request: Request) {
       else await db.insert(retentionPolicies).values({ householdId: household.id, resourceType, retentionDays: retentionDays ?? 0, isActive: isActive ?? true } as typeof retentionPolicies.$inferInsert);
     }
     await audit(session.sub, 'privacy.settings.updated', 'privacy_settings', household.id, { fields: Object.keys(input).filter((key) => key !== 'reauthPassword') });
-    return NextResponse.json({ privacy: { ...(await privacySettings(household.id)), updatedAt: new Date().toISOString() } });
+    return NextResponse.json({ privacy: await privacySettings(household.id) });
   } catch (e) { return safetyErrorResponse(e); }
 }

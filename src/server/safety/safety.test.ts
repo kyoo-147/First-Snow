@@ -3,11 +3,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const selectResults: unknown[][] = [];
 const select = vi.fn(() => ({
   from: vi.fn(() => ({
-    where: vi.fn(() => ({
-      limit: vi.fn(async () => selectResults.shift() ?? []),
-    })),
+    where: vi.fn(() => {
+      const result = selectResults.shift() ?? [];
+      return Object.assign(Promise.resolve(result), {
+        limit: vi.fn(async () => result),
+        orderBy: vi.fn(async () => result),
+      });
+    }),
     innerJoin: vi.fn(() => ({
-      where: vi.fn(() => ({ limit: vi.fn(async () => selectResults.shift() ?? []) })),
+      where: vi.fn(() => {
+        const result = selectResults.shift() ?? [];
+        return Object.assign(Promise.resolve(result), { limit: vi.fn(async () => result) });
+      }),
     })),
   })),
 }));
@@ -66,5 +73,43 @@ describe('safety service', () => {
     const response = await PATCH(new Request('http://localhost/api/notification-preferences', { method: 'PATCH', body: JSON.stringify({ emergencySmsAlerts: true }) }));
     expect(response.status).toBe(503);
     expect(await response.json()).toMatchObject({ error: { code: 'PROVIDER_UNAVAILABLE' } });
+  });
+
+  it('keeps camera preview false even when camera consent is granted', async () => {
+    selectResults.push([{ capability: 'camera', granted: true, childId: null }], []);
+    const { privacySettings } = await import('./index');
+    const settings = await privacySettings('household-a');
+    expect(settings.cameraAccess).toBe(true);
+    expect(settings.cameraPreview).toBe(false);
+    expect(settings).not.toHaveProperty('updatedAt');
+  });
+
+  it('rejects enabling camera preview before changing camera consent', async () => {
+    const { PATCH } = await import('@/app/api/privacy/route');
+    const response = await PATCH(new Request('http://localhost/api/privacy', { method: 'PATCH', body: JSON.stringify({ cameraPreview: true }) }));
+    expect(response.status).toBe(503);
+    expect(await response.json()).toMatchObject({ error: { code: 'CAPABILITY_UNAVAILABLE' } });
+  });
+
+  it('omits unverified email, unknown push device count, and timestamp without stored preferences', async () => {
+    const { mapNotificationPreferences } = await import('@/app/api/notification-preferences/route');
+    const preferences = mapNotificationPreferences([]);
+    expect(preferences).not.toHaveProperty('verifiedEmail');
+    expect(preferences).not.toHaveProperty('pushDeviceCount');
+    expect(preferences).not.toHaveProperty('updatedAt');
+  });
+
+  it('rejects enabling contact alerts instead of saving them as disabled', async () => {
+    const { POST } = await import('@/app/api/emergency-contacts/route');
+    const response = await POST(new Request('http://localhost/api/emergency-contacts', { method: 'POST', body: JSON.stringify({ name: 'Caregiver', relation: 'Parent', phone: '555-0100', notifyOnAlert: true }) }));
+    expect(response.status).toBe(503);
+    expect(await response.json()).toMatchObject({ error: { code: 'PREFERENCE_UNAVAILABLE' } });
+  });
+
+  it('does not fabricate a contact priority and reports the unavailable alert default as false', async () => {
+    const { mapEmergencyContact } = await import('@/app/api/emergency-contacts/route');
+    const contact = mapEmergencyContact({ id: 'contact-a', name: 'Caregiver', relationship: 'Parent', phone: '555-0100', email: null, isPrimary: false, createdAt: new Date('2026-01-01T00:00:00Z'), updatedAt: new Date('2026-01-01T00:00:00Z') } as never);
+    expect(contact.notifyOnAlert).toBe(false);
+    expect(contact).not.toHaveProperty('priority');
   });
 });

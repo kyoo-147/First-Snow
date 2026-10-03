@@ -51,7 +51,7 @@ export async function privacySettings(householdId: string) {
   const granted = (capability: string) => consents.find((row) => row.capability === capability)?.granted === true;
   const transcript = retention.find((row) => row.resourceType === 'transcripts');
   const emotion = retention.find((row) => row.resourceType === 'emotion_timeline');
-  return { microphoneAccess: granted('mic'), cameraAccess: granted('camera'), visionAiAccess: granted('vision'), screenCaptureAccess: granted('screen'), cameraPreview: granted('camera'), transcriptStorageDays: transcript?.retentionDays ?? 0, emotionTimelineStorage: emotion?.isActive ?? false };
+  return { microphoneAccess: granted('mic'), cameraAccess: granted('camera'), visionAiAccess: granted('vision'), screenCaptureAccess: granted('screen'), cameraPreview: false, transcriptStorageDays: transcript?.retentionDays ?? 0, emotionTimelineStorage: emotion?.isActive ?? false };
 }
 
 export function mapConsent(row: typeof capabilityConsents.$inferSelect) {
