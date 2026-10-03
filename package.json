@@ -13,6 +13,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx src/db/seed.ts",
+    "db:seed:lessons": "tsx src/db/seed-lessons.ts",
     "safety:worker": "tsx src/server/safety/run-worker.ts",
     "test": "vitest run && npm run test:contracts",
     "test:contracts": "node --test src/components/auth/auth-contracts.test.mjs src/components/safety/safety-contracts.test.mjs src/lib/__tests__/learning-client.test.ts && tsx --test src/__tests__/companion/*.test.ts && node --test src/vtuber-app/src/__tests__/voice-client-contracts.test.mjs",
