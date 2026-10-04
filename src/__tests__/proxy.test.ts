@@ -1,24 +1,78 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { proxy } from '../proxy';
 import {
   createParentSession,
   createChildSession,
+  generateOpaqueToken,
   PARENT_COOKIE_NAME,
   CHILD_COOKIE_NAME,
 } from '@/lib/auth/session';
 
-describe('src/proxy.ts Route Guards', () => {
-  let parentToken: string;
-  let adminToken: string;
-  let childToken: string;
+// Controllable in-memory stand-in for the two-query DB session check.
+const state = vi.hoisted(() => ({
+  queryResults: [] as unknown[][],
+  dbShouldThrow: false,
+  selectCalls: 0,
+}));
 
-  beforeEach(async () => {
-    parentToken = await createParentSession('parent-user-uuid', 'parent');
-    adminToken = await createParentSession('admin-user-uuid', 'admin');
-    childToken = await createChildSession('child-user-uuid', 'household-uuid');
-  });
+vi.mock('server-only', () => ({}));
 
+vi.mock('next/headers', () => ({
+  cookies: async () => ({ get: () => undefined, delete: vi.fn(), set: vi.fn() }),
+}));
+
+vi.mock('@/db/client', () => ({
+  db: {
+    select: () => {
+      state.selectCalls++;
+      return {
+        from: () => ({
+          where: () => ({
+            limit: () => {
+              if (state.dbShouldThrow) {
+                throw new Error('Database connection failed (simulated)');
+              }
+              return state.queryResults.shift() ?? [];
+            },
+          }),
+        }),
+      };
+    },
+  },
+}));
+
+const future = () => new Date(Date.now() + 86_400_000);
+
+function parentSessionRow(
+  role: 'parent' | 'admin',
+  userId: string,
+  overrides: Record<string, unknown> = {},
+) {
+  return {
+    id: 'sess-parent',
+    actorType: role,
+    userId,
+    childId: null,
+    revokedAt: null,
+    expiresAt: future(),
+    ...overrides,
+  };
+}
+
+function childSessionRow(childId: string, overrides: Record<string, unknown> = {}) {
+  return {
+    id: 'sess-child',
+    actorType: 'child',
+    userId: null,
+    childId,
+    revokedAt: null,
+    expiresAt: future(),
+    ...overrides,
+  };
+}
+
+describe('src/proxy.ts Route Guards (DB-backed revocation)', () => {
   function createMockRequest(url: string, cookies: Record<string, string> = {}): NextRequest {
     const req = new NextRequest(new URL(url, 'http://localhost:3000'));
     for (const [name, val] of Object.entries(cookies)) {
@@ -27,28 +81,69 @@ describe('src/proxy.ts Route Guards', () => {
     return req;
   }
 
+  async function parentToken(role: 'parent' | 'admin' = 'parent') {
+    return createParentSession('parent-user-uuid', role, generateOpaqueToken());
+  }
+
+  async function childToken() {
+    return createChildSession('child-user-uuid', 'household-uuid', generateOpaqueToken());
+  }
+
+  beforeEach(() => {
+    state.queryResults = [];
+    state.dbShouldThrow = false;
+    state.selectCalls = 0;
+  });
+
   describe('Admin route guard (/admin/*)', () => {
-    it('redirects unauthenticated user to /login', async () => {
-      const req = createMockRequest('/admin/users');
-      const res = await proxy(req);
+    it('redirects unauthenticated user to /login without touching the DB', async () => {
+      const res = await proxy(createMockRequest('/admin/users'));
       expect(res.status).toBe(307);
       expect(res.headers.get('location')).toBe('http://localhost:3000/login');
+      expect(state.selectCalls).toBe(0);
     });
 
     it('redirects non-admin parent to /login', async () => {
-      const req = createMockRequest('/admin/users', {
-        [PARENT_COOKIE_NAME]: parentToken,
-      });
-      const res = await proxy(req);
+      const res = await proxy(
+        createMockRequest('/admin/users', {
+          [PARENT_COOKIE_NAME]: await parentToken('parent'),
+        }),
+      );
       expect(res.status).toBe(307);
       expect(res.headers.get('location')).toBe('http://localhost:3000/login');
     });
 
-    it('allows admin access with valid admin session', async () => {
-      const req = createMockRequest('/admin/users', {
-        [PARENT_COOKIE_NAME]: adminToken,
-      });
-      const res = await proxy(req);
+    it('redirects admin whose DB session is revoked', async () => {
+      const token = await parentToken('admin');
+      state.queryResults = [
+        [parentSessionRow('admin', 'parent-user-uuid', { revokedAt: new Date() })],
+      ];
+
+      const res = await proxy(createMockRequest('/admin/users', { [PARENT_COOKIE_NAME]: token }));
+      expect(res.status).toBe(307);
+      expect(res.headers.get('location')).toBe('http://localhost:3000/login');
+    });
+
+    it('redirects admin whose user is deactivated', async () => {
+      const token = await parentToken('admin');
+      state.queryResults = [
+        [parentSessionRow('admin', 'parent-user-uuid')],
+        [{ id: 'parent-user-uuid', isActive: false }],
+      ];
+
+      const res = await proxy(createMockRequest('/admin/users', { [PARENT_COOKIE_NAME]: token }));
+      expect(res.status).toBe(307);
+      expect(res.headers.get('location')).toBe('http://localhost:3000/login');
+    });
+
+    it('allows admin access with an active DB session', async () => {
+      const token = await parentToken('admin');
+      state.queryResults = [
+        [parentSessionRow('admin', 'parent-user-uuid')],
+        [{ id: 'parent-user-uuid', isActive: true }],
+      ];
+
+      const res = await proxy(createMockRequest('/admin/users', { [PARENT_COOKIE_NAME]: token }));
       expect(res.status).toBe(200);
       expect(res.headers.get('location')).toBeNull();
     });
@@ -56,26 +151,69 @@ describe('src/proxy.ts Route Guards', () => {
 
   describe('Parent route guard (/parent/*)', () => {
     it('redirects unauthenticated request to /login', async () => {
-      const req = createMockRequest('/parent/dashboard');
-      const res = await proxy(req);
+      const res = await proxy(createMockRequest('/parent/dashboard'));
       expect(res.status).toBe(307);
       expect(res.headers.get('location')).toBe('http://localhost:3000/login');
     });
 
-    it('allows authenticated parent access', async () => {
-      const req = createMockRequest('/parent/dashboard', {
-        [PARENT_COOKIE_NAME]: parentToken,
-      });
-      const res = await proxy(req);
+    it('allows authenticated parent with an active DB session', async () => {
+      const token = await parentToken('parent');
+      state.queryResults = [
+        [parentSessionRow('parent', 'parent-user-uuid')],
+        [{ id: 'parent-user-uuid', isActive: true }],
+      ];
+
+      const res = await proxy(
+        createMockRequest('/parent/dashboard', { [PARENT_COOKIE_NAME]: token }),
+      );
       expect(res.status).toBe(200);
       expect(res.headers.get('location')).toBeNull();
     });
 
     it('redirects when parent token is tampered/invalid', async () => {
-      const req = createMockRequest('/parent/dashboard', {
-        [PARENT_COOKIE_NAME]: 'invalid.token.signature',
-      });
-      const res = await proxy(req);
+      const res = await proxy(
+        createMockRequest('/parent/dashboard', {
+          [PARENT_COOKIE_NAME]: 'invalid.token.signature',
+        }),
+      );
+      expect(res.status).toBe(307);
+      expect(res.headers.get('location')).toBe('http://localhost:3000/login');
+    });
+
+    it('redirects when the parent session was revoked after login', async () => {
+      const token = await parentToken('parent');
+      state.queryResults = [
+        [parentSessionRow('parent', 'parent-user-uuid', { revokedAt: new Date() })],
+      ];
+
+      const res = await proxy(
+        createMockRequest('/parent/dashboard', { [PARENT_COOKIE_NAME]: token }),
+      );
+      expect(res.status).toBe(307);
+      expect(res.headers.get('location')).toBe('http://localhost:3000/login');
+    });
+
+    it('redirects when the parent user was deactivated after login', async () => {
+      const token = await parentToken('parent');
+      state.queryResults = [
+        [parentSessionRow('parent', 'parent-user-uuid')],
+        [{ id: 'parent-user-uuid', isActive: false }],
+      ];
+
+      const res = await proxy(
+        createMockRequest('/parent/dashboard', { [PARENT_COOKIE_NAME]: token }),
+      );
+      expect(res.status).toBe(307);
+      expect(res.headers.get('location')).toBe('http://localhost:3000/login');
+    });
+
+    it('FAILS CLOSED: redirects when the database errors', async () => {
+      const token = await parentToken('parent');
+      state.dbShouldThrow = true;
+
+      const res = await proxy(
+        createMockRequest('/parent/dashboard', { [PARENT_COOKIE_NAME]: token }),
+      );
       expect(res.status).toBe(307);
       expect(res.headers.get('location')).toBe('http://localhost:3000/login');
     });
@@ -83,58 +221,80 @@ describe('src/proxy.ts Route Guards', () => {
 
   describe('Child route guard (/session, /companion, /lessons, etc.)', () => {
     it('redirects unauthenticated request on /session to /child-login', async () => {
-      const req = createMockRequest('/session/active');
-      const res = await proxy(req);
+      const res = await proxy(createMockRequest('/session/active'));
       expect(res.status).toBe(307);
       expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
     });
 
     it('redirects unauthenticated request on /companion to /child-login', async () => {
-      const req = createMockRequest('/companion/snow');
-      const res = await proxy(req);
+      const res = await proxy(createMockRequest('/companion/snow'));
       expect(res.status).toBe(307);
       expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
     });
 
     it('redirects unauthenticated request on /lessons to /child-login', async () => {
-      const req = createMockRequest('/lessons/math-1');
-      const res = await proxy(req);
+      const res = await proxy(createMockRequest('/lessons/math-1'));
       expect(res.status).toBe(307);
       expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
     });
 
-    it('allows authenticated child access to /session', async () => {
-      const req = createMockRequest('/session/active', {
-        [CHILD_COOKIE_NAME]: childToken,
-      });
-      const res = await proxy(req);
+    it('allows authenticated child with an active DB session', async () => {
+      const token = await childToken();
+      state.queryResults = [
+        [childSessionRow('child-user-uuid')],
+        [{ id: 'child-user-uuid', isActive: true }],
+      ];
+
+      const res = await proxy(createMockRequest('/session/active', { [CHILD_COOKIE_NAME]: token }));
       expect(res.status).toBe(200);
       expect(res.headers.get('location')).toBeNull();
     });
 
+    it('redirects when the child session was revoked after login', async () => {
+      const token = await childToken();
+      state.queryResults = [[childSessionRow('child-user-uuid', { revokedAt: new Date() })]];
+
+      const res = await proxy(createMockRequest('/session/active', { [CHILD_COOKIE_NAME]: token }));
+      expect(res.status).toBe(307);
+      expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
+    });
+
+    it('redirects when the child was deactivated after login', async () => {
+      const token = await childToken();
+      state.queryResults = [
+        [childSessionRow('child-user-uuid')],
+        [{ id: 'child-user-uuid', isActive: false }],
+      ];
+
+      const res = await proxy(createMockRequest('/session/active', { [CHILD_COOKIE_NAME]: token }));
+      expect(res.status).toBe(307);
+      expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
+    });
+
     it('rejects child accessing /session with parent token (separate secret key)', async () => {
-      const req = createMockRequest('/session/active', {
-        [CHILD_COOKIE_NAME]: parentToken,
-      });
-      const res = await proxy(req);
+      const res = await proxy(
+        createMockRequest('/session/active', {
+          [CHILD_COOKIE_NAME]: await parentToken('parent'),
+        }),
+      );
       expect(res.status).toBe(307);
       expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
     });
   });
 
   describe('Public routes', () => {
-    it('allows access to public home page without authentication', async () => {
-      const req = createMockRequest('/');
-      const res = await proxy(req);
+    it('allows access to public home page without authentication or DB queries', async () => {
+      const res = await proxy(createMockRequest('/'));
       expect(res.status).toBe(200);
       expect(res.headers.get('location')).toBeNull();
+      expect(state.selectCalls).toBe(0);
     });
 
-    it('allows access to public login page without authentication', async () => {
-      const req = createMockRequest('/login');
-      const res = await proxy(req);
+    it('allows access to public login page without authentication or DB queries', async () => {
+      const res = await proxy(createMockRequest('/login'));
       expect(res.status).toBe(200);
       expect(res.headers.get('location')).toBeNull();
+      expect(state.selectCalls).toBe(0);
     });
   });
 });

@@ -23,7 +23,7 @@ Do not put environment values, provider credentials, database URLs, or deploy ke
 2. Clone that commit into a new timestamped release directory. Never build in the active release.
 3. Run `npm ci --ignore-scripts`.
 4. Load `/etc/agentkid.env` only inside the privileged deployment shell.
-5. Run `npm run db:migrate` and the idempotent `npm run db:seed:lessons`.
+5. Run `npm run db:migrate` and the idempotent `npm run db:seed`. The standard seed now populates the lesson catalog as well as the admin/parent users, household, and children; `npm run db:seed:lessons` remains available for catalog-only reseeding.
 6. Run `npm run build` and `npm run build:gateway`.
 7. Copy `public/` and `.next/static/` into the standalone output and record `DEPLOYED_SHA`.
 8. Atomically update `/var/www/agentkid-ui/current`.

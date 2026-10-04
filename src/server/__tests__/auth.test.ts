@@ -479,18 +479,76 @@ describe('Fail-Closed DB-Backed Session Authentication & Server Guards', () => {
       expect(await isDbSessionValid('any-token')).toBe(false);
     });
 
-    it('returns true when session is active, unrevoked, and unexpired', async () => {
+    it('returns true when session is active, unrevoked, unexpired, and the parent user is active', async () => {
       const { isDbSessionValid } = await import('../auth');
       queryResults = [
         [
           {
             id: 'sess-1',
+            actorType: 'parent',
+            userId: 'user-1',
+            childId: null,
             revokedAt: null,
             expiresAt: new Date(Date.now() + 86400000),
           },
         ],
+        [{ id: 'user-1', isActive: true }],
       ];
       expect(await isDbSessionValid('valid-token')).toBe(true);
+    });
+
+    it('returns true when session is active and the child is active', async () => {
+      const { isDbSessionValid } = await import('../auth');
+      queryResults = [
+        [
+          {
+            id: 'sess-c1',
+            actorType: 'child',
+            userId: null,
+            childId: 'child-1',
+            revokedAt: null,
+            expiresAt: new Date(Date.now() + 86400000),
+          },
+        ],
+        [{ id: 'child-1', isActive: true }],
+      ];
+      expect(await isDbSessionValid('valid-child-token')).toBe(true);
+    });
+
+    it('returns false when the parent user is deactivated', async () => {
+      const { isDbSessionValid } = await import('../auth');
+      queryResults = [
+        [
+          {
+            id: 'sess-1',
+            actorType: 'parent',
+            userId: 'user-1',
+            childId: null,
+            revokedAt: null,
+            expiresAt: new Date(Date.now() + 86400000),
+          },
+        ],
+        [{ id: 'user-1', isActive: false }],
+      ];
+      expect(await isDbSessionValid('valid-token')).toBe(false);
+    });
+
+    it('returns false when the child is deactivated', async () => {
+      const { isDbSessionValid } = await import('../auth');
+      queryResults = [
+        [
+          {
+            id: 'sess-c1',
+            actorType: 'child',
+            userId: null,
+            childId: 'child-1',
+            revokedAt: null,
+            expiresAt: new Date(Date.now() + 86400000),
+          },
+        ],
+        [{ id: 'child-1', isActive: false }],
+      ];
+      expect(await isDbSessionValid('valid-child-token')).toBe(false);
     });
   });
 

@@ -4,6 +4,7 @@ import postgres from 'postgres';
 import * as schema from './schema';
 import { hashPassword } from '@/lib/auth/parent-auth';
 import { hashPin } from '@/lib/auth/child-auth';
+import { seedLessonCatalog } from './seed-lessons';
 
 export async function runSeed(databaseUrl?: string) {
   const connectionString = databaseUrl || process.env.DATABASE_URL;
@@ -103,6 +104,12 @@ export async function runSeed(databaseUrl?: string) {
       console.log('[seed] Created 2 children: Alice and Bob');
     }
   }
+
+  // 6. Lesson catalog (idempotent upserts on deterministic ids)
+  const lessonResult = await seedLessonCatalog({ db });
+  console.log(
+    `[seed] Seeded ${lessonResult.lessonsSeeded} lessons and ${lessonResult.stepsSeeded} steps.`,
+  );
 
   console.log('[seed] Seeding complete.');
   await client.end();

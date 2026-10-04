@@ -218,8 +218,12 @@ export async function requireChildSession(): Promise<
 // ── DB-backed session helper ──────────────────────────────────────────────────
 
 /**
- * Check if a session token is active in the database (not revoked and not expired).
- * Computes SHA-256 of token to query tokenHash.
+ * Check if a session token is active in the database.
+ * Computes SHA-256 of token to query tokenHash and requires:
+ * 1. A matching session row exists
+ * 2. The session is unrevoked (revokedAt IS NULL)
+ * 3. The session is unexpired (expiresAt > now)
+ * 4. The session's principal (user or child) is still active (isActive = true)
  * Returns false on DB failure (fail closed).
  */
 export async function isDbSessionValid(sessionToken: string): Promise<boolean> {
@@ -229,6 +233,9 @@ export async function isDbSessionValid(sessionToken: string): Promise<boolean> {
     const [session] = await db
       .select({
         id: sessions.id,
+        actorType: sessions.actorType,
+        userId: sessions.userId,
+        childId: sessions.childId,
         revokedAt: sessions.revokedAt,
         expiresAt: sessions.expiresAt,
       })
@@ -239,7 +246,24 @@ export async function isDbSessionValid(sessionToken: string): Promise<boolean> {
     if (!session) return false;
     if (session.revokedAt) return false;
     if (new Date(session.expiresAt) <= new Date()) return false;
-    return true;
+
+    if (session.actorType === 'child') {
+      if (!session.childId) return false;
+      const [child] = await db
+        .select({ id: children.id, isActive: children.isActive })
+        .from(children)
+        .where(eq(children.id, session.childId))
+        .limit(1);
+      return child?.isActive === true;
+    }
+
+    if (!session.userId) return false;
+    const [user] = await db
+      .select({ id: users.id, isActive: users.isActive })
+      .from(users)
+      .where(eq(users.id, session.userId))
+      .limit(1);
+    return user?.isActive === true;
   } catch {
     // Fail closed on DB error
     return false;
