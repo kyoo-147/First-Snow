@@ -8,6 +8,20 @@ import { requireParentSession, getParentHousehold, assertChildBelongsToHousehold
 import { alertDto } from '@/server/companion/format';
 
 type Context = { params: Promise<{ alertId: string }> };
+export async function GET(_request: Request, context: Context): Promise<NextResponse> {
+  const actor = await requireParentSession();
+  if (actor instanceof Response) return actor as NextResponse;
+  const { alertId } = await context.params;
+  try {
+    const household = await getParentHousehold(actor.sub);
+    if (!household) return ERRORS.forbidden();
+    const [row] = await db.select({ message: companionMessages, householdId: children.householdId }).from(companionMessages).innerJoin(children, eq(companionMessages.childId, children.id)).where(eq(companionMessages.id, alertId)).limit(1);
+    if (!row || row.householdId !== household.id || !row.message.isFlagged) return ERRORS.forbidden();
+    const denied = await assertChildBelongsToHousehold(row.message.childId, household.id);
+    if (denied) return denied as NextResponse;
+    return NextResponse.json(alertDto(row.message));
+  } catch { return ERRORS.internal('Could not load alert.'); }
+}
 export async function PATCH(_request: Request, context: Context): Promise<NextResponse> {
   const actor = await requireParentSession();
   if (actor instanceof Response) return actor as NextResponse;

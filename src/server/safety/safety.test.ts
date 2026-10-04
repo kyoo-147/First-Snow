@@ -67,6 +67,12 @@ describe('safety service', () => {
     expect(mapDeletion(job as never)).toMatchObject({ status: 'running', scope: 'all_child_data', childId: 'child-a', stages: [{ stage: 'transcripts', status: 'completed' }, { stage: 'emotion_timeline', status: 'failed', detail: 'storage unavailable' }] });
   });
 
+  it('passes a skipped deletion stage through as a truthful unavailable outcome', async () => {
+    const { mapDeletion } = await import('./index');
+    const job = { id: 'job', status: 'completed', createdAt: new Date('2026-01-01T00:00:00Z'), errorMessage: null, stagesReport: { request: { scope: 'all_child_data', childId: 'child-a' }, stages: [{ stage: 'transcripts', status: 'completed' }, { stage: 'emotion_timeline', status: 'skipped', detail: 'No emotion timeline table exists in this schema; there are no records to delete for this stage.' }] } };
+    expect(mapDeletion(job as never)).toMatchObject({ status: 'completed', scope: 'all_child_data', childId: 'child-a', stages: [{ stage: 'transcripts', status: 'completed' }, { stage: 'emotion_timeline', status: 'skipped', detail: 'No emotion timeline table exists in this schema; there are no records to delete for this stage.' }] });
+  });
+
   it('reports unavailable SMS delivery instead of claiming it was sent', async () => {
     selectResults.push([{ id: 'household-a', ownerId: 'user-a', name: 'A' }]);
     const { PATCH } = await import('@/app/api/notification-preferences/route');

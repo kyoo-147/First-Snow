@@ -563,7 +563,7 @@ export type DeletionScope =
 export interface DeletionStageStatus {
   stage: "transcripts" | "emotion_timeline" | "session_logs" | "profile_metadata";
   name: string;
-  status: "pending" | "running" | "completed" | "failed";
+  status: "pending" | "running" | "completed" | "failed" | "skipped";
   detail?: string;
 }
 

@@ -144,7 +144,7 @@ export function ParentEmergencyScreen() {
       <PageHeader
         eyebrow="Parent-Only Safety"
         title="Emergency contacts"
-        description="Specify authorized guardians and emergency responders who should be surfaced during acute support moments. These details are strictly hidden from child sessions."
+        description="Keep authorized guardians and emergency responders on file for acute support moments. These details are strictly hidden from child sessions and are not contacted automatically."
         action={
           <div className="flex items-center gap-2">
             <SnowButton
@@ -192,8 +192,8 @@ export function ParentEmergencyScreen() {
         />
         <StatusTile
           label="Alert routing"
-          value="Enabled"
-          detail="Instant SMS & push escalation"
+          value="Not configured"
+          detail="No SMS or push provider connected"
           icon={<Bell className="size-5 text-snow-primary" />}
           tone="bg-snow-ice"
         />
@@ -209,14 +209,14 @@ export function ParentEmergencyScreen() {
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
         <SettingsSection
           title="Authorized Emergency Contacts"
-          description="Guardians and verified emergency contacts to notify in order of priority."
+          description="Guardians and verified emergency contacts kept on file in order of priority."
         >
           {isLoading ? (
             <SafetyLoadingSkeleton label="Loading verified emergency contacts..." count={3} />
           ) : contacts.length === 0 ? (
             <SafetyEmptyState
               title="No emergency contacts configured"
-              description="Add at least one guardian contact so AgentKid knows who to reach during urgent safety escalations."
+              description="Add at least one guardian contact to keep your emergency details on file. Automatic escalation stays unavailable until a notification provider is configured."
               action={
                 <SnowButton onClick={handleOpenCreate} className="text-xs font-bold">
                   <Plus className="mr-1.5 size-3.5" />
@@ -253,11 +253,6 @@ export function ParentEmergencyScreen() {
                         {contact.relation} • {contact.phone}
                         {contact.email ? ` • ${contact.email}` : ""}
                       </p>
-                      {contact.notifyOnAlert ? (
-                        <p className="mt-1 text-[11px] font-semibold text-snow-success">
-                          ✓ Receives priority alerts
-                        </p>
-                      ) : null}
                     </div>
                   </div>
 
@@ -278,19 +273,23 @@ export function ParentEmergencyScreen() {
         </SettingsSection>
 
         <aside className="space-y-4">
-          <SettingsSection title="Escalation Protocol">
+          <SettingsSection title="Escalation status">
             {[
-              "Primary contact receives immediate notification when urgent support is triggered.",
-              "Backup contacts are notified if primary contact is unavailable.",
-              "Child session interface transitions to calm breathing exercises during review.",
-              "No clinical diagnoses or alarming messages are shown to child or guardian.",
+              { ok: true, text: "Emergency contacts are stored for your reference and are never shown in child sessions." },
+              { ok: false, text: "Automatic SMS, email, or push escalation is unavailable until a notification provider is configured." },
+              { ok: false, text: "AgentKid does not contact emergency services or dispatchers on your behalf." },
+              { ok: true, text: "Alerts remain calm, non-diagnostic observations for parent review." },
             ].map((rule, idx) => (
               <div
                 key={idx}
                 className="flex items-start gap-2.5 rounded-[var(--radius-md)] bg-snow-surface-soft p-3 text-xs font-semibold leading-5 text-snow-primary-dark"
               >
-                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-snow-success" />
-                <span>{rule}</span>
+                {rule.ok ? (
+                  <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-snow-success" />
+                ) : (
+                  <ShieldCheck className="mt-0.5 size-4 shrink-0 text-snow-muted" />
+                )}
+                <span>{rule.text}</span>
               </div>
             ))}
           </SettingsSection>
