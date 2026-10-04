@@ -7,6 +7,7 @@ import {
   sendMessage,
   getMessages,
   getTranscripts,
+  getChildSession,
   getAlerts,
   markAlertRead,
   CompanionApiError,
@@ -205,6 +206,47 @@ async function main() {
     }
   }
   assert(threwMissingChildId, "getTranscripts: throws error when childId is empty");
+
+  // T15: getChildSession resolves the real child id from an authenticated child session
+  let capturedSessionUrl = "";
+  await withMockFetch(
+    (input) => {
+      capturedSessionUrl = typeof input === "string" ? input : input.toString();
+      return new Response(JSON.stringify({ session: { actorType: "child", child: { id: "child-42", name: "Minh", householdId: "h-1" } } }), { status: 200 });
+    },
+    async () => {
+      const child = await getChildSession();
+      assert(capturedSessionUrl === "/api/auth/session", "getChildSession: reads the authenticated session endpoint");
+      assert(child?.id === "child-42", "getChildSession: resolves the session child id");
+    }
+  );
+
+  // T16: getChildSession returns null for a parent session
+  await withMockFetch(
+    () => new Response(JSON.stringify({ session: { actorType: "parent", user: { id: "u-1" } } }), { status: 200 }),
+    async () => {
+      const child = await getChildSession();
+      assert(child === null, "getChildSession: parent session does not yield a child id");
+    }
+  );
+
+  // T17: getChildSession returns null when there is no session
+  await withMockFetch(
+    () => new Response(JSON.stringify({ session: null }), { status: 200 }),
+    async () => {
+      const child = await getChildSession();
+      assert(child === null, "getChildSession: missing session yields null");
+    }
+  );
+
+  // T18: getChildSession fails closed on an unauthorized response
+  await withMockFetch(
+    () => new Response(JSON.stringify({ error: { code: "UNAUTHORIZED", message: "Not authenticated" } }), { status: 401 }),
+    async () => {
+      const child = await getChildSession();
+      assert(child === null, "getChildSession: unauthorized response yields null");
+    }
+  );
 
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);

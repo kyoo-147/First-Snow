@@ -39,6 +39,12 @@ export type ApiTranscriptMessage = {
   createdAt: string;
 };
 
+export type CompanionChildSession = {
+  id: string;
+  name: string;
+  householdId: string;
+};
+
 // ── Error class ──────────────────────────────────────────────────────────────
 
 export class CompanionApiError extends Error {
@@ -154,6 +160,35 @@ export function getTranscripts(childId: string): Promise<ApiTranscriptMessage[]>
   return request<ApiTranscriptMessage[]>(
     `/api/children/${encodeURIComponent(childId.trim())}/transcripts`,
   );
+}
+
+/** GET /api/auth/session — resolve the authenticated child session, or null. */
+export async function getChildSession(): Promise<CompanionChildSession | null> {
+  let res: Response;
+  try {
+    res = await fetch("/api/auth/session", { credentials: "same-origin" });
+  } catch {
+    return null;
+  }
+  if (!res.ok) return null;
+  const body = (await safeJson(res)) as
+    | {
+        session?: {
+          actorType?: unknown;
+          child?: { id?: unknown; name?: unknown; householdId?: unknown };
+        } | null;
+      }
+    | null;
+  const session = body?.session;
+  const child = session?.child;
+  if (session?.actorType !== "child" || !child || typeof child.id !== "string" || !child.id) {
+    return null;
+  }
+  return {
+    id: child.id,
+    name: typeof child.name === "string" ? child.name : "",
+    householdId: typeof child.householdId === "string" ? child.householdId : "",
+  };
 }
 
 /** GET /api/alerts or /api/alerts?childId=... */
