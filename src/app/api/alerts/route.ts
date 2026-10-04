@@ -19,6 +19,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       if (denied) return denied as NextResponse;
     }
     const rows = await db.select({ message: companionMessages }).from(companionMessages).innerJoin(children, eq(companionMessages.childId, children.id)).where(requestedChild ? and(eq(children.householdId, household.id), eq(children.id, requestedChild), eq(companionMessages.isFlagged, true)) : and(eq(children.householdId, household.id), eq(companionMessages.isFlagged, true))).orderBy(asc(companionMessages.createdAt));
-    return NextResponse.json(rows.map(({ message }) => alertDto(message)));
+    return NextResponse.json({ alerts: rows.map(({ message }) => alertDto(message)) });
   } catch { return ERRORS.internal('Could not load alerts.'); }
 }

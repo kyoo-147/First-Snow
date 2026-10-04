@@ -129,7 +129,7 @@ async function main() {
   await withMockFetch(
     (input) => {
       capturedAlertsUrl = typeof input === "string" ? input : input.toString();
-      return new Response(JSON.stringify([{ id: "a-1", childId: "c1", title: "Alert", description: "desc", severity: "low", createdAt: "2026-01-01T00:00:00Z", readAt: null }]), { status: 200 });
+      return new Response(JSON.stringify({ alerts: [{ id: "a-1", childId: "c1", title: "Alert", description: "desc", severity: "low", createdAt: "2026-01-01T00:00:00Z", readAt: null }] }), { status: 200 });
     },
     async () => {
       const alerts = await getAlerts("c1");
@@ -187,7 +187,7 @@ async function main() {
   await withMockFetch(
     (input) => {
       capturedTranscriptsUrl = typeof input === "string" ? input : input.toString();
-      return new Response(JSON.stringify([{ id: "tm-1", sessionId: "s-1", role: "assistant", content: "hello", createdAt: "2026-01-01T00:00:00Z" }]), { status: 200 });
+      return new Response(JSON.stringify({ transcripts: [{ id: "tm-1", sessionId: "s-1", role: "assistant", content: "hello", createdAt: "2026-01-01T00:00:00Z" }] }), { status: 200 });
     },
     async () => {
       const msgs = await getTranscripts("child-123");

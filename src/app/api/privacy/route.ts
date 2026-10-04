@@ -4,14 +4,14 @@ import { db } from '@/db/client';
 import { capabilityConsents, retentionPolicies } from '@/db/schema';
 import { requireParentSession } from '@/server/auth';
 import { audit, consentCapabilities, context, latestConsents, POLICY_VERSION, privacySettings, reauthenticate, SafetyError, safetyErrorResponse } from '@/server/safety';
-import { z } from 'zod';
+import { UpdatePrivacySettingsSchema } from '@/server/contracts/privacy';
 
 export async function GET() {
   try { const session = await requireParentSession(); if (session instanceof Response) return session; const { household } = await context(session); return NextResponse.json({ privacy: await privacySettings(household.id) }); }
   catch (e) { return safetyErrorResponse(e); }
 }
 
-const schema = z.object({ microphoneAccess: z.boolean().optional(), cameraAccess: z.boolean().optional(), visionAiAccess: z.boolean().optional(), screenCaptureAccess: z.boolean().optional(), cameraPreview: z.boolean().optional(), transcriptStorageDays: z.number().int().min(0).max(3650).optional(), emotionTimelineStorage: z.boolean().optional(), reauthPassword: z.string().optional() }).strict();
+const schema = UpdatePrivacySettingsSchema;
 export async function PATCH(request: Request) {
   try {
     const session = await requireParentSession(); if (session instanceof Response) return session;
