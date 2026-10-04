@@ -11,7 +11,15 @@ export type AccountCapabilities = {
   emailChange: false;
   emailVerification: false;
   mfa: false;
-  sessionManagement: false;
+  sessionManagement: boolean;
+};
+
+export type AccountSession = {
+  id: string;
+  createdAt: string;
+  expiresAt: string;
+  userAgent: string | null;
+  current: boolean;
 };
 
 export class AccountApiError extends Error {
@@ -58,5 +66,28 @@ export async function changePassword(currentPassword: string, newPassword: strin
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ currentPassword, newPassword }),
+  }));
+}
+
+export async function getAccountSessions(): Promise<AccountSession[]> {
+  const data = await parseResponse<{ sessions?: AccountSession[] }>(
+    await fetch('/api/account/sessions', { cache: 'no-store' }),
+  );
+  return Array.isArray(data.sessions) ? data.sessions : [];
+}
+
+export async function revokeOtherSessions(): Promise<{ revoked: number; message: string }> {
+  return parseResponse(await fetch('/api/account/sessions', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({}),
+  }));
+}
+
+export async function revokeAccountSession(sessionId: string): Promise<{ revoked: number; message: string }> {
+  return parseResponse(await fetch('/api/account/sessions', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId }),
   }));
 }

@@ -70,7 +70,7 @@ export async function GET(): Promise<NextResponse> {
         emailChange: false,
         emailVerification: false,
         mfa: false,
-        sessionManagement: false,
+        sessionManagement: true,
       },
     });
   } catch (error) {

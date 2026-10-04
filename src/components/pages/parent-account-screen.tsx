@@ -1,10 +1,11 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { CheckCircle2, LockKeyhole, Mail, RefreshCw, ShieldAlert, UserCircle } from "lucide-react";
+import { CheckCircle2, Laptop, LockKeyhole, LogOut, Mail, RefreshCw, ShieldAlert, UserCircle } from "lucide-react";
 import { ParentPageFrame, PageHeader, SettingsSection, StatusTile } from "@/components/layout/snow-page-frame";
 import { SnowButton } from "@/components/ui/snow-button";
-import { AccountApiError, changePassword, getAccount, type AccountCapabilities, type AccountProfile, updateAccount } from "@/lib/account-client";
+import { AccountApiError, changePassword, getAccount, getAccountSessions, revokeAccountSession, revokeOtherSessions, type AccountCapabilities, type AccountProfile, type AccountSession, updateAccount } from "@/lib/account-client";
+import { formatSnowDateTime } from "@/lib/format";
 
 const inputClass = "mt-2 h-11 w-full rounded-[var(--radius-md)] border border-snow-border bg-snow-surface px-4 text-sm font-semibold text-snow-primary-dark outline-none transition focus:border-snow-primary disabled:cursor-not-allowed disabled:bg-snow-surface-soft disabled:text-snow-muted";
 
@@ -17,6 +18,11 @@ export function ParentAccountScreen() {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [sessions, setSessions] = useState<AccountSession[]>([]);
+  const [isLoadingSessions, setIsLoadingSessions] = useState(true);
+  const [sessionAction, setSessionAction] = useState<string | null>(null);
+  const [confirmRevokeOthers, setConfirmRevokeOthers] = useState(false);
+  const [confirmSessionId, setConfirmSessionId] = useState<string | null>(null);
 
   const loadAccount = useCallback(async () => {
     setIsLoading(true);
@@ -33,11 +39,55 @@ export function ParentAccountScreen() {
     }
   }, []);
 
+  const loadSessions = useCallback(async () => {
+    setIsLoadingSessions(true);
+    try {
+      setSessions(await getAccountSessions());
+    } catch (caught) {
+      setError(messageFor(caught, "Active sessions could not be loaded."));
+    } finally {
+      setIsLoadingSessions(false);
+    }
+  }, []);
+
   useEffect(() => {
     queueMicrotask(() => {
       void loadAccount();
+      void loadSessions();
     });
-  }, [loadAccount]);
+  }, [loadAccount, loadSessions]);
+
+  async function revokeOthers() {
+    setSessionAction("others");
+    setError(null);
+    setSuccess(null);
+    try {
+      const result = await revokeOtherSessions();
+      setSuccess(result.message);
+      setConfirmRevokeOthers(false);
+      await loadSessions();
+    } catch (caught) {
+      setError(messageFor(caught, "Other sessions could not be revoked."));
+    } finally {
+      setSessionAction(null);
+    }
+  }
+
+  async function revokeOne(id: string) {
+    setSessionAction(id);
+    setError(null);
+    setSuccess(null);
+    try {
+      const result = await revokeAccountSession(id);
+      setSuccess(result.message);
+      setConfirmSessionId(null);
+      await loadSessions();
+    } catch (caught) {
+      setError(messageFor(caught, "That session could not be revoked."));
+    } finally {
+      setSessionAction(null);
+    }
+  }
 
   async function submitProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -83,7 +133,7 @@ export function ParentAccountScreen() {
 
   return (
     <ParentPageFrame>
-      <PageHeader eyebrow="Account" title="Parent account" description="Update your guardian profile and protect access to parent-only settings." action={<SnowButton variant="ghost" onClick={loadAccount} disabled={isLoading}><RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />Refresh</SnowButton>} />
+      <PageHeader eyebrow="Account" title="Parent account" description="Update your guardian profile and protect access to parent-only settings." action={<SnowButton variant="ghost" onClick={() => { void loadAccount(); void loadSessions(); }} disabled={isLoading}><RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />Refresh</SnowButton>} />
       {error ? <Notice tone="error" message={error} /> : null}
       {success ? <Notice tone="success" message={success} /> : null}
       {isLoading ? <AccountSkeleton /> : account ? (
@@ -110,12 +160,58 @@ export function ParentAccountScreen() {
               </form>
             </SettingsSection>
           </div>
+          <SettingsSection title="Active sessions" description="Devices signed in to your parent account. Revoking a session signs that device out.">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs font-semibold text-snow-muted">
+                {isLoadingSessions ? "Loading sessions..." : `${sessions.length} active session${sessions.length === 1 ? "" : "s"}.`}
+              </p>
+              {sessions.some((item) => !item.current) ? (
+                confirmRevokeOthers ? (
+                  <span className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-snow-danger">Revoke all other sessions?</span>
+                    <SnowButton variant="danger" disabled={sessionAction === "others"} onClick={() => void revokeOthers()}>{sessionAction === "others" ? "Revoking..." : "Confirm"}</SnowButton>
+                    <SnowButton variant="ghost" disabled={sessionAction === "others"} onClick={() => setConfirmRevokeOthers(false)}>Cancel</SnowButton>
+                  </span>
+                ) : (
+                  <SnowButton variant="soft" onClick={() => setConfirmRevokeOthers(true)}><LogOut className="mr-2 size-4" />Revoke other sessions</SnowButton>
+                )
+              ) : null}
+            </div>
+            {isLoadingSessions ? (
+              <p role="status" className="text-sm font-semibold text-snow-muted">Loading active sessions...</p>
+            ) : sessions.length === 0 ? (
+              <p className="text-sm font-semibold text-snow-muted">No active sessions were returned.</p>
+            ) : (
+              <ul className="space-y-2">
+                {sessions.map((item) => (
+                  <li key={item.id} className="flex flex-col justify-between gap-2 rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft px-4 py-3 sm:flex-row sm:items-center">
+                    <div className="min-w-0">
+                      <p className="flex items-center gap-2 text-sm font-black text-snow-primary-dark">
+                        <Laptop className="size-4 text-snow-primary" />
+                        {deviceLabel(item.userAgent)}
+                        {item.current ? <span className="rounded-full bg-snow-primary-soft px-2 py-0.5 text-[10px] font-black text-snow-primary-dark">This device</span> : null}
+                      </p>
+                      <p className="mt-1 text-xs font-semibold text-snow-muted">Signed in {formatSnowDateTime(item.createdAt)} · Expires {formatSnowDateTime(item.expiresAt)}</p>
+                    </div>
+                    {item.current ? null : confirmSessionId === item.id ? (
+                      <span className="flex items-center gap-2">
+                        <SnowButton variant="danger" disabled={sessionAction === item.id} onClick={() => void revokeOne(item.id)}>{sessionAction === item.id ? "Revoking..." : "Confirm revoke"}</SnowButton>
+                        <SnowButton variant="ghost" disabled={sessionAction === item.id} onClick={() => setConfirmSessionId(null)}>Cancel</SnowButton>
+                      </span>
+                    ) : (
+                      <SnowButton variant="ghost" onClick={() => setConfirmSessionId(item.id)}>Revoke</SnowButton>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </SettingsSection>
           <SettingsSection title="Security availability" description="Only controls backed by the current product are shown as active.">
             <div className="grid gap-3 md:grid-cols-2">
               <Availability label="Password protection" available detail="Current-password confirmation is required for password changes." />
-              <Availability label="Other-session revocation" available detail="Changing your password revokes other parent sessions." />
+              <Availability label="Other-session revocation" available detail="Revoke other parent sessions here, or automatically by changing your password." />
               <Availability label="Multi-factor authentication" available={Boolean(capabilities?.mfa)} detail="Not available in this version." />
-              <Availability label="Device and session manager" available={Boolean(capabilities?.sessionManagement)} detail="Individual device review and removal are not available." />
+              <Availability label="Device and session manager" available={Boolean(capabilities?.sessionManagement)} detail="Review and revoke other parent sessions above." />
             </div>
           </SettingsSection>
         </>
@@ -125,6 +221,12 @@ export function ParentAccountScreen() {
 }
 
 function messageFor(error: unknown, fallback: string) { return error instanceof AccountApiError ? error.message : fallback; }
+function deviceLabel(userAgent: string | null) {
+  if (!userAgent) return "Unknown device";
+  const browser = /Edg\//.test(userAgent) ? "Edge" : /Chrome\//.test(userAgent) ? "Chrome" : /Firefox\//.test(userAgent) ? "Firefox" : /Safari\//.test(userAgent) ? "Safari" : "Browser";
+  const platform = /Windows/.test(userAgent) ? "Windows" : /Macintosh|Mac OS X/.test(userAgent) ? "macOS" : /Android/.test(userAgent) ? "Android" : /iPhone|iPad|iOS/.test(userAgent) ? "iOS" : /Linux/.test(userAgent) ? "Linux" : "device";
+  return `${browser} on ${platform}`;
+}
 function PasswordField({ name, label, autoComplete, minLength }: { name: string; label: string; autoComplete: string; minLength?: number }) { return <label className="block"><span className="text-sm font-black text-snow-primary-dark">{label}</span><input className={inputClass} type="password" name={name} autoComplete={autoComplete} minLength={minLength} maxLength={128} required /></label>; }
 function Notice({ tone, message }: { tone: "success" | "error"; message: string }) { const Icon = tone === "success" ? CheckCircle2 : ShieldAlert; return <div role={tone === "error" ? "alert" : "status"} className={`flex items-start gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-sm font-bold ${tone === "success" ? "border-snow-success/30 bg-snow-success/10 text-snow-success" : "border-snow-danger/30 bg-snow-danger/10 text-snow-danger"}`}><Icon className="mt-0.5 size-4 shrink-0" /><span>{message}</span></div>; }
 function Availability({ label, available, detail }: { label: string; available: boolean; detail: string }) { return <div className="rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft px-4 py-3"><div className="flex items-center gap-2"><span className={`size-2 rounded-full ${available ? "bg-snow-success" : "bg-snow-muted"}`} /><p className="text-sm font-black text-snow-primary-dark">{label}</p></div><p className="mt-1 text-xs font-semibold leading-5 text-snow-muted">{detail}</p></div>; }

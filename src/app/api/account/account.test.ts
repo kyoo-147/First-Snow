@@ -83,7 +83,7 @@ describe('account API', () => {
     const body = await response.json();
     expect(body).toMatchObject({
       account: { id: 'parent-a', email: 'parent@example.com', displayName: 'Parent A', role: 'parent', household: { id: 'house-a', name: 'Family', role: 'owner' } },
-      capabilities: { emailChange: false, emailVerification: false, mfa: false, sessionManagement: false },
+      capabilities: { emailChange: false, emailVerification: false, mfa: false, sessionManagement: true },
     });
   });
 
