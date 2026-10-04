@@ -125,6 +125,49 @@ describe('companion route contracts', () => {
     expect(response.status).toBe(500);
   });
 
+  it('returns only messages after a known afterId cursor', async () => {
+    const { GET } = await import('@/app/api/companion/sessions/[sessionId]/messages/route');
+    const cursorId = '11111111-1111-4111-8111-111111111111';
+    const nextId = '22222222-2222-4222-8222-222222222222';
+    dbState.rows = [
+      [session],
+      [{ createdAt: new Date('2026-01-01T00:00:00Z'), id: cursorId }],
+      [{ ...message, id: nextId, createdAt: new Date('2026-01-01T00:00:05Z') }],
+    ];
+    const request = new NextRequest(`http://localhost/api/companion/sessions/session-1/messages?afterId=${cursorId}`);
+    const response = await GET(request, { params: Promise.resolve({ sessionId: 'session-1' }) });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toHaveLength(1);
+  });
+
+  it('returns an empty list for an unknown afterId instead of full history', async () => {
+    const { GET } = await import('@/app/api/companion/sessions/[sessionId]/messages/route');
+    dbState.rows = [[session], []];
+    const unknownId = '33333333-3333-4333-8333-333333333333';
+    const request = new NextRequest(`http://localhost/api/companion/sessions/session-1/messages?afterId=${unknownId}`);
+    const response = await GET(request, { params: Promise.resolve({ sessionId: 'session-1' }) });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual([]);
+  });
+
+  it('returns an empty list for a malformed afterId without querying messages', async () => {
+    const { GET } = await import('@/app/api/companion/sessions/[sessionId]/messages/route');
+    dbState.rows = [[session]];
+    const request = new NextRequest('http://localhost/api/companion/sessions/session-1/messages?afterId=not-a-uuid');
+    const response = await GET(request, { params: Promise.resolve({ sessionId: 'session-1' }) });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual([]);
+  });
+
+  it('returns the full ordered history when no afterId is supplied', async () => {
+    const { GET } = await import('@/app/api/companion/sessions/[sessionId]/messages/route');
+    dbState.rows = [[session], [message, { ...message, id: 'message-2' }]];
+    const request = new NextRequest('http://localhost/api/companion/sessions/session-1/messages');
+    const response = await GET(request, { params: Promise.resolve({ sessionId: 'session-1' }) });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toHaveLength(2);
+  });
+
   it('persists child input but reports provider unavailable without saving an assistant reply', async () => {
     const { POST } = await import('@/app/api/companion/sessions/[sessionId]/messages/route');
     dbState.rows = [[session], [], [message], [message]];

@@ -1,5 +1,6 @@
-import { and, asc, eq } from 'drizzle-orm';
+import { and, asc, eq, gt, or } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db/client';
 import { companionMessages, companionSessions, type NewCompanionMessage } from '@/db/schema/companion';
 import { ERRORS } from '@/lib/api/errors';
@@ -20,9 +21,35 @@ export async function GET(request: NextRequest, context: Context): Promise<NextR
   try {
     if (!await ownedSession(sessionId, actor.sub)) return ERRORS.forbidden();
     const afterId = request.nextUrl.searchParams.get('afterId');
-    const rows = await db.select().from(companionMessages).where(eq(companionMessages.sessionId, sessionId)).orderBy(asc(companionMessages.createdAt), asc(companionMessages.id));
-    const cursor = afterId ? rows.findIndex((row) => row.id === afterId) : -1;
-    return NextResponse.json(rows.slice(cursor >= 0 ? cursor + 1 : 0).map(messageDto));
+    if (!afterId) {
+      const rows = await db
+        .select()
+        .from(companionMessages)
+        .where(eq(companionMessages.sessionId, sessionId))
+        .orderBy(asc(companionMessages.createdAt), asc(companionMessages.id));
+      return NextResponse.json(rows.map(messageDto));
+    }
+    // Keyset cursor. A malformed, unknown, or foreign-session afterId yields an
+    // empty list — never a silent fallback to the full history.
+    if (!z.string().uuid().safeParse(afterId).success) return NextResponse.json([]);
+    const [cursor] = await db
+      .select({ createdAt: companionMessages.createdAt, id: companionMessages.id })
+      .from(companionMessages)
+      .where(and(eq(companionMessages.sessionId, sessionId), eq(companionMessages.id, afterId)))
+      .limit(1);
+    if (!cursor) return NextResponse.json([]);
+    const rows = await db
+      .select()
+      .from(companionMessages)
+      .where(and(
+        eq(companionMessages.sessionId, sessionId),
+        or(
+          gt(companionMessages.createdAt, cursor.createdAt),
+          and(eq(companionMessages.createdAt, cursor.createdAt), gt(companionMessages.id, cursor.id)),
+        ),
+      ))
+      .orderBy(asc(companionMessages.createdAt), asc(companionMessages.id));
+    return NextResponse.json(rows.map(messageDto));
   } catch { return ERRORS.internal('Could not load messages.'); }
 }
 
