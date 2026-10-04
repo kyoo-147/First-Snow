@@ -153,13 +153,15 @@ export function getMessages(
 }
 
 /** GET /api/children/:childId/transcripts */
-export function getTranscripts(childId: string): Promise<ApiTranscriptMessage[]> {
+export async function getTranscripts(childId: string): Promise<ApiTranscriptMessage[]> {
   if (!childId || !childId.trim()) {
     throw new Error("childId is required to fetch transcripts");
   }
-  return request<ApiTranscriptMessage[]>(
+  const data = await request<ApiTranscriptMessage[] | { transcripts?: ApiTranscriptMessage[] }>(
     `/api/children/${encodeURIComponent(childId.trim())}/transcripts`,
   );
+  if (Array.isArray(data)) return data;
+  return Array.isArray(data?.transcripts) ? data.transcripts : [];
 }
 
 /** GET /api/auth/session — resolve the authenticated child session, or null. */
@@ -192,11 +194,13 @@ export async function getChildSession(): Promise<CompanionChildSession | null> {
 }
 
 /** GET /api/alerts or /api/alerts?childId=... */
-export function getAlerts(childId?: string): Promise<ApiAlert[]> {
+export async function getAlerts(childId?: string): Promise<ApiAlert[]> {
   const url = childId
     ? `/api/alerts?childId=${encodeURIComponent(childId.trim())}`
     : "/api/alerts";
-  return request<ApiAlert[]>(url);
+  const data = await request<ApiAlert[] | { alerts?: ApiAlert[] }>(url);
+  if (Array.isArray(data)) return data;
+  return Array.isArray(data?.alerts) ? data.alerts : [];
 }
 
 /** PATCH /api/alerts/:id */

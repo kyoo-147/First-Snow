@@ -82,11 +82,11 @@ describe("dashboard-client", () => {
     const alerts = [
       { id: "alert-1", childId: "child-1", title: "Safety alert", severity: "high", createdAt: "2026-10-03" },
     ];
-    vi.stubGlobal("fetch", vi.fn(async () => Response.json(alerts)));
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ alerts })));
     await expect(fetchDashboardAlerts("child-1")).resolves.toEqual(alerts);
     expect(fetch).toHaveBeenCalledWith("/api/alerts?childId=child-1", { credentials: "same-origin" });
 
-    vi.stubGlobal("fetch", vi.fn(async () => Response.json(alerts)));
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ alerts })));
     await expect(fetchDashboardAlerts()).resolves.toEqual(alerts);
     expect(fetch).toHaveBeenCalledWith("/api/alerts", { credentials: "same-origin" });
   });
