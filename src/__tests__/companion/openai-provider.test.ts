@@ -15,6 +15,10 @@ const VALID_CONFIG: OpenAiProviderConfig = {
   apiKey: 'sk-test-secret-key-12345678',
   baseUrl: 'https://api.openai.com/v1',
   model: 'gpt-4o-mini',
+  models: ['gpt-4o-mini'],
+  routing: 'failover',
+  retriesPerModel: 0,
+  maxAttempts: 1,
   timeoutMs: 15_000,
   maxBytes: 65_536,
 };
@@ -34,6 +38,9 @@ describe('OpenAI-compatible text companion provider adapter', () => {
       assert.equal(config.apiKey, 'sk-test-key');
       assert.equal(config.baseUrl, DEFAULT_OPENAI_BASE_URL);
       assert.equal(config.model, DEFAULT_OPENAI_MODEL);
+      assert.deepEqual(config.models, [DEFAULT_OPENAI_MODEL]);
+      assert.equal(config.routing, 'failover');
+      assert.equal(config.retriesPerModel, 0);
       assert.equal(config.timeoutMs, DEFAULT_PROVIDER_TIMEOUT_MS);
       assert.equal(config.maxBytes, DEFAULT_PROVIDER_MAX_BYTES);
     });
@@ -82,6 +89,27 @@ describe('OpenAI-compatible text companion provider adapter', () => {
       assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-key', COMPANION_OPENAI_BASE_URL: 'https://user:pass@api.example.com/v1' }), null);
       assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-key', COMPANION_OPENAI_BASE_URL: 'https://api.example.com/v1?token=unsafe' }), null);
       assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-key', COMPANION_OPENAI_BASE_URL: 'http://127.0.0.1:8080/v1' })?.baseUrl, 'http://127.0.0.1:8080/v1');
+    });
+
+    it('reads a bounded, de-duplicated model pool and routing policy', () => {
+      const config = readOpenAiProviderConfig({
+        COMPANION_OPENAI_API_KEY: 'sk-key',
+        COMPANION_PROVIDER_MODELS: 'free, opencode, free, navin-coding',
+        COMPANION_PROVIDER_ROUTING: 'round-robin',
+        COMPANION_PROVIDER_RETRIES_PER_MODEL: '1',
+        COMPANION_PROVIDER_MAX_ATTEMPTS: '4',
+      });
+      assert.ok(config);
+      assert.deepEqual(config.models, ['free', 'opencode', 'navin-coding']);
+      assert.equal(config.model, 'free');
+      assert.equal(config.routing, 'round-robin');
+      assert.equal(config.retriesPerModel, 1);
+      assert.equal(config.maxAttempts, 4);
+    });
+
+    it('fails closed for malformed pools or routing policies', () => {
+      assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-key', COMPANION_PROVIDER_MODELS: 'free,,opencode' }), null);
+      assert.equal(readOpenAiProviderConfig({ COMPANION_OPENAI_API_KEY: 'sk-key', COMPANION_PROVIDER_ROUTING: 'random' }), null);
     });
 
     it('falls back to defaults when numeric bounds are violated', () => {
@@ -169,6 +197,82 @@ describe('OpenAI-compatible text companion provider adapter', () => {
           return true;
         },
       );
+    });
+
+    it('fails over across configured combo models on retryable upstream errors', async () => {
+      const attemptedModels: string[] = [];
+      const mockFetch: typeof fetch = async (_input, init) => {
+        const body = JSON.parse(String(init?.body)) as { model: string };
+        attemptedModels.push(body.model);
+        if (body.model === 'free') return new Response('{}', { status: 503 });
+        return Response.json({ choices: [{ message: { content: 'Fallback reply' } }] });
+      };
+      const provider = createOpenAiCompanionProvider({
+        ...VALID_CONFIG,
+        model: 'free',
+        models: ['free', 'opencode', 'navin-coding'],
+        maxAttempts: 3,
+      }, { fetch: mockFetch });
+      await assert.doesNotReject(async () => {
+        assert.equal(await provider({ content: 'Hello', history: [] }), 'Fallback reply');
+      });
+      assert.deepEqual(attemptedModels, ['free', 'opencode']);
+    });
+
+    it('rotates the first combo in round-robin mode', async () => {
+      const attemptedModels: string[] = [];
+      const mockFetch: typeof fetch = async (_input, init) => {
+        const body = JSON.parse(String(init?.body)) as { model: string };
+        attemptedModels.push(body.model);
+        return Response.json({ choices: [{ message: { content: 'ok' } }] });
+      };
+      const provider = createOpenAiCompanionProvider({
+        ...VALID_CONFIG,
+        model: 'free',
+        models: ['free', 'opencode', 'navin-coding'],
+        routing: 'round-robin',
+        maxAttempts: 3,
+      }, { fetch: mockFetch });
+      await provider({ content: 'one', history: [] });
+      await provider({ content: 'two', history: [] });
+      await provider({ content: 'three', history: [] });
+      assert.deepEqual(attemptedModels, ['free', 'opencode', 'navin-coding']);
+    });
+
+    it('does not rotate or retry when credentials are rejected', async () => {
+      let attempts = 0;
+      const mockFetch: typeof fetch = async () => {
+        attempts += 1;
+        return new Response('{}', { status: 401 });
+      };
+      const provider = createOpenAiCompanionProvider({
+        ...VALID_CONFIG,
+        model: 'free',
+        models: ['free', 'opencode'],
+        retriesPerModel: 2,
+        maxAttempts: 6,
+      }, { fetch: mockFetch });
+      await assert.rejects(() => provider({ content: 'Hello', history: [] }), /COMPANION_PROVIDER_HTTP_401/);
+      assert.equal(attempts, 1);
+    });
+
+    it('bounds retry attempts across models', async () => {
+      const attemptedModels: string[] = [];
+      const mockFetch: typeof fetch = async (_input, init) => {
+        const body = JSON.parse(String(init?.body)) as { model: string };
+        attemptedModels.push(body.model);
+        return new Response('{}', { status: 429 });
+      };
+      const provider = createOpenAiCompanionProvider({
+        ...VALID_CONFIG,
+        model: 'free',
+        models: ['free', 'opencode', 'navin-coding'],
+        retriesPerModel: 1,
+        maxAttempts: 4,
+      }, { fetch: mockFetch });
+      await assert.rejects(() => provider({ content: 'Hello', history: [] }), /COMPANION_PROVIDER_HTTP_429/);
+      assert.equal(attemptedModels.length, 4);
+      assert.deepEqual(attemptedModels, ['free', 'free', 'opencode', 'opencode']);
     });
 
     it('rejects empty or whitespace-only assistant content without fake answers', async () => {
