@@ -405,6 +405,93 @@ describe('OpenAI-compatible text companion provider adapter', () => {
         },
       );
     });
+
+    it('aggregates text/event-stream chunks (delta and message) into the final reply', async () => {
+      const sse = [
+        'data: {"choices":[{"delta":{"role":"assistant"}}]}',
+        '',
+        'data: {"choices":[{"delta":{"content":"Hello"}}]}',
+        '',
+        'data: {"choices":[{"delta":{"content":" from"}}]}',
+        '',
+        'data: {"choices":[{"message":{"content":" the stream."}}]}',
+        '',
+        'data: [DONE]',
+        '',
+        'data: {"choices":[{"delta":{"content":"ignored after done"}}]}',
+      ].join('\n');
+
+      const mockFetch: typeof fetch = async () => new Response(sse, {
+        status: 200,
+        headers: { 'Content-Type': 'text/event-stream' },
+      });
+
+      const provider = createOpenAiCompanionProvider(VALID_CONFIG, { fetch: mockFetch });
+      assert.equal(await provider({ content: 'Hi', history: [] }), 'Hello from the stream.');
+    });
+
+    it('detects an event stream from the body when the content-type is generic', async () => {
+      const sse = 'data: {"choices":[{"delta":{"content":"Streamed "}}]}\ndata: {"choices":[{"delta":{"content":"reply"}}]}\ndata: [DONE]\n';
+      const mockFetch: typeof fetch = async () => new Response(sse, { status: 200 });
+
+      const provider = createOpenAiCompanionProvider(VALID_CONFIG, { fetch: mockFetch });
+      assert.equal(await provider({ content: 'Hi', history: [] }), 'Streamed reply');
+    });
+
+    it('retries the same model once when a 200 response is empty, then succeeds', async () => {
+      let attempts = 0;
+      const mockFetch: typeof fetch = async () => {
+        attempts += 1;
+        if (attempts === 1) {
+          return Response.json({ choices: [{ message: { content: '' }, finish_reason: 'in_progress' }] });
+        }
+        return Response.json({ choices: [{ message: { content: 'Recovered reply' } }] });
+      };
+
+      const provider = createOpenAiCompanionProvider(
+        { ...VALID_CONFIG, model: 'free', models: ['free'], retriesPerModel: 1, maxAttempts: 2 },
+        { fetch: mockFetch },
+      );
+
+      assert.equal(await provider({ content: 'Hi', history: [] }), 'Recovered reply');
+      assert.equal(attempts, 2);
+    });
+
+    it('fails over to the next model when a model keeps returning empty content', async () => {
+      const attemptedModels: string[] = [];
+      const mockFetch: typeof fetch = async (_input, init) => {
+        const body = JSON.parse(String(init?.body)) as { model: string };
+        attemptedModels.push(body.model);
+        if (body.model === 'free') {
+          return Response.json({ choices: [{ message: { content: '   ' }, finish_reason: 'in_progress' }] });
+        }
+        return Response.json({ choices: [{ message: { content: 'Fallback reply' } }] });
+      };
+
+      const provider = createOpenAiCompanionProvider(
+        { ...VALID_CONFIG, model: 'free', models: ['free', 'opencode'], maxAttempts: 2 },
+        { fetch: mockFetch },
+      );
+
+      assert.equal(await provider({ content: 'Hi', history: [] }), 'Fallback reply');
+      assert.deepEqual(attemptedModels, ['free', 'opencode']);
+    });
+
+    it('treats an event stream with no usable text as empty without fabricating content', async () => {
+      const mockFetch: typeof fetch = async () => new Response('data: {"choices":[{"delta":{"role":"assistant"}}]}\ndata: [DONE]\n', {
+        status: 200,
+        headers: { 'Content-Type': 'text/event-stream' },
+      });
+
+      const provider = createOpenAiCompanionProvider(VALID_CONFIG, { fetch: mockFetch });
+      await assert.rejects(
+        () => provider({ content: 'Test prompt', history: [] }),
+        (err: Error) => {
+          assert.equal(err.message, 'COMPANION_PROVIDER_EMPTY_REPLY');
+          return true;
+        },
+      );
+    });
   });
 
   describe('generateReply contracts integration', () => {

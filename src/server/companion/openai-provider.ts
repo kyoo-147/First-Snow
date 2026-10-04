@@ -172,6 +172,47 @@ async function readBoundedResponse(response: Response, maxBytes: number): Promis
   return new TextDecoder('utf-8').decode(combined);
 }
 
+function isEventStream(contentType: string, body: string): boolean {
+  return contentType.toLowerCase().includes('text/event-stream') || body.trimStart().startsWith('data:');
+}
+
+function parseJsonReply(body: string): string | null {
+  let data: unknown;
+  try {
+    data = JSON.parse(body);
+  } catch {
+    throw providerError('COMPANION_PROVIDER_MALFORMED_JSON', false, true);
+  }
+  const payload = data as { choices?: Array<{ message?: { content?: unknown } }> };
+  const content = payload?.choices?.[0]?.message?.content;
+  return typeof content === 'string' ? content : null;
+}
+
+// Aggregate OpenAI-compatible SSE chunks (`data: {...}` lines). Some upstreams
+// stream even when `stream: true` was not requested. Never fabricates content:
+// an aggregation with no text yields an empty string (caller fails over).
+function aggregateEventStream(body: string): string {
+  const parts: string[] = [];
+  for (const rawLine of body.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line.startsWith('data:')) continue;
+    const payload = line.slice('data:'.length).trim();
+    if (payload === '[DONE]') break;
+    if (!payload) continue;
+    let event: unknown;
+    try { event = JSON.parse(payload); } catch { continue; }
+    const choices = (event as { choices?: Array<{ delta?: { content?: unknown }; message?: { content?: unknown } }> })?.choices;
+    if (!Array.isArray(choices)) continue;
+    for (const choice of choices) {
+      const delta = choice?.delta?.content;
+      const message = choice?.message?.content;
+      if (typeof delta === 'string') parts.push(delta);
+      if (typeof message === 'string') parts.push(message);
+    }
+  }
+  return parts.join('');
+}
+
 export function createOpenAiCompanionProvider(
   config: OpenAiProviderConfig,
   options: OpenAiProviderOptions = {},
@@ -221,16 +262,14 @@ export function createOpenAiCompanionProvider(
           }
 
           const responseText = await readBoundedResponse(response, config.maxBytes);
-          let data: unknown;
-          try {
-            data = JSON.parse(responseText);
-          } catch {
-            throw providerError('COMPANION_PROVIDER_MALFORMED_JSON', false, true);
-          }
-          const payload = data as { choices?: Array<{ message?: { content?: unknown } }> };
-          const reply = payload?.choices?.[0]?.message?.content;
+          const contentType = response.headers?.get('content-type') ?? '';
+          const reply = isEventStream(contentType, responseText)
+            ? aggregateEventStream(responseText)
+            : parseJsonReply(responseText);
           if (typeof reply !== 'string' || !reply.trim()) {
-            throw providerError('COMPANION_PROVIDER_EMPTY_REPLY', false, true);
+            // An empty 200 (e.g. async `finish_reason: "in_progress"`) may
+            // complete on a same-model retry, but still allows next-model failover.
+            throw providerError('COMPANION_PROVIDER_EMPTY_REPLY', true, true);
           }
           if (reply.length > MAX_MESSAGE_CHARS) {
             throw providerError('COMPANION_PROVIDER_REPLY_TOO_LARGE', false, true);
