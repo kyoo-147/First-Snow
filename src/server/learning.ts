@@ -28,12 +28,115 @@ export function presentChild<T extends { displayName: string; gradeLevel?: strin
   return { ...child, name: child.displayName, grade: child.gradeLevel ?? null };
 }
 
-export async function listPublishedLessons() {
-  return db
-    .select()
+const LESSON_ACCENTS = ['primary', 'aqua', 'peach', 'pink', 'ice'] as const;
+type LessonAccent = (typeof LESSON_ACCENTS)[number];
+
+function parseLessonContent(content: unknown): Record<string, unknown> | null {
+  if (typeof content === 'string') {
+    try {
+      const parsed = JSON.parse(content);
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? (parsed as Record<string, unknown>) : null;
+    } catch {
+      return null;
+    }
+  }
+  return content && typeof content === 'object' && !Array.isArray(content) ? (content as Record<string, unknown>) : null;
+}
+
+function toLessonAccent(value: unknown): LessonAccent | undefined {
+  return typeof value === 'string' && (LESSON_ACCENTS as readonly string[]).includes(value)
+    ? (value as LessonAccent)
+    : undefined;
+}
+
+// Card fields are authored inside the lesson `content` JSON. Only surface values
+// that actually exist; never invent a rating/subtitle for a lesson.
+function lessonCardFields(content: unknown): {
+  subtitle?: string;
+  description?: string;
+  image?: string;
+  rating?: string;
+  accent?: LessonAccent;
+} {
+  const parsed = parseLessonContent(content);
+  return {
+    ...(typeof parsed?.subtitle === 'string' ? { subtitle: parsed.subtitle } : {}),
+    ...(typeof parsed?.description === 'string' ? { description: parsed.description } : {}),
+    ...(typeof parsed?.image === 'string' ? { image: parsed.image } : {}),
+    ...(typeof parsed?.rating === 'string' ? { rating: parsed.rating } : {}),
+    ...(toLessonAccent(parsed?.accent) ? { accent: toLessonAccent(parsed?.accent) } : {}),
+  };
+}
+
+const lessonCatalogColumns = {
+  id: lessons.id,
+  title: lessons.title,
+  subject: lessons.subject,
+  gradeLevel: lessons.gradeLevel,
+  content: lessons.content,
+  estimatedMinutes: lessons.estimatedMinutes,
+  isPublished: lessons.isPublished,
+  createdAt: lessons.createdAt,
+  updatedAt: lessons.updatedAt,
+};
+
+type CatalogLessonRow = {
+  content: unknown;
+  progressStatus?: string | null;
+  bestScore?: number | null;
+  [key: string]: unknown;
+};
+
+function presentCatalogLesson(row: CatalogLessonRow, withProgress: boolean) {
+  const { content, progressStatus, bestScore, ...rest } = row;
+  const progress = withProgress
+    ? {
+        status: progressStatus ?? 'not_started',
+        progress: progressStatus === 'completed' ? 100 : 0,
+        bestScore: bestScore ?? null,
+      }
+    : {};
+  return { ...rest, ...lessonCardFields(content), ...progress };
+}
+
+// Resolve the signed-in child, if any, so the catalog can report real per-child
+// progress without an explicit childId from callers.
+async function resolveChildSessionId(): Promise<string | null> {
+  try {
+    const { getChildSession } = await import('@/server/auth');
+    const session = await getChildSession();
+    return session?.sub ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function listPublishedLessons(childId?: string) {
+  const resolvedChildId = childId ?? (await resolveChildSessionId());
+
+  if (!resolvedChildId) {
+    const rows = await db
+      .select(lessonCatalogColumns)
+      .from(lessons)
+      .where(eq(lessons.isPublished, true))
+      .orderBy(asc(lessons.createdAt));
+    return rows.map((row) => presentCatalogLesson(row, false));
+  }
+
+  const rows = await db
+    .select({
+      ...lessonCatalogColumns,
+      progressStatus: lessonProgress.status,
+      bestScore: lessonProgress.bestScore,
+    })
     .from(lessons)
+    .leftJoin(
+      lessonProgress,
+      and(eq(lessonProgress.lessonId, lessons.id), eq(lessonProgress.childId, resolvedChildId)),
+    )
     .where(eq(lessons.isPublished, true))
     .orderBy(asc(lessons.createdAt));
+  return rows.map((row) => presentCatalogLesson(row, true));
 }
 
 export async function getPublishedLesson(lessonId: string) {
@@ -262,7 +365,7 @@ export async function getChildAttempts(childId: string) {
 }
 
 export async function getChildProgress(childId: string) {
-  const [counts, catalog, time] = await Promise.all([
+  const [counts, catalog, time, subjectCoverage] = await Promise.all([
     db
       .select({
         lessonsCompleted: sql<number>`count(*) filter (where ${lessonProgress.status} = 'completed')::int`,
@@ -281,12 +384,62 @@ export async function getChildProgress(childId: string) {
       .from(lessonAttempts)
       .innerJoin(lessons, eq(lessonAttempts.lessonId, lessons.id))
       .where(and(eq(lessonAttempts.childId, childId), eq(lessonAttempts.status, 'completed'))),
+    db
+      .select({
+        subject: lessons.subject,
+        total: sql<number>`count(*)::int`,
+        completed: sql<number>`count(*) filter (where ${lessonProgress.status} = 'completed')::int`,
+      })
+      .from(lessons)
+      .leftJoin(
+        lessonProgress,
+        and(eq(lessonProgress.lessonId, lessons.id), eq(lessonProgress.childId, childId)),
+      )
+      .where(eq(lessons.isPublished, true))
+      .groupBy(lessons.subject),
   ]);
+
+  const skills = subjectCoverage.map((row) => {
+    const total = row.total ?? 0;
+    const completed = row.completed ?? 0;
+    return {
+      label: row.subject,
+      value: total > 0 ? Math.round((completed / total) * 100) : 0,
+      note: `${completed} of ${total} lessons`,
+    };
+  });
+
+  const nextFocus = skills
+    .filter((skill) => skill.value < 100)
+    .sort((a, b) => a.value - b.value)[0]?.label;
+
   return {
     childId,
     lessonsCompleted: counts[0]?.lessonsCompleted ?? 0,
     totalLessons: catalog[0]?.totalLessons ?? 0,
     practiceTimeMinutes: time[0]?.practiceTimeMinutes ?? 0,
-    skills: [],
+    skills,
+    ...(nextFocus ? { nextFocus } : {}),
   };
+}
+
+export async function getChildRewards(childId: string) {
+  const rows = await db
+    .select({
+      id: rewards.id,
+      rewardType: rewards.rewardType,
+      label: rewards.label,
+      awardedAt: rewards.awardedAt,
+      sourceAttemptId: rewards.sourceAttemptId,
+    })
+    .from(rewards)
+    .where(eq(rewards.childId, childId))
+    .orderBy(desc(rewards.awardedAt));
+  return rows.map((row) => ({
+    id: row.id,
+    type: row.rewardType,
+    label: row.label,
+    awardedAt: row.awardedAt,
+    sourceAttemptId: row.sourceAttemptId,
+  }));
 }

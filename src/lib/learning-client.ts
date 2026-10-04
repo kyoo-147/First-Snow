@@ -93,6 +93,8 @@ export interface LessonSummary {
   image?: string;
   accent?: "primary" | "aqua" | "peach" | "pink" | "ice";
   progress?: number;
+  status?: "not_started" | "in_progress" | "completed";
+  bestScore?: number | null;
   isPublished?: boolean;
 }
 
@@ -437,4 +439,64 @@ export async function fetchChildAttempts(childId: string): Promise<ChildAttemptS
     return data.attempts;
   }
   return [];
+}
+
+export type RewardType = "star" | "badge" | "streak" | "milestone";
+
+export interface ChildReward {
+  id: string;
+  type: RewardType;
+  label: string;
+  awardedAt: string;
+  sourceAttemptId?: string | null;
+}
+
+export interface SessionChild {
+  id: string;
+  name: string;
+}
+
+/**
+ * Fetch a child's earned rewards.
+ * GET /api/rewards (session child) or /api/rewards?childId=...
+ */
+export async function fetchChildRewards(childId?: string): Promise<ChildReward[]> {
+  const url = childId
+    ? `/api/rewards?childId=${encodeURIComponent(childId)}`
+    : "/api/rewards";
+  const data = await request<ChildReward[] | { rewards: ChildReward[] }>(url);
+  if (Array.isArray(data)) {
+    return data;
+  }
+  if (data && typeof data === "object" && Array.isArray(data.rewards)) {
+    return data.rewards;
+  }
+  return [];
+}
+
+/**
+ * Resolve the signed-in child (id + display name) from the session, or null.
+ * GET /api/auth/session
+ */
+export async function fetchSessionChild(): Promise<SessionChild | null> {
+  try {
+    const res = await fetch("/api/auth/session", { credentials: "same-origin" });
+    if (!res.ok) return null;
+    const body = (await res.json()) as
+      | {
+          session?: {
+            actorType?: unknown;
+            child?: { id?: unknown; name?: unknown };
+          } | null;
+        }
+      | null;
+    const session = body?.session;
+    const child = session?.child;
+    if (session?.actorType !== "child" || !child || typeof child.id !== "string" || !child.id) {
+      return null;
+    }
+    return { id: child.id, name: typeof child.name === "string" ? child.name : "" };
+  } catch {
+    return null;
+  }
 }

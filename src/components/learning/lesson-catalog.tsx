@@ -158,7 +158,8 @@ export function LessonCatalog() {
               {lessons.map((lesson) => {
                 const accentClass = getSubjectAccent(lesson.subject, lesson.accent);
                 const lessonImg = getLessonImage(lesson.image, lesson.subject);
-                const progressValue = typeof lesson.progress === "number" ? lesson.progress : 0;
+                const isCompleted = lesson.status === "completed";
+                const isInProgress = lesson.status === "in_progress";
 
                 return (
                   <Link
@@ -184,20 +185,26 @@ export function LessonCatalog() {
                         <p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted line-clamp-2">
                           {lesson.subtitle || lesson.description || "Gentle step-by-step practice."}
                         </p>
-                        {progressValue > 0 ? (
+                        {isCompleted ? (
                           <div className="mt-4">
-                            <ProgressStrip value={progressValue} />
-                            <p className="mt-2 text-xs font-black text-snow-primary">{progressValue}% completed</p>
+                            <ProgressStrip value={100} />
+                            <p className="mt-2 text-xs font-black text-snow-primary">Completed</p>
                           </div>
+                        ) : isInProgress ? (
+                          <div className="mt-4 text-xs font-black text-snow-primary">In progress</div>
                         ) : (
                           <div className="mt-4 text-xs font-black text-snow-muted">Not started yet</div>
                         )}
                         <div className="mt-4 flex items-center justify-between text-xs font-bold text-snow-muted">
+                          {lesson.rating ? (
+                            <span className="flex items-center gap-1">
+                              <Star className="size-3.5 text-snow-warning" /> {lesson.rating}
+                            </span>
+                          ) : (
+                            <span />
+                          )}
                           <span className="flex items-center gap-1">
-                            <Star className="size-3.5 text-snow-warning" /> {lesson.rating || "4.8"}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="size-3.5" /> {lesson.estimatedMinutes ? `${lesson.estimatedMinutes} min` : "10 min"}
+                            <Clock className="size-3.5" /> {lesson.estimatedMinutes ? `${lesson.estimatedMinutes} min` : "—"}
                           </span>
                         </div>
                       </div>

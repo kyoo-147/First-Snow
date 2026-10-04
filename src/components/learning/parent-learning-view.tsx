@@ -145,15 +145,15 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
             />
             <StatusTile
               label="Comfort pattern"
-              value={progress?.comfortPattern || "Steady"}
-              detail="Short visual choices"
+              value={progress?.comfortPattern || "—"}
+              detail={progress?.comfortPattern ? "Short visual choices" : "Not recorded yet"}
               icon={<Star className="size-5 text-snow-primary" />}
               tone="bg-snow-lavender"
             />
             <StatusTile
               label="Next focus"
-              value={progress?.nextFocus || "Reading"}
-              detail="Recommended review"
+              value={progress?.nextFocus || "—"}
+              detail={progress?.nextFocus ? "Recommended review" : "Not enough practice data"}
               icon={<GraduationCap className="size-5 text-snow-primary" />}
               tone="bg-snow-cream"
             />
@@ -206,9 +206,15 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
             <aside className="space-y-4">
               <SnowCard className="p-5">
                 <h2 className="text-lg font-black text-snow-primary-dark">Suggested next step</h2>
-                <p className="mt-2 text-sm font-semibold leading-6 text-snow-muted">
-                  Focus on {progress?.nextFocus ? progress.nextFocus.toLowerCase() : "reading activities"} with visual card prompts to build confidence.
-                </p>
+                {progress?.nextFocus ? (
+                  <p className="mt-2 text-sm font-semibold leading-6 text-snow-muted">
+                    Focus on {progress.nextFocus.toLowerCase()} activities to build coverage where practice is lightest.
+                  </p>
+                ) : (
+                  <p className="mt-2 text-sm font-semibold leading-6 text-snow-muted">
+                    Not enough practice data yet to suggest a focus.
+                  </p>
+                )}
                 <div className="mt-4 rounded-full bg-snow-primary-soft px-4 py-2 text-xs font-black text-snow-primary inline-block">
                   Guided by AgentKid
                 </div>
