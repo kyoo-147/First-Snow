@@ -31,9 +31,6 @@ function EmergencyContactDialogInner({
   const [phone, setPhone] = useState(contact?.phone || "");
   const [email, setEmail] = useState(contact?.email || "");
   const [isPrimary, setIsPrimary] = useState(contact?.isPrimary || false);
-  const [notifyOnAlert, setNotifyOnAlert] = useState(
-    contact ? contact.notifyOnAlert : true,
-  );
   const [validationError, setValidationError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -59,7 +56,6 @@ function EmergencyContactDialogInner({
       phone: phone.trim(),
       email: email.trim() || undefined,
       isPrimary,
-      notifyOnAlert,
     });
   }
 
@@ -225,20 +221,10 @@ function EmergencyContactDialogInner({
                 </div>
               </label>
 
-              <label className="flex items-center gap-2.5 rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft p-2.5 text-xs font-semibold text-snow-primary-dark cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={notifyOnAlert}
-                  onChange={(e) => setNotifyOnAlert(e.target.checked)}
-                  className="size-4 rounded border-snow-border text-snow-primary"
-                />
-                <div>
-                  <span className="font-bold">Receive Priority Alerts</span>
-                  <p className="text-[11px] text-snow-muted">
-                    Automated SMS/Email notification when parent intervention is needed.
-                  </p>
-                </div>
-              </label>
+              <p className="rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft p-2.5 text-[11px] font-semibold text-snow-muted">
+                Automatic alert delivery to contacts is unavailable until a notification provider
+                is configured, so no alert preference is stored for this contact.
+              </p>
             </div>
 
             <div className="flex items-center justify-between pt-3">

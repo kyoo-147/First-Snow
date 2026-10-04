@@ -159,6 +159,10 @@ export async function fetchDashboardAlerts(childId?: string): Promise<DashboardA
   return Array.isArray(data.alerts) ? data.alerts : [];
 }
 
+export async function fetchDashboardAlert(alertId: string): Promise<DashboardAlert> {
+  return request<DashboardAlert>(`/api/alerts/${encodeURIComponent(alertId)}`);
+}
+
 export async function markDashboardAlertRead(alertId: string): Promise<DashboardAlert> {
   return request<DashboardAlert>(`/api/alerts/${encodeURIComponent(alertId)}`, { method: "PATCH" });
 }

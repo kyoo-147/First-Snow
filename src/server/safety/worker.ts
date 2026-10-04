@@ -46,6 +46,11 @@ export interface NotificationJob {
   body: string;
 }
 
+export interface RetentionPurgeResult {
+  purgedRecords: number;
+  policiesApplied: number;
+}
+
 export interface SafetyWorkerRepository {
   claimExports(limit: number, retryFailed: boolean): Promise<ExportJob[]>;
   getExportRequest(job: ExportJob): Promise<ExportRequest>;
@@ -58,6 +63,7 @@ export interface SafetyWorkerRepository {
   listPendingNotifications(limit: number, retryFailed: boolean): Promise<NotificationJob[]>;
   deliverNotification(job: NotificationJob, adapter: DeliveryAdapter | undefined): Promise<'sent' | 'failed' | 'skipped'>;
   queueFlaggedSafetyAlerts(limit: number): Promise<number>;
+  purgeExpiredRetention(now: Date): Promise<RetentionPurgeResult>;
   close?(): Promise<void>;
 }
 
@@ -75,6 +81,7 @@ export interface RunOnceResult {
   deletions: { completed: number; failed: number; blocked: number };
   notifications: { sent: number; failed: number };
   safetyAlertsQueued: number;
+  retention: RetentionPurgeResult;
 }
 
 export async function runSafetyJobsOnce(options: RunOnceOptions): Promise<RunOnceResult> {
@@ -86,9 +93,11 @@ export async function runSafetyJobsOnce(options: RunOnceOptions): Promise<RunOnc
     deletions: { completed: 0, failed: 0, blocked: 0 },
     notifications: { sent: 0, failed: 0 },
     safetyAlertsQueued: 0,
+    retention: { purgedRecords: 0, policiesApplied: 0 },
   };
 
   result.safetyAlertsQueued = await repository.queueFlaggedSafetyAlerts(limit);
+  result.retention = await repository.purgeExpiredRetention(now);
 
   const exportJobs = await repository.claimExports(limit, options.retryFailed ?? false);
   for (const job of exportJobs) {

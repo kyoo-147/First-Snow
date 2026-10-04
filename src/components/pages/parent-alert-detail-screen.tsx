@@ -7,7 +7,7 @@ import { ParentPageFrame, PageHeader, StatusTile } from "@/components/layout/sno
 import { SnowButton } from "@/components/ui/snow-button";
 import { SnowCard } from "@/components/ui/snow-card";
 import {
-  fetchDashboardAlerts,
+  fetchDashboardAlert,
   fetchHouseholdChildren,
   getErrorMessage,
   markDashboardAlertRead,
@@ -25,11 +25,9 @@ export function ParentAlertDetailScreen({ alertId }: { alertId: string }) {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([fetchDashboardAlerts(), fetchHouseholdChildren()])
-      .then(([alerts, children]) => {
+    Promise.all([fetchDashboardAlert(alertId), fetchHouseholdChildren()])
+      .then(([foundAlert, children]) => {
         if (cancelled) return;
-        const foundAlert = alerts.find((item) => item.id === alertId) ?? null;
-        if (!foundAlert) throw new Error("This safety review was not found for your household.");
         const foundChild = children.find((item) => item.id === foundAlert.childId) ?? null;
         if (!foundChild) throw new Error("The child profile for this safety review is unavailable.");
         setAlert(foundAlert);

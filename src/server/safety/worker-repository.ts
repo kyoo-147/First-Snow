@@ -2,12 +2,22 @@ import { asc, and, eq, inArray, lt } from 'drizzle-orm';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from '@/db/schema';
-import { auditEvents, children, companionMessages, companionSessions, dataDeletionJobs, dataExportJobs, householdMembers, households, lessonAttempts, lessonProgress, notificationPreferences, notifications, sessions, users } from '@/db/schema';
-import type { DeletionJob, DeliveryAdapter, ExportJob, ExportRequest, NotificationJob, SafetyWorkerRepository } from './worker';
+import { auditEvents, children, companionMessages, companionSessions, dataDeletionJobs, dataExportJobs, householdMembers, households, lessonAttempts, lessonProgress, notificationPreferences, notifications, retentionPolicies, sessions, users } from '@/db/schema';
+import type { DeletionJob, DeliveryAdapter, ExportJob, ExportRequest, NotificationJob, RetentionPurgeResult, SafetyWorkerRepository } from './worker';
 
 type WorkerDb = ReturnType<typeof drizzle<typeof schema>>;
 type JsonObject = Record<string, unknown>;
-type DeletionStage = { stage: string; name?: string; status: 'pending' | 'running' | 'completed' | 'failed'; detail?: string };
+export type DeletionStageStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+type DeletionStage = { stage: string; name?: string; status: DeletionStageStatus; detail?: string };
+
+/**
+ * A deletion request is complete when every stage either deleted its data or was
+ * explicitly skipped because there was nothing to delete. A `failed` stage keeps
+ * the request incomplete so the status reflects reality.
+ */
+export function isDeletionComplete(stages: Array<{ status: DeletionStageStatus }>): boolean {
+  return stages.every((stage) => stage.status === 'completed' || stage.status === 'skipped');
+}
 
 export class DatabaseSafetyWorkerRepository implements SafetyWorkerRepository {
   private readonly client: ReturnType<typeof postgres>;
@@ -97,12 +107,12 @@ export class DatabaseSafetyWorkerRepository implements SafetyWorkerRepository {
       return 'blocked';
     }
     for (const stage of report.stages) {
-      if (stage.status === 'completed' || (stage.status === 'failed' && !retryFailed)) continue;
+      if (stage.status === 'completed' || stage.status === 'skipped' || (stage.status === 'failed' && !retryFailed)) continue;
       await this.runDeletionStage(job, stage.stage, report.request.childId);
     }
     const [fresh] = await this.db.select({ stagesReport: dataDeletionJobs.stagesReport }).from(dataDeletionJobs).where(eq(dataDeletionJobs.id, job.id)).limit(1);
     const completedReport = parseDeletionReport(fresh?.stagesReport);
-    const complete = completedReport.stages.every((stage) => stage.status === 'completed');
+    const complete = isDeletionComplete(completedReport.stages);
     await this.finishDeletion(job, completedReport, complete ? 'completed' : 'failed', complete ? null : 'One or more deletion stages failed. Review the stage report before retrying.');
     return complete ? 'completed' : 'failed';
   }
@@ -114,8 +124,13 @@ export class DatabaseSafetyWorkerRepository implements SafetyWorkerRepository {
         if (!jobRow) return;
         const report = parseDeletionReport(jobRow.stagesReport);
         const stage = report.stages.find((item) => item.stage === stageName);
-        if (!stage || stage.status === 'completed') return;
-        if (stageName === 'emotion_timeline') throw new Error('No emotion timeline table exists in this schema; no records were changed.');
+        if (!stage || stage.status === 'completed' || stage.status === 'skipped') return;
+        if (stageName === 'emotion_timeline') {
+          const detail = 'No emotion timeline table exists in this schema; there are no records to delete for this stage.';
+          const updatedStages = report.stages.map((item) => item.stage === stageName ? { ...item, status: 'skipped' as const, detail } : item);
+          await tx.update(dataDeletionJobs).set({ stagesReport: { ...report, stages: updatedStages }, updatedAt: new Date() } as Partial<typeof dataDeletionJobs.$inferInsert>).where(and(eq(dataDeletionJobs.id, job.id), eq(dataDeletionJobs.status, 'processing')));
+          return;
+        }
         if (!['transcripts', 'session_logs', 'profile_metadata'].includes(stageName)) throw new Error(`Unsupported deletion stage: ${stageName}`);
         if (!childId) throw new Error('A child identifier is required for this deletion stage.');
         const child = await tx.select({ id: children.id }).from(children).where(and(eq(children.id, childId), eq(children.householdId, job.householdId))).limit(1);
@@ -207,6 +222,25 @@ export class DatabaseSafetyWorkerRepository implements SafetyWorkerRepository {
       return inserted.length;
     });
   }
+
+  async purgeExpiredRetention(now = new Date()): Promise<RetentionPurgeResult> {
+    const policies = await this.db.select().from(retentionPolicies).where(and(eq(retentionPolicies.isActive, true), eq(retentionPolicies.resourceType, 'transcripts')));
+    let purgedRecords = 0;
+    let policiesApplied = 0;
+    for (const policy of policies) {
+      if (policy.retentionDays <= 0) continue;
+      const cutoff = new Date(now.getTime() - policy.retentionDays * 24 * 60 * 60 * 1000);
+      const deleted = await this.db.delete(companionMessages).where(and(
+        lt(companionMessages.createdAt, cutoff),
+        inArray(companionMessages.childId, this.db.select({ id: children.id }).from(children).where(eq(children.householdId, policy.householdId))),
+      )).returning({ id: companionMessages.id });
+      if (!deleted.length) continue;
+      purgedRecords += deleted.length;
+      policiesApplied++;
+      await this.db.insert(auditEvents).values({ actorType: 'system', eventType: 'retention.purged', resourceType: 'household', resourceId: policy.householdId, metadata: { resourceType: policy.resourceType, retentionDays: policy.retentionDays, cutoff: cutoff.toISOString(), purgedRecords: deleted.length } } as typeof auditEvents.$inferInsert);
+    }
+    return { purgedRecords, policiesApplied };
+  }
 }
 
 type DeletionReport = { request: { scope: string; childId?: string }; stages: DeletionStage[] };
@@ -216,7 +250,7 @@ function parseDeletionReport(value: unknown): DeletionReport {
   const request = object.request as JsonObject | undefined;
   if (!request || typeof request.scope !== 'string') throw new Error('Deletion scope metadata is missing.');
   const stages = Array.isArray(object.stages) ? object.stages as DeletionStage[] : [];
-  if (stages.some((stage) => typeof stage.stage !== 'string' || !['pending', 'running', 'completed', 'failed'].includes(stage.status))) throw new Error('Deletion stage report is invalid.');
+  if (stages.some((stage) => typeof stage.stage !== 'string' || !['pending', 'running', 'completed', 'failed', 'skipped'].includes(stage.status))) throw new Error('Deletion stage report is invalid.');
   return { request: { scope: request.scope, ...(typeof request.childId === 'string' ? { childId: request.childId } : {}) }, stages };
 }
 

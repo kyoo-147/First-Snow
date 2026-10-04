@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { runSafetyJobsOnce, type DeliveryAdapter, type ExportJob, type NotificationJob, type ObjectStore, type SafetyWorkerRepository } from './worker';
+import { runSafetyJobsOnce, type DeliveryAdapter, type ExportJob, type NotificationJob, type ObjectStore, type RetentionPurgeResult, type SafetyWorkerRepository } from './worker';
+import { isDeletionComplete } from './worker-repository';
 
 vi.mock('server-only', () => ({}));
 
@@ -15,6 +16,8 @@ class FakeRepository implements SafetyWorkerRepository {
   deletionState: 'completed' | 'failed' | 'blocked' = 'completed';
   notificationState: 'sent' | 'failed' | 'skipped' = 'sent';
   queuedAlerts = 0;
+  retention: RetentionPurgeResult = { purgedRecords: 0, policiesApplied: 0 };
+  purgeCalls: Date[] = [];
   request = { format: 'zip' as const, includeTranscripts: true, includeEmotionTimeline: false, includeLearningProgress: true };
   exportData: Record<string, unknown> = { children: [{ id: 'child-1', displayName: 'Actual child record' }], transcripts: [] };
   async claimExports() { const claimed = this.exports; this.exports = []; return claimed; }
@@ -33,6 +36,7 @@ class FakeRepository implements SafetyWorkerRepository {
     return this.notificationState;
   }
   async queueFlaggedSafetyAlerts() { return this.queuedAlerts; }
+  async purgeExpiredRetention(now: Date) { this.purgeCalls.push(now); return this.retention; }
 }
 
 function memoryStore(options: { corruptRead?: boolean; url?: string } = {}) {
@@ -121,6 +125,15 @@ describe('safety worker orchestration', () => {
     expect(result.safetyAlertsQueued).toBe(2);
   });
 
+  it('enforces stored retention windows through the repository purge task', async () => {
+    const repository = new FakeRepository();
+    repository.retention = { purgedRecords: 4, policiesApplied: 2 };
+    const now = new Date('2026-01-01T00:00:00Z');
+    const result = await runSafetyJobsOnce({ repository, adapters: {}, now });
+    expect(result.retention).toEqual({ purgedRecords: 4, policiesApplied: 2 });
+    expect(repository.purgeCalls).toEqual([now]);
+  });
+
   it('leaves subsequent runs without claimed exports idle, supporting repository-level idempotency', async () => {
     const repository = new FakeRepository();
     const store = memoryStore();
@@ -180,5 +193,13 @@ describe('safety worker CLI: no DATABASE_URL', () => {
     } finally {
       if (original !== undefined) process.env.DATABASE_URL = original;
     }
+  });
+});
+
+describe('deletion stage resolution', () => {
+  it('treats skipped stages as resolved but a failed stage as unresolved', () => {
+    expect(isDeletionComplete([{ status: 'completed' }, { status: 'skipped' }])).toBe(true);
+    expect(isDeletionComplete([{ status: 'completed' }, { status: 'failed' }])).toBe(false);
+    expect(isDeletionComplete([{ status: 'pending' }])).toBe(false);
   });
 });
