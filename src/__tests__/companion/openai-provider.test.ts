@@ -438,5 +438,40 @@ describe('OpenAI-compatible text companion provider adapter', () => {
         setTestCompanionProvider(null);
       }
     });
+
+    it('persists round-robin rotation across generateReply calls on one config', async () => {
+      setTestCompanionProvider(null);
+      const envKeys = [
+        'COMPANION_OPENAI_API_KEY',
+        'COMPANION_PROVIDER_MODELS',
+        'COMPANION_PROVIDER_ROUTING',
+      ] as const;
+      const savedEnv = envKeys.map((key) => [key, process.env[key]] as const);
+      process.env.COMPANION_OPENAI_API_KEY = 'sk-round-robin-key';
+      process.env.COMPANION_PROVIDER_MODELS = 'model-a,model-b';
+      process.env.COMPANION_PROVIDER_ROUTING = 'round-robin';
+
+      const globalRecord = globalThis as unknown as Record<string, unknown>;
+      const originalFetch = globalRecord['fetch'];
+      const attemptedModels: string[] = [];
+      globalRecord['fetch'] = async (_input: RequestInfo | URL, init?: RequestInit) => {
+        const body = JSON.parse(String(init?.body)) as { model: string };
+        attemptedModels.push(body.model);
+        return Response.json({ choices: [{ message: { content: 'ok' } }] });
+      };
+
+      try {
+        assert.equal(await generateReply({ content: 'one', history: [] }), 'ok');
+        assert.equal(await generateReply({ content: 'two', history: [] }), 'ok');
+      } finally {
+        globalRecord['fetch'] = originalFetch;
+        for (const [key, value] of savedEnv) {
+          if (value === undefined) delete process.env[key];
+          else process.env[key] = value;
+        }
+      }
+
+      assert.deepEqual(attemptedModels, ['model-a', 'model-b']);
+    });
   });
 });

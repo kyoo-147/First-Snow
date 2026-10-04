@@ -7,14 +7,22 @@ export function setTestCompanionProvider(provider: Provider | null): void {
   testProvider = provider;
 }
 
+// Cache the configured provider so its per-instance round-robin cursor persists
+// across requests. The config is re-read on every call; when it changes (for
+// example after an env update) the provider is rebuilt, resetting routing state.
+let cachedProvider: { key: string; provider: Provider } | null = null;
+
 export async function generateReply(input: ProviderInput): Promise<string> {
   const provider = testProvider;
   if (provider) return provider(input);
   const { readOpenAiProviderConfig, createOpenAiCompanionProvider } = await import('./openai-provider');
   const config = readOpenAiProviderConfig();
   if (config) {
-    const openAiProvider = createOpenAiCompanionProvider(config);
-    return openAiProvider(input);
+    const key = JSON.stringify(config);
+    if (!cachedProvider || cachedProvider.key !== key) {
+      cachedProvider = { key, provider: createOpenAiCompanionProvider(config) };
+    }
+    return cachedProvider.provider(input);
   }
   throw new Error('COMPANION_PROVIDER_UNAVAILABLE');
 }
