@@ -15,14 +15,15 @@ import { eq } from 'drizzle-orm';
 // Returns current authenticated session details or { session: null }
 // FAIL CLOSED: Validates DB-backed session row via getParentSession / getChildSession.
 // If DB fails, row is missing, revoked, or expired, returns { session: null }. Never falls back to raw JWT.
-export async function GET(): Promise<NextResponse> {
+export async function GET(request?: Request): Promise<NextResponse> {
   try {
     const cookieStore = await cookies();
     const parentToken = cookieStore.get(PARENT_COOKIE_NAME)?.value;
     const childToken = cookieStore.get(CHILD_COOKIE_NAME)?.value;
+    const preferChild = request ? new URL(request.url).searchParams.get('actor') === 'child' : false;
 
     // ── 1. Check parent session (strictly DB-backed) ──────────────────────────
-    if (parentToken) {
+    if (!preferChild && parentToken) {
       const parentSession = await getParentSession();
       if (parentSession) {
         const [user] = await db

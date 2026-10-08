@@ -480,7 +480,7 @@ export async function fetchChildRewards(childId?: string): Promise<ChildReward[]
  */
 export async function fetchSessionChild(): Promise<SessionChild | null> {
   try {
-    const res = await fetch("/api/auth/session", { credentials: "same-origin" });
+    const res = await fetch("/api/auth/session?actor=child", { credentials: "same-origin" });
     if (!res.ok) return null;
     const body = (await res.json()) as
       | {

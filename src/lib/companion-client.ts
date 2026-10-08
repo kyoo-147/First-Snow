@@ -168,7 +168,7 @@ export async function getTranscripts(childId: string): Promise<ApiTranscriptMess
 export async function getChildSession(): Promise<CompanionChildSession | null> {
   let res: Response;
   try {
-    res = await fetch("/api/auth/session", { credentials: "same-origin" });
+    res = await fetch("/api/auth/session?actor=child", { credentials: "same-origin" });
   } catch {
     return null;
   }

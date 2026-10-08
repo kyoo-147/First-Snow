@@ -216,7 +216,7 @@ async function main() {
     },
     async () => {
       const child = await getChildSession();
-      assert(capturedSessionUrl === "/api/auth/session", "getChildSession: reads the authenticated session endpoint");
+      assert(capturedSessionUrl === "/api/auth/session?actor=child", "getChildSession: reads the child-authenticated session endpoint");
       assert(child?.id === "child-42", "getChildSession: resolves the session child id");
     }
   );

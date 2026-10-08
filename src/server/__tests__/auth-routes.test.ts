@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   createParentSession,
+  createChildSession,
   generateOpaqueToken,
   PARENT_COOKIE_NAME,
   PARENT_COOKIE_OPTIONS,
@@ -184,6 +185,26 @@ describe('Auth Route Handlers — Fail-Closed DB Session Guarantees', () => {
   });
 
   describe('GET /api/auth/session (DB-backed, fail-closed, no JWT offline fallback)', () => {
+    it('returns the child session when actor=child even if a parent cookie is also present', async () => {
+      const childOpaque = generateOpaqueToken();
+      const childJwt = await createChildSession('child-1', 'house-1', childOpaque);
+      mockCookies[PARENT_COOKIE_NAME] = 'parent-cookie-present';
+      mockCookies['snow_child_session'] = childJwt;
+      mockQueryQueue = [
+        [{ id: 'session-1', actorType: 'child', childId: 'child-1', expiresAt: new Date(Date.now() + 60_000), revokedAt: null }],
+        [{ id: 'child-1', isActive: true }],
+        [{ id: 'child-1', displayName: 'Alice', householdId: 'house-1' }],
+      ];
+
+      const { GET } = await import('@/app/api/auth/session/route');
+      const res = await GET(new NextRequest('http://localhost:3000/api/auth/session?actor=child'));
+
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.session.actorType).toBe('child');
+      expect(json.session.child.id).toBe('child-1');
+    });
+
     it('returns { session: null } when no cookies exist', async () => {
       const { GET } = await import('@/app/api/auth/session/route');
       const res = await GET();
