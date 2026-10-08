@@ -17,6 +17,7 @@ import {
 import { parentNavGroups } from "@/data/snow-data";
 import { SnowLogo } from "@/components/ui/snow-logo";
 import { cn } from "@/lib/utils";
+import { t, tUnchecked } from "@/i18n";
 import { fetchDashboardSession, fetchHouseholdChildren, type DashboardChild } from "@/lib/dashboard-client";
 
 const SIDEBAR_STORAGE_KEY = "agentkid:parent-sidebar-collapsed";
@@ -78,14 +79,14 @@ export function ParentShell({
         {isMobileMenuOpen ? (
           <button
             type="button"
-            aria-label="Close navigation menu"
+            aria-label={t("parent", "aria.closeNav")}
             className="fixed inset-0 z-40 bg-black/25 md:hidden"
             onClick={() => setIsMobileMenuOpen(false)}
           />
         ) : null}
 
         <aside
-          aria-label="Parent sidebar"
+          aria-label={t("parent", "aria.parentSidebar")}
           className={cn(
             "fixed inset-y-0 left-0 z-50 flex h-full shrink-0 flex-col border-r border-snow-border bg-snow-surface transition-[width,transform] duration-200 ease-out md:static md:translate-x-0",
             isMobileMenuOpen ? "w-[224px] translate-x-0" : "w-[224px] -translate-x-full",
@@ -93,14 +94,14 @@ export function ParentShell({
           )}
         >
           <div className={cn("flex h-[72px] shrink-0 items-center border-b border-snow-border px-4", isCollapsed && !isMobileMenuOpen && "md:justify-center md:px-0")}>
-            <Link href="/parent" aria-label="Go to AgentKid dashboard" className={cn("snow-focus-ring rounded-[var(--radius-md)]", isCollapsed && !isMobileMenuOpen && "md:hidden")}>
+            <Link href="/parent" aria-label={t("parent", "aria.gotoDashboard")} className={cn("snow-focus-ring rounded-[var(--radius-md)]", isCollapsed && !isMobileMenuOpen && "md:hidden")}>
               <SnowLogo />
             </Link>
             <button
               type="button"
-              aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              aria-label={isCollapsed ? t("parent", "aria.expandSidebar") : t("parent", "aria.collapseSidebar")}
               aria-expanded={!isCollapsed}
-              title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              title={isCollapsed ? t("parent", "aria.expandSidebar") : t("parent", "aria.collapseSidebar")}
               onClick={toggleSidebar}
               className={cn(
                 "snow-focus-ring hidden size-8 shrink-0 place-items-center rounded-[var(--radius-md)] border border-transparent text-snow-muted transition hover:border-snow-border hover:bg-snow-surface-soft hover:text-snow-primary-dark md:grid",
@@ -111,7 +112,7 @@ export function ParentShell({
             </button>
             <button
               type="button"
-              aria-label="Close navigation menu"
+              aria-label={t("parent", "aria.closeNav")}
               className="snow-focus-ring ml-auto grid size-8 place-items-center rounded-[var(--radius-md)] text-snow-muted transition hover:bg-snow-surface-soft hover:text-snow-foreground md:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -119,12 +120,12 @@ export function ParentShell({
             </button>
           </div>
 
-          <nav aria-label="Parent navigation" className="agentkid-nav-scrollbar min-h-0 flex-1 overflow-y-auto px-2 py-4">
+          <nav aria-label={t("parent", "aria.parentNav")} className="agentkid-nav-scrollbar min-h-0 flex-1 overflow-y-auto px-2 py-4">
             <div className="space-y-5">
               {parentNavGroups.map((group) => (
-                <section key={group.group} aria-label={group.group}>
+                <section key={tUnchecked("parent", `nav.${group.group.replace(' ', '').replace(' ', '').toLowerCase()}`)} aria-label={tUnchecked("parent", `nav.${group.group.replace(' ', '').replace(' ', '').toLowerCase()}`)}>
                   <p className={cn("mb-1.5 px-2 text-[10px] font-medium uppercase tracking-[0.08em] text-snow-muted transition-opacity", !showLabels && "md:sr-only")}>
-                    {group.group}
+                    {tUnchecked("parent", `nav.${group.group.replace(' ', '').replace(' ', '').toLowerCase()}`)}
                   </p>
                   <div className="space-y-0.5">
                     {group.items.map((item) => {
@@ -151,7 +152,7 @@ export function ParentShell({
                           )}
                         >
                           <Icon className="size-[18px] shrink-0" strokeWidth={1.8} />
-                          <span className={cn("truncate whitespace-nowrap", !showLabels && "md:hidden")}>{item.label}</span>
+                          <span className={cn("truncate whitespace-nowrap", !showLabels && "md:hidden")}>{tUnchecked("parent", `nav.${item.key}`)}</span>
                         </Link>
                       );
                     })}
@@ -164,7 +165,7 @@ export function ParentShell({
           <div className="shrink-0 border-t border-snow-border p-2 space-y-1">
             <Link
               href="/parent/settings/account"
-              title={!showLabels ? "Account" : undefined}
+              title={!showLabels ? t("parent", "nav.account") : undefined}
               className={cn(
                 "snow-focus-ring flex min-h-11 items-center rounded-[var(--radius-md)] transition hover:bg-snow-surface-soft",
                 showLabels ? "gap-3 px-2" : "md:justify-center md:px-0",
@@ -173,21 +174,21 @@ export function ParentShell({
             >
               <Image src="/images/nana_avatar.png" alt="" width={30} height={30} className="size-[30px] shrink-0 rounded-[var(--radius-md)] object-cover" />
               <span className={cn("min-w-0 flex-1", !showLabels && "md:hidden")}>
-                <strong className="block truncate text-[13px] font-semibold text-snow-foreground">{parentName ?? "Parent account"}</strong>
-                <span className="block truncate text-[11px] text-snow-muted">Parent account</span>
+                <strong className="block truncate text-[13px] font-semibold text-snow-foreground">{parentName ?? t("parent", "nav.account")}</strong>
+                <span className="block truncate text-[11px] text-snow-muted">{t("parent", "nav.account")}</span>
               </span>
               <ChevronRight className={cn("size-4 shrink-0 text-snow-muted", !showLabels && "md:hidden")} />
             </Link>
             <Link
               href="/logout"
-              title={!showLabels ? "Sign Out" : undefined}
+              title={!showLabels ? t("common", "signOut") : undefined}
               className={cn(
                 "snow-focus-ring flex min-h-8 items-center rounded-[var(--radius-md)] text-snow-muted transition hover:bg-snow-danger/10 hover:text-snow-danger",
                 showLabels ? "gap-3 px-2 text-[12px] font-semibold" : "md:justify-center md:px-0",
               )}
             >
               <LogOut className="size-4 shrink-0" />
-              <span className={cn("truncate", !showLabels && "md:hidden")}>Sign Out</span>
+              <span className={cn("truncate", !showLabels && "md:hidden")}>{t("common", "signOut")}</span>
             </Link>
           </div>
         </aside>
@@ -197,7 +198,7 @@ export function ParentShell({
             <div className="flex items-center gap-3 md:hidden">
               <button
                 type="button"
-                aria-label="Open navigation menu"
+                aria-label={t("parent", "aria.openNav")}
                 className="snow-focus-ring grid size-10 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-primary-dark hover:bg-snow-surface-soft"
                 onClick={() => setIsMobileMenuOpen(true)}
               >
@@ -208,24 +209,24 @@ export function ParentShell({
             <div className="hidden md:block" />
             <div className="ml-auto flex min-w-0 items-center gap-2 sm:gap-3">
               <Link href="/session-switch" className="snow-focus-ring hidden min-h-11 items-center gap-2 rounded-full bg-snow-primary px-5 text-sm font-extrabold text-white shadow-[var(--shadow-card)] transition hover:brightness-105 lg:inline-flex">
-                Open child app <Sparkles className="size-4" />
+                {t("parent", "nav.openChildApp")} <Sparkles className="size-4" />
               </Link>
-              <Link href="/parent/alerts" aria-label="Open parent alerts" className="snow-focus-ring grid size-10 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-primary-dark">
+              <Link href="/parent/alerts" aria-label={t("parent", "aria.openAlerts")} className="snow-focus-ring grid size-10 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-primary-dark">
                 <Bell className="size-5" />
               </Link>
               <Link href="/parent/settings/account" className="snow-focus-ring hidden min-h-[52px] items-center gap-3 rounded-full border border-snow-border bg-snow-surface px-3 shadow-[var(--shadow-card)] md:flex">
                 <Image src="/images/nana_avatar.png" alt="" width={40} height={40} className="rounded-full object-cover" />
                 <span className="text-sm leading-tight">
-                  <strong className="block font-black text-snow-primary-dark">{parentName ?? "Parent account"}</strong>
-                  <span className="font-bold text-snow-muted">Parent</span>
+                  <strong className="block font-black text-snow-primary-dark">{parentName ?? t("parent", "nav.account")}</strong>
+                  <span className="font-bold text-snow-muted">{t("parent", "nav.account")}</span>
                 </span>
                 <ChevronDown className="size-4 text-snow-primary-dark" />
               </Link>
-              <Link href="/session-switch" aria-label="Open child profile selector" className="snow-focus-ring flex min-h-[52px] min-w-0 items-center gap-3 rounded-full border border-snow-border bg-snow-primary-soft px-3 shadow-[var(--shadow-card)]">
+              <Link href="/session-switch" aria-label={t("parent", "aria.openChildSelector")} className="snow-focus-ring flex min-h-[52px] min-w-0 items-center gap-3 rounded-full border border-snow-border bg-snow-primary-soft px-3 shadow-[var(--shadow-card)]">
                 <Image src="/images/snow-avatar-final.png" alt="" width={40} height={40} className="rounded-full object-cover" />
                 <span className="hidden text-sm leading-tight sm:block">
-                  <strong className="block font-black text-snow-primary-dark">{primaryChild?.name ?? "Choose child"}</strong>
-                  <span className="font-bold text-snow-muted">Open child app</span>
+                  <strong className="block font-black text-snow-primary-dark">{primaryChild?.name ?? t("parent", "nav.chooseChild")}</strong>
+                  <span className="font-bold text-snow-muted">{t("parent", "nav.openChildApp")}</span>
                 </span>
               </Link>
             </div>

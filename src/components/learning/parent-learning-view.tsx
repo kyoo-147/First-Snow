@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { t } from "@/i18n";
 import {
   BarChart3,
   BookOpen,
@@ -80,14 +81,12 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
   return (
     <ParentPageFrame>
       <PageHeader
-        eyebrow={`${childName}'s learning`}
-        title="Learning progress"
-        description={`A parent view of what ${childName} practiced, where visual choices helped, and which lesson is best to revisit next.`}
+        eyebrow={t("parent", "learningView.eyebrow", { name: childName })}
+        title={t("parent", "learningView.title")}
+        description={t("parent", "learningView.description", { name: childName })}
         action={
           <SnowButton variant="soft" onClick={loadData}>
-            <BarChart3 className="mr-2 size-4" />
-            Refresh data
-          </SnowButton>
+            <BarChart3 className="mr-2 size-4" />{t("parent", "learningView.refreshData")}</SnowButton>
         }
       />
 
@@ -97,8 +96,8 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
             <div className="grid size-12 place-items-center rounded-full bg-snow-primary-soft text-snow-primary animate-spin">
               <RefreshCw className="size-6" />
             </div>
-            <p className="mt-2 text-lg font-black text-snow-primary-dark">Loading learning analytics...</p>
-            <p className="text-sm font-semibold text-snow-muted">Fetching latest session and progress records.</p>
+            <p className="mt-2 text-lg font-black text-snow-primary-dark">{t("parent", "learningView.loadingAnalytics")}</p>
+            <p className="text-sm font-semibold text-snow-muted">{t("parent", "learningView.fetchingRecords")}</p>
           </div>
         </div>
       ) : error ? (
@@ -107,22 +106,20 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
             <div className="mx-auto grid size-12 place-items-center rounded-full bg-snow-warning/20 text-snow-primary-dark">
               <AlertCircle className="size-6" />
             </div>
-            <h2 className="mt-3 text-lg font-black text-snow-primary-dark">Unable to load learning data</h2>
+            <h2 className="mt-3 text-lg font-black text-snow-primary-dark">{t("parent", "learningView.unableToLoad")}</h2>
             <p className="mt-1 text-sm font-semibold text-snow-muted">{error}</p>
             <div className="mt-5 flex justify-center">
               <SnowButton onClick={loadData} className="gap-2">
-                <RefreshCw className="size-4" />
-                Try again
-              </SnowButton>
+                <RefreshCw className="size-4" />{t("parent", "learningView.tryAgain")}</SnowButton>
             </div>
           </div>
         </div>
       ) : !progress && attempts.length === 0 ? (
         <div className="py-6">
           <EmptyState
-            title="No learning history yet"
-            description={`${childName} hasn't completed any lessons yet. Once a lesson is started, progress will appear here automatically.`}
-            actionLabel="Check again"
+            title={t("parent", "learningView.noLearningHistory")}
+            description={t("parent", "learningView.noLessonsCompleted", { name: childName })}
+            actionLabel={t("parent", "learningView.checkAgain")}
             onAction={loadData}
           />
         </div>
@@ -131,29 +128,29 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
           {/* Status Metrics */}
           <div className="grid gap-4 md:grid-cols-4">
             <StatusTile
-              label="Practice time"
+              label={t("parent", "learningView.practiceTime")}
               value={`${progress?.practiceTimeMinutes ?? 0} min`}
-              detail="Recorded learning time"
+              detail={t("parent", "learningView.recordedLearningTime")}
               icon={<Clock className="size-5 text-snow-primary" />}
             />
             <StatusTile
-              label="Lessons completed"
+              label={t("parent", "learningView.lessonsCompleted")}
               value={`${progress?.lessonsCompleted ?? attempts.filter((a) => a.status === "completed").length}`}
               detail={progress?.totalLessons ? `of ${progress.totalLessons} available` : "Total finished"}
               icon={<BookOpen className="size-5 text-snow-primary" />}
               tone="bg-snow-ice"
             />
             <StatusTile
-              label="Comfort pattern"
+              label={t("parent", "learningView.comfortPattern")}
               value={progress?.comfortPattern || "—"}
-              detail={progress?.comfortPattern ? "Short visual choices" : "Not recorded yet"}
+              detail={progress?.comfortPattern ? t("parent", "learningView.shortVisualChoices") : t("parent", "learningView.notRecordedYet")}
               icon={<Star className="size-5 text-snow-primary" />}
               tone="bg-snow-lavender"
             />
             <StatusTile
-              label="Next focus"
+              label={t("parent", "learningView.nextFocus")}
               value={progress?.nextFocus || "—"}
-              detail={progress?.nextFocus ? "Recommended review" : "Not enough practice data"}
+              detail={progress?.nextFocus ? t("parent", "learningView.recommendedReview") : t("parent", "learningView.notEnoughData")}
               icon={<GraduationCap className="size-5 text-snow-primary" />}
               tone="bg-snow-cream"
             />
@@ -164,20 +161,20 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
             <SnowCard className="p-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-black text-snow-primary-dark">Skill map</h2>
+                  <h2 className="text-xl font-black text-snow-primary-dark">{t("parent", "learningView.skillMap")}</h2>
                   <p className="mt-1 text-sm font-semibold leading-6 text-snow-muted">
-                    Progress is shown as practice coverage, not as a clinical score.
+                    {t("parent", "learningView.progressCoverage")}
                   </p>
                 </div>
                 <span className="rounded-full bg-snow-primary-soft px-3 py-1.5 text-xs font-black text-snow-primary">
-                  Current week
+                  {t("parent", "learningView.currentWeek")}
                 </span>
               </div>
               <div className="mt-5 grid gap-4 2xl:grid-cols-2">
                 {skillsToDisplay.length === 0 ? (
                   <div className="col-span-full rounded-[var(--radius-md)] border border-dashed border-snow-border bg-snow-surface-soft p-6 text-center">
                     <p className="text-sm font-semibold text-snow-muted">
-                      No skill practice records recorded for this week yet.
+                      {t("parent", "learningView.noSkillPractice")}
                     </p>
                   </div>
                 ) : (
@@ -205,28 +202,28 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
             {/* Sidebar: Next steps and Recent attempts */}
             <aside className="space-y-4">
               <SnowCard className="p-5">
-                <h2 className="text-lg font-black text-snow-primary-dark">Suggested next step</h2>
+                <h2 className="text-lg font-black text-snow-primary-dark">{t("parent", "learningView.suggestedNextStep")}</h2>
                 {progress?.nextFocus ? (
                   <p className="mt-2 text-sm font-semibold leading-6 text-snow-muted">
-                    Focus on {progress.nextFocus.toLowerCase()} activities to build coverage where practice is lightest.
+                    {t("parent", "learningView.focusOnActivities", { focus: progress.nextFocus.toLowerCase() })}
                   </p>
                 ) : (
                   <p className="mt-2 text-sm font-semibold leading-6 text-snow-muted">
-                    Not enough practice data yet to suggest a focus.
+                    {t("parent", "learningView.notEnoughSuggest")}
                   </p>
                 )}
                 <div className="mt-4 rounded-full bg-snow-primary-soft px-4 py-2 text-xs font-black text-snow-primary inline-block">
-                  Guided by AgentKid
+                  {t("parent", "learningView.guidedByAgentKid")}
                 </div>
               </SnowCard>
 
               <SnowCard className="p-5">
                 <div className="flex items-center justify-between gap-2">
-                  <h2 className="text-lg font-black text-snow-primary-dark">Recent attempts</h2>
-                  <span className="text-xs font-bold text-snow-muted">{attempts.length} logged</span>
+                  <h2 className="text-lg font-black text-snow-primary-dark">{t("parent", "learningView.recentAttempts")}</h2>
+                  <span className="text-xs font-bold text-snow-muted">{t("parent", "learningView.logged", { count: attempts.length })}</span>
                 </div>
                 {attempts.length === 0 ? (
-                  <p className="mt-3 text-sm font-semibold text-snow-muted">No recent lesson attempts recorded.</p>
+                  <p className="mt-3 text-sm font-semibold text-snow-muted">{t("parent", "learningView.noRecentAttempts")}</p>
                 ) : (
                   <div className="mt-4 space-y-3">
                     {attempts.slice(0, 5).map((att) => (
@@ -245,8 +242,8 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
                           </p>
                           <p className="text-xs font-semibold text-snow-muted">
                             {att.status === "completed"
-                              ? `Completed${att.score !== undefined && att.score !== null ? ` • Score: ${att.score}%` : ""}`
-                              : "In progress"}
+                              ? (att.score !== undefined && att.score !== null ? t("parent", "learningView.completedScore", { score: att.score }) : t("parent", "learningView.completed"))
+                              : t("parent", "learningView.inProgress")}
                           </p>
                         </div>
                       </div>

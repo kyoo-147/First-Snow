@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 "use client";
 
 import type { LucideIcon } from "lucide-react";
@@ -215,8 +216,8 @@ export function ParentPrivacyScreen() {
     <ParentPageFrame>
       <PageHeader
         eyebrow="Safety & Governance"
-        title="Privacy and data controls"
-        description="Manage hardware access, cloud retention, observation timelines, and verifiable data exports. Children cannot modify these settings."
+        title={t("parent", "privacy.title")}
+        description={t("parent", "privacy.notice")}
         action={
           <SnowButton
             variant="ghost"
@@ -276,11 +277,11 @@ export function ParentPrivacyScreen() {
 
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
         <SettingsSection
-          title="Hardware and Storage Permissions"
-          description="Manage guardian safety preferences. Sensitive capture remains unavailable until backend consent/grant enforcement is verified."
+          title={t("parent", "privacy.hardwareAndStorage")}
+          description={t("parent", "privacy.hardwareDesc")}
         >
           {isLoading ? (
-            <SafetyLoadingSkeleton label="Fetching real-time privacy settings..." count={5} />
+            <SafetyLoadingSkeleton label={t("parent", "privacy.fetching")} count={5} />
           ) : settings ? (
             PRIVACY_ITEMS.map((item) => {
               const Icon = item.icon;
@@ -357,8 +358,8 @@ export function ParentPrivacyScreen() {
 
         <aside className="space-y-4">
           <SettingsSection
-            title="Data Ownership & Rights"
-            description="Exercise your guardian data rights under Snow child protection governance."
+            title={t("parent", "privacy.dataOwnership")}
+            description={t("parent", "privacy.dataRightsDesc")}
           >
             <button
               type="button"
@@ -392,7 +393,7 @@ export function ParentPrivacyScreen() {
           <div className="rounded-[var(--radius-lg)] border border-snow-border bg-snow-lavender p-5">
             <div className="flex items-center gap-2">
               <Shield className="size-4 text-snow-primary" />
-              <h2 className="text-sm font-black text-snow-primary-dark">Calm Copy Rule</h2>
+              <h2 className="text-sm font-black text-snow-primary-dark">{t("parent", "privacy.calmCopyRule")}</h2>
             </div>
             <p className="mt-2 text-xs font-semibold leading-5 text-snow-primary-dark">
               AgentKid records observations, not diagnostic labels. Child memories and transcripts

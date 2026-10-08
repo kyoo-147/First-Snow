@@ -13,6 +13,7 @@ import { topNavItems } from "@/data/snow-data";
 import { SnowLogo } from "@/components/ui/snow-logo";
 import { cn } from "@/lib/utils";
 import { fetchDashboardSession } from "@/lib/dashboard-client";
+import { t } from "@/i18n";
 
 type AppShellProps = {
   activeNav:
@@ -55,15 +56,15 @@ export function AppShell({ activeNav, children, rightPanel, backHref }: AppShell
           <header className="z-20 flex min-h-[72px] shrink-0 items-center justify-between gap-3 border-b border-snow-border/55 bg-snow-surface/72 px-4 py-2 backdrop-blur-xl sm:px-5 lg:px-6">
             <div className="flex min-w-[140px] items-center gap-3">
               {backHref && (
-                <Link aria-label="Go back" href={backHref} className="snow-focus-ring md:hidden grid size-10 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-primary-dark hover:bg-snow-surface-soft">
+                <Link aria-label={t("common", "back")} href={backHref} className="snow-focus-ring md:hidden grid size-10 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-primary-dark hover:bg-snow-surface-soft">
                   <ChevronLeft className="size-5" />
                 </Link>
               )}
-              <Link href="/session/home" aria-label="Go to AgentKid home" className={cn("snow-focus-ring rounded-lg", backHref ? "hidden md:block" : "block")}>
+              <Link href="/session/home" aria-label={t("common", "back")} className={cn("snow-focus-ring rounded-lg", backHref ? "hidden md:block" : "block")}>
                 <SnowLogo />
               </Link>
             </div>
-            <nav aria-label="Child app navigation" className="hidden flex-1 items-center justify-center gap-7 md:flex">
+            <nav aria-label={t("common", "search")} className="hidden flex-1 items-center justify-center gap-7 md:flex">
                 {topNavItems.map((item) => {
                   const Icon = item.icon;
                   const active = activeNav === item.key || (activeNav === "activities" && item.key === "feelings");
@@ -86,24 +87,24 @@ export function AppShell({ activeNav, children, rightPanel, backHref }: AppShell
             </nav>
             <div className="flex w-full min-w-0 items-center justify-between gap-2 md:w-auto md:justify-end md:gap-3">
               <Link href="/parent" className="snow-focus-ring hidden min-h-11 items-center gap-2 rounded-full border border-snow-border bg-snow-surface px-4 text-sm font-extrabold text-snow-primary-dark transition hover:bg-snow-surface-soft md:inline-flex">
-                Parent portal <Lock className="size-4" />
+                {t("auth", "sessionSwitch.view.guardianPortal")} <Lock className="size-4" />
               </Link>
               <Link
                 href="/session-switch"
-                aria-label="Switch profile"
-                title="Switch profile"
+                aria-label={t("parent", "child.addChild")}
+                title={t("parent", "child.addChild")}
                 className="snow-focus-ring hidden min-h-11 items-center gap-1.5 rounded-full border border-snow-border bg-snow-surface px-3 text-xs font-bold text-snow-muted transition hover:bg-snow-surface-soft hover:text-snow-primary-dark lg:inline-flex"
               >
-                Switch
+                {t("auth", "sessionSwitch.view.switchChild")}
               </Link>
-              <Link href="/session/activities" aria-label="Open feelings check-in" className="snow-focus-ring grid size-10 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-primary-dark transition hover:bg-snow-surface-soft">
+              <Link href="/session/activities" aria-label={t("common", "learnMore")} className="snow-focus-ring grid size-10 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-primary-dark transition hover:bg-snow-surface-soft">
                 <Bell className="size-5" />
               </Link>
-              <Link href="/session/settings" aria-label="Open child settings" className="snow-focus-ring flex min-h-12 min-w-0 items-center gap-2 rounded-full border border-snow-border bg-snow-surface px-2 shadow-[var(--shadow-card)] transition hover:bg-snow-surface-soft sm:min-h-[52px] sm:gap-3 sm:px-3">
+              <Link href="/session/settings" aria-label={t("common", "settings")} className="snow-focus-ring flex min-h-12 min-w-0 items-center gap-2 rounded-full border border-snow-border bg-snow-surface px-2 shadow-[var(--shadow-card)] transition hover:bg-snow-surface-soft sm:min-h-[52px] sm:gap-3 sm:px-3">
                 <Image src="/images/snow-avatar-final.png" alt="" width={40} height={40} className="rounded-full object-cover" />
                 <span className="hidden text-sm leading-tight sm:block">
-                  <strong className="block font-black text-snow-primary-dark">{childName ?? "Child profile"}</strong>
-                  <span className="font-bold text-snow-muted">Signed in</span>
+                  <strong className="block font-black text-snow-primary-dark">{childName ?? t("common", "childProfile")}</strong>
+                  <span className="font-bold text-snow-muted">{ t("common", "success") }</span>
                 </span>
                 <Settings className="hidden size-4 text-snow-muted sm:block" />
               </Link>
@@ -115,7 +116,7 @@ export function AppShell({ activeNav, children, rightPanel, backHref }: AppShell
             {rightPanel ? <aside className="hidden lg:block pt-4 md:pt-0">{rightPanel}</aside> : null}
           </div>
 
-          <nav aria-label="Child app navigation" className="fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-around border-t border-snow-border bg-white/90 backdrop-blur-xl pb-safe pt-1 md:hidden">
+          <nav aria-label={t("common", "search")} className="fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-around border-t border-snow-border bg-white/90 backdrop-blur-xl pb-safe pt-1 md:hidden">
               {topNavItems.map((item) => {
                 const Icon = item.icon;
                 const active = activeNav === item.key || (activeNav === "activities" && item.key === "feelings");

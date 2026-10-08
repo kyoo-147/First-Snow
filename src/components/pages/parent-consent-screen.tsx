@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/i18n";
 
 import { useEffect, useState } from "react";
 import {
@@ -65,7 +66,7 @@ export function ParentConsentScreen() {
         setErrorCode(err.code);
         setRequestId(err.requestId);
       } else {
-        setErrorMessage("Failed to load guardian consent records from the server.");
+        setErrorMessage(t("parent", "consent.failedLoad"));
       }
     } finally {
       setIsLoading(false);
@@ -97,7 +98,7 @@ export function ParentConsentScreen() {
 
       setSuccessMessage(
         response.message ||
-          `${scope.charAt(0).toUpperCase() + scope.slice(1)} consent has been ${nextGranted ? "granted" : "revoked"}.`,
+          t("parent", "consent.grantSuccess", { action: nextGranted ? t("parent", "consent.granted") : t("parent", "consent.revoked"), scope }),
       );
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err: unknown) {
@@ -112,7 +113,7 @@ export function ParentConsentScreen() {
         setErrorCode(err.code);
         setRequestId(err.requestId);
       } else {
-        setErrorMessage(`Failed to update ${scope} consent. Change was not saved.`);
+        setErrorMessage(t("parent", "consent.updateFailed", { scope }));
       }
     } finally {
       setMutatingScope(null);
@@ -145,9 +146,9 @@ export function ParentConsentScreen() {
   return (
     <ParentPageFrame>
       <PageHeader
-        eyebrow="Child Safety & Permissions"
-        title="Consent management"
-        description="Explicit, parent-authorized permissions for microphone audio, video input, vision AI reasoning, and screen review. Sensitive capture remains unavailable until backend consent/grant enforcement is verified."
+        eyebrow={t("parent", "consent.eyebrow")}
+        title={t("parent", "consent.title")}
+        description={t("parent", "consent.description")}
         action={
           <SnowButton
             variant="ghost"
@@ -156,7 +157,7 @@ export function ParentConsentScreen() {
             className="text-xs font-bold"
           >
             <RefreshCw className={cn("mr-1.5 size-3.5", isLoading && "animate-spin")} />
-            Sync Records
+            {t("parent", "consent.syncRecords")}
           </SnowButton>
         }
       />
@@ -182,22 +183,22 @@ export function ParentConsentScreen() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <StatusTile
-          label="Active Authorizations"
+          label={t("parent", "consent.activeAuth")}
           value={isLoading ? "..." : `${activeCount} of 4`}
-          detail="Mic, camera, vision, screen"
+          detail={t("parent", "consent.activeAuthDetail")}
           icon={<FileCheck className="size-5 text-snow-primary" />}
         />
         <StatusTile
-          label="Pending Review"
+          label={t("parent", "consent.pendingReview")}
           value={isLoading ? "..." : `${pendingCount}`}
-          detail={pendingCount > 0 ? "Action required" : "All policies reviewed"}
+          detail={pendingCount > 0 ? t("parent", "consent.actionRequired") : t("parent", "consent.allReviewed")}
           icon={<ShieldAlert className="size-5 text-snow-primary" />}
           tone={pendingCount > 0 ? "bg-snow-peach" : "bg-snow-ice"}
         />
         <StatusTile
-          label="Governance Policy"
-          value="Fail-Closed"
-          detail="Capture unavailable until verified"
+          label={t("parent", "consent.govPolicy")}
+          value={t("parent", "consent.failClosed")}
+          detail={t("parent", "consent.failClosedDetail")}
           icon={<Lock className="size-5 text-snow-primary" />}
           tone="bg-snow-lavender"
         />
@@ -207,11 +208,11 @@ export function ParentConsentScreen() {
 
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
         <SettingsSection
-          title="Hardware & Capture Permissions"
-          description="Review and toggle guardian authorizations. Sensitive capture remains unavailable until backend consent/grant enforcement is verified."
+          title={t("parent", "consent.hwPermissions")}
+          description={t("parent", "consent.hwPermissionsDesc")}
         >
           {isLoading ? (
-            <SafetyLoadingSkeleton label="Verifying active guardian consent records..." count={4} />
+            <SafetyLoadingSkeleton label={t("parent", "consent.verifying")} count={4} />
           ) : (
             <div className="space-y-3">
               {ALL_SCOPES.map((scope) => {
@@ -233,12 +234,12 @@ export function ParentConsentScreen() {
         </SettingsSection>
 
         <aside className="space-y-4">
-          <SettingsSection title="Guardian Consent Policy">
+          <SettingsSection title={t("parent", "consent.policyHeader")}>
             {[
-              "Sensitive capture remains unavailable until backend consent/grant enforcement is verified.",
-              "Camera preview remains hidden by default unless explicitly requested.",
-              "Target policy specifies no long-term storage of captured media frames.",
-              "Consent updates are submitted directly to guardian API endpoints.",
+              t("parent", "consent.policy1"),
+              t("parent", "consent.policy2"),
+              t("parent", "consent.policy3"),
+              t("parent", "consent.policy4"),
             ].map((item, idx) => (
               <div
                 key={idx}
@@ -253,7 +254,7 @@ export function ParentConsentScreen() {
           <div className="rounded-[var(--radius-lg)] border border-snow-border bg-snow-lavender p-5">
             <div className="flex items-center gap-2">
               <Shield className="size-4 text-snow-primary" />
-              <h2 className="text-sm font-black text-snow-primary-dark">Fail-Closed Policy</h2>
+              <h2 className="text-sm font-black text-snow-primary-dark">{t("parent", "consent.failClosed")}</h2>
             </div>
             <p className="mt-2 text-xs font-semibold leading-5 text-snow-primary-dark">
               Sensitive capture remains unavailable until backend consent/grant enforcement is verified.
@@ -265,8 +266,8 @@ export function ParentConsentScreen() {
 
       <ReauthModal
         isOpen={isReauthOpen}
-        title="Re-Authentication Required for Consent Change"
-        description="Modifying safety hardware consent requires your guardian account password to prevent unauthorized adjustments."
+        title={t("parent", "consent.reauthRequired")}
+        description={t("parent", "consent.reauthDesc")}
         isProcessing={isReauthProcessing}
         onConfirm={handleReauthConfirm}
         onClose={() => {

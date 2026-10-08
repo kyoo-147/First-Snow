@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/i18n";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
@@ -146,15 +147,15 @@ export function ParentDashboard() {
     // Add attempts
     for (const attempt of attempts.slice(0, 5)) {
       const dateStr = attempt.completedAt || attempt.startedAt || attempt.createdAt;
-      const time = dateStr ? new Date(dateStr).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Today";
+      const time = dateStr ? new Date(dateStr).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : t("parent", "dashboard.timeToday");
       items.push({
         time,
-        title: `Lesson: ${attempt.lessonTitle}`,
+        title: t("parent", "dashboard.lessonLabel", { title: attempt.lessonTitle }),
         detail:
           attempt.status === "completed"
-            ? `Completed${attempt.score !== null ? ` with score ${attempt.score}%` : ""}`
-            : "In progress",
-        tag: attempt.status === "completed" ? "Done" : "Practicing",
+            ? t("parent", "dashboard.lessonCompleted", { score: attempt.score !== null ? t("parent", "dashboard.lessonScore", { score: attempt.score }) : "" })
+            : t("parent", "dashboard.lessonInProgress"),
+        tag: attempt.status === "completed" ? t("parent", "dashboard.tagDone") : t("parent", "dashboard.tagPracticing"),
         icon: BookOpen,
       });
     }
@@ -164,10 +165,10 @@ export function ParentDashboard() {
       for (const step of routine.steps) {
         if (step.isCompleted) {
           items.push({
-            time: routine.scheduledTime || "Today",
-            title: `Routine: ${step.title}`,
-            detail: `${step.durationMinutes} min step completed`,
-            tag: "Routine",
+            time: routine.scheduledTime || t("parent", "dashboard.timeToday"),
+            title: t("parent", "dashboard.routineLabel", { title: step.title }),
+            detail: t("parent", "dashboard.routineCompleted", { minutes: step.durationMinutes }),
+            tag: t("parent", "dashboard.tagRoutine"),
             icon: CalendarCheck,
           });
         }
@@ -176,7 +177,7 @@ export function ParentDashboard() {
 
     // Add alerts
     for (const alert of alerts.slice(0, 3)) {
-      const time = alert.createdAt ? new Date(alert.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Notice";
+      const time = alert.createdAt ? new Date(alert.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : t("parent", "dashboard.timeNotice");
       items.push({
         time,
         title: alert.title,
@@ -193,19 +194,19 @@ export function ParentDashboard() {
   const nextSteps = useMemo(() => {
     const steps: string[] = [];
     if (!progress || progress.lessonsCompleted === 0) {
-      steps.push("Start with an introductory lesson in the practice catalog.");
+      steps.push(t("parent", "dashboard.stepIntroLesson"));
     } else {
-      steps.push("Explore the next recommended lesson together.");
+      steps.push(t("parent", "dashboard.stepNextLesson"));
     }
     if (totalRoutineSteps > 0 && completedRoutineSteps < totalRoutineSteps) {
-      steps.push(`Complete the remaining ${totalRoutineSteps - completedRoutineSteps} routine step(s) for today.`);
+      steps.push(t("parent", "dashboard.stepCompleteRoutines", { count: totalRoutineSteps - completedRoutineSteps }));
     } else if (totalRoutineSteps === 0) {
-      steps.push("Set up a gentle daily routine in routine settings.");
+      steps.push(t("parent", "dashboard.stepSetupRoutine"));
     }
     if (alerts.length > 0) {
-      steps.push("Review new companion safety alerts in the parent alert center.");
+      steps.push(t("parent", "dashboard.stepReviewAlerts"));
     } else {
-      steps.push("Encourage a calm companion conversation before bedtime.");
+      steps.push(t("parent", "dashboard.stepCalmConv"));
     }
     return steps;
   }, [progress, totalRoutineSteps, completedRoutineSteps, alerts.length]);
@@ -215,7 +216,7 @@ export function ParentDashboard() {
       <ParentPageFrame>
         <div className="flex min-h-[400px] flex-col items-center justify-center p-8">
           <Loader2 className="size-8 animate-spin text-snow-primary" />
-          <p className="mt-4 text-sm font-bold text-snow-muted">Loading household overview...</p>
+          <p className="mt-4 text-sm font-bold text-snow-muted">{t("parent", "dashboard.loading")}</p>
         </div>
       </ParentPageFrame>
     );
@@ -226,12 +227,10 @@ export function ParentDashboard() {
       <ParentPageFrame>
         <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center">
           <AlertCircle className="size-10 text-snow-error" />
-          <h2 className="mt-3 text-lg font-black text-snow-primary-dark">Unable to load parent dashboard</h2>
+          <h2 className="mt-3 text-lg font-black text-snow-primary-dark">{t("parent", "dashboard.errorLoading")}</h2>
           <p className="mt-2 text-sm font-semibold text-snow-muted">{error}</p>
           <SnowButton variant="soft" onClick={reload} className="mt-4">
-            <RefreshCw className="mr-2 size-4" />
-            Try again
-          </SnowButton>
+            <RefreshCw className="mr-2 size-4" />{t("parent", "dashboard.errorTryAgain")}</SnowButton>
         </div>
       </ParentPageFrame>
     );
@@ -241,15 +240,15 @@ export function ParentDashboard() {
     return (
       <ParentPageFrame>
         <PageHeader
-          eyebrow="Parent portal"
-          title="Household overview"
-          description="A calm daily view of how your household learns, responds, and moves through sessions with AgentKid."
+          eyebrow={t("parent", "dashboard.portal")}
+          title={t("parent", "dashboard.overview")}
+          description={t("parent", "dashboard.overviewDesc")}
         />
         <EmptyState
           icon={UserRound}
-          title="No children in household"
-          description="Add your first child profile to start tracking daily routines, lesson practice, and companion check-ins."
-          actionLabel="Add child profile"
+          title={t("parent", "dashboard.noChildren")}
+          description={t("parent", "dashboard.noChildrenDesc")}
+          actionLabel={t("parent", "dashboard.addChild")}
           onAction={() => {
             router.push("/parent/children");
           }}
@@ -264,9 +263,9 @@ export function ParentDashboard() {
   return (
     <ParentPageFrame>
       <PageHeader
-        eyebrow="Parent portal"
-        title={`${childName}'s day`}
-        description={`A calm daily view of how ${childName} learned, responded, and moved through today's sessions with AgentKid.`}
+        eyebrow={t("parent", "dashboard.portal")}
+        title={t("parent", "dashboard.dayTitle", { name: childName })}
+        description={t("parent", "dashboard.dayDesc", { name: childName })}
         action={
           selectedChild ? (
             <SnowCard className="w-full min-w-[300px] p-4">
@@ -283,7 +282,7 @@ export function ParentDashboard() {
                     <p className="text-lg font-black text-snow-primary-dark">{selectedChild.name}</p>
                     {children.length > 1 && (
                       <select
-                        aria-label="Select child"
+                        aria-label={t("parent", "dashboard.selectChild")}
                         value={selectedChild.id}
                         onChange={(e) => setSelectedChildId(e.target.value)}
                         className="rounded-lg border border-snow-border bg-snow-surface-soft px-2 py-1 text-xs font-bold text-snow-primary-dark"
@@ -297,7 +296,7 @@ export function ParentDashboard() {
                     )}
                   </div>
                   <p className="snow-body-small snow-font-readable font-bold text-snow-muted">
-                    {selectedChild.age ? `Age ${selectedChild.age}` : "Age not set"}{" "}
+                    {selectedChild.age ? `Age ${selectedChild.age}` : t("parent", "dashboard.ageNotSet")}{" "}
                     {selectedChild.grade ? `• ${selectedChild.grade}` : ""}
                   </p>
                 </div>
@@ -307,13 +306,13 @@ export function ParentDashboard() {
                   href={`/parent/children/${selectedChild.id}/sessions`}
                   className="snow-focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-snow-border text-xs font-black text-snow-primary-dark"
                 >
-                  <UserRound className="size-3.5" /> Review
+                  <UserRound className="size-3.5" /> {t("parent", "dashboard.review")}
                 </Link>
                 <Link
                   href="/session/home"
                   className="snow-focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-snow-primary text-xs font-black text-white"
                 >
-                  <Sparkles className="size-3.5" /> Open app
+                  <Sparkles className="size-3.5" /> {t("parent", "dashboard.openApp")}
                 </Link>
               </div>
             </SnowCard>
@@ -325,7 +324,7 @@ export function ParentDashboard() {
         <div className="mb-4 flex items-center justify-between rounded-[var(--radius-md)] bg-snow-error-soft p-4 text-snow-error">
           <p className="text-sm font-bold">{error}</p>
           <SnowButton variant="ghost" className="min-h-9 px-3 text-xs" onClick={reload}>
-            <RefreshCw className="mr-1 size-3.5" /> Retry
+            <RefreshCw className="mr-1 size-3.5" /> {t("parent", "dashboard.retry")}
           </SnowButton>
         </div>
       )}
@@ -335,12 +334,12 @@ export function ParentDashboard() {
         <SnowCard className="relative h-full min-h-[150px] overflow-hidden bg-snow-primary-soft p-5">
           <div className="relative z-10 flex h-full items-start justify-between gap-3">
             <div className="max-w-[65%]">
-              <p className="text-[11px] font-black uppercase tracking-wide text-snow-muted">Routines completed</p>
+              <p className="text-[11px] font-black uppercase tracking-wide text-snow-muted">{t("parent", "dashboard.routinesCompleted")}</p>
               <p className="mt-3 text-[clamp(1.6rem,1.7vw,2rem)] font-black leading-tight text-snow-primary-dark">
                 {totalRoutineSteps > 0 ? `${completedRoutineSteps} / ${totalRoutineSteps}` : "0 / 0"}
               </p>
               <p className="snow-body-small snow-font-readable mt-2 font-semibold text-snow-muted">
-                {routines.length > 0 ? `${routines.length} routine(s) scheduled` : "No routines scheduled today"}
+                {routines.length > 0 ? t("parent", "dashboard.routinesScheduled", { count: routines.length }) : t("parent", "dashboard.noRoutines")}
               </p>
             </div>
             <div className="grid size-11 shrink-0 place-items-center rounded-full bg-snow-surface/80">
@@ -359,12 +358,12 @@ export function ParentDashboard() {
         <SnowCard className="relative h-full min-h-[150px] overflow-hidden bg-snow-ice p-5">
           <div className="relative z-10 flex h-full items-start justify-between gap-3">
             <div className="max-w-[65%]">
-              <p className="text-[11px] font-black uppercase tracking-wide text-snow-muted">Lessons practiced</p>
+              <p className="text-[11px] font-black uppercase tracking-wide text-snow-muted">{t("parent", "dashboard.lessonsPracticed")}</p>
               <p className="mt-3 text-[clamp(1.6rem,1.7vw,2rem)] font-black leading-tight text-snow-primary-dark">
                 {progress?.lessonsCompleted ?? 0}
               </p>
               <p className="snow-body-small snow-font-readable mt-2 font-semibold text-snow-muted">
-                {progress?.totalLessons ? `Out of ${progress.totalLessons} available` : "Catalog active"}
+                {progress?.totalLessons ? t("parent", "dashboard.outOfAvailable", { count: progress.totalLessons }) : t("parent", "dashboard.catalogActive")}
               </p>
             </div>
             <div className="grid size-11 shrink-0 place-items-center rounded-full bg-snow-surface/80">
@@ -383,12 +382,12 @@ export function ParentDashboard() {
         <SnowCard className="relative h-full min-h-[150px] overflow-hidden bg-snow-aqua/35 p-5">
           <div className="relative z-10 flex h-full items-start justify-between gap-3">
             <div className="max-w-[65%]">
-              <p className="text-[11px] font-black uppercase tracking-wide text-snow-muted">Safety alerts</p>
+              <p className="text-[11px] font-black uppercase tracking-wide text-snow-muted">{t("parent", "dashboard.safetyAlerts")}</p>
               <p className="mt-3 text-[clamp(1.6rem,1.7vw,2rem)] font-black leading-tight text-snow-primary-dark">
                 {alerts.length}
               </p>
               <p className="snow-body-small snow-font-readable mt-2 font-semibold text-snow-muted">
-                {alerts.length === 0 ? "No active alerts" : "Review needed in portal"}
+                {alerts.length === 0 ? t("parent", "dashboard.noAlerts") : t("parent", "dashboard.reviewNeeded")}
               </p>
             </div>
             <div className="grid size-11 shrink-0 place-items-center rounded-full bg-snow-surface/80">
@@ -407,12 +406,12 @@ export function ParentDashboard() {
         <SnowCard className="relative h-full min-h-[150px] overflow-hidden bg-snow-lavender p-5">
           <div className="relative z-10 flex h-full items-start justify-between gap-3">
             <div className="max-w-[65%]">
-              <p className="text-[11px] font-black uppercase tracking-wide text-snow-muted">Total practice time</p>
+              <p className="text-[11px] font-black uppercase tracking-wide text-snow-muted">{t("parent", "dashboard.totalPracticeTime")}</p>
               <p className="mt-3 text-[clamp(1.6rem,1.7vw,2rem)] font-black leading-tight text-snow-primary-dark">
                 {progress?.practiceTimeMinutes ?? 0} min
               </p>
               <p className="snow-body-small snow-font-readable mt-2 font-semibold text-snow-muted">
-                Logged across completed lessons
+                {t("parent", "dashboard.loggedAcross")}
               </p>
             </div>
             <div className="grid size-11 shrink-0 place-items-center rounded-full bg-snow-surface/80">
@@ -434,9 +433,9 @@ export function ParentDashboard() {
           <SnowCard className="snow-card-pad">
             <div className="flex items-center justify-between gap-4 border-b border-snow-border pb-4">
               <div>
-                <h2 className="snow-heading font-black text-snow-primary-dark">Today&apos;s activity timeline</h2>
+                <h2 className="snow-heading font-black text-snow-primary-dark">{t("parent", "dashboard.activityTimeline")}</h2>
                 <p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">
-                  A parent-safe sequence of how {childName} moved through the day.
+                  {t("parent", "dashboard.activityTimelineDesc", { name: childName })}
                 </p>
               </div>
               {selectedChild && (
@@ -444,7 +443,7 @@ export function ParentDashboard() {
                   href={`/parent/children/${selectedChild.id}/timeline`}
                   className="rounded-full bg-snow-primary-soft px-3 py-1.5 text-xs font-black text-snow-primary"
                 >
-                  View full timeline
+                  {t("parent", "dashboard.viewFullTimeline")}
                 </Link>
               )}
             </div>
@@ -452,9 +451,9 @@ export function ParentDashboard() {
             {activityTimeline.length === 0 ? (
               <div className="p-8 text-center">
                 <Clock className="mx-auto size-8 text-snow-muted opacity-50" />
-                <p className="mt-2 text-sm font-bold text-snow-muted">No activity recorded today yet for {childName}.</p>
+                <p className="mt-2 text-sm font-bold text-snow-muted">{t("parent", "dashboard.noActivity", { name: childName })}</p>
                 <p className="snow-body-small mt-1 text-snow-muted">
-                  When {childName} completes lessons, routines, or check-ins, they will appear here.
+                  {t("parent", "dashboard.whenCompletes", { name: childName })}
                 </p>
               </div>
             ) : (
@@ -488,9 +487,9 @@ export function ParentDashboard() {
 
           <SnowCard className="overflow-hidden">
             <div className="p-5">
-              <h2 className="snow-heading font-black text-snow-primary-dark">Latest accomplishment</h2>
+              <h2 className="snow-heading font-black text-snow-primary-dark">{t("parent", "dashboard.latestAccomplishment")}</h2>
               <p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">
-                {latestCompletedLesson ? `${childName}'s recent completed lesson.` : "No completed lessons yet."}
+                {latestCompletedLesson ? t("parent", "dashboard.latestDesc", { name: childName }) : t("parent", "dashboard.noLessons")}
               </p>
             </div>
             {latestCompletedLesson ? (
@@ -506,14 +505,14 @@ export function ParentDashboard() {
                 <div className="p-5">
                   <p className="text-sm font-black text-snow-primary-dark">{latestCompletedLesson.lessonTitle}</p>
                   <p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">
-                    {latestCompletedLesson.score !== null ? `Score: ${latestCompletedLesson.score}%` : "Completed"}
+                    {latestCompletedLesson.score !== null ? t("parent", "dashboard.score", { score: latestCompletedLesson.score }) : t("parent", "dashboard.completed")}
                     {latestCompletedLesson.completedAt ? ` • ${new Date(latestCompletedLesson.completedAt).toLocaleDateString()}` : ""}
                   </p>
                 </div>
               </>
             ) : (
               <div className="p-6 text-center text-sm font-semibold text-snow-muted">
-                Once {childName} completes a lesson, their certificate and score will be spotlighted here.
+                {t("parent", "dashboard.onceCompletes", { name: childName })}
               </div>
             )}
           </SnowCard>
@@ -523,30 +522,30 @@ export function ParentDashboard() {
           <SnowCard className="snow-card-pad">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h2 className="snow-heading font-black text-snow-primary-dark">Learning steadiness</h2>
+                <h2 className="snow-heading font-black text-snow-primary-dark">{t("parent", "dashboard.learningSteadiness")}</h2>
                 <p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">
-                  Daily consistency and calm practice tracking.
+                  {t("parent", "dashboard.learningSteadinessDesc")}
                 </p>
               </div>
               <span className="rounded-full bg-snow-ice px-3 py-1.5 text-xs font-black text-snow-primary-dark">
-                This week
+                {t("parent", "dashboard.thisWeek")}
               </span>
             </div>
             <div className="mt-4 rounded-[var(--radius-md)] bg-snow-surface-soft p-4">
-              <p className="text-xs font-black uppercase text-snow-muted">Active status</p>
+              <p className="text-xs font-black uppercase text-snow-muted">{t("parent", "dashboard.activeStatus")}</p>
               <p className="mt-1 text-sm font-semibold text-snow-primary-dark">
-                {selectedChild?.isActive ? "Child profile active and ready for sessions." : "Child profile deactivated."}
+                {selectedChild?.isActive ? t("parent", "dashboard.profileActive") : t("parent", "dashboard.profileDeactivated")}
               </p>
               <p className="mt-2 text-xs text-snow-muted">
-                {progress?.lessonsCompleted ?? 0} lesson(s) completed • {progress?.practiceTimeMinutes ?? 0} minutes total
+                {t("parent", "dashboard.lessonsCompletedStats", { lessons: progress?.lessonsCompleted ?? 0, minutes: progress?.practiceTimeMinutes ?? 0 })}
               </p>
             </div>
           </SnowCard>
 
           <SnowCard className="snow-card-pad">
-            <h2 className="snow-heading font-black text-snow-primary-dark">Suggested next steps</h2>
+            <h2 className="snow-heading font-black text-snow-primary-dark">{t("parent", "dashboard.suggestedSteps")}</h2>
             <p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">
-              Simple ideas to support {childName}&apos;s calm learning block.
+              {t("parent", "dashboard.suggestedStepsDesc", { name: childName })}
             </p>
             <div className="mt-4 space-y-3">
               {nextSteps.map((step) => (
@@ -567,37 +566,37 @@ export function ParentDashboard() {
         <aside className="space-y-4">
           <SnowCard className="snow-card-pad bg-snow-ice/55">
             <h2 className="snow-heading flex items-center gap-2 font-black text-snow-primary-dark">
-              <Heart className="size-5 text-snow-primary" /> What AgentKid noticed
+              <Heart className="size-5 text-snow-primary" /> {t("parent", "dashboard.agentKidNoticed")}
             </h2>
             <div className="mt-4 space-y-3">
               <div className="rounded-[var(--radius-md)] bg-snow-surface p-4">
-                <p className="text-sm font-black text-snow-primary-dark">Pacing and consistency</p>
+                <p className="text-sm font-black text-snow-primary-dark">{t("parent", "dashboard.pacingConsistency")}</p>
                 <p className="snow-body-copy snow-font-readable mt-2 font-semibold text-snow-muted">
                   {progress?.lessonsCompleted
-                    ? `${childName} has completed ${progress.lessonsCompleted} lesson(s) with ${progress.practiceTimeMinutes} minutes of practice.`
-                    : `${childName} is ready for their first guided lesson session.`}
+                    ? t("parent", "dashboard.pacingStats", { name: childName, lessons: progress.lessonsCompleted, minutes: progress.practiceTimeMinutes })
+                    : t("parent", "dashboard.readyForFirst", { name: childName })}
                 </p>
               </div>
               <div className="rounded-[var(--radius-md)] bg-snow-surface p-4">
-                <p className="text-sm font-black text-snow-primary-dark">Daily routines</p>
+                <p className="text-sm font-black text-snow-primary-dark">{t("parent", "dashboard.dailyRoutines")}</p>
                 <p className="snow-body-copy snow-font-readable mt-2 font-semibold text-snow-muted">
                   {totalRoutineSteps > 0
-                    ? `${completedRoutineSteps} of ${totalRoutineSteps} steps finished for today.`
-                    : "No routine steps scheduled today. Routines help build steady habits."}
+                    ? t("parent", "dashboard.routineStats", { completed: completedRoutineSteps, total: totalRoutineSteps })
+                    : t("parent", "dashboard.noRoutineSteps")}
                 </p>
               </div>
             </div>
           </SnowCard>
 
           <SnowCard className="snow-card-pad">
-            <h2 className="snow-heading font-black text-snow-primary-dark">Safety & controls</h2>
+            <h2 className="snow-heading font-black text-snow-primary-dark">{t("parent", "dashboard.safetyControls")}</h2>
             <div className="mt-4 space-y-3">
               {[
-                { title: "Parent privacy center", href: "/parent/privacy" },
-                { title: "Emergency contacts", href: "/parent/settings/emergency" },
-                { title: "Companion alerts", href: "/parent/alerts" },
+                { title: t("parent", "dashboard.privacyCenter"), href: "/parent/privacy" },
+                { title: t("parent", "dashboard.emergencyContacts"), href: "/parent/settings/emergency" },
+                { title: t("parent", "dashboard.companionAlerts"), href: "/parent/alerts" },
                 {
-                  title: selectedChild ? "Daily routine manager" : "Routines",
+                  title: selectedChild ? t("parent", "dashboard.routineManager") : t("parent", "dashboard.routines"),
                   href: selectedChild ? `/parent/children/${selectedChild.id}/routines` : "/parent/children",
                 },
               ].map((item) => (
@@ -616,9 +615,9 @@ export function ParentDashboard() {
           <SnowCard className="grid grid-cols-[74px_minmax(0,1fr)] items-center gap-4 bg-snow-lavender p-4">
             <Image src="/images/snow-mascot-ui.png" alt="" width={72} height={72} className="object-contain" />
             <div>
-              <p className="text-sm font-black text-snow-primary-dark">You&apos;re doing an amazing job.</p>
+              <p className="text-sm font-black text-snow-primary-dark">{t("parent", "dashboard.amazingJob")}</p>
               <p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">
-                Your support helps {childName} feel safe, curious, and ready to learn.
+                {t("parent", "dashboard.supportHelps", { name: childName })}
               </p>
             </div>
           </SnowCard>

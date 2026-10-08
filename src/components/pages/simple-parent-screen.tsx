@@ -1,4 +1,5 @@
 import { Bell, BookOpen, Calendar, ChevronRight, Download, Lock, Mail, ShieldCheck, Users } from "lucide-react";
+import { t } from "@/i18n";
 import { SnowCard } from "@/components/ui/snow-card";
 
 export function SimpleParentScreen({ title }: { title: string }) {
@@ -8,7 +9,7 @@ export function SimpleParentScreen({ title }: { title: string }) {
     <div className="space-y-6 pb-10">
       <header>
         <h1 className="text-3xl font-black text-snow-primary-dark">{title}</h1>
-        <p className="mt-1 text-sm font-bold text-snow-muted">Manage Minh&apos;s AgentKid experience with calm, parent-first controls.</p>
+        <p className="mt-1 text-sm font-bold text-snow-muted">{t("parent", "simple.manage")}</p>
       </header>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -33,16 +34,16 @@ export function SimpleParentScreen({ title }: { title: string }) {
 
         <aside className="space-y-5">
           <SnowCard className="p-5">
-            <h2 className="text-lg font-black text-snow-primary-dark">Today&apos;s Summary</h2>
+            <h2 className="text-lg font-black text-snow-primary-dark">{t("parent", "simple.summary")}</h2>
             <div className="mt-5 space-y-4">
-              <Metric label="Screen time" value="45 min" />
-              <Metric label="Safety locks" value="Active" />
-              <Metric label="Care team" value="2 adults" />
+              <Metric label={t("parent", "simple.screenTime")} value="45 min" />
+              <Metric label={t("parent", "simple.safetyLocks")} value="Active" />
+              <Metric label={t("parent", "simple.careTeam")} value="2 adults" />
             </div>
           </SnowCard>
           <SnowCard className="bg-snow-lavender p-5">
-            <h2 className="text-lg font-black text-snow-primary-dark">Parent note</h2>
-            <p className="mt-3 text-sm font-semibold leading-6 text-snow-primary-dark">AgentKid uses observational language and avoids clinical labels. Review settings with Minh when possible.</p>
+            <h2 className="text-lg font-black text-snow-primary-dark">{t("parent", "simple.parentNote")}</h2>
+            <p className="mt-3 text-sm font-semibold leading-6 text-snow-primary-dark">{t("parent", "simple.parentNoteDesc")}</p>
           </SnowCard>
         </aside>
       </div>

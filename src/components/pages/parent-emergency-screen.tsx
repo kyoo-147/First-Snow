@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/i18n";
 
 import { useEffect, useState } from "react";
 import {
@@ -65,7 +66,7 @@ export function ParentEmergencyScreen() {
         setErrorCode(err.code);
         setRequestId(err.requestId);
       } else {
-        setErrorMessage("Failed to load emergency contacts from the safety service.");
+        setErrorMessage(t("parent", "emergency.errorLoad"));
       }
     } finally {
       setIsLoading(false);
@@ -95,12 +96,12 @@ export function ParentEmergencyScreen() {
         setContacts((prev) =>
           prev.map((c) => (c.id === selectedContact.id ? res.contact : c)),
         );
-        setSuccessMessage(`Updated emergency contact ${res.contact.name}.`);
+        setSuccessMessage(t("parent", "emergency.successUpdated", { name: res.contact.name }));
       } else {
         // Create
         const res = await createEmergencyContact(payload);
         setContacts((prev) => [...prev, res.contact]);
-        setSuccessMessage(`Added emergency contact ${res.contact.name}.`);
+        setSuccessMessage(t("parent", "emergency.successAdded", { name: res.contact.name }));
       }
 
       setIsDialogOpen(false);
@@ -109,7 +110,7 @@ export function ParentEmergencyScreen() {
       if (err instanceof SafetyApiError) {
         setDialogError(err.message);
       } else {
-        setDialogError("Failed to save emergency contact. Please try again.");
+        setDialogError(t("parent", "emergency.errorSave"));
       }
     } finally {
       setIsSaving(false);
@@ -123,14 +124,14 @@ export function ParentEmergencyScreen() {
     try {
       await deleteEmergencyContact(id);
       setContacts((prev) => prev.filter((c) => c.id !== id));
-      setSuccessMessage("Emergency contact removed successfully.");
+      setSuccessMessage(t("parent", "emergency.successRemoved"));
       setIsDialogOpen(false);
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err: unknown) {
       if (err instanceof SafetyApiError) {
         setDialogError(err.message);
       } else {
-        setDialogError("Failed to delete contact.");
+        setDialogError(t("parent", "emergency.errorDelete"));
       }
     } finally {
       setIsDeleting(false);
@@ -142,9 +143,9 @@ export function ParentEmergencyScreen() {
   return (
     <ParentPageFrame>
       <PageHeader
-        eyebrow="Parent-Only Safety"
-        title="Emergency contacts"
-        description="Keep authorized guardians and emergency responders on file for acute support moments. These details are strictly hidden from child sessions and are not contacted automatically."
+        eyebrow={t("parent", "emergency.eyebrow")}
+        title={t("parent", "emergency.title")}
+        description={t("parent", "emergency.description")}
         action={
           <div className="flex items-center gap-2">
             <SnowButton
@@ -154,11 +155,11 @@ export function ParentEmergencyScreen() {
               className="text-xs font-bold"
             >
               <RefreshCw className={cn("mr-1.5 size-3.5", isLoading && "animate-spin")} />
-              Sync Contacts
+              {t("parent", "emergency.syncContacts")}
             </SnowButton>
             <SnowButton onClick={handleOpenCreate} className="text-xs font-bold">
               <UserPlus className="mr-1.5 size-4" />
-              Add Contact
+              {t("parent", "emergency.addContact")}
             </SnowButton>
           </div>
         }
@@ -185,22 +186,22 @@ export function ParentEmergencyScreen() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <StatusTile
-          label="Contacts saved"
+          label={t("parent", "emergency.contactsSaved")}
           value={isLoading ? "..." : `${contacts.length}`}
-          detail={primaryContact ? `Primary: ${primaryContact.name}` : "No primary contact"}
+          detail={primaryContact ? t("parent", "emergency.primaryContact", { name: primaryContact.name }) : t("parent", "emergency.noPrimary")}
           icon={<PhoneCall className="size-5 text-snow-primary" />}
         />
         <StatusTile
-          label="Alert routing"
-          value="Not configured"
-          detail="No SMS or push provider connected"
+          label={t("parent", "emergency.alertRouting")}
+          value={t("parent", "emergency.notConfigured")}
+          detail={t("parent", "emergency.noSmsProvider")}
           icon={<Bell className="size-5 text-snow-primary" />}
           tone="bg-snow-ice"
         />
         <StatusTile
-          label="Child visibility"
-          value="Hidden"
-          detail="Strict parent route boundary"
+          label={t("parent", "emergency.childVisibility")}
+          value={t("parent", "emergency.hidden")}
+          detail={t("parent", "emergency.strictBoundary")}
           icon={<ShieldCheck className="size-5 text-snow-primary" />}
           tone="bg-snow-lavender"
         />
@@ -208,19 +209,19 @@ export function ParentEmergencyScreen() {
 
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
         <SettingsSection
-          title="Authorized Emergency Contacts"
-          description="Guardians and verified emergency contacts kept on file in order of priority."
+          title={t("parent", "emergency.authorizedContacts")}
+          description={t("parent", "emergency.authorizedDesc")}
         >
           {isLoading ? (
-            <SafetyLoadingSkeleton label="Loading verified emergency contacts..." count={3} />
+            <SafetyLoadingSkeleton label={t("parent", "emergency.loadingContacts")} count={3} />
           ) : contacts.length === 0 ? (
             <SafetyEmptyState
-              title="No emergency contacts configured"
-              description="Add at least one guardian contact to keep your emergency details on file. Automatic escalation stays unavailable until a notification provider is configured."
+              title={t("parent", "emergency.noContacts")}
+              description={t("parent", "emergency.noContactsDesc")}
               action={
                 <SnowButton onClick={handleOpenCreate} className="text-xs font-bold">
                   <Plus className="mr-1.5 size-3.5" />
-                  Add Primary Guardian
+                  {t("parent", "emergency.addPrimary")}
                 </SnowButton>
               }
             />
@@ -240,13 +241,9 @@ export function ParentEmergencyScreen() {
                         <p className="text-sm font-black text-snow-primary-dark">{contact.name}</p>
                         {contact.isPrimary ? (
                           <span className="inline-flex items-center gap-1 rounded-full bg-snow-primary-soft px-2 py-0.5 text-[10px] font-black text-snow-primary-dark">
-                            <Star className="size-3 fill-snow-primary text-snow-primary" />
-                            Primary
-                          </span>
+                            <Star className="size-3 fill-snow-primary text-snow-primary" />{t("parent", "emergency.primary")}</span>
                         ) : (
-                          <span className="rounded-full bg-snow-surface px-2 py-0.5 text-[10px] font-bold text-snow-muted border border-snow-border">
-                            Backup
-                          </span>
+                          <span className="rounded-full bg-snow-surface px-2 py-0.5 text-[10px] font-bold text-snow-muted border border-snow-border">{t("parent", "emergency.backup")}</span>
                         )}
                       </div>
                       <p className="mt-1 text-xs font-semibold text-snow-muted">
@@ -262,9 +259,7 @@ export function ParentEmergencyScreen() {
                       onClick={() => handleOpenEdit(contact)}
                       className="min-h-8 px-3 text-xs font-bold"
                     >
-                      <Edit2 className="mr-1 size-3" />
-                      Edit
-                    </SnowButton>
+                      <Edit2 className="mr-1 size-3" />{t("parent", "emergency.edit")}</SnowButton>
                   </div>
                 </div>
               ))}
@@ -273,12 +268,12 @@ export function ParentEmergencyScreen() {
         </SettingsSection>
 
         <aside className="space-y-4">
-          <SettingsSection title="Escalation status">
+          <SettingsSection title={t("parent", "emergency.escalationStatus")}>
             {[
-              { ok: true, text: "Emergency contacts are stored for your reference and are never shown in child sessions." },
-              { ok: false, text: "Automatic SMS, email, or push escalation is unavailable until a notification provider is configured." },
-              { ok: false, text: "AgentKid does not contact emergency services or dispatchers on your behalf." },
-              { ok: true, text: "Alerts remain calm, non-diagnostic observations for parent review." },
+              { ok: true, text: t("parent", "emergency.ruleStored") },
+              { ok: false, text: t("parent", "emergency.ruleUnavailable") },
+              { ok: false, text: t("parent", "emergency.ruleNoDispatch") },
+              { ok: true, text: t("parent", "emergency.ruleCalm") },
             ].map((rule, idx) => (
               <div
                 key={idx}

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Lock, Sparkles } from "lucide-react";
+import { t } from "@/i18n";
 import { SnowLogo } from "@/components/ui/snow-logo";
 import { cn } from "@/lib/utils";
 
@@ -34,7 +35,7 @@ export function AuthShell({
     <div className="snow-page-bg min-h-[100dvh] flex flex-col justify-between text-snow-foreground">
       {/* Top Header */}
       <header className="z-20 flex min-h-[68px] items-center justify-between border-b border-snow-border/60 bg-snow-surface/80 px-4 py-3 backdrop-blur-md sm:px-8">
-        <Link href="/" aria-label="Go to Snow Home" className="snow-focus-ring rounded-lg">
+        <Link href="/" aria-label={t("auth", "shell.homeAria")} className="snow-focus-ring rounded-lg">
           <SnowLogo />
         </Link>
 
@@ -44,14 +45,14 @@ export function AuthShell({
               href="/child-login"
               className="snow-focus-ring inline-flex min-h-10 items-center gap-2 rounded-full border border-snow-border bg-snow-surface px-4 text-xs font-black text-snow-primary-dark shadow-[var(--shadow-card)] transition hover:bg-snow-surface-soft"
             >
-              Child PIN Sign-in <Sparkles className="size-3.5 text-snow-primary" />
+              {t("auth", "shell.childPinSignIn")} <Sparkles className="size-3.5 text-snow-primary" />
             </Link>
           ) : mode === "child" ? (
             <Link
               href="/login"
               className="snow-focus-ring inline-flex min-h-10 items-center gap-2 rounded-full border border-snow-border bg-snow-surface px-4 text-xs font-black text-snow-primary-dark shadow-[var(--shadow-card)] transition hover:bg-snow-surface-soft"
             >
-              Guardian Portal <Lock className="size-3.5 text-snow-primary" />
+              {t("auth", "shell.guardianPortal")} <Lock className="size-3.5 text-snow-primary" />
             </Link>
           ) : (
             <div className="flex items-center gap-2">
@@ -59,13 +60,13 @@ export function AuthShell({
                 href="/child-login"
                 className="snow-focus-ring inline-flex min-h-10 items-center gap-1.5 rounded-full border border-snow-border bg-snow-surface px-3 text-xs font-extrabold text-snow-primary-dark hover:bg-snow-surface-soft"
               >
-                Child
+                {t("auth", "shell.child")}
               </Link>
               <Link
                 href="/login"
                 className="snow-focus-ring inline-flex min-h-10 items-center gap-1.5 rounded-full bg-snow-primary px-3 text-xs font-extrabold text-white shadow-[var(--shadow-card)] hover:brightness-105"
               >
-                Guardian
+                {t("auth", "shell.guardian")}
               </Link>
             </div>
           )}
@@ -120,7 +121,7 @@ export function AuthShell({
 
       {/* Footer */}
       <footer className="z-10 border-t border-snow-border/50 bg-snow-surface/50 py-4 text-center text-xs font-semibold text-snow-muted">
-        <p>AgentKid Snow &bull; Safe, gentle learning companion &bull; COPPA & FERPA compliant</p>
+        <p>AgentKid Snow &bull; {t("auth", "shell.safeCompanion")} &bull; {t("auth", "shell.compliance")}</p>
       </footer>
     </div>
   );

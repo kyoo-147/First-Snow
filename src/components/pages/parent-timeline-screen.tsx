@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/i18n";
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -44,7 +45,7 @@ export function ParentTimelineScreen({ childId }: { childId: string }) {
       .then(([children, attemptRows, alertRows]) => {
         if (cancelled) return;
         const ownedChild = children.find((item) => item.id === childId) ?? null;
-        if (!ownedChild) throw new Error("This child profile is unavailable for this household.");
+        if (!ownedChild) throw new Error(t("parent", "timeline.unavailableProfile"));
         setChild(ownedChild);
         setAttempts(attemptRows);
         setAlerts(alertRows);
@@ -66,7 +67,7 @@ export function ParentTimelineScreen({ childId }: { childId: string }) {
       .map((attempt) => ({
         id: `lesson-${attempt.id}`,
         kind: "lesson" as const,
-        title: "Lesson completed",
+        title: t("parent", "timeline.lessonCompleted"),
         detail: attempt.lessonTitle,
         occurredAt: attempt.completedAt as string,
         href: `/parent/children/${encodeURIComponent(childId)}/learning`,
@@ -74,7 +75,7 @@ export function ParentTimelineScreen({ childId }: { childId: string }) {
     const alertEvents = alerts.map((alert) => ({
       id: `alert-${alert.id}`,
       kind: "alert" as const,
-      title: alert.readAt ? "Safety review checked" : "Safety review needs attention",
+      title: alert.readAt ? t("parent", "timeline.safetyChecked") : t("parent", "timeline.safetyNeedsAttention"),
       detail: alert.description,
       occurredAt: alert.createdAt,
       href: `/parent/alerts/${encodeURIComponent(alert.id)}`,
@@ -91,39 +92,39 @@ export function ParentTimelineScreen({ childId }: { childId: string }) {
     <ParentPageFrame>
       <PageHeader
         eyebrow={child ? `${child.name}'s timeline` : "Activity timeline"}
-        title="Recorded activity"
-        description="A chronological view of persisted lesson completions and safety reviews. Emotion trends are not inferred from activity records."
+        title={t("parent", "timeline.recordedActivity")}
+        description={t("parent", "timeline.recordedDesc")}
         action={
           <SnowButton variant="soft" onClick={() => { setLoading(true); setError(null); setReloadKey((value) => value + 1); }} disabled={loading}>
-            <RefreshCw className="mr-2 size-4" /> Refresh
+            <RefreshCw className="mr-2 size-4" /> {t("parent", "account.refresh")}
           </SnowButton>
         }
       />
 
       <div className="grid gap-4 md:grid-cols-3">
-        <StatusTile label="Completed lessons" value={loading ? "—" : `${completedLessons}`} detail="Persisted attempts" icon={<BookCheck className="size-5 text-snow-primary" />} />
-        <StatusTile label="Safety reviews" value={loading ? "—" : `${alerts.length}`} detail="Persisted flagged messages" icon={<AlertTriangle className="size-5 text-snow-primary" />} tone="bg-snow-ice" />
-        <StatusTile label="Needs review" value={loading ? "—" : `${unreadAlerts}`} detail="Unread safety reviews" icon={<CalendarClock className="size-5 text-snow-primary" />} tone="bg-snow-lavender" />
+        <StatusTile label={t("parent", "timeline.completedLessons")} value={loading ? "â€”" : `${completedLessons}`} detail={t("parent", "timeline.persistedAttempts")} icon={<BookCheck className="size-5 text-snow-primary" />} />
+        <StatusTile label={t("parent", "timeline.safetyReviews")} value={loading ? "â€”" : `${alerts.length}`} detail={t("parent", "timeline.persistedFlagged")} icon={<AlertTriangle className="size-5 text-snow-primary" />} tone="bg-snow-ice" />
+        <StatusTile label={t("parent", "timeline.needsReview")} value={loading ? "â€”" : `${unreadAlerts}`} detail={t("parent", "timeline.unreadSafety")} icon={<CalendarClock className="size-5 text-snow-primary" />} tone="bg-snow-lavender" />
       </div>
 
-      {loading ? <SnowCard className="p-8 text-center"><p role="status">Loading recorded activity…</p></SnowCard> : null}
+      {loading ? <SnowCard className="p-8 text-center"><p role="status">{t("parent", "timeline.loading")}</p></SnowCard> : null}
       {!loading && error ? (
         <SnowCard className="p-8 text-center">
           <div role="alert">
-          <h2 className="text-xl font-black text-snow-primary-dark">Timeline unavailable</h2>
+          <h2 className="text-xl font-black text-snow-primary-dark">{t("parent", "timeline.unavailable")}</h2>
           <p className="mt-2 text-sm font-semibold text-snow-muted">{error}</p>
           </div>
         </SnowCard>
       ) : null}
       {!loading && !error && events.length === 0 ? (
         <SnowCard className="p-8 text-center">
-          <h2 className="text-xl font-black text-snow-primary-dark">No recorded activity yet</h2>
-          <p className="mt-2 text-sm font-semibold text-snow-muted">Completed lessons and safety reviews will appear here after they are persisted.</p>
+          <h2 className="text-xl font-black text-snow-primary-dark">{t("parent", "timeline.noActivity")}</h2>
+          <p className="mt-2 text-sm font-semibold text-snow-muted">{t("parent", "timeline.noActivityDesc")}</p>
         </SnowCard>
       ) : null}
       {!loading && !error && events.length > 0 ? (
         <SnowCard className="p-5">
-          <h2 className="text-lg font-black text-snow-primary-dark">Latest first</h2>
+          <h2 className="text-lg font-black text-snow-primary-dark">{t("parent", "timeline.latestFirst")}</h2>
           <div className="mt-4 space-y-3">
             {events.map((event) => (
               <Link key={event.id} href={event.href} className="snow-focus-ring block rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft p-4 transition hover:border-snow-primary">

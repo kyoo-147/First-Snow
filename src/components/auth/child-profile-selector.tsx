@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Lock, PlusCircle, ShieldAlert, Sparkles, UserPlus } from "lucide-react";
 import type { ChildProfileSummary } from "./auth-types";
+import { t } from "@/i18n";
 
 type ChildProfileSelectorProps = {
   childrenList: ChildProfileSummary[];
@@ -25,7 +26,7 @@ export function ChildProfileSelector({
       <div className="py-8 text-center space-y-3">
         <div className="mx-auto size-10 animate-spin rounded-full border-4 border-snow-primary-soft border-t-snow-primary" />
         <p className="snow-body-small snow-font-readable font-bold text-snow-muted">
-          Looking for your profile...
+          {t("auth", "child.findingProfile")}
         </p>
       </div>
     );
@@ -40,7 +41,7 @@ export function ChildProfileSelector({
         </div>
         <div>
           <h2 className="snow-heading font-black text-snow-primary-dark">
-            Guardian Sign-In Required
+            {t("auth", "unauthorized.view.signInReq")}
           </h2>
           <p className="snow-body-small snow-font-readable mt-1.5 text-snow-muted font-semibold max-w-[360px] mx-auto">
             {authErrorMessage ||
@@ -52,13 +53,13 @@ export function ChildProfileSelector({
             href="/login?callbackUrl=/child-login"
             className="snow-focus-ring inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-snow-primary px-5 text-sm font-black text-white shadow-[var(--shadow-card)] transition hover:brightness-105"
           >
-            <Lock className="size-4" /> Sign In as Guardian
+            <Lock className="size-4" /> {t("auth", "parentLogin.signInBtn")}
           </Link>
           <Link
             href="/register"
             className="snow-focus-ring inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-snow-border bg-snow-surface px-5 text-sm font-extrabold text-snow-primary-dark hover:bg-snow-surface-soft"
           >
-            Create Guardian Account
+            {t("auth", "parentRegister.createBtn")}
           </Link>
         </div>
       </div>
@@ -74,10 +75,10 @@ export function ChildProfileSelector({
         </div>
         <div>
           <h2 className="snow-heading font-black text-snow-primary-dark">
-            No Child Profiles Found
+            {t("auth", "child.profileSelector.noProfiles")}
           </h2>
           <p className="snow-body-small snow-font-readable mt-1.5 text-snow-muted font-semibold">
-            Ask your grown-up to sign in to the Guardian Portal and add your profile.
+            {t("auth", "child.profileSelector.addProfile")}
           </p>
         </div>
         <div className="pt-2 flex flex-col gap-2.5">
@@ -85,13 +86,13 @@ export function ChildProfileSelector({
             href="/parent/children"
             className="snow-focus-ring inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-snow-primary px-5 text-sm font-black text-white shadow-[var(--shadow-card)] transition hover:brightness-105"
           >
-            <Lock className="size-4" /> Go to Guardian Portal
+            <Lock className="size-4" /> {t("auth", "sessionSwitch.view.guardianPortal")}
           </Link>
           <Link
             href="/register"
             className="snow-focus-ring inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-snow-border bg-snow-surface px-5 text-sm font-extrabold text-snow-primary-dark hover:bg-snow-surface-soft"
           >
-            Create Guardian Account
+            {t("auth", "parentRegister.createBtn")}
           </Link>
         </div>
       </div>
@@ -101,7 +102,7 @@ export function ChildProfileSelector({
   return (
     <div className="space-y-4">
       <p className="text-center snow-body-small snow-font-readable font-bold text-snow-muted">
-        Who is learning with Snow today?
+        {t("auth", "child.profileSelector.selectProfile")}
       </p>
 
       {/* Grid of Child Profiles */}
@@ -126,7 +127,7 @@ export function ChildProfileSelector({
                 {child.name}
               </h3>
               <p className="truncate text-xs font-bold text-snow-muted">
-                {child.age ? `Age ${child.age}` : ""}
+                {child.age ? `${t("parent", "child.age")} ${child.age}` : ""}
                 {child.grade ? ` &bull; ${child.grade}` : ""}
               </p>
             </div>
@@ -141,7 +142,7 @@ export function ChildProfileSelector({
           href="/parent/children"
           className="snow-focus-ring inline-flex items-center gap-1.5 text-xs font-extrabold text-snow-primary hover:underline"
         >
-          <PlusCircle className="size-3.5" /> Grown-up: Manage or add child profiles
+          <PlusCircle className="size-3.5" /> {t("auth", "child.profileSelector.switchParent")}
         </Link>
       </div>
     </div>

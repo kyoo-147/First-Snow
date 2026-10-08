@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/i18n";
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -182,17 +183,17 @@ function ParentTranscriptsContent({
   return (
     <ParentPageFrame className="space-y-4">
       <PageHeader
-        eyebrow="Child records"
-        title="Transcripts"
-        description="Review conversation records between the child and AgentKid available to your parent account. These notes are for observation and follow-up only."
+        eyebrow={t("parent", "transcripts.childRecords")}
+        title={t("parent", "transcripts.title")}
+        description={t("parent", "transcripts.desc")}
         action={
           <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-snow-muted" />
               <input
                 type="text"
-                aria-label="Search conversation records"
-                placeholder="Search conversations..."
+                aria-label={t("parent", "transcripts.searchAria")}
+                placeholder={t("parent", "transcripts.search")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="snow-font-readable h-11 w-full min-w-[260px] rounded-full border border-snow-border bg-snow-surface pl-9 pr-4 text-sm font-semibold outline-none transition focus:border-snow-primary focus:ring-2 focus:ring-snow-primary-soft"
@@ -202,7 +203,7 @@ function ParentTranscriptsContent({
               variant="soft"
               disabled
               aria-disabled="true"
-              title="Export not yet available"
+              title={t("parent", "transcripts.exportNotAvailable")}
             >
               <Download className="mr-2 size-4" />
               Export
@@ -214,29 +215,29 @@ function ParentTranscriptsContent({
       {/* Status tiles */}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatusTile
-          label="Child profile"
+          label={t("parent", "transcripts.childProfile")}
           value={childId ? `Child (${childId})` : "Unspecified"}
-          detail="Route profile"
+          detail={t("parent", "transcripts.routeProfile")}
           icon={<ShieldCheck className="size-5 text-snow-primary" />}
         />
         <StatusTile
-          label="Latest session"
+          label={t("parent", "transcripts.latestSession")}
           value={tileData.latestSession.value}
           detail={tileData.latestSession.detail}
           icon={<CalendarClock className="size-5 text-snow-primary" />}
           tone="bg-snow-ice"
         />
         <StatusTile
-          label="Stored transcript"
+          label={t("parent", "transcripts.storedTranscript")}
           value={tileData.storedTranscript.value}
           detail={tileData.storedTranscript.detail}
           icon={<MessageSquare className="size-5 text-snow-primary" />}
           tone="bg-snow-lavender"
         />
         <StatusTile
-          label="Sharing"
-          value="Parent-only"
-          detail="No child-facing export controls"
+          label={t("parent", "transcripts.sharing")}
+          value={t("parent", "transcripts.parentOnly")}
+          detail={t("parent", "transcripts.noChildExport")}
           tone="bg-snow-cream"
         />
       </div>
@@ -246,12 +247,12 @@ function ParentTranscriptsContent({
         <div
           role="status"
           aria-busy="true"
-          aria-label="Loading transcripts"
+          aria-label={t("parent", "transcripts.loadingAria")}
           className="flex min-h-[400px] items-center justify-center rounded-[var(--radius-lg)] border border-snow-border bg-snow-surface"
         >
           <div className="flex flex-col items-center gap-3 text-snow-muted">
             <Loader2 className="size-8 animate-spin text-snow-primary" />
-            <p className="text-sm font-bold">Loading transcripts…</p>
+            <p className="text-sm font-bold">{t("parent", "transcripts.loading")}</p>
           </div>
         </div>
       )}
@@ -275,7 +276,7 @@ function ParentTranscriptsContent({
       {status === "ready" && sessions.length === 0 && (
         <div className="flex min-h-[400px] flex-col items-center justify-center gap-3 rounded-[var(--radius-lg)] border border-snow-border bg-snow-surface p-8 text-center">
           <MessageSquare className="size-10 text-snow-muted/60" />
-          <h2 className="snow-heading text-lg font-black text-snow-primary-dark">No transcripts yet</h2>
+          <h2 className="snow-heading text-lg font-black text-snow-primary-dark">{t("parent", "transcripts.noTranscripts")}</h2>
           <p className="snow-body-copy snow-font-readable max-w-[420px] font-semibold text-snow-muted">
             Conversation records between the child and AgentKid will appear here once sessions take place.
           </p>
@@ -493,12 +494,12 @@ export function ParentTranscriptsScreen(props: { childId: string; initialSession
           <div
             role="status"
             aria-busy="true"
-            aria-label="Loading transcripts"
+            aria-label={t("parent", "transcripts.loadingAria")}
             className="flex min-h-[400px] items-center justify-center rounded-[var(--radius-lg)] border border-snow-border bg-snow-surface"
           >
             <div className="flex flex-col items-center gap-3 text-snow-muted">
               <Loader2 className="size-8 animate-spin text-snow-primary" />
-              <p className="text-sm font-bold">Loading transcripts…</p>
+              <p className="text-sm font-bold">{t("parent", "transcripts.loading")}</p>
             </div>
           </div>
         </ParentPageFrame>

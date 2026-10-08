@@ -1,5 +1,8 @@
+"use client";
+
 import { AlertCircle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { t } from "@/i18n";
 
 type AuthErrorBannerProps = {
   message?: string | null;
@@ -25,7 +28,7 @@ export function AuthErrorBanner({ message, onDismiss, className }: AuthErrorBann
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="Dismiss error"
+          aria-label={t("auth", "error.clearError")}
           className="snow-focus-ring -mr-1 -mt-1 grid size-7 place-items-center rounded-[var(--radius-sm)] text-snow-muted transition hover:bg-snow-danger/15 hover:text-snow-primary-dark"
         >
           <X className="size-4" />

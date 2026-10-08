@@ -1,5 +1,5 @@
 "use client";
-
+import { t } from "@/i18n";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -44,19 +44,19 @@ export function formatAlertStatusTiles(
   return {
     active: {
       value: isReady ? `${activeCount}` : "—",
-      detail: isReady ? "Waiting for parent review" : "Status unavailable",
+      detail: isReady ? t("parent", "alertsScreen.waitingForReview") : t("parent", "alertsScreen.statusUnavailable"),
     },
     urgent: {
       value: isReady ? `${urgentCount}` : "—",
       detail: isReady
         ? urgentCount === 0
-          ? "No urgent alerts"
-          : "High priority review"
-        : "Status unavailable",
+          ? t("parent", "alertsScreen.noUrgentAlerts")
+          : t("parent", "alertsScreen.highPriorityReview")
+        : t("parent", "alertsScreen.statusUnavailable"),
     },
     total: {
       value: isReady ? `${alerts.length}` : "—",
-      detail: isReady ? "Household records" : "Status unavailable",
+      detail: isReady ? t("parent", "alertsScreen.householdRecords") : t("parent", "alertsScreen.statusUnavailable"),
     },
   };
 }
@@ -81,7 +81,7 @@ export function ParentAlertsScreen() {
           ? e.message
           : e instanceof Error
             ? e.message
-            : "Failed to load alerts",
+            : t("parent", "alertsScreen.failedToLoad"),
       );
       setStatus("error");
     }
@@ -103,7 +103,7 @@ export function ParentAlertsScreen() {
             ? e.message
             : e instanceof Error
               ? e.message
-              : "Failed to load alerts",
+              : t("parent", "alertsScreen.failedToLoad"),
         );
         setStatus("error");
       }
@@ -133,7 +133,7 @@ export function ParentAlertsScreen() {
         setAlerts((prev) =>
           prev.map((a) =>
             a.id === alertId
-              ? { ...a, isUpdating: false, warning: "Alert no longer available" }
+              ? { ...a, isUpdating: false, warning: t("parent", "alertsScreen.alertUnavailable") }
               : a,
           ),
         );
@@ -143,7 +143,7 @@ export function ParentAlertsScreen() {
             ? e.message
             : e instanceof Error
               ? e.message
-              : "Failed to mark alert as reviewed";
+              : t("parent", "alertsScreen.failedToMark");
         setAlerts((prev) =>
           prev.map((a) =>
             a.id === alertId ? { ...a, isUpdating: false, warning: msg } : a,
@@ -158,28 +158,28 @@ export function ParentAlertsScreen() {
   return (
     <ParentPageFrame>
       <PageHeader
-        eyebrow="Safety"
-        title="Alerts"
-        description="Parent-only review of moments AgentKid marked for follow-up. Alerts use calm observation language and do not make medical claims."
+        eyebrow={t("parent", "alertsScreen.eyebrow")}
+        title={t("parent", "alertsScreen.title")}
+        description={t("parent", "alertsScreen.description")}
       />
 
       {/* Status tiles */}
       <div className="grid gap-4 md:grid-cols-3">
         <StatusTile
-          label="Active alerts"
+          label={t("parent", "alertsScreen.activeAlerts")}
           value={tileData.active.value}
           detail={tileData.active.detail}
           icon={<Bell className="size-5 text-snow-primary" />}
         />
         <StatusTile
-          label="Urgent alerts"
+          label={t("parent", "alertsScreen.urgentAlerts")}
           value={tileData.urgent.value}
           detail={tileData.urgent.detail}
           icon={<ShieldCheck className="size-5 text-snow-success" />}
           tone="bg-snow-ice"
         />
         <StatusTile
-          label="Total alerts"
+          label={t("parent", "alertsScreen.totalAlerts")}
           value={tileData.total.value}
           detail={tileData.total.detail}
           icon={<ShieldAlert className="size-5 text-snow-primary" />}
@@ -192,12 +192,12 @@ export function ParentAlertsScreen() {
         <div
           role="status"
           aria-busy="true"
-          aria-label="Loading alerts"
+          aria-label={t("parent", "alertsScreen.loadingAria")}
           className="flex min-h-[400px] items-center justify-center rounded-[var(--radius-lg)] border border-snow-border bg-snow-surface"
         >
           <div className="flex flex-col items-center gap-3 text-snow-muted">
             <Loader2 className="size-8 animate-spin text-snow-primary" />
-            <p className="text-sm font-bold">Loading alerts…</p>
+            <p className="text-sm font-bold">{t("parent", "alertsScreen.loading")}</p>
           </div>
         </div>
       )}
@@ -212,7 +212,7 @@ export function ParentAlertsScreen() {
           <p className="text-sm font-bold text-snow-danger">{errorMessage}</p>
           <SnowButton onClick={() => void handleFetch()}>
             <RefreshCw className="size-4" />
-            Try again
+            {t("parent", "alertsScreen.tryAgain")}
           </SnowButton>
         </div>
       )}
@@ -224,9 +224,9 @@ export function ParentAlertsScreen() {
             {alerts.length === 0 ? (
               <div className="flex min-h-[300px] flex-col items-center justify-center gap-3 rounded-[var(--radius-lg)] border border-snow-border bg-snow-surface p-8 text-center">
                 <CheckCircle2 className="size-10 text-snow-success" />
-                <h2 className="snow-heading text-lg font-black text-snow-primary-dark">No alerts</h2>
+                <h2 className="snow-heading text-lg font-black text-snow-primary-dark">{t("parent", "alertsScreen.noAlerts")}</h2>
                 <p className="snow-body-copy snow-font-readable max-w-[420px] font-semibold text-snow-muted">
-                  No alerts were returned for your account.
+                  {t("parent", "alertsScreen.noAlertsDesc")}
                 </p>
               </div>
             ) : (
@@ -273,7 +273,7 @@ export function ParentAlertsScreen() {
                           {formatSnowDateTime(alert.createdAt)}
                         </p>
                         <span className="mt-2 inline-flex rounded-full bg-snow-primary-soft px-3 py-1 text-xs font-black capitalize text-snow-primary-dark">
-                          {alert.severity} priority
+                          {alert.severity} {t("parent", "alertsScreen.priority")}
                         </span>
                       </div>
                     </div>
@@ -283,7 +283,7 @@ export function ParentAlertsScreen() {
                         href={`/parent/alerts/${alert.id}`}
                         className="snow-focus-ring inline-flex min-h-10 items-center rounded-full border border-snow-border px-4 text-sm font-black text-snow-primary-dark hover:bg-snow-surface-soft"
                       >
-                        Review details
+                        {t("parent", "alertsScreen.reviewDetails")}
                       </Link>
 
                       {alert.linkedSessionId && alert.childId ? (
@@ -291,7 +291,7 @@ export function ParentAlertsScreen() {
                           href={`/parent/children/${encodeURIComponent(alert.childId)}/transcripts?session=${encodeURIComponent(alert.linkedSessionId)}`}
                           className="snow-focus-ring inline-flex min-h-10 items-center gap-1.5 rounded-full border border-snow-border px-4 text-sm font-black text-snow-primary-dark hover:bg-snow-surface-soft"
                         >
-                          View session
+                          {t("parent", "alertsScreen.viewSession")}
                           <ArrowRight className="size-3.5" />
                         </Link>
                       ) : null}
@@ -299,7 +299,7 @@ export function ParentAlertsScreen() {
                       {isReviewed ? (
                         <span className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-snow-success/15 px-4 text-sm font-black text-snow-success">
                           <CheckCircle2 className="size-4" />
-                          Reviewed
+                          {t("parent", "alertsScreen.reviewed")}
                         </span>
                       ) : (
                         <SnowButton
@@ -311,10 +311,10 @@ export function ParentAlertsScreen() {
                           {alert.isUpdating ? (
                             <>
                               <Loader2 className="mr-1.5 size-4 animate-spin" />
-                              Updating…
+                              {t("parent", "alertsScreen.updating")}
                             </>
                           ) : (
-                            "Mark reviewed"
+                            t("parent", "alertsScreen.markReviewed")
                           )}
                         </SnowButton>
                       )}
@@ -327,17 +327,15 @@ export function ParentAlertsScreen() {
 
           <aside className="space-y-4">
             <SnowCard className="bg-snow-lavender p-5">
-              <h2 className="text-lg font-black text-snow-primary-dark">How to read alerts</h2>
+              <h2 className="text-lg font-black text-snow-primary-dark">{t("parent", "alertsScreen.howToRead")}</h2>
               <p className="mt-2 text-sm font-semibold leading-6 text-snow-primary-dark">
-                AgentKid surfaces moments worth reviewing. The parent decides whether any follow-up
-                is needed.
+                {t("parent", "alertsScreen.howToReadDesc")}
               </p>
             </SnowCard>
             <SnowCard className="p-5">
-              <h2 className="text-lg font-black text-snow-primary-dark">Review posture</h2>
+              <h2 className="text-lg font-black text-snow-primary-dark">{t("parent", "alertsScreen.reviewPosture")}</h2>
               <p className="mt-3 text-sm font-semibold leading-6 text-snow-muted">
-                Alerts stay calm and parent-readable. Reviewing them should feel deliberate, not
-                alarming.
+                {t("parent", "alertsScreen.reviewPostureDesc")}
               </p>
             </SnowCard>
           </aside>

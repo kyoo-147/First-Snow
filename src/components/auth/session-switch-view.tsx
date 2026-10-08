@@ -8,6 +8,7 @@ import { Lock, LogOut, Sparkles, UserCheck } from "lucide-react";
 import { SnowButton } from "@/components/ui/snow-button";
 import { getAuthSession, logoutUser } from "./auth-api";
 import type { AuthSessionData } from "./auth-types";
+import { t } from "@/i18n";
 
 export function SessionSwitchView() {
   const router = useRouter();
@@ -59,16 +60,16 @@ export function SessionSwitchView() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-black uppercase tracking-wider text-snow-muted">
-              Current Active Session
+              {t("auth", "sessionSwitch.view.currentSession")}
             </p>
             <p className="truncate text-base font-black text-snow-primary-dark">
               {session?.child?.name
-                ? `${session.child.name} (Child mode)`
+                ? `${session.child.name} (${t("auth", "sessionSwitch.view.childMode")})`
                 : session?.user?.name
-                  ? `${session.user.name} (Guardian)`
+                  ? `${session.user.name} (${t("auth", "sessionSwitch.view.guardianMode")})`
                   : isLoading
-                    ? "Checking session..."
-                    : "No active session"}
+                    ? t("auth", "sessionSwitch.view.checking")
+                    : t("auth", "sessionSwitch.view.noSession")}
             </p>
           </div>
           <UserCheck className="size-5 shrink-0 text-snow-success" />
@@ -78,7 +79,7 @@ export function SessionSwitchView() {
       {/* Switch Options List */}
       <div className="space-y-3">
         <p className="snow-body-small snow-font-readable font-bold text-snow-muted">
-          Select an action:
+          {t("auth", "sessionSwitch.view.selectAction")}
         </p>
 
         {/* Option 1: Switch Child */}
@@ -92,10 +93,10 @@ export function SessionSwitchView() {
             </div>
             <div>
               <h3 className="snow-font-child text-sm font-black text-snow-primary-dark">
-                Switch Child Profile
+                {t("auth", "sessionSwitch.view.switchChild")}
               </h3>
               <p className="text-xs font-semibold text-snow-muted">
-                Choose another learner or enter a different PIN
+                {t("auth", "sessionSwitch.view.switchChildSub")}
               </p>
             </div>
           </div>
@@ -112,10 +113,10 @@ export function SessionSwitchView() {
             </div>
             <div>
               <h3 className="text-sm font-black text-snow-primary-dark">
-                Guardian Portal & Controls
+                {t("auth", "sessionSwitch.view.guardianPortal")}
               </h3>
               <p className="text-xs font-semibold text-snow-muted">
-                Review progress, routines, safety settings, and account
+                {t("auth", "sessionSwitch.view.guardianPortalSub")}
               </p>
             </div>
           </div>
@@ -132,7 +133,7 @@ export function SessionSwitchView() {
           className="w-full text-sm font-extrabold text-snow-danger hover:bg-snow-danger/10 hover:text-snow-danger"
         >
           <LogOut className="size-4" />
-          {isLoggingOut ? "Signing out..." : "Sign Out of All Sessions"}
+          {isLoggingOut ? t("auth", "sessionSwitch.view.signingOut") : t("auth", "sessionSwitch.view.signOutAll")}
         </SnowButton>
       </div>
     </div>

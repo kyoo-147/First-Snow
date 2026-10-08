@@ -7,6 +7,7 @@ import { Check, Eye, EyeOff, Loader2, Lock, Mail, Shield, User } from "lucide-re
 import { SnowButton } from "@/components/ui/snow-button";
 import { AuthErrorBanner } from "./auth-error-banner";
 import { registerParent } from "./auth-api";
+import { t } from "@/i18n";
 
 export function ParentRegisterForm() {
   const router = useRouter();
@@ -28,17 +29,17 @@ export function ParentRegisterForm() {
     const cleanEmail = email.trim();
 
     if (!cleanName || !cleanEmail || !password) {
-      setErrorMessage("Please fill in all required fields.");
+      setErrorMessage(t("auth", "register.missingFields"));
       return;
     }
 
     if (cleanName.length < 2) {
-      setErrorMessage("Name must be at least 2 characters.");
+      setErrorMessage(t("auth", "register.missingFields"));
       return;
     }
 
     if (password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters long.");
+      setErrorMessage(t("auth", "register.minPassword"));
       return;
     }
 
@@ -74,7 +75,7 @@ export function ParentRegisterForm() {
           htmlFor="parent-register-name"
           className="block text-xs font-black uppercase tracking-wider text-snow-primary-dark"
         >
-          Guardian Full Name
+          {t("auth", "register.nameLabel")}
         </label>
         <div className="relative mt-1.5">
           <User
@@ -90,7 +91,7 @@ export function ParentRegisterForm() {
             disabled={isLoading}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Linh Nguyen"
+            placeholder={t("auth", "parentRegister.namePlaceholder")}
             className="snow-focus-ring w-full rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft pl-10 pr-4 py-2.5 text-sm font-semibold text-snow-primary-dark placeholder:text-snow-muted/70 transition focus:border-snow-primary focus:bg-snow-surface disabled:opacity-60"
           />
         </div>
@@ -102,7 +103,7 @@ export function ParentRegisterForm() {
           htmlFor="parent-register-email"
           className="block text-xs font-black uppercase tracking-wider text-snow-primary-dark"
         >
-          Guardian Email
+          {t("auth", "register.emailLabel")}
         </label>
         <div className="relative mt-1.5">
           <Mail
@@ -118,7 +119,7 @@ export function ParentRegisterForm() {
             disabled={isLoading}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="guardian@example.com"
+            placeholder={t("auth", "parentLogin.emailPlaceholder")}
             className="snow-focus-ring w-full rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft pl-10 pr-4 py-2.5 text-sm font-semibold text-snow-primary-dark placeholder:text-snow-muted/70 transition focus:border-snow-primary focus:bg-snow-surface disabled:opacity-60"
           />
         </div>
@@ -130,7 +131,7 @@ export function ParentRegisterForm() {
           htmlFor="parent-register-password"
           className="block text-xs font-black uppercase tracking-wider text-snow-primary-dark"
         >
-          Password
+          {t("auth", "register.passwordLabel")}
         </label>
         <div className="relative mt-1.5">
           <Lock
@@ -147,7 +148,7 @@ export function ParentRegisterForm() {
             disabled={isLoading}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="At least 8 characters"
+            placeholder={t("auth", "parentLogin.passwordPlaceholder")}
             className="snow-focus-ring w-full rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft pl-10 pr-11 py-2.5 text-sm font-semibold text-snow-primary-dark placeholder:text-snow-muted/70 transition focus:border-snow-primary focus:bg-snow-surface disabled:opacity-60"
           />
           <button
@@ -174,7 +175,7 @@ export function ParentRegisterForm() {
               isPasswordLongEnough ? "text-snow-success" : "text-snow-muted"
             }`}
           >
-            Must be at least 8 characters
+            {t("auth", "register.minPassword")}
           </span>
         </div>
       </div>
@@ -184,8 +185,7 @@ export function ParentRegisterForm() {
         <div className="flex items-start gap-2.5">
           <Shield className="mt-0.5 size-4 shrink-0 text-snow-primary" aria-hidden="true" />
           <p className="font-semibold leading-relaxed">
-            As a guardian, you retain full ownership of child profiles, screen time limits, and
-            transcripts. Snow never diagnoses or shares private child data.
+            {t("auth", "parentRegister.privacyInfo")}
           </p>
         </div>
       </div>
@@ -201,10 +201,10 @@ export function ParentRegisterForm() {
           {isLoading ? (
             <>
               <Loader2 className="size-4 animate-spin" />
-              Creating Guardian Account...
+              {t("auth", "register.createBtnProgress")}
             </>
           ) : (
-            "Create Guardian Account"
+            t("auth", "parentRegister.createBtn")
           )}
         </SnowButton>
       </div>
@@ -212,12 +212,12 @@ export function ParentRegisterForm() {
       {/* Navigation Links */}
       <div className="pt-2 text-center">
         <p className="text-xs font-semibold text-snow-muted">
-          Already have a guardian account?{" "}
+          {t("auth", "parentRegister.haveAccount")}{" "}
           <Link
             href="/login"
             className="snow-focus-ring font-extrabold text-snow-primary underline-offset-4 hover:underline"
           >
-            Sign in
+            {t("auth", "register.signInLink")}
           </Link>
         </p>
       </div>

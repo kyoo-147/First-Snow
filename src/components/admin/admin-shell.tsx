@@ -6,11 +6,13 @@ import { Bot, Cpu, Menu, ShieldCheck, X } from "lucide-react";
 import { SnowLogo } from "@/components/ui/snow-logo";
 import { cn } from "@/lib/utils";
 
+import { t } from "@/i18n";
+
 const adminNavItems = [
-  { key: "dashboard", label: "Overview", href: "/admin", icon: ShieldCheck },
-  { key: "companion", label: "Companion", href: "/admin/companion", icon: Bot },
-  { key: "vision", label: "Vision", href: "/admin/vision", icon: Cpu },
-  { key: "system", label: "System", href: "/admin/system", icon: Cpu },
+  { key: "dashboard", label: t("parent", "admin.nav.overview"), href: "/admin", icon: ShieldCheck },
+  { key: "companion", label: t("parent", "admin.nav.companion"), href: "/admin/companion", icon: Bot },
+  { key: "vision", label: t("parent", "admin.nav.vision"), href: "/admin/vision", icon: Cpu },
+  { key: "system", label: t("parent", "admin.nav.system"), href: "/admin/system", icon: Cpu },
 ];
 
 export function AdminShell({ children, activeNav = "dashboard" }: { children: React.ReactNode; activeNav?: string }) {
@@ -38,7 +40,7 @@ export function AdminShell({ children, activeNav = "dashboard" }: { children: Re
           <div className="flex items-center justify-between">
             <SnowLogo />
             <button
-              aria-label="Close admin navigation"
+              aria-label={t("parent", "admin.aria.closeAdminNav")}
               className="lg:hidden text-snow-muted hover:text-snow-primary-dark"
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -46,7 +48,7 @@ export function AdminShell({ children, activeNav = "dashboard" }: { children: Re
             </button>
           </div>
           <div className="mt-8 flex-1 overflow-y-auto snow-scrollbar">
-            <h2 className="px-4 text-xs font-black uppercase tracking-wider text-snow-muted">Admin Portal</h2>
+            <h2 className="px-4 text-xs font-black uppercase tracking-wider text-snow-muted">{t("parent", "admin.portal")}</h2>
             <nav className="mt-4 space-y-1">
               {adminNavItems.map((item) => {
                 const Icon = item.icon;
@@ -72,15 +74,15 @@ export function AdminShell({ children, activeNav = "dashboard" }: { children: Re
         <main className="flex h-full min-w-0 flex-1 flex-col overflow-hidden">
           <header className="z-20 flex min-h-[72px] shrink-0 items-center gap-3 border-b border-snow-border bg-snow-surface/76 px-4 py-2 backdrop-blur-xl sm:px-5 lg:px-6">
             <button
-              aria-label="Open admin navigation"
+              aria-label={t("parent", "admin.aria.openAdminNav")}
               className="snow-focus-ring lg:hidden grid size-10 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-primary-dark hover:bg-snow-surface-soft"
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <Menu className="size-5" />
             </button>
             <div className="min-w-0">
-              <h1 className="font-black text-snow-primary-dark">System Administration</h1>
-              <p className="text-xs font-semibold text-snow-muted">Parent-safe technical controls for the AgentKid runtime.</p>
+              <h1 className="font-black text-snow-primary-dark">{t("parent", "admin.systemAdmin")}</h1>
+              <p className="text-xs font-semibold text-snow-muted">{t("parent", "admin.systemAdminDesc")}</p>
             </div>
           </header>
           <div className="snow-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-5 pt-4 sm:px-5 lg:px-6">

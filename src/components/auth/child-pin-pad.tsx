@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { t } from "@/i18n";
 import { ArrowLeft, Delete, Loader2, RotateCcw } from "lucide-react";
 import { AuthErrorBanner } from "./auth-error-banner";
 import { loginChild } from "./auth-api";
@@ -39,11 +40,11 @@ export function ChildPinPad({ child, onBack }: ChildPinPadProps) {
         if (err instanceof Error) {
           setErrorMessage(
             err.message.includes("401") || err.message.toLowerCase().includes("invalid")
-              ? "That PIN did not match. Let's try together, or ask your grown-up for help!"
+              ? t("auth", "child.pinPad.errorMismatch")
               : err.message,
           );
         } else {
-          setErrorMessage("Let's try together. Ask your grown-up if you need help with your PIN.");
+          setErrorMessage(t("auth", "child.pinPad.errorGeneric"));
         }
       } finally {
         setIsLoading(false);
@@ -108,7 +109,7 @@ export function ChildPinPad({ child, onBack }: ChildPinPadProps) {
           disabled={isLoading}
           className="snow-focus-ring flex items-center gap-1.5 rounded-full border border-snow-border bg-snow-surface px-3 py-1.5 text-xs font-black text-snow-primary-dark hover:bg-snow-surface-soft disabled:opacity-50"
         >
-          <ArrowLeft className="size-3.5" /> Change profile
+          <ArrowLeft className="size-3.5" /> {t("auth", "child.pinPad.changeProfile")}
         </button>
 
         <div className="flex items-center gap-2.5">
@@ -131,10 +132,10 @@ export function ChildPinPad({ child, onBack }: ChildPinPadProps) {
       {/* Instruction */}
       <div className="text-center">
         <p className="snow-title-compact text-[20px] font-black text-snow-primary-dark">
-          Enter Your 4-Digit Secret PIN
+          {t("auth", "child.pinPad.title")}
         </p>
         <p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">
-          Use the big buttons or your keyboard numbers
+          {t("auth", "child.pinPad.subtitle")}
         </p>
       </div>
 
@@ -163,7 +164,7 @@ export function ChildPinPad({ child, onBack }: ChildPinPadProps) {
       {isLoading ? (
         <div className="flex items-center justify-center gap-2 py-2 text-sm font-bold text-snow-primary">
           <Loader2 className="size-5 animate-spin" />
-          <span>Opening your world...</span>
+          <span>{t("auth", "child.pinPad.loading")}</span>
         </div>
       ) : null}
 
@@ -175,7 +176,7 @@ export function ChildPinPad({ child, onBack }: ChildPinPadProps) {
             type="button"
             disabled={isLoading}
             onClick={() => handleDigit(digit)}
-            aria-label={`Digit ${digit}`}
+            aria-label={t("auth", "child.pinPad.digit", { digit })}
             className="snow-focus-ring grid size-16 place-items-center rounded-full border border-snow-border bg-snow-surface text-2xl font-black text-snow-primary-dark shadow-[var(--shadow-soft)] transition hover:border-snow-primary hover:bg-snow-primary-soft/40 active:scale-95 disabled:opacity-50"
           >
             {digit}
@@ -187,7 +188,7 @@ export function ChildPinPad({ child, onBack }: ChildPinPadProps) {
           type="button"
           disabled={isLoading || pin.length === 0}
           onClick={handleClear}
-          aria-label="Clear PIN"
+          aria-label={t("auth", "child.pinPad.clear")}
           className="snow-focus-ring grid size-16 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-muted transition hover:bg-snow-surface-soft hover:text-snow-primary-dark active:scale-95 disabled:opacity-40"
         >
           <RotateCcw className="size-5" />
@@ -198,7 +199,7 @@ export function ChildPinPad({ child, onBack }: ChildPinPadProps) {
           type="button"
           disabled={isLoading}
           onClick={() => handleDigit("0")}
-          aria-label="Digit 0"
+          aria-label={t("auth", "child.pinPad.digit", { digit: "0" })}
           className="snow-focus-ring grid size-16 place-items-center rounded-full border border-snow-border bg-snow-surface text-2xl font-black text-snow-primary-dark shadow-[var(--shadow-soft)] transition hover:border-snow-primary hover:bg-snow-primary-soft/40 active:scale-95 disabled:opacity-50"
         >
           0
@@ -209,7 +210,7 @@ export function ChildPinPad({ child, onBack }: ChildPinPadProps) {
           type="button"
           disabled={isLoading || pin.length === 0}
           onClick={handleBackspace}
-          aria-label="Backspace"
+          aria-label={t("auth", "child.pinPad.backspace")}
           className="snow-focus-ring grid size-16 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-muted transition hover:bg-snow-surface-soft hover:text-snow-primary-dark active:scale-95 disabled:opacity-40"
         >
           <Delete className="size-5" />

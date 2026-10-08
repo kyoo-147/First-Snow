@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/i18n";
 
 import { useEffect, useState } from "react";
 import {
@@ -54,7 +55,7 @@ export function ParentNotificationsScreen() {
         setErrorCode(err.code);
         setRequestId(err.requestId);
       } else {
-        setErrorMessage("Failed to load notification preferences from the server.");
+        setErrorMessage(t("parent", "notifications.errorLoad"));
       }
     } finally {
       setIsLoading(false);
@@ -76,7 +77,7 @@ export function ParentNotificationsScreen() {
     try {
       const updated = await updateNotificationPreferences({ [key]: nextValue });
       setPreferences(updated);
-      setSuccessMessage("Notification channel updated.");
+      setSuccessMessage(t("parent", "notifications.successChannel"));
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err: unknown) {
       setPreferences(preferences);
@@ -85,7 +86,7 @@ export function ParentNotificationsScreen() {
         setErrorCode(err.code);
         setRequestId(err.requestId);
       } else {
-        setErrorMessage("Failed to update notification setting. Change was rolled back.");
+        setErrorMessage(t("parent", "notifications.errorUpdateChannel"));
       }
     } finally {
       setIsSaving(false);
@@ -119,14 +120,14 @@ export function ParentNotificationsScreen() {
         deliveryPreference: nextDelivery,
       });
       setPreferences(updated);
-      setSuccessMessage("Delivery preference saved.");
+      setSuccessMessage(t("parent", "notifications.successDelivery"));
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err: unknown) {
       setPreferences(preferences);
       if (err instanceof SafetyApiError) {
         setErrorMessage(err.message);
       } else {
-        setErrorMessage("Failed to update delivery preference.");
+        setErrorMessage(t("parent", "notifications.errorUpdateDelivery"));
       }
     } finally {
       setIsSaving(false);
@@ -145,14 +146,14 @@ export function ParentNotificationsScreen() {
     try {
       const updated = await updateNotificationPreferences({ reportCadence: cadence });
       setPreferences(updated);
-      setSuccessMessage("Summary report cadence updated.");
+      setSuccessMessage(t("parent", "notifications.successCadence"));
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err: unknown) {
       setPreferences(preferences);
       if (err instanceof SafetyApiError) {
         setErrorMessage(err.message);
       } else {
-        setErrorMessage("Failed to update report cadence.");
+        setErrorMessage(t("parent", "notifications.errorUpdateCadence"));
       }
     } finally {
       setIsSaving(false);
@@ -162,9 +163,9 @@ export function ParentNotificationsScreen() {
   return (
     <ParentPageFrame>
       <PageHeader
-        eyebrow="Guardian Settings"
-        title="Notifications & alert routing"
-        description="Configure how and when you receive session summaries, learning milestones, and urgent safety escalations. Child interfaces never receive alert pings."
+        eyebrow={t("parent", "notifications.eyebrow")}
+        title={t("parent", "notifications.title")}
+        description={t("parent", "notifications.description")}
         action={
           <SnowButton
             variant="ghost"
@@ -173,7 +174,7 @@ export function ParentNotificationsScreen() {
             className="text-xs font-bold"
           >
             <RefreshCw className={cn("mr-1.5 size-3.5", isLoading && "animate-spin")} />
-            Sync Preferences
+            {t("parent", "notifications.syncPrefs")}
           </SnowButton>
         }
       />
@@ -199,26 +200,26 @@ export function ParentNotificationsScreen() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <StatusTile
-          label="Email alerts"
-          value={preferences?.emailAlerts ? "Enabled" : "Off"}
-          detail={preferences?.verifiedEmail ? `To: ${preferences.verifiedEmail}` : "Parent email"}
+          label={t("parent", "notifications.emailAlerts")}
+          value={preferences?.emailAlerts ? t("parent", "notifications.enabled") : t("parent", "notifications.off")}
+          detail={preferences?.verifiedEmail ? t("parent", "notifications.emailTo", { email: preferences.verifiedEmail }) : t("parent", "notifications.parentEmail")}
           icon={<Mail className="size-5 text-snow-primary" />}
         />
         <StatusTile
-          label="Device push"
-          value={preferences?.pushAlerts ? "Active" : "Off"}
+          label={t("parent", "notifications.devicePush")}
+          value={preferences?.pushAlerts ? t("parent", "notifications.active") : t("parent", "notifications.off")}
           detail={
             preferences?.pushDeviceCount !== undefined
-              ? `${preferences.pushDeviceCount} device(s) registered`
-              : "Parent device only"
+              ? t("parent", "notifications.devicesRegistered", { count: preferences.pushDeviceCount })
+              : t("parent", "notifications.parentDeviceOnly")
           }
           icon={<Smartphone className="size-5 text-snow-primary" />}
           tone="bg-snow-ice"
         />
         <StatusTile
-          label="Summary cadence"
+          label={t("parent", "notifications.summaryCadence")}
           value={preferences?.reportCadence ? preferences.reportCadence.toUpperCase() : "WEEKLY"}
-          detail="Calm observation review"
+          detail={t("parent", "notifications.calmReview")}
           icon={<BellRing className="size-5 text-snow-primary" />}
           tone="bg-snow-lavender"
         />
@@ -227,39 +228,39 @@ export function ParentNotificationsScreen() {
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="space-y-5">
           <SettingsSection
-            title="Notification Channels"
-            description="Choose which delivery channels AgentKid may use to reach you."
+            title={t("parent", "notifications.notificationChannels")}
+            description={t("parent", "notifications.channelsDesc")}
           >
             {isLoading ? (
-              <SafetyLoadingSkeleton label="Loading notification preferences..." count={4} />
+              <SafetyLoadingSkeleton label={t("parent", "notifications.loadingPrefs")} count={4} />
             ) : preferences ? (
               <div className="space-y-3">
                 {[
                   {
                     key: "emailAlerts" as const,
-                    title: "Guardian Email Notifications",
-                    detail: "Receives learning summaries, milestone recaps, and account alerts.",
+                    title: t("parent", "notifications.guardianEmail"),
+                    detail: t("parent", "notifications.guardianEmailDesc"),
                     icon: Mail,
                     enabled: preferences.emailAlerts,
                   },
                   {
                     key: "pushAlerts" as const,
-                    title: "Mobile Push Notifications",
-                    detail: "Time-sensitive prompts for consent review or active session breaks.",
+                    title: t("parent", "notifications.mobilePush"),
+                    detail: t("parent", "notifications.mobilePushDesc"),
                     icon: Smartphone,
                     enabled: preferences.pushAlerts,
                   },
                   {
                     key: "emergencySmsAlerts" as const,
-                    title: "Urgent Safety SMS Escalations",
-                    detail: "High-priority SMS alerts delivered to primary emergency contacts.",
+                    title: t("parent", "notifications.urgentSms"),
+                    detail: t("parent", "notifications.urgentSmsDesc"),
                     icon: PhoneCall,
                     enabled: preferences.emergencySmsAlerts,
                   },
                   {
                     key: "weeklyReport" as const,
-                    title: "Weekly Learning & Routine Report",
-                    detail: "Comprehensive Friday recap of practice sessions and conversation insights.",
+                    title: t("parent", "notifications.weeklyReport"),
+                    detail: t("parent", "notifications.weeklyReportDesc"),
                     icon: MessageSquare,
                     enabled: preferences.weeklyReport,
                   },
@@ -287,7 +288,7 @@ export function ParentNotificationsScreen() {
                           type="button"
                           role="switch"
                           aria-checked={channel.enabled}
-                          aria-label={`Toggle ${channel.title}`}
+                          aria-label={t("parent", "notifications.toggle", { title: channel.title })}
                           disabled={isSaving}
                           onClick={() => handleToggleChannel(channel.key)}
                           className={cn(
@@ -311,21 +312,21 @@ export function ParentNotificationsScreen() {
           </SettingsSection>
 
           <SettingsSection
-            title="Delivery Preferences & Dispatch Mode"
-            description="Control delivery channel bundling and notification frequency."
+            title={t("parent", "notifications.deliveryPrefs")}
+            description={t("parent", "notifications.deliveryDesc")}
           >
             {preferences ? (
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-black text-snow-primary-dark">
-                    Preferred Delivery Channel
+                    {t("parent", "notifications.preferredChannel")}
                   </label>
                   <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
                     {[
-                      { id: "email", label: "Email Only" },
-                      { id: "push", label: "Push Only" },
-                      { id: "both", label: "Both (Recommended)" },
-                      { id: "none", label: "Mute All" },
+                      { id: "email", label: t("parent", "notifications.emailOnly") },
+                      { id: "push", label: t("parent", "notifications.pushOnly") },
+                      { id: "both", label: t("parent", "notifications.bothRecommended") },
+                      { id: "none", label: t("parent", "notifications.muteAll") },
                     ].map((opt) => (
                       <button
                         key={opt.id}
@@ -347,24 +348,24 @@ export function ParentNotificationsScreen() {
 
                 <div>
                   <label className="block text-xs font-black text-snow-primary-dark">
-                    Dispatch Frequency
+                    {t("parent", "notifications.dispatchFreq")}
                   </label>
                   <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
                     {[
                       {
                         id: "immediate",
-                        label: "Real-time Immediate",
-                        desc: "Dispatched upon event",
+                        label: t("parent", "notifications.realtime"),
+                        desc: t("parent", "notifications.realtimeDesc"),
                       },
                       {
                         id: "digest_daily",
-                        label: "Daily Digest",
-                        desc: "Batched at 7:00 PM",
+                        label: t("parent", "notifications.dailyDigest"),
+                        desc: t("parent", "notifications.dailyDigestDesc"),
                       },
                       {
                         id: "digest_weekly",
-                        label: "Weekly Digest",
-                        desc: "Batched on Fridays",
+                        label: t("parent", "notifications.weeklyDigest"),
+                        desc: t("parent", "notifications.weeklyDigestDesc"),
                       },
                     ].map((freq) => (
                       <button
@@ -390,7 +391,7 @@ export function ParentNotificationsScreen() {
 
                 <div>
                   <label className="block text-xs font-black text-snow-primary-dark">
-                    Summary Report Cadence
+                    {t("parent", "notifications.summaryCadenceLabel")}
                   </label>
                   <div className="mt-2 flex gap-2">
                     {(["daily", "weekly", "monthly"] as ReportCadence[]).map((cadence) => (
@@ -417,14 +418,13 @@ export function ParentNotificationsScreen() {
         </div>
 
         <aside className="space-y-4">
-          <SettingsSection title="Quiet Hours Protocol">
+          <SettingsSection title={t("parent", "notifications.quietHours")}>
             <div className="flex items-start gap-3 rounded-[var(--radius-md)] bg-snow-surface-soft p-3.5">
               <Moon className="size-5 shrink-0 text-snow-primary" />
               <div className="text-xs">
-                <p className="font-black text-snow-primary-dark">Nighttime Do Not Disturb</p>
+                <p className="font-black text-snow-primary-dark">{t("parent", "notifications.nighttimeDnd")}</p>
                 <p className="mt-1 leading-5 text-snow-muted">
-                  Non-urgent routine updates and milestone summaries are muted between 9:00 PM and
-                  7:00 AM. Emergency escalations bypass quiet hours.
+                  {t("parent", "notifications.dndDesc")}
                 </p>
               </div>
             </div>
@@ -433,11 +433,10 @@ export function ParentNotificationsScreen() {
           <div className="rounded-[var(--radius-lg)] border border-snow-border bg-snow-lavender p-5">
             <div className="flex items-center gap-2">
               <Shield className="size-4 text-snow-primary" />
-              <h2 className="text-sm font-black text-snow-primary-dark">Guardian Exclusivity</h2>
+              <h2 className="text-sm font-black text-snow-primary-dark">{t("parent", "notifications.guardianExclusivity")}</h2>
             </div>
             <p className="mt-2 text-xs font-semibold leading-5 text-snow-primary-dark">
-              Notifications are routed to configured guardian contact channels.
-              Children never see alerts, notification prompts, or system banners in their session UI.
+              {t("parent", "notifications.exclusivityDesc")}
             </p>
           </div>
         </aside>

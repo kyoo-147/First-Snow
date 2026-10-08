@@ -6,6 +6,7 @@ import { Loader2, LogOut } from "lucide-react";
 import { SnowButton } from "@/components/ui/snow-button";
 import { AuthErrorBanner } from "./auth-error-banner";
 import { logoutUser } from "./auth-api";
+import { t } from "@/i18n";
 
 export function LogoutView() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export function LogoutView() {
       if (err instanceof Error) {
         setErrorMessage(err.message);
       } else {
-        setErrorMessage("Unable to complete sign out. Please try again.");
+        setErrorMessage(t("common", "error"));
       }
       setIsLoading(false);
     }
@@ -42,10 +43,10 @@ export function LogoutView() {
 
       <div>
         <h2 className="snow-heading font-black text-snow-primary-dark">
-          Sign Out of AgentKid Snow
+          {t("auth", "logout.confirmTitle")}
         </h2>
         <p className="snow-body-small snow-font-readable mt-1.5 font-semibold text-snow-muted">
-          Your learning progress and settings are safely stored. You can sign back in anytime.
+          {t("auth", "logout.confirmSubtitle")}
         </p>
       </div>
 
@@ -62,10 +63,10 @@ export function LogoutView() {
           {isLoading ? (
             <>
               <Loader2 className="size-4 animate-spin" />
-              Signing out safely...
+              {t("auth", "logout.view.title")}
             </>
           ) : (
-            "Yes, Sign Out"
+            t("auth", "logout.title")
           )}
         </SnowButton>
 
@@ -76,7 +77,7 @@ export function LogoutView() {
           variant="ghost"
           className="w-full text-sm font-extrabold"
         >
-          Stay Signed In
+          {t("auth", "logout.staySignedIn")}
         </SnowButton>
       </div>
     </div>
