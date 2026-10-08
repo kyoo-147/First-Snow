@@ -21,20 +21,20 @@ import {
 import type { LessonCardData, MoodOption, ParentInsight, SnowNavItem, ParentNavGroup } from "@/types/snow";
 
 export const childSidebarItems: SnowNavItem[] = [
-  { label: "Home", href: "/session/home", icon: Home, key: "home" },
-  { label: "Lessons", href: "/session/lessons", icon: BookOpen, key: "lessons" },
-  { label: "AI Companion", href: "/companion", icon: Sparkles, key: "companion" },
-  { label: "Activities", href: "/session/activities", icon: Activity, key: "activities" },
-  { label: "Routine", href: "/session/routine", icon: CalendarCheck, key: "routine" },
-  { label: "Settings", href: "/session/settings", icon: Settings, key: "settings" },
+  { label: "Trang chủ", href: "/session/home", icon: Home, key: "home" },
+  { label: "Bài học", href: "/session/lessons", icon: BookOpen, key: "lessons" },
+  { label: "Trợ lý AI", href: "/companion", icon: Sparkles, key: "companion" },
+  { label: "Hoạt động", href: "/session/activities", icon: Activity, key: "activities" },
+  { label: "Lịch trình", href: "/session/routine", icon: CalendarCheck, key: "routine" },
+  { label: "Cài đặt", href: "/session/settings", icon: Settings, key: "settings" },
 ];
 
 export const topNavItems: SnowNavItem[] = [
-  { label: "Home", href: "/session/home", icon: Home, key: "home" },
-  { label: "Companion", href: "/companion", icon: Sparkles, key: "companion" },
-  { label: "Lessons", href: "/session/lessons", icon: BookOpen, key: "lessons" },
-  { label: "Feelings", href: "/session/activities", icon: Heart, key: "feelings" },
-  { label: "Routine", href: "/session/routine", icon: CalendarCheck, key: "routine" },
+  { label: "Trang chủ", href: "/session/home", icon: Home, key: "home" },
+  { label: "Trợ lý", href: "/companion", icon: Sparkles, key: "companion" },
+  { label: "Bài học", href: "/session/lessons", icon: BookOpen, key: "lessons" },
+  { label: "Cảm xúc", href: "/session/activities", icon: Heart, key: "feelings" },
+  { label: "Lịch trình", href: "/session/routine", icon: CalendarCheck, key: "routine" },
 ];
 
 export const parentNavGroups: ParentNavGroup[] = [
@@ -71,10 +71,10 @@ export const parentNavGroups: ParentNavGroup[] = [
 export const lessons: LessonCardData[] = [
   {
     id: "magic-word-box",
-    title: "The Magic Word Box",
-    subtitle: "Letters and sounds",
-    subject: "English",
-    duration: "15 min",
+    title: "Hộp từ ngữ diệu kỳ",
+    subtitle: "Chữ cái và âm thanh",
+    subject: "Tiếng Anh",
+    duration: "15 phút",
     rating: "4.8",
     image: "/images/lesson-abc.png",
     accent: "primary",
@@ -82,10 +82,10 @@ export const lessons: LessonCardData[] = [
   },
   {
     id: "baby-penguins",
-    title: "Count with Baby Penguins",
-    subtitle: "Numbers 1-10",
-    subject: "Math",
-    duration: "12 min",
+    title: "Đếm cùng chim cánh cụt",
+    subtitle: "Các số từ 1 đến 10",
+    subject: "Toán học",
+    duration: "12 phút",
     rating: "4.9",
     image: "/images/lesson-math.png",
     accent: "aqua",
@@ -93,10 +93,10 @@ export const lessons: LessonCardData[] = [
   },
   {
     id: "brave-little-fox",
-    title: "The Brave Little Fox",
-    subtitle: "Kindness story",
-    subject: "Story Time",
-    duration: "18 min",
+    title: "Chú cáo nhỏ dũng cảm",
+    subtitle: "Câu chuyện về lòng tốt",
+    subject: "Kể chuyện",
+    duration: "18 phút",
     rating: "4.8",
     image: "/images/lesson-story.png",
     accent: "peach",
@@ -104,10 +104,10 @@ export const lessons: LessonCardData[] = [
   },
   {
     id: "sharing-caring",
-    title: "Sharing is Caring",
-    subtitle: "Friendship",
-    subject: "Social Skills",
-    duration: "10 min",
+    title: "Chia sẻ là yêu thương",
+    subtitle: "Tình bạn diệu kỳ",
+    subject: "Kỹ năng xã hội",
+    duration: "10 phút",
     rating: "4.7",
     image: "/images/lesson-social.png",
     accent: "pink",
@@ -116,12 +116,12 @@ export const lessons: LessonCardData[] = [
 ];
 
 export const moods: MoodOption[] = [
-  { label: "Calm", value: "calm", description: "Soft voice and gentle pace" },
-  { label: "Happy", value: "happy", description: "Warm encouragement" },
-  { label: "Excited", value: "excited", description: "Playful learning energy" },
-  { label: "Thinking", value: "thinking", description: "Extra time to answer" },
-  { label: "Encouraging", value: "encouraging", description: "More supportive prompts" },
-  { label: "Sleepy", value: "sleepy", description: "Quiet routine mode" },
+  { label: "Bình tĩnh", value: "calm", description: "Giọng nói êm dịu và nhịp độ chậm rãi" },
+  { label: "Vui vẻ", value: "happy", description: "Sự khích lệ ấm áp" },
+  { label: "Hào hứng", value: "excited", description: "Năng lượng học tập vui tươi" },
+  { label: "Suy nghĩ", value: "thinking", description: "Thêm thời gian suy nghĩ để trả lời" },
+  { label: "Khích lệ", value: "encouraging", description: "Thêm những lời động viên nâng đỡ" },
+  { label: "Buồn ngủ", value: "sleepy", description: "Chế độ lịch trình êm dịu" },
 ];
 
 export const parentInsights: ParentInsight[] = [
@@ -146,15 +146,15 @@ export const parentInsights: ParentInsight[] = [
 ];
 
 export const dailyTools = [
-  { title: "Breathing Exercise", subtitle: "2-5 min", icon: Brain },
-  { title: "Calm Story", subtitle: "Relax and listen", icon: BookOpen },
-  { title: "Feelings Check-in", subtitle: "Name how you feel", icon: Heart },
-  { title: "Ask for Help", subtitle: "Talk to a grown-up", icon: ShieldCheck },
+  { title: "Bài tập hít thở", subtitle: "2-5 phút", icon: Brain },
+  { title: "Câu chuyện nhẹ nhàng", subtitle: "Thư giãn và lắng nghe", icon: BookOpen },
+  { title: "Kiểm tra cảm xúc", subtitle: "Nói lên cảm xúc của bạn", icon: Heart },
+  { title: "Nhờ người lớn giúp", subtitle: "Trò chuyện cùng người lớn", icon: ShieldCheck },
 ];
 
 export const routeCards = [
-  { href: "/companion", title: "Talk with AgentKid", subtitle: "Ask anything or practice together.", icon: Sparkles },
-  { href: "/session/routine", title: "Today's Routine", subtitle: "See your plan, tasks, and goals.", icon: CalendarCheck },
-  { href: "/session/lessons", title: "Feelings and Emotions", subtitle: "Learn about feelings and kind choices.", icon: Heart },
-  { href: "/session/activities", title: "Feeling Check-in", subtitle: "Name how today feels and choose a calm next step.", icon: Activity },
+  { href: "/companion", title: "Trò chuyện cùng AgentKid", subtitle: "Hỏi bất cứ điều gì hoặc cùng nhau luyện tập.", icon: Sparkles },
+  { href: "/session/routine", title: "Lịch trình hôm nay", subtitle: "Xem kế hoạch, nhiệm vụ và mục tiêu của bạn.", icon: CalendarCheck },
+  { href: "/session/lessons", title: "Cảm xúc và tâm trạng", subtitle: "Tìm hiểu về cảm xúc và những lựa chọn tử tế.", icon: Heart },
+  { href: "/session/activities", title: "Kiểm tra cảm xúc", subtitle: "Cảm nhận ngày hôm nay và chọn bước tiếp theo thật nhẹ nhàng.", icon: Activity },
 ];

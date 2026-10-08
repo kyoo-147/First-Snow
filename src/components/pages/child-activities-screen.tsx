@@ -14,19 +14,20 @@ import {
   type DashboardRoutine,
 } from "@/lib/dashboard-client";
 import { cn } from "@/lib/utils";
-
-const moods = [
-  { label: "Happy", icon: Smile, tone: "bg-snow-peach text-snow-primary-dark" },
-  { label: "Excited", icon: Sparkles, tone: "bg-snow-primary text-white" },
-  { label: "Calm", icon: Sun, tone: "bg-snow-aqua text-snow-primary-dark" },
-  { label: "Need a break", icon: Heart, tone: "bg-snow-lavender text-snow-primary-dark" },
-];
+import { t } from "@/i18n";
 
 export function ChildActivitiesScreen() {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [routines, setRoutines] = useState<DashboardRoutine[]>([]);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const moods = [
+    { label: t("child", "activities.moods.happy"), icon: Smile, tone: "bg-snow-peach text-snow-primary-dark" },
+    { label: t("child", "activities.moods.excited"), icon: Sparkles, tone: "bg-snow-primary text-white" },
+    { label: t("child", "activities.moods.calm"), icon: Sun, tone: "bg-snow-aqua text-snow-primary-dark" },
+    { label: t("child", "activities.moods.needBreak"), icon: Heart, tone: "bg-snow-lavender text-snow-primary-dark" },
+  ];
 
   useEffect(() => {
     let ignore = false;
@@ -64,20 +65,20 @@ export function ChildActivitiesScreen() {
       <ChildSessionFrame>
         <div className="flex min-h-[400px] flex-col items-center justify-center p-8">
           <Loader2 className="size-8 animate-spin text-snow-primary" />
-          <p className="mt-4 text-sm font-bold text-snow-muted">Loading check-in...</p>
+          <p className="mt-4 text-sm font-bold text-snow-muted">{t("child", "activities.loading")}</p>
         </div>
       </ChildSessionFrame>
     );
   }
 
-  const childGreeting = session?.actorType === "child" ? `Hi ${session.child.name}` : undefined;
+  const childGreeting = session?.actorType === "child" ? t("child", "home.hiChild", { name: session.child.name }) : undefined;
 
   return (
     <ChildSessionFrame>
       <PageHeader
         eyebrow={childGreeting}
-        title="How are you feeling?"
-        description="Pick one card. AgentKid can help with a calm next step."
+        title={t("child", "activities.howAreYouFeeling")}
+        description={t("child", "activities.pickCardDesc")}
         compact
       />
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
@@ -88,18 +89,18 @@ export function ChildActivitiesScreen() {
                 <Image src="/images/snow-mascot-ui.png" alt="" fill sizes="150px" className="object-contain" />
               </div>
               <div className="mt-4 rounded-[var(--radius-lg)] bg-snow-surface p-4">
-                <p className="text-sm font-black text-snow-primary-dark">AgentKid says</p>
+                <p className="text-sm font-black text-snow-primary-dark">{t("child", "activities.agentKidSays")}</p>
                 <p className="mt-2 text-sm font-semibold leading-6 text-snow-muted">
-                  Pick the feeling that fits best. One calm choice is enough.
+                  {t("child", "activities.pickFeelingDesc")}
                 </p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="flex items-center justify-between gap-3 rounded-[var(--radius-lg)] bg-snow-primary-soft px-4 py-3">
-                <p className="text-sm font-black text-snow-primary-dark">Feeling check-in</p>
+                <p className="text-sm font-black text-snow-primary-dark">{t("child", "activities.todayCheckIn")}</p>
                 <span className="rounded-full bg-snow-surface px-3 py-1 text-xs font-black text-snow-primary">
-                  {selectedMood ? "Ready to proceed" : "Step 1 of 2"}
+                  {selectedMood ? t("child", "activities.readyToProceed") : t("child", "activities.step1of2")}
                 </span>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
@@ -141,13 +142,13 @@ export function ChildActivitiesScreen() {
               <div className="min-w-0">
                 <p className="text-base font-black text-snow-primary-dark">
                   {totalSteps > 0
-                    ? `Today's routine: ${completedSteps} of ${totalSteps} step(s) done`
-                    : "Today's check-in"}
+                    ? t("child", "activities.checkInDone", { completed: completedSteps, total: totalSteps })
+                    : t("child", "activities.todayCheckIn")}
                 </p>
                 <p className="mt-1 text-sm font-semibold leading-6 text-snow-muted">
                   {selectedMood
-                    ? `You picked "${selectedMood}". AgentKid can help with one small next step.`
-                    : "After your check-in, AgentKid can help with the next small step."}
+                    ? t("child", "activities.selectedMoodDesc", { mood: selectedMood })
+                    : t("child", "activities.afterCheckIn")}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-3">
                   {selectedMood ? (
@@ -155,18 +156,18 @@ export function ChildActivitiesScreen() {
                       href={`/companion?mood=${encodeURIComponent(selectedMood)}`}
                       className="snow-interactive-card snow-focus-ring inline-flex min-h-11 items-center rounded-full bg-snow-primary px-5 text-sm font-black text-white snow-pop-soft"
                     >
-                      Continue with AgentKid
+                      {t("child", "activities.continueWithSnow")}
                     </Link>
                   ) : (
                     <p className="inline-flex min-h-11 items-center rounded-full bg-snow-primary-soft px-5 text-sm font-black text-snow-primary">
-                      Pick one feeling to continue.
+                      {t("child", "activities.pickOneToContinue")}
                     </p>
                   )}
                   <Link
                     href="/session/routine"
                     className="snow-focus-ring inline-flex min-h-11 items-center rounded-full border border-snow-border px-5 text-sm font-black text-snow-primary-dark"
                   >
-                    See routine
+                    {t("child", "activities.seeRoutine")}
                   </Link>
                 </div>
               </div>
@@ -176,24 +177,24 @@ export function ChildActivitiesScreen() {
 
         <aside className="grid gap-4 self-start">
           <SnowCard className="p-5">
-            <p className="text-xs font-black text-snow-primary">Daily goal</p>
-            <p className="mt-2 text-lg font-black text-snow-primary-dark">Pick one feeling, then return to your routine.</p>
+            <p className="text-xs font-black text-snow-primary">{t("child", "activities.dailyGoalTitle")}</p>
+            <p className="mt-2 text-lg font-black text-snow-primary-dark">{t("child", "activities.dailyGoalDesc")}</p>
             <div className="mt-4 rounded-full bg-snow-surface-soft px-4 py-3 text-sm font-semibold text-snow-muted">
-              One calm check-in is enough for this step.
+              {t("child", "activities.dailyGoalNote")}
             </div>
           </SnowCard>
           <SnowCard className="p-5">
-            <p className="text-xs font-black text-snow-primary">AgentKid can help next</p>
-            <p className="mt-2 text-lg font-black text-snow-primary-dark">Talk first, then return to routine.</p>
+            <p className="text-xs font-black text-snow-primary">{t("child", "activities.agentKidCanHelpTitle")}</p>
+            <p className="mt-2 text-lg font-black text-snow-primary-dark">{t("child", "activities.agentKidCanHelpDesc")}</p>
             <p className="mt-2 text-sm font-semibold leading-6 text-snow-muted">
-              Feelings screens should stay short and gentle, not crowded.
+              {t("child", "activities.feelingsScreenNote")}
             </p>
           </SnowCard>
           <div className="rounded-[var(--radius-xl)] bg-snow-primary-soft p-5">
             <Sparkles className="size-6 text-snow-primary" />
-            <p className="mt-4 text-lg font-black text-snow-primary-dark">Calm choices only</p>
+            <p className="mt-4 text-lg font-black text-snow-primary-dark">{t("child", "activities.calmChoicesTitle")}</p>
             <p className="mt-2 text-sm font-semibold leading-6 text-snow-muted">
-              AgentKid keeps one simple next action visible after a feeling is picked.
+              {t("child", "activities.calmChoicesDesc")}
             </p>
           </div>
         </aside>

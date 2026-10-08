@@ -27,6 +27,8 @@ import { ModeProvider } from "@/vtuber-app/src/context/mode-context";
 import Sidebar from "@/vtuber-app/src/components/sidebar/sidebar";
 import Footer from "@/vtuber-app/src/components/footer/footer";
 
+import { t } from "@/i18n";
+
 declare global {
   interface Window {
     getLAppAdapter?: () => unknown;
@@ -154,7 +156,7 @@ export function VtuberApp() {
       <div className="flex min-h-[50vh] flex-col items-center justify-center p-10 text-white">
         <div className="size-8 animate-spin rounded-full border-3 border-snow-primary-soft border-t-white" />
         <p className="mt-4 text-sm font-semibold tracking-wide text-white/90">
-          Initializing voice companion...
+          {t("companion", "wrapper.initializing")}
         </p>
       </div>
     );

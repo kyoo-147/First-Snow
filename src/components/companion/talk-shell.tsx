@@ -26,6 +26,7 @@ import {
 } from "@/lib/companion-client";
 import type { CompanionMessage } from "@/lib/companion-client";
 import { cn } from "@/lib/utils";
+import { t } from "@/i18n";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -40,11 +41,11 @@ type OptimisticMessage = CompanionMessage & {
 };
 
 const moodData = [
-  { label: "Happy" as Mood, icon: Star, bg: "bg-snow-warning/20", color: "text-snow-warning" },
-  { label: "Worried" as Mood, icon: Cloud, bg: "bg-snow-aqua/20", color: "text-snow-aqua" },
-  { label: "Angry" as Mood, icon: Flame, bg: "bg-snow-peach/30", color: "text-snow-danger" },
-  { label: "Excited" as Mood, icon: Sparkles, bg: "bg-snow-success/20", color: "text-snow-success" },
-  { label: "Sleepy" as Mood, icon: Moon, bg: "bg-snow-primary/20", color: "text-snow-primary" },
+  { key: "Happy" as Mood, labelKey: "happy" as const, icon: Star, bg: "bg-snow-warning/20", color: "text-snow-warning" },
+  { key: "Worried" as Mood, labelKey: "worried" as const, icon: Cloud, bg: "bg-snow-aqua/20", color: "text-snow-aqua" },
+  { key: "Angry" as Mood, labelKey: "angry" as const, icon: Flame, bg: "bg-snow-peach/30", color: "text-snow-danger" },
+  { key: "Excited" as Mood, labelKey: "excited" as const, icon: Sparkles, bg: "bg-snow-success/20", color: "text-snow-success" },
+  { key: "Sleepy" as Mood, labelKey: "sleepy" as const, icon: Moon, bg: "bg-snow-primary/20", color: "text-snow-primary" },
 ];
 
 export function getCompanionSessionStorageKey(childId: string): string {
@@ -59,7 +60,7 @@ const SEND_TIMEOUT_MS = 30000;
 function parseApiError(e: unknown): string {
   if (e instanceof CompanionApiError) return e.message;
   if (e instanceof Error) return e.message;
-  return "Something went wrong";
+  return t("companion", "error.connectionFailed");
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -218,7 +219,7 @@ export function TalkShell({ childId }: { childId: string }) {
         setMessages((prev) =>
           prev.map((m) =>
             m._clientKey === clientKey && m._status === "pending"
-              ? { ...m, _status: "error" as MessageStatus, _error: "Request timed out" }
+              ? { ...m, _status: "error" as MessageStatus, _error: t("companion", "talk.timedOut") }
               : m,
           ),
         );
@@ -261,10 +262,10 @@ export function TalkShell({ childId }: { childId: string }) {
   }, [inputText, isSending, sessionId, doSend]);
 
   const handleMoodSelect = useCallback(
-    (mood: Mood) => {
+    (moodKey: Mood, label: string) => {
       if (!sessionId) return;
-      const clientKey = `mood-${mood}-${Date.now()}`;
-      doSend(`I feel ${mood.toLowerCase()}.`, clientKey);
+      const clientKey = `mood-${moodKey}-${Date.now()}`;
+      doSend(`Tôi cảm thấy ${label.toLowerCase()}.`, clientKey);
     },
     [sessionId, doSend],
   );
@@ -305,11 +306,11 @@ export function TalkShell({ childId }: { childId: string }) {
         <div
           role="status"
           aria-busy="true"
-          aria-label="Starting your session with AgentKid"
+          aria-label={t("companion", "talk.startingSession")}
           className="flex flex-1 flex-col items-center justify-center gap-3 p-8 text-snow-muted"
         >
           <Loader2 className="size-8 animate-spin text-snow-primary" />
-          <p className="text-sm font-bold">Starting your session…</p>
+          <p className="text-sm font-bold">{t("companion", "talk.startingSession")}</p>
         </div>
       )}
 
@@ -327,7 +328,7 @@ export function TalkShell({ childId }: { childId: string }) {
             className="snow-focus-ring inline-flex min-h-11 items-center gap-2 rounded-full bg-snow-primary px-6 text-sm font-extrabold text-white"
           >
             <RefreshCw className="size-4" />
-            Try again
+            {t("companion", "talk.retry")}
           </button>
         </div>
       )}
@@ -338,20 +339,21 @@ export function TalkShell({ childId }: { childId: string }) {
           {/* Mood picker */}
           <div className="shrink-0 border-b border-snow-border px-6 py-5">
             <h2 className="mb-1 text-xl font-black text-snow-primary-dark">
-              How are you feeling today?
+              {t("companion", "talk.howAreYouFeeling")}
             </h2>
             <p className="mb-4 text-sm font-semibold text-snow-muted">
-              Pick a feeling or talk to AgentKid.
+              {t("companion", "talk.pickFeelingOrTalk")}
             </p>
             <div className="flex flex-wrap gap-4">
               {moodData.map((m) => {
                 const Icon = m.icon;
+                const label = t("companion", `talk.moods.${m.labelKey}`);
                 return (
                   <button
-                    key={m.label}
+                    key={m.key}
                     type="button"
-                    onClick={() => handleMoodSelect(m.label)}
-                    aria-label={`I feel ${m.label.toLowerCase()}`}
+                    onClick={() => handleMoodSelect(m.key, label)}
+                    aria-label={`Tôi cảm thấy ${label.toLowerCase()}`}
                     className={cn(
                       "snow-focus-ring flex h-28 w-24 flex-col items-center justify-center rounded-[var(--radius-lg)] border border-white/50 p-4 shadow-sm transition-transform hover:-translate-y-1",
                       m.bg,
@@ -359,7 +361,7 @@ export function TalkShell({ childId }: { childId: string }) {
                   >
                     <Icon className={cn("mb-2 size-9", m.color)} />
                     <span className={cn("text-sm font-black", m.color)}>
-                      {m.label}
+                      {label}
                     </span>
                   </button>
                 );
@@ -372,12 +374,12 @@ export function TalkShell({ childId }: { childId: string }) {
             ref={listRef}
             role="log"
             aria-live="polite"
-            aria-label="Conversation with AgentKid"
+            aria-label={t("companion", "talk.title")}
             className="snow-scrollbar min-h-0 flex-1 space-y-6 overflow-y-auto p-6"
           >
             {messages.length === 0 && (
               <p className="text-center text-sm font-semibold text-snow-muted">
-                Say hello to AgentKid!
+                {t("companion", "talk.sayHello")}
               </p>
             )}
             {messages.map((msg) => {
@@ -414,7 +416,7 @@ export function TalkShell({ childId }: { childId: string }) {
                     {/* Sender + time */}
                     <div className="mb-1 flex items-center gap-2 px-1">
                       <span className="text-xs font-black text-snow-primary-dark">
-                        {isChild ? "You" : "AgentKid"}
+                        {isChild ? t("companion", "talk.you") : t("companion", "talk.agentKid")}
                       </span>
                       <span className="text-[10px] font-bold text-snow-muted">
                         {new Date(msg.createdAt).toLocaleTimeString([], {
@@ -426,7 +428,7 @@ export function TalkShell({ childId }: { childId: string }) {
                       {isChild && status === "pending" && (
                         <Loader2
                           className="size-3 animate-spin text-snow-muted"
-                          aria-label="Sending…"
+                          aria-label={t("companion", "talk.sending")}
                         />
                       )}
                     </div>
@@ -448,7 +450,7 @@ export function TalkShell({ childId }: { childId: string }) {
                     {isChild && status === "error" && clientKey && (
                       <div className="mt-2 flex items-center gap-2">
                         <span className="text-xs font-bold text-snow-danger">
-                          {error ?? "Failed to send"}
+                          {error ?? t("companion", "talk.failedToSend")}
                         </span>
                         <button
                           type="button"
@@ -456,7 +458,7 @@ export function TalkShell({ childId }: { childId: string }) {
                           className="snow-focus-ring inline-flex items-center gap-1 rounded-full border border-snow-danger/30 bg-snow-danger/10 px-3 py-1 text-xs font-bold text-snow-danger transition hover:bg-snow-danger/20"
                         >
                           <RefreshCw className="size-3" />
-                          Retry
+                          {t("companion", "talk.retry")}
                         </button>
                       </div>
                     )}
@@ -469,21 +471,21 @@ export function TalkShell({ childId }: { childId: string }) {
                           className="flex items-center gap-2 rounded-full border border-snow-success/20 bg-snow-success/10 px-4 py-2 text-xs font-bold text-snow-success"
                         >
                           <Leaf className="size-4" />
-                          Yes, let&apos;s try
+                          {t("companion", "talk.breathingAction")}
                         </button>
                         <button
                           type="button"
                           className="flex items-center gap-2 rounded-full border border-snow-aqua/20 bg-snow-aqua/10 px-4 py-2 text-xs font-bold text-snow-aqua"
                         >
                           <BookOpen className="size-4" />
-                          Tell me a calm story
+                          {t("companion", "talk.storyAction")}
                         </button>
                         <button
                           type="button"
                           className="flex items-center gap-2 rounded-full border border-snow-peach/20 bg-snow-peach/10 px-4 py-2 text-xs font-bold text-snow-peach"
                         >
                           <Heart className="size-4" />
-                          I need more help
+                          {t("companion", "talk.helpAction")}
                         </button>
                       </div>
                     )}
@@ -495,7 +497,7 @@ export function TalkShell({ childId }: { childId: string }) {
                       <div className="grid size-10 place-items-center overflow-hidden rounded-full border-2 border-snow-surface bg-snow-ice">
                         <Image
                           src="/images/snow-avatar-final.png"
-                          alt="You"
+                          alt={t("companion", "talk.you")}
                           width={40}
                           height={40}
                         />
@@ -513,7 +515,7 @@ export function TalkShell({ childId }: { childId: string }) {
               {/* Mic — disabled, no camera/voice in text UI */}
               <button
                 type="button"
-                aria-label="Voice input not available"
+                aria-label={t("companion", "talk.voiceDisabledAria")}
                 aria-disabled="true"
                 disabled
                 className="grid size-12 shrink-0 cursor-not-allowed place-items-center rounded-full bg-snow-surface-soft text-snow-muted opacity-50"
@@ -531,8 +533,8 @@ export function TalkShell({ childId }: { childId: string }) {
                     handleSend();
                   }
                 }}
-                aria-label="Type a message to AgentKid"
-                placeholder="Tap to talk with AgentKid…"
+                aria-label={t("companion", "talk.tapToTalk")}
+                placeholder={t("companion", "talk.tapToTalk")}
                 className="min-w-0 flex-1 bg-transparent px-4 py-2 text-base font-semibold text-snow-primary-dark outline-none placeholder:text-snow-muted/60"
                 disabled={isSending || !sessionId}
               />
@@ -540,7 +542,7 @@ export function TalkShell({ childId }: { childId: string }) {
               <button
                 type="button"
                 onClick={handleSend}
-                aria-label="Send message"
+                aria-label={t("companion", "talk.sendAria")}
                 disabled={isSending || !inputText.trim() || !sessionId}
                 className="snow-focus-ring grid size-12 shrink-0 place-items-center rounded-full bg-snow-lavender text-snow-primary transition hover:bg-snow-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
               >

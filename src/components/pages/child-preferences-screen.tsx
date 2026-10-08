@@ -1,39 +1,40 @@
 import { BellOff, HelpCircle, Mic, Moon, Type } from "lucide-react";
 import { ChildSessionFrame, PageHeader, SettingsSection } from "@/components/layout/snow-page-frame";
-
-const preferences = [
-  {
-    title: "AgentKid voice",
-    description: "Use a calm voice during sessions.",
-    icon: Mic,
-    value: "Calm",
-  },
-  {
-    title: "Big text",
-    description: "Make reading choices easier to see.",
-    icon: Type,
-    value: "On",
-  },
-  {
-    title: "Quiet animations",
-    description: "Keep movement soft and slow.",
-    icon: Moon,
-    value: "On",
-  },
-  {
-    title: "Sound reminders",
-    description: "Gentle sounds when a step is ready.",
-    icon: BellOff,
-    value: "Soft",
-  },
-];
+import { t } from "@/i18n";
 
 export function ChildPreferencesScreen() {
+  const preferences = [
+    {
+      title: t("child", "preferences.voiceTitle"),
+      description: t("child", "preferences.voiceDesc"),
+      icon: Mic,
+      value: t("child", "preferences.calm"),
+    },
+    {
+      title: t("child", "preferences.textTitle"),
+      description: t("child", "preferences.textDesc"),
+      icon: Type,
+      value: t("child", "preferences.on"),
+    },
+    {
+      title: t("child", "preferences.motionTitle"),
+      description: t("child", "preferences.motionDesc"),
+      icon: Moon,
+      value: t("child", "preferences.on"),
+    },
+    {
+      title: t("child", "preferences.soundTitle"),
+      description: t("child", "preferences.soundDesc"),
+      icon: BellOff,
+      value: t("child", "preferences.soft"),
+    },
+  ];
+
   return (
     <ChildSessionFrame className="justify-center">
       <PageHeader
-        title="My AgentKid preferences"
-        description="Small choices for how AgentKid talks and helps during learning. A grown-up manages privacy and safety settings."
+        title={t("child", "preferences.title")}
+        description={t("child", "preferences.description")}
         compact
       />
       <div className="grid gap-4 md:grid-cols-2">
@@ -62,9 +63,9 @@ export function ChildPreferencesScreen() {
             <HelpCircle className="size-5" />
           </div>
           <div>
-            <p className="text-base font-black text-snow-primary-dark">Need help changing something?</p>
+            <p className="text-base font-black text-snow-primary-dark">{t("child", "preferences.needHelpTitle")}</p>
             <p className="mt-1 text-sm font-semibold leading-6 text-snow-primary-dark">
-              Ask a grown-up to open Parent Access for privacy, camera, storage, and safety choices.
+              {t("child", "preferences.needHelpDesc")}
             </p>
           </div>
         </div>

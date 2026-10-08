@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { t } from "@/i18n";
 
 const VtuberApp = dynamic(
   () => import("@/components/vtuber-wrapper").then((mod) => mod.VtuberApp),
@@ -17,7 +18,7 @@ export default function AvatarCompanionPage() {
         className="snow-focus-ring fixed left-4 top-4 z-[60] inline-flex min-h-11 items-center gap-2 rounded-full bg-white/95 px-4 text-sm font-black text-snow-primary-dark shadow-[var(--shadow-card)] backdrop-blur transition hover:bg-white"
       >
         <ChevronLeft className="size-4" />
-        Back to AgentKid app
+        {t("companion", "avatar.backToApp")}
       </Link>
       <VtuberApp />
     </main>

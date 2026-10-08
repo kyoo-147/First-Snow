@@ -4,6 +4,7 @@ import { Clock, Star } from "lucide-react";
 import type { LessonCardData } from "@/types/snow";
 import type { LessonSummary } from "@/lib/learning-client";
 import { ProgressStrip } from "@/components/ui/progress-strip";
+import { t } from "@/i18n";
 
 const accentClass: Record<string, string> = {
   primary: "bg-snow-primary-soft text-snow-primary-dark",
@@ -16,7 +17,10 @@ const accentClass: Record<string, string> = {
 export function LessonCard({ lesson }: { lesson: LessonCardData | LessonSummary }) {
   const accent = (lesson.accent && accentClass[lesson.accent]) ? accentClass[lesson.accent] : accentClass.primary;
   const image = lesson.image || "/images/lesson-abc.png";
-  const duration = "duration" in lesson && lesson.duration ? lesson.duration : `${(lesson as LessonSummary).estimatedMinutes || 12} min`;
+  const rawDuration = "duration" in lesson && lesson.duration ? lesson.duration : `${(lesson as LessonSummary).estimatedMinutes || 12}`;
+  const duration = rawDuration.includes("phút")
+    ? rawDuration
+    : t("learning", "lesson.duration", { minutes: rawDuration.replace(/\D/g, "") || "12" });
   const rating = lesson.rating || "4.8";
 
   return (

@@ -27,10 +27,11 @@ import {
   type DashboardLesson,
   type DashboardRoutine,
 } from "@/lib/dashboard-client";
+import { t } from "@/i18n";
 
 export function HomeScreen() {
   const [session, setSession] = useState<AuthSession | null>(null);
-  const [childName, setChildName] = useState<string>("there");
+  const [childName, setChildName] = useState<string>("bạn");
   const [lessons, setLessons] = useState<DashboardLesson[]>([]);
   const [routines, setRoutines] = useState<DashboardRoutine[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -62,7 +63,7 @@ export function HomeScreen() {
             setChildName(householdChildren[0].name);
             activeChildId = householdChildren[0].id;
           } else {
-            setChildName(auth.user.name || "there");
+            setChildName(auth.user.name || "bạn");
           }
         }
 
@@ -96,7 +97,7 @@ export function HomeScreen() {
       <ChildSessionFrame className="gap-4">
         <div className="flex min-h-[400px] flex-col items-center justify-center p-8">
           <Loader2 className="size-10 animate-spin text-snow-primary" />
-          <p className="mt-4 text-base font-bold text-snow-primary-dark">Loading your calm space...</p>
+          <p className="mt-4 text-base font-bold text-snow-primary-dark">{t("child", "home.loading")}</p>
         </div>
       </ChildSessionFrame>
     );
@@ -107,11 +108,11 @@ export function HomeScreen() {
       <ChildSessionFrame className="gap-4">
         <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center">
           <AlertCircle className="size-10 text-snow-error" />
-          <h2 className="mt-3 text-lg font-black text-snow-primary-dark">Unable to load session</h2>
+          <h2 className="mt-3 text-lg font-black text-snow-primary-dark">{t("child", "home.sessionError")}</h2>
           <p className="mt-2 text-sm font-semibold text-snow-muted">{error}</p>
           <SnowButton variant="soft" onClick={reload} className="mt-4">
             <RefreshCw className="mr-2 size-4" />
-            Try again
+            {t("common", "retry")}
           </SnowButton>
         </div>
       </ChildSessionFrame>
@@ -121,29 +122,29 @@ export function HomeScreen() {
   const primaryActions = [
     {
       href: "/companion",
-      title: "Talk with AgentKid",
-      subtitle: "Start a calm conversation.",
+      title: t("child", "home.talkAction"),
+      subtitle: t("child", "home.startConversation"),
       icon: Sparkles,
       tone: "from-snow-primary to-snow-pink",
     },
     {
       href: "/session/routine",
-      title: "Today's Routine",
-      subtitle: routines.length > 0 ? `${routines.length} routine(s) ready.` : "See the next gentle step.",
+      title: t("child", "home.routineAction"),
+      subtitle: routines.length > 0 ? t("child", "home.routineReady", { count: routines.length }) : t("child", "home.routineStepHint"),
       icon: CalendarCheck,
       tone: "from-snow-primary to-snow-aqua",
     },
     {
       href: "/session/lessons",
-      title: "Practice Lesson",
-      subtitle: lessons.length > 0 ? `${lessons.length} lesson(s) available.` : "Try one short activity.",
+      title: t("child", "home.lessonsAction"),
+      subtitle: lessons.length > 0 ? t("child", "home.lessonsAvailable", { count: lessons.length }) : t("child", "home.lessonsTryOne"),
       icon: BookOpen,
       tone: "from-snow-aqua to-snow-success",
     },
     {
       href: "/session/activities",
-      title: "Feeling Check-in",
-      subtitle: "Name how today feels.",
+      title: t("child", "home.feelingAction"),
+      subtitle: t("child", "home.feelingSubtitle"),
       icon: Heart,
       tone: "from-snow-peach to-snow-pink",
     },
@@ -158,12 +159,12 @@ export function HomeScreen() {
         <div className="relative overflow-hidden rounded-[var(--radius-xl)] bg-gradient-to-r from-snow-ice via-snow-surface-soft to-snow-lavender">
           <div className="grid min-h-[250px] gap-4 px-6 py-7 md:px-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-center">
             <div className="relative z-10 min-w-0">
-              <p className="text-sm font-black text-snow-primary">Hi {childName}</p>
+              <p className="text-sm font-black text-snow-primary">{t("child", "home.hiChild", { name: childName })}</p>
               <h1 className="snow-title mt-2 max-w-[620px] font-black text-snow-primary-dark md:text-[42px]">
-                Start with AgentKid, then pick one small step.
+                {t("child", "home.heroTitle")}
               </h1>
               <p className="snow-body-copy snow-font-readable mt-4 max-w-[520px] font-semibold text-snow-muted">
-                Choose a calm conversation, a short lesson, a feeling check, or today&apos;s routine.
+                {t("child", "home.heroSubtitle")}
               </p>
             </div>
             <div className="relative hidden h-[210px] lg:block snow-float-soft">
@@ -185,9 +186,9 @@ export function HomeScreen() {
         >
           <div>
             <Sparkles className="size-7" />
-            <h2 className="mt-5 text-[28px] font-black leading-tight">Talk with AgentKid</h2>
+            <h2 className="mt-5 text-[28px] font-black leading-tight">{t("child", "home.talkAction")}</h2>
             <p className="snow-body-copy mt-3 max-w-[230px] font-bold text-white/90">
-              AgentKid listens first, then helps you choose what comes next.
+              {t("child", "home.talkActionDesc")}
             </p>
           </div>
           <span className="grid size-12 place-items-center rounded-full bg-white text-snow-primary">
@@ -222,17 +223,17 @@ export function HomeScreen() {
         <div className="rounded-[var(--radius-xl)] border border-snow-border bg-snow-surface p-5 shadow-[var(--shadow-card)]">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-black text-snow-primary">Ready next</p>
-              <h2 className="snow-heading mt-1 font-black text-snow-primary-dark">Small practice choices</h2>
+              <p className="text-xs font-black text-snow-primary">{t("child", "home.readyNext")}</p>
+              <h2 className="snow-heading mt-1 font-black text-snow-primary-dark">{t("child", "home.smallChoices")}</h2>
             </div>
             <Link href="/session/lessons" className="text-sm font-black text-snow-primary">
-              See lessons
+              {t("child", "home.seeLessons")}
             </Link>
           </div>
 
           {recommendedLessons.length === 0 ? (
             <div className="p-8 text-center text-sm font-semibold text-snow-muted">
-              No lessons published yet in the catalog. Check back soon for new practice activities.
+              {t("child", "home.noLessons")}
             </div>
           ) : (
             <div className="mt-4 grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
@@ -249,7 +250,7 @@ export function HomeScreen() {
                     <p className="truncate text-sm font-black text-snow-primary-dark">{lesson.title}</p>
                     <p className="snow-body-small snow-font-readable mt-0.5 font-semibold text-snow-muted">
                       {lesson.subject}
-                      {lesson.estimatedMinutes ? ` • ${lesson.estimatedMinutes} min` : ""}
+                      {lesson.estimatedMinutes ? ` • ${lesson.estimatedMinutes} phút` : ""}
                     </p>
                   </div>
                 </Link>
@@ -261,19 +262,19 @@ export function HomeScreen() {
         <div className="grid gap-4">
           <div className="rounded-[var(--radius-xl)] bg-snow-primary-soft p-5">
             <Stars className="size-6 text-snow-primary" />
-            <p className="mt-4 text-lg font-black text-snow-primary-dark">AgentKid keeps it simple</p>
+            <p className="mt-4 text-lg font-black text-snow-primary-dark">{t("child", "home.simpleChoiceTitle")}</p>
             <p className="snow-body-copy snow-font-readable mt-2 font-semibold text-snow-muted">
-              One choice, one step, then a calm pause. You can stop anytime.
+              {t("child", "home.simpleChoiceDesc")}
             </p>
           </div>
 
           <div className="rounded-[var(--radius-xl)] border border-snow-border bg-snow-surface p-5 shadow-[var(--shadow-card)]">
-            <p className="text-xs font-black text-snow-primary">Good next move</p>
+            <p className="text-xs font-black text-snow-primary">{t("child", "home.nextMoveTitle")}</p>
             <p className="mt-2 text-lg font-black text-snow-primary-dark">
-              Start with one short lesson after talking with AgentKid.
+              {t("child", "home.nextMoveDesc")}
             </p>
             <p className="snow-body-copy snow-font-readable mt-2 font-semibold text-snow-muted">
-              That usually keeps the day feeling calm and clear.
+              {t("child", "home.nextMoveNote")}
             </p>
           </div>
         </div>

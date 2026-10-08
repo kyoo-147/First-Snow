@@ -10,6 +10,7 @@ import { SnowButton } from "@/components/ui/snow-button";
 import { SnowCard } from "@/components/ui/snow-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { fetchLessons, type LessonSummary } from "@/lib/learning-client";
+import { t } from "@/i18n";
 
 const accentBg: Record<string, string> = {
   primary: "bg-snow-primary-soft",
@@ -24,18 +25,18 @@ function getSubjectAccent(subject?: string, fallbackAccent?: string): string {
     return accentBg[fallbackAccent];
   }
   const s = (subject || "").toLowerCase();
-  if (s.includes("math") || s.includes("count")) return accentBg.aqua;
-  if (s.includes("story") || s.includes("read")) return accentBg.peach;
-  if (s.includes("social") || s.includes("feel")) return accentBg.pink;
+  if (s.includes("math") || s.includes("count") || s.includes("toán")) return accentBg.aqua;
+  if (s.includes("story") || s.includes("read") || s.includes("truyện") || s.includes("việt")) return accentBg.peach;
+  if (s.includes("social") || s.includes("feel") || s.includes("cảm xúc") || s.includes("bạn")) return accentBg.pink;
   return accentBg.primary;
 }
 
 function getLessonImage(image?: string, subject?: string): string {
   if (image) return image;
   const s = (subject || "").toLowerCase();
-  if (s.includes("math") || s.includes("count")) return "/images/lesson-math.png";
-  if (s.includes("story") || s.includes("fox")) return "/images/lesson-story.png";
-  if (s.includes("social") || s.includes("friend") || s.includes("feel")) return "/images/lesson-social.png";
+  if (s.includes("math") || s.includes("count") || s.includes("toán")) return "/images/lesson-math.png";
+  if (s.includes("story") || s.includes("fox") || s.includes("truyện") || s.includes("việt")) return "/images/lesson-story.png";
+  if (s.includes("social") || s.includes("friend") || s.includes("feel") || s.includes("cảm xúc")) return "/images/lesson-social.png";
   return "/images/lesson-abc.png";
 }
 
@@ -64,7 +65,7 @@ export function LessonCatalog() {
         }
       } catch (err: unknown) {
         if (!ignore) {
-          setError(err instanceof Error ? err.message : "Could not load lessons. Please try again.");
+          setError(err instanceof Error ? err.message : t("learning", "catalog.couldNotLoad"));
           setIsLoading(false);
         }
       }
@@ -82,8 +83,8 @@ export function LessonCatalog() {
   return (
     <ChildSessionFrame>
       <PageHeader
-        title="Pick one lesson"
-        description="Choose a short activity. AgentKid will guide the steps slowly."
+        title={t("learning", "catalog.pickLesson")}
+        description={t("learning", "catalog.pickLessonDesc")}
         compact
       />
 
@@ -93,8 +94,8 @@ export function LessonCatalog() {
             <div className="relative size-24 animate-pulse">
               <Image src="/images/snow-mascot-ui.png" alt="" fill sizes="96px" className="object-contain" />
             </div>
-            <p className="mt-2 text-lg font-black text-snow-primary-dark">Loading your calm lessons...</p>
-            <p className="text-sm font-semibold text-snow-muted">AgentKid is preparing the activities.</p>
+            <p className="mt-2 text-lg font-black text-snow-primary-dark">{t("learning", "catalog.loadingLessons")}</p>
+            <p className="text-sm font-semibold text-snow-muted">{t("learning", "catalog.preparing")}</p>
           </div>
         </div>
       ) : error ? (
@@ -103,12 +104,12 @@ export function LessonCatalog() {
             <div className="mx-auto grid size-12 place-items-center rounded-full bg-snow-warning/20 text-snow-primary-dark">
               <AlertCircle className="size-6" />
             </div>
-            <h2 className="mt-3 text-lg font-black text-snow-primary-dark">We couldn&apos;t load the lessons</h2>
+            <h2 className="mt-3 text-lg font-black text-snow-primary-dark">{t("learning", "catalog.couldNotLoad")}</h2>
             <p className="mt-1 text-sm font-semibold text-snow-muted">{error}</p>
             <div className="mt-5 flex justify-center">
               <SnowButton onClick={loadLessons} className="gap-2">
                 <RefreshCw className="size-4" />
-                Try again
+                {t("learning", "catalog.tryAgain")}
               </SnowButton>
             </div>
           </div>
@@ -116,9 +117,9 @@ export function LessonCatalog() {
       ) : lessons.length === 0 ? (
         <div className="py-6">
           <EmptyState
-            title="No lessons available yet"
-            description="AgentKid will have new lessons ready soon. Talk with AgentKid or check back later."
-            actionLabel="Refresh lessons"
+            title={t("learning", "catalog.noLessonsYet")}
+            description={t("learning", "catalog.noLessonsDesc")}
+            actionLabel={t("learning", "catalog.refreshLessons")}
             onAction={loadLessons}
           />
         </div>
@@ -130,15 +131,15 @@ export function LessonCatalog() {
                 <SnowCard className="overflow-hidden transition-transform duration-200 group-hover:scale-[1.01]">
                   <div className="grid gap-4 bg-gradient-to-r from-snow-ice via-snow-surface-soft to-snow-lavender p-5 md:grid-cols-[minmax(0,1fr)_240px] md:items-center">
                     <div>
-                      <p className="text-xs font-black uppercase tracking-wide text-snow-primary">Best next start</p>
+                      <p className="text-xs font-black uppercase tracking-wide text-snow-primary">{t("learning", "catalog.bestNextStart")}</p>
                       <h2 className="snow-heading mt-2 text-[1.75rem] font-black text-snow-primary-dark">
                         {featuredLesson.title}
                       </h2>
                       <p className="snow-body-copy snow-font-readable mt-2 max-w-[520px] font-semibold text-snow-muted">
-                        {featuredLesson.subtitle || featuredLesson.description || "A calm learning adventure with AgentKid."}
+                        {featuredLesson.subtitle || featuredLesson.description || t("learning", "catalog.defaultSubtitle")}
                       </p>
                       <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-snow-primary px-4 py-2 text-xs font-black text-white shadow-sm">
-                        Start lesson
+                        {t("learning", "catalog.startLesson")}
                       </div>
                     </div>
                     <div className={`relative h-36 rounded-[var(--radius-lg)] ${getSubjectAccent(featuredLesson.subject, featuredLesson.accent)}`}>
@@ -183,17 +184,17 @@ export function LessonCatalog() {
                         </div>
                         <h2 className="text-lg font-black leading-tight text-snow-primary-dark">{lesson.title}</h2>
                         <p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted line-clamp-2">
-                          {lesson.subtitle || lesson.description || "Gentle step-by-step practice."}
+                          {lesson.subtitle || lesson.description || t("learning", "catalog.defaultPractice")}
                         </p>
                         {isCompleted ? (
                           <div className="mt-4">
                             <ProgressStrip value={100} />
-                            <p className="mt-2 text-xs font-black text-snow-primary">Completed</p>
+                            <p className="mt-2 text-xs font-black text-snow-primary">{t("learning", "lesson.status.completed")}</p>
                           </div>
                         ) : isInProgress ? (
-                          <div className="mt-4 text-xs font-black text-snow-primary">In progress</div>
+                          <div className="mt-4 text-xs font-black text-snow-primary">{t("learning", "lesson.status.inProgress")}</div>
                         ) : (
-                          <div className="mt-4 text-xs font-black text-snow-muted">Not started yet</div>
+                          <div className="mt-4 text-xs font-black text-snow-muted">{t("learning", "lesson.status.notStarted")}</div>
                         )}
                         <div className="mt-4 flex items-center justify-between text-xs font-bold text-snow-muted">
                           {lesson.rating ? (
@@ -204,7 +205,7 @@ export function LessonCatalog() {
                             <span />
                           )}
                           <span className="flex items-center gap-1">
-                            <Clock className="size-3.5" /> {lesson.estimatedMinutes ? `${lesson.estimatedMinutes} min` : "—"}
+                            <Clock className="size-3.5" /> {lesson.estimatedMinutes ? `${lesson.estimatedMinutes} phút` : "—"}
                           </span>
                         </div>
                       </div>
@@ -218,18 +219,18 @@ export function LessonCatalog() {
               <SnowCard className="p-5">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-xs font-black text-snow-primary">Best next flow</p>
-                    <h2 className="mt-1 text-lg font-black text-snow-primary-dark">Keep one short lesson visible</h2>
+                    <p className="text-xs font-black text-snow-primary">{t("learning", "catalog.flowTitle")}</p>
+                    <h2 className="mt-1 text-lg font-black text-snow-primary-dark">{t("learning", "catalog.flowDesc")}</h2>
                   </div>
                   <span className="rounded-full bg-snow-primary-soft px-3 py-1 text-xs font-black text-snow-primary-dark">
-                    Child-safe
+                    {t("learning", "catalog.childSafe")}
                   </span>
                 </div>
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
                   {[
-                    ["Talk with AgentKid", "A calm opening first."],
-                    ["Pick one card", "One lesson is enough."],
-                    ["Finish gently", "Return to routine after."],
+                    [t("learning", "catalog.stepTalk"), t("learning", "catalog.stepTalkDesc")],
+                    [t("learning", "catalog.stepCard"), t("learning", "catalog.stepCardDesc")],
+                    [t("learning", "catalog.stepGently"), t("learning", "catalog.stepGentlyDesc")],
                   ].map(([title, detail]) => (
                     <div key={title} className="rounded-[var(--radius-md)] bg-snow-surface-soft p-4">
                       <p className="text-sm font-black text-snow-primary-dark">{title}</p>
@@ -241,9 +242,9 @@ export function LessonCatalog() {
 
               <div className="rounded-[var(--radius-xl)] bg-snow-lavender p-5">
                 <Sparkles className="size-6 text-snow-primary" />
-                <p className="mt-4 text-lg font-black text-snow-primary-dark">AgentKid keeps choices small</p>
+                <p className="mt-4 text-lg font-black text-snow-primary-dark">{t("learning", "catalog.choicesSmallTitle")}</p>
                 <p className="mt-2 text-sm font-semibold leading-6 text-snow-muted">
-                  Short lessons feel better when they read like invitations, not a giant catalog.
+                  {t("learning", "catalog.choicesSmallDesc")}
                 </p>
               </div>
             </div>
@@ -251,16 +252,16 @@ export function LessonCatalog() {
 
           <aside className="space-y-4">
             <SnowCard className="p-5">
-              <p className="text-xs font-black text-snow-primary">Lesson rhythm</p>
-              <p className="mt-2 text-lg font-black text-snow-primary-dark">One short activity is enough for this step.</p>
+              <p className="text-xs font-black text-snow-primary">{t("learning", "catalog.rhythmTitle")}</p>
+              <p className="mt-2 text-lg font-black text-snow-primary-dark">{t("learning", "catalog.rhythmDesc")}</p>
               <p className="snow-body-copy snow-font-readable mt-2 font-semibold text-snow-muted">
-                The child flow stays calm when lessons feel like invitations, not a big content catalog.
+                {t("learning", "catalog.rhythmNote")}
               </p>
             </SnowCard>
             <div className="rounded-[var(--radius-xl)] bg-snow-primary-soft p-5">
-              <p className="text-sm font-black text-snow-primary-dark">Good pairing</p>
+              <p className="text-sm font-black text-snow-primary-dark">{t("learning", "catalog.pairingTitle")}</p>
               <p className="snow-body-copy snow-font-readable mt-2 font-semibold text-snow-muted">
-                Talk with AgentKid first, then open one lesson that matches the day&apos;s energy.
+                {t("learning", "catalog.pairingDesc")}
               </p>
             </div>
           </aside>

@@ -5,7 +5,8 @@
     "thinking": "Đang suy nghĩ",
     "speaking": "Đang nói",
     "loading": "Đang tải",
-    "error": "Lỗi kết nối"
+    "error": "Lỗi kết nối",
+    "interrupted": "Đã tạm dừng"
   },
   "input": {
     "placeholder": "Nhập tin nhắn…",
@@ -27,5 +28,121 @@
     "noResponse": "Trợ lý chưa trả lời được. Hãy thử lại nhé!",
     "connectionFailed": "Không thể kết nối. Vui lòng kiểm tra mạng.",
     "sessionExpired": "Phiên trò chuyện đã hết hạn."
+  },
+  "talk": {
+    "title": "Trò chuyện cùng AgentKid",
+    "subtitle": "Không gian an toàn để bạn chia sẻ, cảm nhận và trưởng thành.",
+    "avatarMode": "Chế độ hình đại diện",
+    "loadingCompanion": "Đang chuẩn bị người bạn trợ lý…",
+    "startingSession": "Đang bắt đầu phiên trò chuyện…",
+    "signInAlert": "Đăng nhập bằng tài khoản của bé để trò chuyện cùng AgentKid.",
+    "signInButton": "Đến trang bé đăng nhập",
+    "howAreYouFeeling": "Hôm nay bạn cảm thấy thế nào?",
+    "pickFeelingOrTalk": "Chọn một cảm xúc hoặc trò chuyện cùng AgentKid.",
+    "sayHello": "Hãy gửi lời chào tới AgentKid nhé!",
+    "you": "Bạn",
+    "agentKid": "AgentKid",
+    "sending": "Đang gửi…",
+    "failedToSend": "Chưa gửi được tin nhắn",
+    "retry": "Thử lại",
+    "tapToTalk": "Nhấn để trò chuyện cùng AgentKid…",
+    "voiceDisabledAria": "Tính năng giọng nói chưa khả dụng",
+    "sendAria": "Gửi tin nhắn",
+    "timedOut": "Yêu cầu đã quá thời gian chờ.",
+    "breathingAction": "Được, cùng thử nào",
+    "storyAction": "Kể cho mình nghe một câu chuyện nhẹ nhàng",
+    "helpAction": "Mình cần thêm sự giúp đỡ",
+    "moods": {
+      "happy": "Vui vẻ",
+      "worried": "Lo lắng",
+      "angry": "Tức giận",
+      "excited": "Hào hứng",
+      "sleepy": "Buồn ngủ"
+    }
+  },
+  "avatar": {
+    "backToApp": "Quay lại ứng dụng AgentKid"
+  },
+  "wrapper": {
+    "initializing": "Đang khởi tạo trợ lý giọng nói..."
+  },
+  "shell": {
+    "title": "Cài đặt trợ lý",
+    "subtitle": "Tùy chỉnh trải nghiệm AgentKid của bạn",
+    "helpAria": "Trợ giúp",
+    "childMode": "Chế độ trẻ em",
+    "aiCompanion": "Trợ lý AI",
+    "buddySubtitle": "Người bạn học tập thông minh của bạn",
+    "closeSettings": "Đóng cài đặt",
+    "requireParentVerification": "Cần phụ huynh xác minh",
+    "enabled": "Đã bật",
+    "typeMessage": "Nhập tin nhắn của bạn...",
+    "openEmojiPicker": "Mở bảng chọn biểu tượng cảm xúc",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "toggleMic": "Bật/tắt micro",
+    "muteAgentKid": "Tắt tiếng AgentKid",
+    "stopAgentKid": "Dừng AgentKid",
+    "footerDisclaimer": "AgentKid là trợ lý học tập cho trẻ em. Luôn đồng hành và cùng bạn học tập.",
+    "stageAlt": "AgentKid trong lớp học ấm áp",
+    "subtitles": {
+      "listening": "Chào bạn, đã sẵn sàng cùng học chưa?",
+      "thinking": "AgentKid đang suy nghĩ một bước nhỏ tiếp theo thật nhẹ nhàng.",
+      "speaking": "Cùng thử nào. Bạn có thể làm từ từ, không cần vội.",
+      "connectionLost": "AgentKid đang cố gắng kết nối lại.",
+      "default": "AgentKid luôn ở đây khi bạn sẵn sàng."
+    },
+    "tabs": {
+      "general": "Chung",
+      "live2d": "Live2D",
+      "asr": "Nhận diện giọng nói",
+      "tts": "Giọng đọc",
+      "agent": "Trợ lý",
+      "about": "Giới thiệu"
+    },
+    "fields": {
+      "language": "Ngôn ngữ",
+      "showSubtitle": "Hiện phụ đề",
+      "childSafeMode": "Chế độ an toàn cho trẻ",
+      "calmVoice": "Giọng nói êm dịu",
+      "parentAccess": "Quyền truy cập của phụ huynh",
+      "backgroundScene": "Khung cảnh nền",
+      "characterPreset": "Cài đặt nhân vật",
+      "webSocketUrl": "Địa chỉ WebSocket",
+      "baseUrl": "Địa chỉ máy chủ",
+      "modelPreset": "Cài đặt mô hình",
+      "scale": "Tỉ lệ",
+      "positionX": "Vị trí X",
+      "positionY": "Vị trí Y",
+      "eyeTracking": "Theo dõi chuyển động mắt",
+      "idleMotion": "Chuyển động khi nghỉ",
+      "touchInteraction": "Tương tác chạm",
+      "provider": "Nhà cung cấp",
+      "voiceActivityDetection": "Phát hiện giọng nói",
+      "silenceThreshold": "Ngưỡng khoảng lặng",
+      "wakeWordOptional": "Từ đánh thức (tùy chọn)",
+      "voice": "Giọng đọc",
+      "speed": "Tốc độ",
+      "pitch": "Cao độ",
+      "emotionTone": "Tông giọng cảm xúc",
+      "persona": "Tính cách nhân vật",
+      "safetyProfile": "Hồ sơ an toàn",
+      "childAgeMode": "Độ tuổi của trẻ",
+      "lessonContext": "Ngữ cảnh bài học",
+      "memoryMode": "Chế độ ghi nhớ",
+      "version": "Phiên bản",
+      "sourceBase": "Mã nguồn cơ sở",
+      "privacyNotes": "Chính sách quyền riêng tư",
+      "safetyDisclaimer": "Tuyên bố an toàn"
+    },
+    "defaults": {
+      "backgroundScene": "Lớp học ấm áp (Mùa đông)",
+      "characterPreset": "AgentKid (Mặc định)",
+      "browserVoice": "Giọng nói trình duyệt",
+      "gentleVoice": "Giọng nói nhẹ nhàng",
+      "version": "AgentKid UI prototype 0.1",
+      "safetyDisclaimer": "AgentKid hỗ trợ học tập với ngôn ngữ nhẹ nhàng, an toàn.",
+      "default": "AgentKid mặc định"
+    }
   }
 }

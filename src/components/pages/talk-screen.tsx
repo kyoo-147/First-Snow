@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Loader2, MonitorPlay, Sparkles } from "lucide-react";
 import { TalkShell } from "@/components/companion/talk-shell";
 import { getChildSession } from "@/lib/companion-client";
+import { t } from "@/i18n";
 
 export function TalkScreen() {
   const [childId, setChildId] = useState<string | null>(null);
@@ -29,10 +30,10 @@ export function TalkScreen() {
       <header className="z-10 mb-6 flex shrink-0 flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-4xl font-black text-snow-primary-dark">
-            Talk with AgentKid <Sparkles className="size-6 text-snow-primary" />
+            {t("companion", "talk.title")} <Sparkles className="size-6 text-snow-primary" />
           </h1>
           <p className="mt-2 text-base font-bold text-snow-muted">
-            Your safe space to share, feel, and grow.
+            {t("companion", "talk.subtitle")}
           </p>
         </div>
         <Link
@@ -40,7 +41,7 @@ export function TalkScreen() {
           className="snow-focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-snow-border bg-snow-surface px-4 text-sm font-black text-snow-primary-dark transition hover:bg-snow-surface-soft"
         >
           <MonitorPlay className="size-4 text-snow-primary" />
-          Avatar mode
+          {t("companion", "talk.avatarMode")}
         </Link>
       </header>
 
@@ -60,11 +61,11 @@ export function TalkScreen() {
         <div
           role="status"
           aria-busy="true"
-          aria-label="Loading your companion"
+          aria-label={t("companion", "talk.loadingCompanion")}
           className="z-10 flex flex-1 flex-col items-center justify-center gap-3 rounded-[var(--radius-xl)] border border-snow-border bg-white p-8 text-snow-muted shadow-sm"
         >
           <Loader2 className="size-8 animate-spin text-snow-primary" />
-          <p className="text-sm font-bold">Loading your companion…</p>
+          <p className="text-sm font-bold">{t("companion", "talk.loadingCompanion")}</p>
         </div>
       ) : childId ? (
         <TalkShell childId={childId} />
@@ -74,13 +75,13 @@ export function TalkScreen() {
           className="z-10 flex flex-1 flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border border-snow-border bg-white p-8 text-center shadow-sm"
         >
           <p className="text-sm font-bold text-snow-danger">
-            Sign in with a child profile to talk with AgentKid.
+            {t("companion", "talk.signInAlert")}
           </p>
           <Link
             href="/child-login"
             className="snow-focus-ring inline-flex min-h-11 items-center justify-center rounded-full bg-snow-primary px-6 text-sm font-extrabold text-white transition hover:brightness-105"
           >
-            Go to child sign in
+            {t("companion", "talk.signInButton")}
           </Link>
         </div>
       )}

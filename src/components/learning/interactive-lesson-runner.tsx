@@ -28,6 +28,7 @@ import {
   type LessonAttempt,
   type LessonStep,
 } from "@/lib/learning-client";
+import { t } from "@/i18n";
 
 interface InteractiveLessonRunnerProps {
   lessonId: string;
@@ -85,7 +86,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
           setError(
             err instanceof Error
               ? err.message
-              : "Failed to load lesson. Please check connection and try again."
+              : t("learning", "runner.failedToLoad")
           );
           setIsLoading(false);
         }
@@ -159,7 +160,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
       setAttempt(finished);
     } catch (err: unknown) {
       setError(
-        err instanceof Error ? err.message : "Could not complete lesson. Please try again."
+        err instanceof Error ? err.message : t("learning", "runner.failedToComplete")
       );
     } finally {
       setIsCompleting(false);
@@ -173,9 +174,9 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
           <div className="relative size-28 animate-pulse">
             <Image src="/images/snow-mascot-ui.png" alt="" fill sizes="112px" className="object-contain" />
           </div>
-          <h2 className="text-xl font-black text-snow-primary-dark">Loading your learning activity...</h2>
+          <h2 className="text-xl font-black text-snow-primary-dark">{t("learning", "runner.loading")}</h2>
           <p className="max-w-[420px] text-sm font-semibold text-snow-muted">
-            AgentKid is getting the lesson and your saved progress ready.
+            {t("learning", "runner.loadingDesc")}
           </p>
         </div>
       </div>
@@ -187,21 +188,21 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
       <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-4 py-8 snow-enter-soft">
         <Link href="/session/lessons" className="inline-flex items-center gap-2 text-sm font-black text-snow-primary">
           <ArrowLeft className="size-4" />
-          Back to lessons
+          {t("learning", "runner.backToLessons")}
         </Link>
         <div className="rounded-[var(--radius-xl)] border border-snow-warning/30 bg-snow-cream p-8 text-center">
           <div className="mx-auto grid size-12 place-items-center rounded-full bg-snow-warning/20 text-snow-primary-dark">
             <AlertCircle className="size-6" />
           </div>
-          <h2 className="mt-3 text-xl font-black text-snow-primary-dark">Unable to start lesson</h2>
+          <h2 className="mt-3 text-xl font-black text-snow-primary-dark">{t("learning", "runner.unableToStart")}</h2>
           <p className="mt-2 text-sm font-semibold text-snow-muted">{error}</p>
           <div className="mt-6 flex justify-center gap-3">
             <SnowButton onClick={initLesson} className="gap-2">
               <RefreshCw className="size-4" />
-              Try again
+              {t("learning", "runner.tryAgain")}
             </SnowButton>
             <Link href="/session/lessons">
-              <SnowButton variant="ghost">Return to catalog</SnowButton>
+              <SnowButton variant="ghost">{t("learning", "runner.returnToCatalog")}</SnowButton>
             </Link>
           </div>
         </div>
@@ -214,12 +215,12 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
       <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-4 py-8 snow-enter-soft">
         <Link href="/session/lessons" className="inline-flex items-center gap-2 text-sm font-black text-snow-primary">
           <ArrowLeft className="size-4" />
-          Back to lessons
+          {t("learning", "runner.backToLessons")}
         </Link>
         <EmptyState
-          title="Lesson steps not available"
-          description="This lesson does not have interactive steps published yet."
-          actionLabel="Return to lessons"
+          title={t("learning", "runner.stepsNotAvailable")}
+          description={t("learning", "runner.stepsNotAvailableDesc")}
+          actionLabel={t("learning", "runner.returnToLessons")}
           onAction={() => {
             window.location.href = "/session/lessons";
           }}
@@ -242,21 +243,21 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
 
           <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-snow-success/15 px-4 py-1.5 text-sm font-black text-snow-success">
             <CheckCircle2 className="size-4" />
-            Lesson Completed!
+            {t("learning", "runner.completedBadge")}
           </div>
 
           <h1 className="snow-heading mt-4 text-[2rem] font-black text-snow-primary-dark">
-            Great job on {lesson.title}!
+            {t("learning", "runner.completedTitle", { title: lesson.title })}
           </h1>
           <p className="snow-body-copy snow-font-readable mx-auto mt-2 max-w-[500px] font-semibold text-snow-muted">
-            You completed all the steps. Your effort and answers have been safely saved.
+            {t("learning", "runner.completedDesc")}
           </p>
 
           <div className="mx-auto mt-6 flex max-w-[320px] items-center justify-around rounded-[var(--radius-lg)] bg-snow-surface-soft p-4">
             {hasServerScore ? (
               <>
                 <div className="text-center">
-                  <p className="text-xs font-black uppercase text-snow-muted">Score</p>
+                  <p className="text-xs font-black uppercase text-snow-muted">{t("learning", "runner.scoreLabel")}</p>
                   <p className="mt-1 flex items-center justify-center gap-1 text-2xl font-black text-snow-primary-dark">
                     <Star className="size-5 text-snow-warning fill-snow-warning" />
                     {attempt?.score}%
@@ -267,24 +268,24 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
             ) : (
               <>
                 <div className="text-center">
-                  <p className="text-xs font-black uppercase text-snow-muted">Status</p>
+                  <p className="text-xs font-black uppercase text-snow-muted">{t("learning", "runner.statusLabel")}</p>
                   <p className="mt-1 flex items-center justify-center gap-1 text-base font-black text-snow-primary-dark">
                     <CheckCircle2 className="size-4 text-snow-success" />
-                    Completed
+                    {t("learning", "lesson.status.completed")}
                   </p>
                 </div>
                 <div className="h-8 w-px bg-snow-border" />
               </>
             )}
             <div className="text-center">
-              <p className="text-xs font-black uppercase text-snow-muted">Steps</p>
+              <p className="text-xs font-black uppercase text-snow-muted">{t("learning", "runner.stepsLabel")}</p>
               <p className="mt-1 text-2xl font-black text-snow-primary-dark">{lesson.steps.length}</p>
             </div>
           </div>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link href="/session/lessons">
-              <SnowButton className="px-8 text-base">Back to lessons</SnowButton>
+              <SnowButton className="px-8 text-base">{t("learning", "runner.backToLessons")}</SnowButton>
             </Link>
             <SnowButton
               variant="soft"
@@ -294,7 +295,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
               }}
             >
               <RotateCcw className="mr-2 size-4" />
-              Review steps
+              {t("learning", "runner.reviewSteps")}
             </SnowButton>
           </div>
         </div>
@@ -313,24 +314,24 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
         <div className="min-w-0">
           <Link href="/session/lessons" className="mb-4 inline-flex items-center gap-2 text-sm font-black text-snow-primary">
             <ArrowLeft className="size-4" />
-            Back to lessons
+            {t("learning", "runner.backToLessons")}
           </Link>
           <p className="text-xs font-black uppercase tracking-wide text-snow-primary">{lesson.subject}</p>
           <h1 className="mt-1 text-[30px] font-black leading-tight text-snow-primary-dark md:text-[36px]">
             {lesson.title}
           </h1>
           <p className="mt-2 max-w-[620px] text-sm font-semibold leading-6 text-snow-muted md:text-base">
-            {lesson.subtitle || currentStep?.instruction || "One calm question at a time."}
+            {lesson.subtitle || currentStep?.instruction || t("learning", "runner.defaultQuestion")}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           {saveStatus === "saving" && (
-            <span className="text-xs font-bold text-snow-muted animate-pulse">Saving...</span>
+            <span className="text-xs font-bold text-snow-muted animate-pulse">{t("learning", "runner.saving")}</span>
           )}
           {saveStatus === "saved" && (
             <span className="inline-flex items-center gap-1 text-xs font-black text-snow-success">
-              <Check className="size-3" /> Saved
+              <Check className="size-3" /> {t("learning", "runner.saved")}
             </span>
           )}
           {saveStatus === "error" && (
@@ -338,11 +339,11 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
               onClick={handleRetrySave}
               className="inline-flex items-center gap-1 text-xs font-black text-snow-warning underline"
             >
-              <AlertCircle className="size-3" /> Retry save
+              <AlertCircle className="size-3" /> {t("learning", "runner.retrySave")}
             </button>
           )}
           <div className="rounded-full bg-snow-primary-soft px-4 py-2 text-xs font-black text-snow-primary">
-            Step {currentStepIndex + 1} of {lesson.steps.length}
+            {t("learning", "runner.stepCount", { current: currentStepIndex + 1, total: lesson.steps.length })}
           </div>
         </div>
       </div>
@@ -358,7 +359,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
             onClick={() => setError(null)}
             className="text-xs font-bold text-snow-muted hover:text-snow-primary-dark"
           >
-            Dismiss
+            {t("learning", "runner.dismiss")}
           </button>
         </div>
       )}
@@ -372,17 +373,17 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
               <Image src="/images/snow-mascot-ui.png" alt="AgentKid" fill sizes="128px" className="object-contain" />
             </div>
             <div className="mt-4 rounded-[var(--radius-lg)] bg-snow-surface p-4">
-              <p className="text-sm font-black text-snow-primary-dark">AgentKid says</p>
+              <p className="text-sm font-black text-snow-primary-dark">{t("learning", "runner.agentKidSays")}</p>
               <p className="mt-2 text-sm font-semibold leading-6 text-snow-muted">
-                {currentStep?.helper || "There is no wrong answer. We learn by practicing together."}
+                {currentStep?.helper || t("learning", "runner.defaultHelper")}
               </p>
             </div>
           </div>
 
           <div className="rounded-[var(--radius-xl)] bg-snow-primary-soft p-5">
-            <p className="text-sm font-black text-snow-primary-dark">Pacing reminder</p>
+            <p className="text-sm font-black text-snow-primary-dark">{t("learning", "runner.pacingReminder")}</p>
             <p className="mt-2 text-sm font-semibold leading-6 text-snow-muted">
-              Pick one choice when ready. Your answers are saved automatically as you go.
+              {t("learning", "runner.pacingDesc")}
             </p>
           </div>
         </aside>
@@ -395,17 +396,17 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
               <div className="flex items-start gap-3">
                 <button
                   type="button"
-                  aria-label="Play audio prompt"
+                  aria-label={t("learning", "runner.audioPromptAria")}
                   className="snow-interactive-card snow-focus-ring grid size-11 shrink-0 place-items-center rounded-full bg-snow-lavender text-snow-primary"
                 >
                   <Volume2 className="size-5" />
                 </button>
                 <div>
                   <h2 className="text-xl font-black text-snow-primary-dark">
-                    {currentStep?.prompt || currentStep?.title || "Choose your answer"}
+                    {currentStep?.prompt || currentStep?.title || t("learning", "runner.chooseAnswer")}
                   </h2>
                   <p className="mt-1 text-sm font-semibold leading-6 text-snow-muted">
-                    {currentStep?.instruction || "Select the card that best fits."}
+                    {currentStep?.instruction || t("learning", "runner.selectCard")}
                   </p>
                 </div>
               </div>
@@ -413,7 +414,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
               <div className="relative mt-5 aspect-[16/9] overflow-hidden rounded-[var(--radius-lg)] bg-snow-surface-soft">
                 <Image
                   src={currentStep?.image || lesson.image || "/images/lesson-story.png"}
-                  alt={currentStep?.title || "Lesson illustration"}
+                  alt={currentStep?.title || t("learning", "runner.illustrationAlt")}
                   fill
                   sizes="720px"
                   className="object-cover"
@@ -425,9 +426,9 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
             <div className="space-y-3">
               {!hasOptions ? (
                 <div className="rounded-[var(--radius-lg)] border border-dashed border-snow-border bg-snow-surface-soft p-6 text-center">
-                  <p className="text-base font-black text-snow-primary-dark">Choices unavailable</p>
+                  <p className="text-base font-black text-snow-primary-dark">{t("learning", "runner.choicesUnavailable")}</p>
                   <p className="mt-1 text-sm font-semibold text-snow-muted">
-                    This step does not have interactive options published yet.
+                    {t("learning", "runner.choicesUnavailableDesc")}
                   </p>
                 </div>
               ) : (
@@ -472,13 +473,13 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
                   className={cn("mt-2 w-full justify-center", !currentAnswer && "pointer-events-none opacity-55")}
                   onClick={() => setIsChecked(true)}
                 >
-                  Check answer
+                  {t("learning", "runner.checkAnswer")}
                 </SnowButton>
               )}
 
               {isChecked && (
                 <div className="rounded-[var(--radius-md)] bg-snow-success/15 p-4 text-sm font-semibold leading-6 text-snow-primary-dark snow-pop-soft">
-                  {selectedOption ? `Nice choice: ${selectedOption.label}. Let's keep going!` : "Great step! Continue when ready."}
+                  {selectedOption ? t("learning", "runner.feedbackGood", { choice: selectedOption.label }) : t("learning", "runner.feedbackDefault")}
                 </div>
               )}
 
@@ -492,7 +493,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
                   className={cn(currentStepIndex === 0 && "opacity-40")}
                 >
                   <ArrowLeft className="mr-1 size-4" />
-                  Previous
+                  {t("learning", "runner.previous")}
                 </SnowButton>
 
                 {isLastStep ? (
@@ -505,11 +506,11 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
                     {isCompleting ? (
                       <>
                         <RefreshCw className="size-4 animate-spin" />
-                        Finishing...
+                        {t("learning", "runner.finishing")}
                       </>
                     ) : (
                       <>
-                        Finish lesson
+                        {t("learning", "runner.finish")}
                         <CheckCircle2 className="size-4" />
                       </>
                     )}
@@ -521,7 +522,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
                     onClick={handleNextStep}
                     className="gap-2"
                   >
-                    Next step
+                    {t("learning", "runner.next")}
                     <ArrowRight className="size-4" />
                   </SnowButton>
                 )}
@@ -541,15 +542,15 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
                   }}
                 >
                   <RotateCcw className="size-4 mr-1.5" />
-                  Repeat prompt
+                  {t("learning", "runner.repeatPrompt")}
                 </SnowButton>
                 <SnowButton type="button" variant="ghost">
                   <Volume2 className="size-4 mr-1.5" />
-                  Play audio
+                  {t("learning", "runner.playAudio")}
                 </SnowButton>
               </div>
               <div className="rounded-full bg-snow-primary px-6 py-2.5 text-sm font-black text-white shadow-[var(--shadow-card)]">
-                Hold to talk with Snow
+                {t("learning", "runner.holdToTalk")}
               </div>
             </div>
           </div>
