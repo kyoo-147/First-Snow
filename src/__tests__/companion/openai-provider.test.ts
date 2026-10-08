@@ -176,6 +176,7 @@ describe('OpenAI-compatible text companion provider adapter', () => {
       assert.equal(parsedBody.messages.length, 4);
       assert.equal(parsedBody.messages[0].role, 'system');
       assert.ok(parsedBody.messages[0].content.includes('Snow'));
+      assert.ok(parsedBody.messages[0].content.includes('Vietnamese'));
       assert.deepEqual(parsedBody.messages[1], { role: 'user', content: 'What is a volcano?' });
       assert.deepEqual(parsedBody.messages[2], { role: 'assistant', content: 'A volcano is a mountain that opens downward to a pool of molten rock!' });
       assert.deepEqual(parsedBody.messages[3], { role: 'user', content: 'Hi Snow!' });

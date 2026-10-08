@@ -20,6 +20,31 @@ describe('companion backend contracts', () => {
   it('flags conservative safety phrases and leaves ordinary messages unflagged', () => {
     assert.ok(checkSafety('I might hurt myself tonight').codes.includes('self_harm'));
     assert.equal(checkSafety('Can you help me with math?').flagged, false);
+
+    assert.ok(checkSafety('con muốn tự tử quá').codes.includes('self_harm'));
+    assert.ok(checkSafety('con muon tu tu qua').codes.includes('self_harm'));
+    assert.ok(checkSafety('ba danh con dau qua').codes.includes('abuse_disclosure'));
+    assert.ok(checkSafety('có người đánh em').codes.includes('immediate_danger'));
+
+    assert.equal(checkSafety('con đi từ từ thôi').flagged, false);
+    assert.equal(checkSafety('xe lửa kêu tu tu').flagged, false);
+    assert.equal(checkSafety('con đang ăn táo').flagged, false);
+
+    assert.ok(checkSafety('ba đánh con').codes.includes('abuse_disclosure'));
+    assert.ok(checkSafety('co nguoi danh em').codes.includes('immediate_danger'));
+    assert.ok(checkSafety('con bị sờ soạng').codes.includes('abuse_disclosure'));
+
+    assert.equal(checkSafety('Món quà này dành em').flagged, false);
+    assert.equal(checkSafety('Phần bánh này dành mình').flagged, false);
+    assert.equal(checkSafety('con đang đánh đàn').flagged, false);
+    assert.equal(checkSafety('cháu đang đánh vần chữ').flagged, false);
+    assert.equal(checkSafety('đến giờ đánh răng rồi').flagged, false);
+
+    // Unaccented benign vs abuse
+    assert.equal(checkSafety('mon qua nay danh em').flagged, false);
+    assert.equal(checkSafety('phan banh nay danh con').flagged, false);
+    assert.ok(checkSafety('chu danh con').codes.includes('abuse_disclosure'));
+    assert.ok(checkSafety('em bi ho danh').codes.includes('abuse_disclosure'));
   });
 
   it('maps linked safety messages into household alert DTOs with persisted read state', () => {

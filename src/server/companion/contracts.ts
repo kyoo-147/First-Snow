@@ -29,13 +29,29 @@ export async function generateReply(input: ProviderInput): Promise<string> {
 
 export function checkSafety(content: string): { flagged: boolean; reason: string | null; codes: string[] } {
   const text = content.toLowerCase();
-  const checks: Array<[string, RegExp]> = [
+
+  const codes = new Set<string>();
+
+  const legacyChecks: Array<[string, RegExp]> = [
     ['self_harm', /\b(kill (?:my|your)self|hurt (?:my|your)self|suicid|self[- ]harm)\b/],
     ['abuse_disclosure', /\b(hitting me|touching me|abusing me|hurt me at home)\b/],
     ['immediate_danger', /\b(in danger|someone is hurting me|unsafe right now)\b/],
   ];
-  const codes = checks.filter(([, pattern]) => pattern.test(text)).map(([code]) => code);
-  return { flagged: codes.length > 0, reason: codes.length ? 'Potential safety concern detected.' : null, codes };
+  for (const [code, pattern] of legacyChecks) {
+    if (pattern.test(text)) codes.add(code);
+  }
+
+  const viChecks: Array<[string, RegExp]> = [
+    ['self_harm', /(^|[^\p{L}])(tự tử|muon tu tu|dinh tu tu|tu sat|tự sát|giet minh|giết mình|lam hai ban than|làm hại bản thân|tu lam dau|tự làm đau|muon chet|muốn chết)([^\p{L}]|$)/u],
+    ['abuse_disclosure', /(^|[^\p{L}])(đánh (con|em|mình)|(ba|bo|me|ong|nguoi|ho|anh|chi|chu|co) danh (con|em|mình|minh)|(con|em|mình|minh) bi (\p{L}+ )*danh|sờ soạng|so soang|đụng chạm|dung cham|bạo hành|bao hanh|lạm dụng|lam dung|đánh đập|danh dap)([^\p{L}]|$)/u],
+    ['immediate_danger', /(^|[^\p{L}])(đang gặp nguy|dang gap nguy|gặp nguy hiểm|gap nguy hiem|cứu con|cuu con|cứu em|cuu em|có người đánh|co nguoi danh)([^\p{L}]|$)/u],
+  ];
+  for (const [code, pattern] of viChecks) {
+    if (pattern.test(text)) codes.add(code);
+  }
+
+  const codesArr = Array.from(codes);
+  return { flagged: codesArr.length > 0, reason: codesArr.length ? 'Potential safety concern detected.' : null, codes: codesArr };
 }
 
 export type Ticket = { token: string; childId: string; sessionId: string; origin: string; expiresAt: number };
