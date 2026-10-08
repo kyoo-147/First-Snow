@@ -1,0 +1,42 @@
+{
+  "dashboard": {
+    "title": "Bảng điều khiển",
+    "childrenOverview": "Tổng quan học sinh",
+    "recentActivity": "Hoạt động gần đây",
+    "noActivity": "Chưa có hoạt động nào",
+    "weeklyReport": "Báo cáo tuần",
+    "totalTime": "Tổng thời gian học: {{duration}}",
+    "lessonsCompleted": "{{count}} bài học hoàn thành"
+  },
+  "child": {
+    "addChild": "Thêm học sinh",
+    "editChild": "Chỉnh sửa học sinh",
+    "childName": "Tên học sinh",
+    "age": "Tuổi",
+    "grade": "Lớp",
+    "subjects": "Môn học",
+    "sessionHistory": "Lịch sử phiên học",
+    "deviceActivity": "Hoạt động thiết bị"
+  },
+  "settings": {
+    "title": "Cài đặt tài khoản",
+    "screenTime": "Giới hạn thời gian màn hình",
+    "screenTimeLabel": "Tối đa {{minutes}} phút/ngày",
+    "contentFilter": "Bộ lọc nội dung",
+    "notifications": "Thông báo",
+    "safetyAlerts": "Cảnh báo an toàn"
+  },
+  "safety": {
+    "alertTitle": "Cảnh báo an toàn",
+    "reviewRequired": "Cần xem xét",
+    "flagged": "Nội dung bị gắn cờ",
+    "cleared": "Đã xác nhận an toàn"
+  },
+  "nav": {
+    "dashboard": "Bảng điều khiển",
+    "children": "Học sinh",
+    "reports": "Báo cáo",
+    "settings": "Cài đặt",
+    "support": "Hỗ trợ"
+  }
+}

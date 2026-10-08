@@ -1,0 +1,48 @@
+{
+  "catalog": {
+    "title": "Danh mục bài học",
+    "allSubjects": "Tất cả môn học",
+    "recommended": "Được đề xuất",
+    "new": "Mới",
+    "popular": "Phổ biến"
+  },
+  "subject": {
+    "math": "Toán học",
+    "vietnamese": "Tiếng Việt",
+    "english": "Tiếng Anh",
+    "science": "Khoa học",
+    "history": "Lịch sử",
+    "geography": "Địa lý",
+    "art": "Mỹ thuật",
+    "music": "Âm nhạc",
+    "pe": "Thể dục"
+  },
+  "lesson": {
+    "duration": "{{minutes}} phút",
+    "level": {
+      "beginner": "Cơ bản",
+      "intermediate": "Trung cấp",
+      "advanced": "Nâng cao"
+    },
+    "status": {
+      "notStarted": "Chưa bắt đầu",
+      "inProgress": "Đang học",
+      "completed": "Hoàn thành",
+      "locked": "Bị khóa"
+    },
+    "quiz": {
+      "question": "Câu hỏi {{number}} / {{total}}",
+      "correct": "Đúng rồi!",
+      "incorrect": "Chưa đúng, hãy thử lại",
+      "score": "Điểm: {{score}} / {{total}}",
+      "pass": "Đạt",
+      "fail": "Chưa đạt"
+    }
+  },
+  "progress": {
+    "completed": "Đã hoàn thành {{count}} / {{total}} bài",
+    "percentage": "{{percent}}%",
+    "keepGoing": "Tiếp tục cố gắng!",
+    "allDone": "Bạn đã hoàn thành tất cả!"
+  }
+}

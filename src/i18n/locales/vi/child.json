@@ -1,0 +1,32 @@
+{
+  "greeting": "Xin chào, {{name}}!",
+  "continueLesson": "Tiếp tục bài học",
+  "startLesson": "Bắt đầu bài học",
+  "myProgress": "Tiến trình của tôi",
+  "todayGoal": "Mục tiêu hôm nay",
+  "streak": {
+    "label": "Chuỗi ngày học",
+    "days": "{{count}} ngày",
+    "keepGoing": "Cố lên nào!"
+  },
+  "points": {
+    "label": "Điểm thưởng",
+    "earned": "Bạn đã đạt được {{count}} điểm!"
+  },
+  "badge": {
+    "new": "Huy hiệu mới!",
+    "unlocked": "Bạn đã mở khóa: {{name}}"
+  },
+  "companion": {
+    "hi": "Chào {{childName}}! Hôm nay bạn muốn học gì?",
+    "wellDone": "Tuyệt vời! Bạn làm rất tốt!",
+    "tryAgain": "Không sao, hãy thử lại nhé!",
+    "lessonComplete": "Bài học hoàn thành! 🎉"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "learn": "Học tập",
+    "achievements": "Thành tích",
+    "profile": "Hồ sơ"
+  }
+}

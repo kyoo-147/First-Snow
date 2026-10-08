@@ -1,0 +1,37 @@
+{
+  "save": "Lưu",
+  "cancel": "Hủy",
+  "close": "Đóng",
+  "confirm": "Xác nhận",
+  "delete": "Xóa",
+  "edit": "Chỉnh sửa",
+  "back": "Quay lại",
+  "next": "Tiếp theo",
+  "loading": "Đang tải…",
+  "error": "Đã xảy ra lỗi",
+  "retry": "Thử lại",
+  "success": "Thành công",
+  "settings": "Cài đặt",
+  "search": "Tìm kiếm",
+  "notFound": "Không tìm thấy",
+  "required": "Bắt buộc",
+  "optional": "Tùy chọn",
+  "learnMore": "Tìm hiểu thêm",
+  "viewAll": "Xem tất cả",
+  "signOut": "Đăng xuất",
+  "welcome": "Chào mừng",
+  "date": {
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "daysAgo": "{{count}} ngày trước",
+    "hoursAgo": "{{count}} giờ trước",
+    "minutesAgo": "{{count}} phút trước",
+    "justNow": "Vừa xong"
+  },
+  "aria": {
+    "closeDialog": "Đóng hộp thoại",
+    "openMenu": "Mở menu",
+    "loading": "Đang tải nội dung",
+    "required": "Trường bắt buộc"
+  }
+}

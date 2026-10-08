@@ -1,0 +1,31 @@
+{
+  "state": {
+    "idle": "Đang chờ",
+    "listening": "Đang nghe",
+    "thinking": "Đang suy nghĩ",
+    "speaking": "Đang nói",
+    "loading": "Đang tải",
+    "error": "Lỗi kết nối"
+  },
+  "input": {
+    "placeholder": "Nhập tin nhắn…",
+    "send": "Gửi",
+    "voiceHint": "Nhấn để nói"
+  },
+  "session": {
+    "start": "Bắt đầu trò chuyện",
+    "end": "Kết thúc phiên",
+    "reconnect": "Kết nối lại",
+    "connected": "Đã kết nối",
+    "disconnected": "Mất kết nối"
+  },
+  "safety": {
+    "blocked": "Nội dung này không phù hợp. Hãy hỏi điều gì đó khác nhé!",
+    "flagged": "Câu hỏi của bạn đang được xem xét."
+  },
+  "error": {
+    "noResponse": "Trợ lý chưa trả lời được. Hãy thử lại nhé!",
+    "connectionFailed": "Không thể kết nối. Vui lòng kiểm tra mạng.",
+    "sessionExpired": "Phiên trò chuyện đã hết hạn."
+  }
+}
