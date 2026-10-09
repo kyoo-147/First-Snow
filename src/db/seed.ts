@@ -1,10 +1,15 @@
 import 'dotenv/config';
+import bcrypt from 'bcryptjs';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
-import { hashPassword } from '@/lib/auth/parent-auth';
-import { hashPin } from '@/lib/auth/child-auth';
 import { seedLessonCatalog } from './seed-lessons';
+
+const SEED_SALT_ROUNDS = 12;
+
+async function hashSeedCredential(value: string): Promise<string> {
+  return bcrypt.hash(value, SEED_SALT_ROUNDS);
+}
 
 export async function runSeed(databaseUrl?: string) {
   const connectionString = databaseUrl || process.env.DATABASE_URL;
@@ -18,7 +23,7 @@ export async function runSeed(databaseUrl?: string) {
   console.log('[seed] Seeding database...');
 
   // 1. System Admin user
-  const adminPasswordHash = await hashPassword('Admin@Password1!');
+  const adminPasswordHash = await hashSeedCredential('Admin@Password1!');
   const [admin] = await db
     .insert(schema.users)
     .values({
@@ -35,7 +40,7 @@ export async function runSeed(databaseUrl?: string) {
   }
 
   // 2. Test Parent user
-  const parentPasswordHash = await hashPassword('Parent@Password1!');
+  const parentPasswordHash = await hashSeedCredential('Parent@Password1!');
   const [parent] = await db
     .insert(schema.users)
     .values({
@@ -78,8 +83,8 @@ export async function runSeed(databaseUrl?: string) {
         .onConflictDoNothing();
 
       // 5. Seed 2 children (Alice & Bob)
-      const child1PinHash = await hashPin('1234');
-      const child2PinHash = await hashPin('5678');
+      const child1PinHash = await hashSeedCredential('1234');
+      const child2PinHash = await hashSeedCredential('5678');
 
       await db
         .insert(schema.children)
