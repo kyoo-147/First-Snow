@@ -11,12 +11,14 @@ import {
   type ChildReward,
   type RewardType,
 } from "@/lib/learning-client";
+import { t } from "@/i18n";
+import { formatSnowDate } from "@/lib/format";
 
-const rewardStyles: Record<RewardType, { label: string; icon: typeof Star; color: string; bg: string }> = {
-  star: { label: "Star", icon: Star, color: "text-snow-warning", bg: "bg-snow-warning/20" },
-  badge: { label: "Badge", icon: Trophy, color: "text-snow-primary", bg: "bg-snow-primary/20" },
-  streak: { label: "Streak", icon: Zap, color: "text-snow-aqua", bg: "bg-snow-aqua/20" },
-  milestone: { label: "Milestone", icon: Heart, color: "text-snow-peach", bg: "bg-snow-peach/20" },
+const rewardStyles: Record<RewardType, { typeKey: "star" | "badge" | "streak" | "milestone"; icon: typeof Star; color: string; bg: string }> = {
+  star: { typeKey: "star", icon: Star, color: "text-snow-warning", bg: "bg-snow-warning/20" },
+  badge: { typeKey: "badge", icon: Trophy, color: "text-snow-primary", bg: "bg-snow-primary/20" },
+  streak: { typeKey: "streak", icon: Zap, color: "text-snow-aqua", bg: "bg-snow-aqua/20" },
+  milestone: { typeKey: "milestone", icon: Heart, color: "text-snow-peach", bg: "bg-snow-peach/20" },
 };
 
 export function RewardsScreen() {
@@ -38,7 +40,7 @@ export function RewardsScreen() {
         const child = await fetchSessionChild();
         if (!child) {
           if (!cancelled) {
-            setError("Sign in with a child profile to see your rewards.");
+            setError(t("learning", "rewardsScreen.signInRequired"));
             setIsLoading(false);
           }
           return;
@@ -51,7 +53,7 @@ export function RewardsScreen() {
         }
       } catch (cause) {
         if (!cancelled) {
-          setError(cause instanceof Error ? cause.message : "Could not load your rewards.");
+          setError(cause instanceof Error ? cause.message : t("learning", "rewardsScreen.couldNotLoad"));
           setIsLoading(false);
         }
       }
@@ -78,17 +80,21 @@ export function RewardsScreen() {
           <div className="flex-1 text-center md:text-left">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-snow-warning/10 px-3 py-1">
               <Sparkles className="size-4 text-snow-warning" />
-              <span className="text-xs font-black uppercase tracking-wide text-snow-warning">Rewards</span>
+              <span className="text-xs font-black uppercase tracking-wide text-snow-warning">
+                {t("learning", "rewardsScreen.badgeTitle")}
+              </span>
             </div>
             <h1 className="mb-4 text-4xl font-black text-snow-primary-dark">
-              {childName ? `Great work, ${childName}!` : "Your rewards"}
+              {childName
+                ? t("learning", "rewardsScreen.greatWork", { name: childName })
+                : t("learning", "rewardsScreen.yourRewards")}
             </h1>
             <p className="max-w-lg text-base font-bold leading-relaxed text-snow-muted">
               {isLoading
-                ? "Loading your rewards…"
+                ? t("learning", "rewardsScreen.loading")
                 : rewards.length > 0
-                  ? `You have earned ${rewards.length} reward${rewards.length === 1 ? "" : "s"} so far, including ${stars} star${stars === 1 ? "" : "s"}.`
-                  : "Finish a lesson with AgentKid to earn your first reward."}
+                  ? t("learning", "rewardsScreen.earnedSummary", { count: rewards.length, stars })
+                  : t("learning", "rewardsScreen.finishFirstLesson")}
             </p>
           </div>
         </div>
@@ -100,29 +106,29 @@ export function RewardsScreen() {
           <div className="mt-5 flex justify-center">
             <SnowButton variant="soft" onClick={reload} className="gap-2">
               <RefreshCw className="size-4" />
-              Try again
+              {t("learning", "rewardsScreen.tryAgain")}
             </SnowButton>
           </div>
         </div>
       ) : isLoading ? (
         <div role="status" aria-busy="true" className="flex items-center justify-center gap-3 py-12 text-snow-muted">
           <Loader2 className="size-6 animate-spin text-snow-primary" />
-          <span className="text-sm font-bold">Loading your rewards…</span>
+          <span className="text-sm font-bold">{t("learning", "rewardsScreen.loading")}</span>
         </div>
       ) : rewards.length === 0 ? (
         <SnowCard className="p-2">
           <EmptyState
             icon={Sparkles}
-            title="No rewards yet"
-            description="Complete a lesson and AgentKid will add your first star here."
-            actionLabel="Check again"
+            title={t("learning", "rewardsScreen.noRewardsTitle")}
+            description={t("learning", "rewardsScreen.noRewardsDesc")}
+            actionLabel={t("learning", "rewardsScreen.checkAgain")}
             onAction={reload}
           />
         </SnowCard>
       ) : (
         <div>
           <h2 className="mb-6 flex items-center gap-2 text-2xl font-black text-snow-primary-dark">
-            Earned rewards
+            {t("learning", "rewardsScreen.earnedRewards")}
             <span className="ml-2 rounded-full bg-snow-surface-soft px-2 py-1 text-sm font-bold text-snow-muted">
               {rewards.length}
             </span>
@@ -131,6 +137,7 @@ export function RewardsScreen() {
             {rewards.map((reward) => {
               const style = rewardStyles[reward.type];
               const Icon = style.icon;
+              const typeLabel = t("learning", `rewardsScreen.types.${style.typeKey}`);
               return (
                 <SnowCard key={reward.id} className="flex items-center gap-4 p-5">
                   <div className={`grid size-14 shrink-0 place-items-center rounded-2xl ${style.bg}`}>
@@ -139,7 +146,7 @@ export function RewardsScreen() {
                   <div className="min-w-0">
                     <p className="truncate text-base font-black text-snow-primary-dark">{reward.label}</p>
                     <p className="text-xs font-bold uppercase tracking-wide text-snow-muted">
-                      {style.label} · {new Date(reward.awardedAt).toLocaleDateString()}
+                      {typeLabel} · {formatSnowDate(reward.awardedAt)}
                     </p>
                   </div>
                 </SnowCard>

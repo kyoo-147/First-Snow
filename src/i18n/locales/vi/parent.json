@@ -593,7 +593,24 @@
     "routineNote": "Ghi chú",
     "routineNoteDesc": "Các bước ngắn giúp phiên học của trẻ dễ đoán hơn.",
     "todaysCompletion": "Hoàn thành hôm nay",
-    "completionDesc": "Mức hoàn thành làm mới theo ngày. Các lịch trình tạm dừng vẫn được lưu lại."
+    "completionDesc": "Mức hoàn thành làm mới theo ngày. Các lịch trình tạm dừng vẫn được lưu lại.",
+    "childRoutines": "Lịch trình của {{name}}",
+    "manageRoutinesDesc": "Quản lý lịch trình học tập và nghỉ ngơi đều đặn cho {{name}}.",
+    "today": "Hôm nay",
+    "predictable": "Dễ đoán",
+    "repeatableSteps": "Các bước nhỏ lặp lại",
+    "createRoutine": "Tạo lịch trình",
+    "saveChanges": "Lưu thay đổi",
+    "stepsCount": "{{count}} bước",
+    "doneToday": "Xong hôm nay",
+    "upNext": "Tiếp theo",
+    "editRoutine": "Chỉnh sửa {{title}}",
+    "deleteRoutine": "Xóa {{title}}",
+    "stepDuration": "{{minutes}} phút",
+    "couldNotLoad": "Không thể tải lịch trình.",
+    "couldNotSave": "Không thể lưu lịch trình này.",
+    "couldNotUpdate": "Không thể cập nhật lịch trình này.",
+    "couldNotDelete": "Không thể xóa lịch trình này."
   },
   "timeline": {
     "recordedActivity": "Hoạt động đã ghi",
@@ -666,7 +683,11 @@
     "storedTranscript": "Bản ghi đã lưu",
     "sharing": "Chia sẻ",
     "loading": "Đang tải...",
-    "noTranscripts": "Chưa có bản ghi"
+    "noTranscripts": "Chưa có bản ghi",
+    "sessionSlice": "Phiên {{slice}}",
+    "sessionNumber": "ID phiên: {{id}}",
+    "noSearchMatchQuery": "Không có tin nhắn nào khớp với tìm kiếm của bạn.",
+    "noTranscriptForSession": "Không có bản ghi nào cho phiên này."
   },
   "simple": {
     "manage": "Quản lý trải nghiệm AgentKid của Minh với quyền kiểm soát của phụ huynh.",

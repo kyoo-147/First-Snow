@@ -13,6 +13,8 @@ import {
   type ChildProgress,
   type ChildReward,
 } from "@/lib/learning-client";
+import { t } from "@/i18n";
+import { formatSnowDate } from "@/lib/format";
 
 function formatMinutes(total: number): string {
   if (!total) return "0 min";
@@ -40,7 +42,7 @@ export function ProgressScreen() {
         const child = await fetchSessionChild();
         if (!child) {
           if (!cancelled) {
-            setError("Sign in with a child profile to see your progress.");
+            setError(t("learning", "progressScreen.signInRequired"));
             setIsLoading(false);
           }
           return;
@@ -56,7 +58,7 @@ export function ProgressScreen() {
         }
       } catch (cause) {
         if (!cancelled) {
-          setError(cause instanceof Error ? cause.message : "Could not load your progress.");
+          setError(cause instanceof Error ? cause.message : t("learning", "progressScreen.couldNotLoad"));
           setIsLoading(false);
         }
       }
@@ -72,30 +74,32 @@ export function ProgressScreen() {
 
   const stats = [
     {
-      label: "Lessons done",
+      label: t("learning", "progressScreen.lessonsDone"),
       value: `${progress?.lessonsCompleted ?? 0}`,
-      detail: progress?.totalLessons ? `of ${progress.totalLessons} available` : "Total finished",
+      detail: progress?.totalLessons
+        ? t("learning", "progressScreen.ofAvailable", { total: progress.totalLessons })
+        : t("learning", "progressScreen.totalFinished"),
       icon: <Target className="size-5 text-snow-primary" />,
       color: "bg-snow-primary/20 text-snow-primary",
     },
     {
-      label: "Stars earned",
+      label: t("learning", "progressScreen.starsEarned"),
       value: `${stars}`,
-      detail: "Completed lesson rewards",
+      detail: t("learning", "progressScreen.completedLessonRewards"),
       icon: <Star className="size-5 fill-snow-warning text-snow-warning" />,
       color: "bg-snow-warning/20 text-snow-warning",
     },
     {
-      label: "Total rewards",
+      label: t("learning", "progressScreen.totalRewards"),
       value: `${rewards.length}`,
-      detail: "All reward types",
+      detail: t("learning", "progressScreen.allRewardTypes"),
       icon: <Sparkles className="size-5 text-snow-aqua" />,
       color: "bg-snow-aqua/20 text-snow-aqua",
     },
     {
-      label: "Time learned",
+      label: t("learning", "progressScreen.timeLearned"),
       value: formatMinutes(progress?.practiceTimeMinutes ?? 0),
-      detail: "Recorded lesson time",
+      detail: t("learning", "progressScreen.recordedLessonTime"),
       icon: <Clock className="size-5 text-snow-primary" />,
       color: "bg-snow-lavender text-snow-primary",
     },
@@ -104,8 +108,8 @@ export function ProgressScreen() {
   return (
     <div className="flex h-full flex-col gap-6">
       <div className="mb-2">
-        <h1 className="mb-2 text-4xl font-black text-snow-primary-dark">My Progress</h1>
-        <p className="text-sm font-bold text-snow-muted">A calm look at your learning journey and achievements.</p>
+        <h1 className="mb-2 text-4xl font-black text-snow-primary-dark">{t("learning", "progressScreen.title")}</h1>
+        <p className="text-sm font-bold text-snow-muted">{t("learning", "progressScreen.subtitle")}</p>
       </div>
 
       {error ? (
@@ -115,7 +119,7 @@ export function ProgressScreen() {
             <div className="mt-5 flex justify-center">
               <SnowButton variant="soft" onClick={reload} className="gap-2">
                 <RefreshCw className="size-4" />
-                Try again
+                {t("learning", "progressScreen.tryAgain")}
               </SnowButton>
             </div>
           </div>
@@ -123,15 +127,15 @@ export function ProgressScreen() {
       ) : isLoading ? (
         <div role="status" aria-busy="true" className="flex items-center justify-center gap-3 py-12 text-snow-muted">
           <Loader2 className="size-6 animate-spin text-snow-primary" />
-          <span className="text-sm font-bold">Loading your progress…</span>
+          <span className="text-sm font-bold">{t("learning", "progressScreen.loading")}</span>
         </div>
       ) : !hasActivity ? (
         <SnowCard className="p-2">
           <EmptyState
             icon={TrendingUp}
-            title="No progress yet"
-            description="Finish a lesson with AgentKid and your progress will show up here."
-            actionLabel="Check again"
+            title={t("learning", "progressScreen.noProgressTitle")}
+            description={t("learning", "progressScreen.noProgressDesc")}
+            actionLabel={t("learning", "progressScreen.checkAgain")}
             onAction={reload}
           />
         </SnowCard>
@@ -153,12 +157,12 @@ export function ProgressScreen() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <SnowCard className="flex flex-col p-6 lg:col-span-2">
               <h2 className="mb-6 flex items-center gap-2 text-xl font-black text-snow-primary-dark">
-                <TrendingUp className="size-5 text-snow-primary" /> Practice coverage
+                <TrendingUp className="size-5 text-snow-primary" /> {t("learning", "progressScreen.practiceCoverage")}
               </h2>
               {skills.length === 0 ? (
                 <div className="rounded-[var(--radius-md)] border border-dashed border-snow-border bg-snow-surface-soft p-6 text-center">
                   <p className="text-sm font-semibold text-snow-muted">
-                    No practice records yet. Completed lessons will fill in each subject here.
+                    {t("learning", "progressScreen.noPracticeRecords")}
                   </p>
                 </div>
               ) : (
@@ -179,10 +183,10 @@ export function ProgressScreen() {
 
             <SnowCard className="flex flex-col p-6">
               <h2 className="mb-4 flex items-center gap-2 text-lg font-black text-snow-primary-dark">
-                <Star className="size-4 text-snow-warning" /> Recent rewards
+                <Star className="size-4 text-snow-warning" /> {t("learning", "progressScreen.recentRewards")}
               </h2>
               {rewards.length === 0 ? (
-                <p className="text-sm font-semibold text-snow-muted">No rewards collected yet.</p>
+                <p className="text-sm font-semibold text-snow-muted">{t("learning", "progressScreen.noRewardsCollected")}</p>
               ) : (
                 <div className="space-y-3">
                   {rewards.slice(0, 5).map((reward) => (
@@ -194,7 +198,7 @@ export function ProgressScreen() {
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-black text-snow-primary-dark">{reward.label}</p>
                         <p className="text-xs font-semibold text-snow-muted">
-                          {new Date(reward.awardedAt).toLocaleDateString()}
+                          {formatSnowDate(reward.awardedAt)}
                         </p>
                       </div>
                     </div>

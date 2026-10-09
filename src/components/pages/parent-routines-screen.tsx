@@ -70,7 +70,7 @@ export function ParentRoutinesScreen({ childId }: { childId: string }) {
       setChildName(childPayload.child?.displayName ?? childPayload.child?.name ?? "Child");
       setRoutines(Array.isArray(routinePayload.routines) ? routinePayload.routines : []);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not load routines.");
+      setError(cause instanceof Error ? cause.message : t("parent", "routines.couldNotLoad"));
     } finally {
       setLoading(false);
     }
@@ -115,7 +115,7 @@ export function ParentRoutinesScreen({ childId }: { childId: string }) {
       setDraft(blankDraft);
       await load();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not save this routine.");
+      setError(cause instanceof Error ? cause.message : t("parent", "routines.couldNotSave"));
     } finally {
       setSaving(false);
     }
@@ -132,7 +132,7 @@ export function ParentRoutinesScreen({ childId }: { childId: string }) {
       if (!response.ok) throw new Error(await responseError(response));
       await load();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not update this routine.");
+      setError(cause instanceof Error ? cause.message : t("parent", "routines.couldNotUpdate"));
     } finally {
       setSaving(false);
     }
@@ -148,7 +148,7 @@ export function ParentRoutinesScreen({ childId }: { childId: string }) {
       if (!response.ok) throw new Error(await responseError(response));
       await load();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not delete this routine.");
+      setError(cause instanceof Error ? cause.message : t("parent", "routines.couldNotDelete"));
     } finally {
       setSaving(false);
     }
@@ -165,24 +165,27 @@ export function ParentRoutinesScreen({ childId }: { childId: string }) {
   }
 
   return <ParentPageFrame>
-    <PageHeader eyebrow={`${childName}'s routines`} title={t("parent", "routines.title")} description={`Manage predictable learning and wind-down routines for ${childName}.`} action={<SnowButton onClick={() => { setShowCreate(true); setEditingId(null); setDraft(blankDraft); }}><Plus className="mr-2 size-4" />{t("parent", "routines.addRoutine")}</SnowButton>} />
+    <PageHeader eyebrow={t("parent", "routines.childRoutines", { name: childName })} title={t("parent", "routines.title")} description={t("parent", "routines.manageRoutinesDesc", { name: childName })} action={<SnowButton onClick={() => { setShowCreate(true); setEditingId(null); setDraft(blankDraft); }}><Plus className="mr-2 size-4" />{t("parent", "routines.addRoutine")}</SnowButton>} />
     {error ? <div role="alert" className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-800">{error}<button type="button" onClick={() => void load()} className="ml-3 underline">{t("parent", "account.tryAgain")}</button></div> : null}
-    <div className="grid gap-4 md:grid-cols-3"><StatusTile label={t("parent", "routines.activeRoutines")} value={`${routines.filter((routine) => routine.isActive).length}`} detail={t("parent", "routines.acrossDay")} icon={<CalendarCheck className="size-5 text-snow-primary" />} /><StatusTile label={t("parent", "routines.stepsComplete")} value={`${completedSteps}/${totalSteps}`} detail="Today" icon={<Sparkles className="size-5 text-snow-primary" />} tone="bg-snow-ice" /><StatusTile label={t("parent", "routines.routineStyle")} value="Predictable" detail="Small repeatable steps" icon={<Sun className="size-5 text-snow-primary" />} tone="bg-snow-lavender" /></div>
+    <div className="grid gap-4 md:grid-cols-3"><StatusTile label={t("parent", "routines.activeRoutines")} value={`${routines.filter((routine) => routine.isActive).length}`} detail={t("parent", "routines.acrossDay")} icon={<CalendarCheck className="size-5 text-snow-primary" />} /><StatusTile label={t("parent", "routines.stepsComplete")} value={`${completedSteps}/${totalSteps}`} detail={t("parent", "routines.today")} icon={<Sparkles className="size-5 text-snow-primary" />} tone="bg-snow-ice" /><StatusTile label={t("parent", "routines.routineStyle")} value={t("parent", "routines.predictable")} detail={t("parent", "routines.repeatableSteps")} icon={<Sun className="size-5 text-snow-primary" />} tone="bg-snow-lavender" /></div>
     <div className="mt-5 grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
       <SnowCard className="p-5"><h2 className="text-xl font-black text-snow-primary-dark">{t("parent", "routines.routineSchedule")}</h2>
         <div className="mt-5 space-y-4">
-          {showCreate ? routineForm("Create routine") : null}
+          {showCreate ? routineForm(t("parent", "routines.createRoutine")) : null}
           {loading ? <p role="status" className="py-6 text-sm font-semibold text-snow-muted">{t("parent", "routines.loading")}</p> : null}
           {!loading && !routines.length && !showCreate ? <div className="rounded-2xl bg-snow-surface-soft p-6 text-center"><h3 className="font-black text-snow-primary-dark">{t("parent", "routines.noRoutines")}</h3><p className="mt-2 text-sm font-semibold text-snow-muted">{t("parent", "routines.createStepsMsg")}</p><button type="button" onClick={() => setShowCreate(true)} className="mt-4 min-h-10 rounded-full bg-snow-primary px-4 text-sm font-black text-white">{t("parent", "routines.createFirst")}</button></div> : null}
           {!loading ? routines.map((routine) => {
             const Icon = routine.timeOfDay === "morning" ? Sun : routine.timeOfDay === "evening" ? Moon : Sparkles;
+            const timeOfDayLabel = routine.timeOfDay === "anytime"
+              ? t("parent", "routines.anyTime")
+              : t("parent", `routines.${routine.timeOfDay}`);
             return <div key={routine.id} className="rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft p-4">
-              {editingId === routine.id ? routineForm("Save changes") : <>
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"><div className="flex min-w-0 items-center gap-4"><div className={cn("grid size-11 place-items-center rounded-full", routine.timeOfDay === "morning" ? "bg-snow-cream text-snow-warning" : "bg-snow-primary-soft text-snow-primary")}><Icon className="size-5" /></div><div className="min-w-0"><h3 className="font-black text-snow-primary-dark">{routine.title}</h3><p className="text-sm font-semibold capitalize text-snow-muted">{routine.timeOfDay}{routine.scheduledTime ? ` Â· ${routine.scheduledTime}` : ""} Â· {routine.steps.length} steps</p></div></div>
-                  <div className="flex flex-wrap gap-2"><button type="button" disabled={saving} aria-pressed={routine.isActive} onClick={() => void toggleActive(routine)} className={cn("min-h-10 rounded-full px-4 text-xs font-black disabled:opacity-60", routine.isActive ? "bg-snow-primary text-white" : "bg-snow-border text-snow-primary-dark")}>{routine.isActive ? t("parent", "routines.active") : t("parent", "routines.paused")}</button><button type="button" onClick={() => beginEdit(routine)} className="grid size-10 place-items-center rounded-full border border-snow-border bg-white" aria-label={`Edit ${routine.title}`}><Pencil className="size-4" /></button><button type="button" disabled={saving} onClick={() => void removeRoutine(routine)} className="grid size-10 place-items-center rounded-full border border-snow-border bg-white text-red-700 disabled:opacity-60" aria-label={`Delete ${routine.title}`}><Trash2 className="size-4" /></button></div>
+              {editingId === routine.id ? routineForm(t("parent", "routines.saveChanges")) : <>
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"><div className="flex min-w-0 items-center gap-4"><div className={cn("grid size-11 place-items-center rounded-full", routine.timeOfDay === "morning" ? "bg-snow-cream text-snow-warning" : "bg-snow-primary-soft text-snow-primary")}><Icon className="size-5" /></div><div className="min-w-0"><h3 className="font-black text-snow-primary-dark">{routine.title}</h3><p className="text-sm font-semibold capitalize text-snow-muted">{timeOfDayLabel}{routine.scheduledTime ? ` · ${routine.scheduledTime}` : ""} · {t("parent", "routines.stepsCount", { count: routine.steps.length })}</p></div></div>
+                  <div className="flex flex-wrap gap-2"><button type="button" disabled={saving} aria-pressed={routine.isActive} onClick={() => void toggleActive(routine)} className={cn("min-h-10 rounded-full px-4 text-xs font-black disabled:opacity-60", routine.isActive ? "bg-snow-primary text-white" : "bg-snow-border text-snow-primary-dark")}>{routine.isActive ? t("parent", "routines.active") : t("parent", "routines.paused")}</button><button type="button" onClick={() => beginEdit(routine)} className="grid size-10 place-items-center rounded-full border border-snow-border bg-white" aria-label={t("parent", "routines.editRoutine", { title: routine.title })}><Pencil className="size-4" /></button><button type="button" disabled={saving} onClick={() => void removeRoutine(routine)} className="grid size-10 place-items-center rounded-full border border-snow-border bg-white text-red-700 disabled:opacity-60" aria-label={t("parent", "routines.deleteRoutine", { title: routine.title })}><Trash2 className="size-4" /></button></div>
                 </div>
-                <div className="mt-4 grid gap-2 md:grid-cols-3">{routine.steps.map((step) => <div key={step.id} className="rounded-[var(--radius-sm)] bg-snow-surface px-3 py-2"><p className="text-xs font-black text-snow-primary-dark">{step.title}</p><p className="mt-1 text-[11px] font-semibold text-snow-muted">{step.durationMinutes} min - {step.isCompleted ? "Done today" : "Up next"}</p></div>)}</div>
-                {editingId === routine.id ? routineForm("Save changes") : null}
+                <div className="mt-4 grid gap-2 md:grid-cols-3">{routine.steps.map((step) => <div key={step.id} className="rounded-[var(--radius-sm)] bg-snow-surface px-3 py-2"><p className="text-xs font-black text-snow-primary-dark">{step.title}</p><p className="mt-1 text-[11px] font-semibold text-snow-muted">{t("parent", "routines.stepDuration", { minutes: step.durationMinutes })} - {step.isCompleted ? t("parent", "routines.doneToday") : t("parent", "routines.upNext")}</p></div>)}</div>
+                {editingId === routine.id ? routineForm(t("parent", "routines.saveChanges")) : null}
               </>}
             </div>;
           }) : null}

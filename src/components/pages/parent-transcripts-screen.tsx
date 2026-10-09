@@ -206,7 +206,7 @@ function ParentTranscriptsContent({
               title={t("parent", "transcripts.exportNotAvailable")}
             >
               <Download className="mr-2 size-4" />
-              Export
+              {t("parent", "transcripts.export")}
             </SnowButton>
           </div>
         }
@@ -216,7 +216,7 @@ function ParentTranscriptsContent({
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatusTile
           label={t("parent", "transcripts.childProfile")}
-          value={childId ? `Child (${childId})` : "Unspecified"}
+          value={childId ? `${t("parent", "transcripts.child")} (${childId})` : t("parent", "transcripts.unspecified")}
           detail={t("parent", "transcripts.routeProfile")}
           icon={<ShieldCheck className="size-5 text-snow-primary" />}
         />
@@ -267,7 +267,7 @@ function ParentTranscriptsContent({
           <p className="text-sm font-bold text-snow-danger">{errorMessage}</p>
           <SnowButton onClick={handleRetry}>
             <RefreshCw className="size-4" />
-            Try again
+            {t("parent", "transcripts.tryAgain")}
           </SnowButton>
         </div>
       )}
@@ -278,7 +278,7 @@ function ParentTranscriptsContent({
           <MessageSquare className="size-10 text-snow-muted/60" />
           <h2 className="snow-heading text-lg font-black text-snow-primary-dark">{t("parent", "transcripts.noTranscripts")}</h2>
           <p className="snow-body-copy snow-font-readable max-w-[420px] font-semibold text-snow-muted">
-            Conversation records between the child and AgentKid will appear here once sessions take place.
+            {t("parent", "transcripts.noTranscriptsDesc")}
           </p>
         </div>
       )}
@@ -290,14 +290,14 @@ function ParentTranscriptsContent({
             <div className="border-b border-snow-border px-2 pb-3">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="snow-heading text-[1.05rem] font-black text-snow-primary-dark">
-                  Session list
+                  {t("parent", "transcripts.sessionList")}
                 </h2>
                 <span className="rounded-full bg-snow-primary-soft px-2.5 py-1 text-xs font-black text-snow-primary-dark">
-                  {sessions.length} records
+                  {t("parent", "transcripts.recordsCount", { count: sessions.length })}
                 </span>
               </div>
               <p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">
-                Choose one conversation to inspect.
+                {t("parent", "transcripts.chooseSession")}
               </p>
             </div>
             <div className="snow-scrollbar mt-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1">
@@ -322,7 +322,7 @@ function ParentTranscriptsContent({
                       </span>
                     </span>
                     <span className="snow-body-small snow-font-readable font-semibold text-snow-muted">
-                      Session ID: …{session.id.slice(-8)}
+                      {t("parent", "transcripts.sessionId", { id: session.id.slice(-8) })}
                     </span>
                     <span
                       className={cn(
@@ -333,7 +333,7 @@ function ParentTranscriptsContent({
                       )}
                     >
                       <MessageSquare className="size-3" />
-                      {session.messageCount} messages
+                      {t("parent", "transcripts.messagesCount", { count: session.messageCount })}
                     </span>
                   </button>
                 );
@@ -352,15 +352,15 @@ function ParentTranscriptsContent({
                         {formatSnowDateTime(activeSession.firstAt)}
                       </h2>
                       <p className="snow-body-small snow-font-readable font-semibold text-snow-muted">
-                        Session ID: {activeSession.id}
+                        {t("parent", "transcripts.sessionIdFull", { id: activeSession.id })}
                       </p>
                     </div>
                   </div>
                   <div className="mt-4 grid gap-3 sm:grid-cols-3">
                     {[
-                      ["Messages", `${transcripts.length}`],
-                      ["Sharing", "Parent-only"],
-                      ["Suggested read", "Opening and pacing"],
+                      [t("parent", "transcripts.messages"), `${transcripts.length}`],
+                      [t("parent", "transcripts.sharing"), t("parent", "transcripts.parentOnly")],
+                      [t("parent", "transcripts.suggestedRead"), t("parent", "transcripts.openingPacing")],
                     ].map(([label, value]) => (
                       <div key={label} className="rounded-[var(--radius-md)] bg-snow-surface px-3 py-2">
                         <p className="text-[11px] font-black text-snow-muted">{label}</p>
@@ -383,7 +383,7 @@ function ParentTranscriptsContent({
                             >
                               <div
                                 className={cn(
-                                  "relative mt-1 size-8 shrink-0 overflow-hidden rounded-full border border-snow-border grid place-items-center text-xs font-black",
+                                   "relative mt-1 size-8 shrink-0 overflow-hidden rounded-full border border-snow-border grid place-items-center text-xs font-black",
                                   isSnow ? "bg-white" : "bg-snow-primary-soft text-snow-primary-dark",
                                 )}
                               >
@@ -401,7 +401,7 @@ function ParentTranscriptsContent({
                               </div>
                               <div className={cn("flex max-w-[78%] flex-col", !isSnow && "order-first items-end")}>
                                 <span className={cn("text-xs font-bold text-snow-muted", isSnow ? "ml-1" : "mr-1")}>
-                                  {isSnow ? "AgentKid" : "Child"}
+                                  {isSnow ? t("parent", "transcripts.agentKid") : t("parent", "transcripts.child")}
                                 </span>
                                 <div
                                   className={cn(
@@ -421,26 +421,26 @@ function ParentTranscriptsContent({
                       <div className="grid gap-3 self-start xl:sticky xl:top-4">
                         <div className="rounded-[var(--radius-lg)] bg-snow-ice p-4">
                           <p className="text-xs font-black uppercase tracking-wide text-snow-muted">
-                            Reading lens
+                            {t("parent", "transcripts.readingLens")}
                           </p>
                           <p className="mt-2 text-sm font-semibold leading-6 text-snow-primary-dark">
-                            Look for openings, transitions, and what helped the child stay with the session.
+                            {t("parent", "transcripts.readingLensDesc")}
                           </p>
                         </div>
                         <div className="rounded-[var(--radius-lg)] bg-snow-primary-soft p-4">
                           <p className="text-xs font-black uppercase tracking-wide text-snow-muted">
-                            Good next step
+                            {t("parent", "transcripts.goodNextStep")}
                           </p>
                           <p className="mt-2 text-sm font-semibold leading-6 text-snow-primary-dark">
-                            Keep tomorrow&apos;s first prompt familiar, then move into one short lesson.
+                            {t("parent", "transcripts.goodNextStepDesc")}
                           </p>
                         </div>
                         <div className="rounded-[var(--radius-lg)] bg-snow-surface-soft p-4">
                           <p className="text-xs font-black uppercase tracking-wide text-snow-muted">
-                            Sharing rule
+                            {t("parent", "transcripts.sharingRule")}
                           </p>
                           <p className="mt-2 text-sm font-semibold leading-6 text-snow-primary-dark">
-                            These records are available to your parent account and remain observational.
+                            {t("parent", "transcripts.sharingRuleDesc")}
                           </p>
                         </div>
                       </div>
@@ -448,15 +448,15 @@ function ParentTranscriptsContent({
                   ) : (
                     <div className="flex h-full items-center justify-center rounded-[var(--radius-lg)] bg-snow-surface-soft text-sm font-bold text-snow-muted">
                       {searchQuery.trim()
-                        ? "No messages match your search."
-                        : "No transcript available for this session."}
+                        ? t("parent", "transcripts.noSearchMatch")
+                        : t("parent", "transcripts.noTranscriptAvailable")}
                     </div>
                   )}
                 </div>
               </>
             ) : (
               <div className="flex h-full items-center justify-center text-sm font-bold text-snow-muted">
-                Select a session to view transcripts.
+                {t("parent", "transcripts.selectSession")}
               </div>
             )}
           </SnowCard>
@@ -465,18 +465,18 @@ function ParentTranscriptsContent({
           <aside className="space-y-4">
             <SnowCard className="snow-card-pad">
               <h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">
-                How to read this
+                {t("parent", "transcripts.howToRead")}
               </h2>
               <p className="snow-body-copy snow-font-readable mt-3 font-semibold text-snow-muted">
-                These records are available to your parent account to support follow-up and context, not diagnosis or scoring.
+                {t("parent", "transcripts.howToReadDesc")}
               </p>
             </SnowCard>
             <SnowCard className="snow-card-pad">
               <h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">
-                Good next step
+                {t("parent", "transcripts.goodNextStep")}
               </h2>
               <p className="snow-body-copy snow-font-readable mt-3 font-semibold text-snow-muted">
-                Look for patterns in openings, pacing, and transitions before changing the child&apos;s routine.
+                {t("parent", "transcripts.goodNextStepSidebarDesc")}
               </p>
             </SnowCard>
           </aside>
