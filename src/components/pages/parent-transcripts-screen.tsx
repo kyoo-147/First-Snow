@@ -389,7 +389,7 @@ function ParentTranscriptsContent({
                               >
                                 {isSnow ? (
                                   <Image
-                                    src="/images/snow-avatar-final.png"
+                                    src="/images/snow-avatar-v2.png"
                                     alt="AgentKid"
                                     fill
                                     sizes="32px"

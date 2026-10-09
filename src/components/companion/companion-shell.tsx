@@ -112,7 +112,7 @@ export function CompanionShell() {
           <div className="flex items-center gap-3">
             <button aria-label={t("companion", "shell.helpAria")} className="grid size-11 place-items-center rounded-full border border-snow-border bg-snow-surface text-snow-primary-dark">?</button>
             <button aria-label={t("companion", "shell.childMode")} className="flex min-h-12 items-center gap-3 rounded-full border border-snow-border bg-snow-surface px-3">
-              <Image src="/images/snow-avatar-final.png" alt="" width={38} height={38} className="rounded-full" />
+              <Image src="/images/snow-avatar-v2.png" alt="" aria-hidden="true" width={38} height={38} className="rounded-full" />
               <span className="hidden text-left leading-tight sm:block">
                 <strong className="block text-sm font-black text-snow-primary-dark">Minh</strong>
                 <span className="text-xs font-bold text-snow-muted">{t("companion", "shell.childMode")}</span>
@@ -239,7 +239,13 @@ function CompanionStage({
 }) {
   return (
     <section className="relative min-h-0 flex-1 overflow-hidden rounded-[var(--radius-lg)] border border-snow-border bg-gradient-to-br from-snow-ice via-snow-surface-soft to-snow-lavender shadow-[var(--shadow-stage)]">
-      <Image src="/images/snow-companion-stage.png" alt={t("companion", "shell.stageAlt")} fill priority className="object-contain object-center" />
+      <Image
+        src="/images/snow-classroom-empty-stage-v2.png"
+        alt={t("companion", "shell.stageAlt")}
+        fill
+        priority
+        className="object-cover object-center"
+      />
       <div className="absolute inset-0 bg-gradient-to-b from-snow-surface/10 via-transparent to-snow-primary-dark/12" />
       <div className={cn("absolute left-6 top-6 z-10 flex min-h-11 items-center gap-2 rounded-full bg-snow-surface px-5 text-sm font-black shadow-[var(--shadow-card)]", connected ? "text-snow-success" : "text-snow-danger")}>
         {connected ? <Wifi className="size-5" /> : <WifiOff className="size-5" />}

@@ -4,9 +4,9 @@ import { SnowCard } from "@/components/ui/snow-card";
 
 export function LibraryScreen() {
   const favorites = [
-    { id: 1, title: "Chú cáo nhỏ dũng cảm", type: "Câu chuyện", time: "5 phút", color: "text-snow-primary", bg: "bg-snow-primary/10", img: "/images/lesson-story.png" },
-    { id: 2, title: "Hơi thở sâu êm dịu", type: "Thư giãn", time: "3 phút", color: "text-snow-aqua", bg: "bg-snow-aqua/10", img: "/images/lesson-story.png" },
-    { id: 3, title: "Những con số kỳ diệu", type: "Toán học", time: "10 phút", color: "text-snow-aqua", bg: "bg-snow-ice", img: "/images/lesson-story.png" },
+    { id: 1, title: "Chú cáo nhỏ dũng cảm", type: "Câu chuyện", time: "5 phút", color: "text-snow-primary", bg: "bg-snow-primary/10", img: "/images/lesson-story-v2.png" },
+    { id: 2, title: "Hơi thở sâu êm dịu", type: "Thư giãn", time: "3 phút", color: "text-snow-aqua", bg: "bg-snow-aqua/10", img: "/images/lesson-social-v2.png" },
+    { id: 3, title: "Những con số kỳ diệu", type: "Toán học", time: "10 phút", color: "text-snow-aqua", bg: "bg-snow-ice", img: "/images/lesson-math-v2.png" },
   ];
 
   const recent = [
@@ -55,7 +55,7 @@ export function LibraryScreen() {
               {favorites.map(item => (
                 <SnowCard key={item.id} className="p-4 flex flex-col group cursor-pointer border border-snow-border hover:border-snow-primary/40 transition-colors">
                   <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-snow-surface-soft mb-3">
-                    <Image src={item.img} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <Image src={item.img} alt={item.title} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-contain p-2 group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute top-2 right-2 size-8 bg-white/90 backdrop-blur-sm rounded-full grid place-items-center shadow-sm">
                       <Heart className="size-4 text-snow-peach fill-snow-peach" />
                     </div>

@@ -52,8 +52,9 @@ export function SessionSwitchView() {
         <div className="flex items-center gap-3">
           <div className="relative size-12 shrink-0 overflow-hidden rounded-full border border-snow-border bg-snow-primary-soft">
             <Image
-              src="/images/snow-avatar-final.png"
+              src="/images/snow-avatar-v2.png"
               alt=""
+              aria-hidden="true"
               fill
               className="object-cover"
             />

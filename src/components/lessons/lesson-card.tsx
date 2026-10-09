@@ -16,7 +16,13 @@ const accentClass: Record<string, string> = {
 
 export function LessonCard({ lesson }: { lesson: LessonCardData | LessonSummary }) {
   const accent = (lesson.accent && accentClass[lesson.accent]) ? accentClass[lesson.accent] : accentClass.primary;
-  const image = lesson.image || "/images/lesson-abc.png";
+  const rawImage = lesson.image || "/images/lesson-abc.png";
+  const image =
+    rawImage === "/images/lesson-abc.png" ? "/images/lesson-abc-v2.png" :
+    rawImage === "/images/lesson-math.png" ? "/images/lesson-math-v2.png" :
+    rawImage === "/images/lesson-story.png" ? "/images/lesson-story-v2.png" :
+    rawImage === "/images/lesson-social.png" ? "/images/lesson-social-v2.png" :
+    rawImage;
   const rawDuration = "duration" in lesson && lesson.duration ? lesson.duration : `${(lesson as LessonSummary).estimatedMinutes || 12}`;
   const duration = rawDuration.includes("phút")
     ? rawDuration

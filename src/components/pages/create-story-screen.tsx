@@ -17,9 +17,9 @@ export function CreateStoryScreen() {
   ];
 
   const characters = [
-    { id: 1, title: "Chú cáo dũng cảm", img: "/images/lesson-story.png", bg: "bg-snow-primary/10" },
-    { id: 2, title: "Chú chim cánh cụt nhỏ", img: "/images/lesson-math.png", bg: "bg-snow-warning/10" },
-    { id: 3, title: "Hai người bạn tốt bụng", img: "/images/lesson-social.png", bg: "bg-snow-aqua/10" },
+    { id: 1, title: "Chú cáo dũng cảm", img: "/images/lesson-story-v2.png", bg: "bg-snow-primary/10" },
+    { id: 2, title: "Chú chim cánh cụt nhỏ", img: "/images/lesson-math-v2.png", bg: "bg-snow-warning/10" },
+    { id: 3, title: "Hai người bạn tốt bụng", img: "/images/lesson-social-v2.png", bg: "bg-snow-aqua/10" },
   ];
 
   return (
@@ -84,7 +84,7 @@ export function CreateStoryScreen() {
               >
                 {/* Character Image */}
                 <div className="w-full aspect-[3/4] relative rounded-2xl overflow-hidden mb-4 bg-snow-surface-soft">
-                  <Image src={char.img} alt={char.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image src={char.img} alt={char.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-contain p-2 group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 
                 {/* Character Title */}

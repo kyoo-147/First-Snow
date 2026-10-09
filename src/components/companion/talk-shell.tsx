@@ -398,7 +398,7 @@ export function TalkShell({ childId }: { childId: string }) {
                     <div className="mt-1 shrink-0">
                       <div className="grid size-10 place-items-center rounded-full border-2 border-snow-surface bg-snow-ice">
                         <Image
-                          src="/images/snow-avatar-final.png"
+                          src="/images/snow-avatar-v2.png"
                           alt="AgentKid"
                           width={32}
                           height={32}
@@ -496,7 +496,7 @@ export function TalkShell({ childId }: { childId: string }) {
                     <div className="mt-1 shrink-0">
                       <div className="grid size-10 place-items-center overflow-hidden rounded-full border-2 border-snow-surface bg-snow-ice">
                         <Image
-                          src="/images/snow-avatar-final.png"
+                          src="/images/snow-avatar-v2.png"
                           alt={t("companion", "talk.you")}
                           width={40}
                           height={40}

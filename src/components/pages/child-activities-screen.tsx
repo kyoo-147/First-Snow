@@ -86,7 +86,7 @@ export function ChildActivitiesScreen() {
           <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
             <div className="rounded-[var(--radius-xl)] bg-snow-ice p-5">
               <div className="relative mx-auto h-36 w-full max-w-[150px]">
-                <Image src="/images/snow-mascot-ui.png" alt="" fill sizes="150px" className="object-contain" />
+                <Image src="/images/snow-mascot-v2.png" alt="Linh vật Snow" fill sizes="150px" className="object-contain" />
               </div>
               <div className="mt-4 rounded-[var(--radius-lg)] bg-snow-surface p-4">
                 <p className="text-sm font-black text-snow-primary-dark">{t("child", "activities.agentKidSays")}</p>

@@ -172,7 +172,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
       <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-4 py-12 snow-enter-soft">
         <div className="flex flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] bg-snow-surface p-12 text-center shadow-[var(--shadow-card)]">
           <div className="relative size-28 animate-pulse">
-            <Image src="/images/snow-mascot-ui.png" alt="" fill sizes="112px" className="object-contain" />
+            <Image src="/images/snow-mascot-v2.png" alt="" aria-hidden="true" fill sizes="112px" className="object-contain" />
           </div>
           <h2 className="text-xl font-black text-snow-primary-dark">{t("learning", "runner.loading")}</h2>
           <p className="max-w-[420px] text-sm font-semibold text-snow-muted">
@@ -238,7 +238,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
       <div className="mx-auto flex w-full max-w-[800px] flex-col gap-6 py-8 snow-enter-soft">
         <div className="rounded-[var(--radius-2xl)] bg-gradient-to-b from-snow-surface via-snow-surface to-snow-primary-soft/30 p-8 text-center shadow-[var(--shadow-card)]">
           <div className="relative mx-auto size-36 snow-float-soft">
-            <Image src="/images/snow-mascot-ui.png" alt="Snow mascot" fill sizes="144px" className="object-contain" />
+            <Image src="/images/snow-mascot-v2.png" alt="Linh vật Snow" fill sizes="144px" className="object-contain" />
           </div>
 
           <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-snow-success/15 px-4 py-1.5 text-sm font-black text-snow-success">
@@ -370,7 +370,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
         <aside className="space-y-4">
           <div className="rounded-[var(--radius-xl)] bg-snow-ice p-5">
             <div className="relative mx-auto size-36 snow-float-soft">
-              <Image src="/images/snow-mascot-ui.png" alt="AgentKid" fill sizes="128px" className="object-contain" />
+              <Image src="/images/snow-mascot-v2.png" alt="Linh vật Snow" fill sizes="128px" className="object-contain" />
             </div>
             <div className="mt-4 rounded-[var(--radius-lg)] bg-snow-surface p-4">
               <p className="text-sm font-black text-snow-primary-dark">{t("learning", "runner.agentKidSays")}</p>

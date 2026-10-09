@@ -14,9 +14,9 @@ export function ActivitiesScreen() {
         
         {/* Missions - Spans 2 columns */}
         <SnowCard className="md:col-span-2 bg-gradient-to-br from-snow-ice to-white p-6 relative overflow-visible border-snow-primary/20 flex flex-col justify-between min-h-[300px]">
-          {/* 3D Mascot Overflow - Owl and AgentKid */}
+          {/* 3D Mascot Overflow - Snow */}
           <div className="absolute -top-10 right-0 lg:right-10 w-48 h-48 hidden sm:block z-10 pointer-events-none">
-            <Image src="/images/snow-mascot.png" alt="AgentKid and Owl" fill className="object-contain drop-shadow-xl" />
+            <Image src="/images/snow-mascot-v2.png" alt="Linh vật Snow" fill sizes="192px" className="object-contain drop-shadow-xl" />
           </div>
 
           <div className="relative z-20 max-w-sm">
@@ -89,7 +89,7 @@ export function ActivitiesScreen() {
           {/* Background Pattern / Illustration */}
           <div className="absolute right-0 top-0 bottom-0 w-2/3 md:w-1/2 z-0 opacity-80 mix-blend-screen overflow-hidden">
              <div className="relative w-full h-full transform translate-x-10 scale-110">
-               <Image src="/images/lesson-story.png" alt="Matching Game BG" fill className="object-cover object-left-bottom" />
+               <Image src="/images/lesson-story-v2.png" alt="" aria-hidden="true" fill sizes="(max-width: 768px) 66vw, 50vw" className="object-cover object-left-bottom" />
              </div>
           </div>
 

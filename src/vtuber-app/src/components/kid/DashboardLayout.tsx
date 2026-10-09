@@ -56,7 +56,7 @@ export default function DashboardLayout({
   }, [location.pathname]);
 
   const username = activeProfile ? activeProfile.name : "Bé Leo";
-  const userAvatar = activeProfile ? activeProfile.avatar : "./images/leo_avatar.png";
+  const userAvatar = activeProfile ? activeProfile.avatar : "./images/leo-avatar-v2.png";
   const currentPath = location.pathname;
 
   const pageTitles: Record<string, string> = {

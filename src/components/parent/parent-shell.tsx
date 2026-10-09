@@ -172,7 +172,7 @@ export function ParentShell({
                 activeNav === "account" && "bg-snow-primary-soft",
               )}
             >
-              <Image src="/images/nana_avatar.png" alt="" width={30} height={30} className="size-[30px] shrink-0 rounded-[var(--radius-md)] object-cover" />
+              <Image src="/images/nana-avatar-v2.png" alt="" aria-hidden="true" width={30} height={30} className="size-[30px] shrink-0 rounded-[var(--radius-md)] object-cover" />
               <span className={cn("min-w-0 flex-1", !showLabels && "md:hidden")}>
                 <strong className="block truncate text-[13px] font-semibold text-snow-foreground">{parentName ?? t("parent", "nav.account")}</strong>
                 <span className="block truncate text-[11px] text-snow-muted">{t("parent", "nav.account")}</span>
@@ -215,7 +215,7 @@ export function ParentShell({
                 <Bell className="size-5" />
               </Link>
               <Link href="/parent/settings/account" className="snow-focus-ring hidden min-h-[52px] items-center gap-3 rounded-full border border-snow-border bg-snow-surface px-3 shadow-[var(--shadow-card)] md:flex">
-                <Image src="/images/nana_avatar.png" alt="" width={40} height={40} className="rounded-full object-cover" />
+                <Image src="/images/nana-avatar-v2.png" alt="" aria-hidden="true" width={40} height={40} className="rounded-full object-cover" />
                 <span className="text-sm leading-tight">
                   <strong className="block font-black text-snow-primary-dark">{parentName ?? t("parent", "nav.account")}</strong>
                   <span className="font-bold text-snow-muted">{t("parent", "nav.account")}</span>
@@ -223,7 +223,7 @@ export function ParentShell({
                 <ChevronDown className="size-4 text-snow-primary-dark" />
               </Link>
               <Link href="/session-switch" aria-label={t("parent", "aria.openChildSelector")} className="snow-focus-ring flex min-h-[52px] min-w-0 items-center gap-3 rounded-full border border-snow-border bg-snow-primary-soft px-3 shadow-[var(--shadow-card)]">
-                <Image src="/images/snow-avatar-final.png" alt="" width={40} height={40} className="rounded-full object-cover" />
+                <Image src="/images/snow-avatar-v2.png" alt="" aria-hidden="true" width={40} height={40} className="rounded-full object-cover" />
                 <span className="hidden text-sm leading-tight sm:block">
                   <strong className="block font-black text-snow-primary-dark">{primaryChild?.name ?? t("parent", "nav.chooseChild")}</strong>
                   <span className="font-bold text-snow-muted">{t("parent", "nav.openChildApp")}</span>

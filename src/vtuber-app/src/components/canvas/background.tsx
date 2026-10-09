@@ -12,7 +12,8 @@ const Background = memo(({ children }: { children?: React.ReactNode }) => {
     backgroundStream, isBackgroundStreaming, startBackgroundCamera, stopBackgroundCamera,
   } = useCamera();
   const { useCameraBackground, backgroundUrl } = useBgUrl();
-  const safeBackgroundUrl = '/images/snow-companion-stage.png';
+  const primaryBackgroundUrl = '/images/snow-classroom-empty-stage-v2.png';
+  const fallbackBackgroundUrl = '/images/snow-companion-stage.png';
 
   useEffect(() => {
     if (useCameraBackground) {
@@ -45,12 +46,12 @@ const Background = memo(({ children }: { children?: React.ReactNode }) => {
       ) : (
         <Image
           {...canvasStyles.background.image}
-          src={backgroundUrl || safeBackgroundUrl}
+          src={backgroundUrl || primaryBackgroundUrl}
           alt={t('ui.backgroundAlt')}
           onError={(event) => {
             const image = event.currentTarget as HTMLImageElement;
-            if (!image.src.endsWith(safeBackgroundUrl)) {
-              image.src = safeBackgroundUrl;
+            if (!image.src.endsWith(fallbackBackgroundUrl)) {
+              image.src = fallbackBackgroundUrl;
             }
           }}
         />

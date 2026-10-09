@@ -116,8 +116,9 @@ export function ChildProfileSelector({
           >
             <div className="relative size-14 shrink-0 overflow-hidden rounded-full border-2 border-snow-border bg-snow-primary-soft">
               <Image
-                src={child.avatarUrl || "/images/snow-avatar-final.png"}
+                src={child.avatarUrl || "/images/snow-avatar-v2.png"}
                 alt=""
+                aria-hidden="true"
                 fill
                 className="object-cover transition group-hover:scale-105"
               />

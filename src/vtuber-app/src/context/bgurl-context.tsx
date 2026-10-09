@@ -40,13 +40,17 @@ const BgUrlContext = createContext<BgUrlContextState | null>(null);
  * @param {React.ReactNode} props.children - Child components
  */
 export function BgUrlProvider({ children }: { children: React.ReactNode }) {
-  const DEFAULT_BACKGROUND = '/images/snow-companion-stage.png';
+  const DEFAULT_BACKGROUND = '/images/snow-classroom-empty-stage-v2.png';
+  const LEGACY_BACKGROUND = '/images/snow-companion-stage.png';
 
   // Local storage for persistent background URL
-  const [backgroundUrl, setBackgroundUrl] = useLocalStorage<string>(
+  const [storedUrl, setBackgroundUrl] = useLocalStorage<string>(
     'backgroundUrl',
     DEFAULT_BACKGROUND,
   );
+
+  // If stored URL is the old double-mascot stage, upgrade it to empty stage
+  const backgroundUrl = storedUrl === LEGACY_BACKGROUND ? DEFAULT_BACKGROUND : storedUrl;
 
   // State for background files list
   const [backgroundFiles, setBackgroundFiles] = useState<BackgroundFile[]>([]);

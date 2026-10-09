@@ -32,12 +32,18 @@ function getSubjectAccent(subject?: string, fallbackAccent?: string): string {
 }
 
 function getLessonImage(image?: string, subject?: string): string {
-  if (image) return image;
+  if (image) {
+    if (image === "/images/lesson-abc.png") return "/images/lesson-abc-v2.png";
+    if (image === "/images/lesson-math.png") return "/images/lesson-math-v2.png";
+    if (image === "/images/lesson-story.png") return "/images/lesson-story-v2.png";
+    if (image === "/images/lesson-social.png") return "/images/lesson-social-v2.png";
+    return image;
+  }
   const s = (subject || "").toLowerCase();
-  if (s.includes("math") || s.includes("count") || s.includes("toán")) return "/images/lesson-math.png";
-  if (s.includes("story") || s.includes("fox") || s.includes("truyện") || s.includes("việt")) return "/images/lesson-story.png";
-  if (s.includes("social") || s.includes("friend") || s.includes("feel") || s.includes("cảm xúc")) return "/images/lesson-social.png";
-  return "/images/lesson-abc.png";
+  if (s.includes("math") || s.includes("count") || s.includes("toán")) return "/images/lesson-math-v2.png";
+  if (s.includes("story") || s.includes("fox") || s.includes("truyện") || s.includes("việt")) return "/images/lesson-story-v2.png";
+  if (s.includes("social") || s.includes("friend") || s.includes("feel") || s.includes("cảm xúc")) return "/images/lesson-social-v2.png";
+  return "/images/lesson-abc-v2.png";
 }
 
 export function LessonCatalog() {
@@ -92,7 +98,7 @@ export function LessonCatalog() {
         <div className="space-y-4 py-8">
           <div className="flex flex-col items-center justify-center gap-3 rounded-[var(--radius-xl)] bg-snow-surface p-12 text-center shadow-[var(--shadow-card)]">
             <div className="relative size-24 animate-pulse">
-              <Image src="/images/snow-mascot-ui.png" alt="" fill sizes="96px" className="object-contain" />
+              <Image src="/images/snow-mascot-v2.png" alt="" aria-hidden="true" fill sizes="96px" className="object-contain" />
             </div>
             <p className="mt-2 text-lg font-black text-snow-primary-dark">{t("learning", "catalog.loadingLessons")}</p>
             <p className="text-sm font-semibold text-snow-muted">{t("learning", "catalog.preparing")}</p>

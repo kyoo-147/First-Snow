@@ -31,7 +31,7 @@ import {
 } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
-const momoMascot = "./images/momo_mascot.png";
+const momoMascot = "./images/momo-mascot-v2.png";
 
 const MotionBox = motion(Box);
 // const MotionFlex = motion(Flex);
@@ -224,7 +224,7 @@ export default function ModeSelectionScreen({
   };
 
   const username = activeProfile ? activeProfile.name : "Bé Leo";
-  const userAvatar = activeProfile ? activeProfile.avatar : "./images/leo_avatar.png";
+  const userAvatar = activeProfile ? activeProfile.avatar : "./images/leo-avatar-v2.png";
   const _userColor = activeProfile ? activeProfile.color : "#7C3AED";
   const _userPoints = activeProfile?.points || 150;
 
@@ -1224,10 +1224,10 @@ export default function ModeSelectionScreen({
                               {/* Stacked avatars */}
                               <HStack spaceX={-2} mt={1}>
                                 <Box w="20px" h="20px" borderRadius="full" border="1.5px solid white" overflow="hidden">
-                                  <img src="./images/leo_avatar.png" alt="" />
+                                  <img src="./images/leo-avatar-v2.png" alt="" />
                                 </Box>
                                 <Box w="20px" h="20px" borderRadius="full" border="1.5px solid white" overflow="hidden">
-                                  <img src="./images/nana_avatar.png" alt="" />
+                                  <img src="./images/nana-avatar-v2.png" alt="" />
                                 </Box>
                               </HStack>
                             </VStack>

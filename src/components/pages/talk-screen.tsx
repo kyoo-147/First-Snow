@@ -48,11 +48,12 @@ export function TalkScreen() {
       {/* Mascot decoration */}
       <div className="-mr-10 absolute right-0 top-0 z-0 hidden lg:block">
         <Image
-          src="/images/snow-mascot.png"
+          src="/images/snow-mascot-v2.png"
           alt=""
+          aria-hidden="true"
           width={160}
           height={160}
-          className="opacity-90 drop-shadow-lg"
+          className="opacity-90 drop-shadow-lg object-contain"
         />
       </div>
 

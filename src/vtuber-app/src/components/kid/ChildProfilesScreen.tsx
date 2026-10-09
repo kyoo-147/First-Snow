@@ -30,7 +30,7 @@ const DEFAULT_PROFILES: KidProfile[] = [
     id: "leo",
     name: "Bé Leo",
     age: 5,
-    avatar: "./images/leo_avatar.png",
+    avatar: "./images/leo-avatar-v2.png",
     status: "Active Session",
     color: "#0E7490", // Teal/Cyan
   },
@@ -38,7 +38,7 @@ const DEFAULT_PROFILES: KidProfile[] = [
     id: "nana",
     name: "Bé Nana",
     age: 4,
-    avatar: "./images/nana_avatar.png",
+    avatar: "./images/nana-avatar-v2.png",
     status: "Resting",
     color: "#7C3AED", // Violet/Purple (as requested in mockup)
   }
@@ -54,7 +54,7 @@ export default function ChildProfilesScreen({
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newName, setNewName] = useState("");
   const [newAge, setNewAge] = useState("");
-  const [selectedAvatar, setSelectedAvatar] = useState("./images/leo_avatar.png");
+  const [selectedAvatar, setSelectedAvatar] = useState("./images/leo-avatar-v2.png");
 
   // Initialize profiles in memory
   useEffect(() => {
@@ -125,9 +125,9 @@ export default function ChildProfilesScreen({
   };
 
   const avatarOptions = [
-    { src: "./images/leo_avatar.png", label: "Leo" },
-    { src: "./images/nana_avatar.png", label: "Nana" },
-    { src: "./images/momo_mascot.png", label: "Momo" },
+    { src: "./images/leo-avatar-v2.png", label: "Leo" },
+    { src: "./images/nana-avatar-v2.png", label: "Nana" },
+    { src: "./images/momo-mascot-v2.png", label: "Momo" },
   ];
 
   return (
@@ -155,7 +155,17 @@ export default function ChildProfilesScreen({
             border="1px solid"
             borderColor="rgba(14, 165, 233, 0.15)"
           >
-            <img src="./images/momo_mascot.png" alt={t("profiles.momoLogo")} style={{ width: "26px", height: "auto" }} />
+            <img
+              src="./images/momo-mascot-v2.png"
+              alt={t("profiles.momoLogo")}
+              onError={(e) => {
+                const img = e.currentTarget as HTMLImageElement;
+                if (!img.src.endsWith("momo_mascot.png")) {
+                  img.src = "./images/momo_mascot.png";
+                }
+              }}
+              style={{ width: "26px", height: "auto" }}
+            />
           </Box>
           <VStack spaceY={0} alignItems="flex-start">
             <Heading size="md" color="#0F172A" fontWeight="bold">

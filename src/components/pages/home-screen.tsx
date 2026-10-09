@@ -169,8 +169,8 @@ export function HomeScreen() {
             </div>
             <div className="relative hidden h-[210px] lg:block snow-float-soft">
               <Image
-                src="/images/snow-mascot-ui.png"
-                alt=""
+                src="/images/snow-mascot-v2.png"
+                alt="Linh vật Snow"
                 fill
                 priority
                 sizes="340px"
@@ -244,7 +244,22 @@ export function HomeScreen() {
                   className="snow-interactive-card snow-focus-ring flex items-center gap-3 rounded-[var(--radius-md)] bg-snow-surface-soft p-3"
                 >
                   <div className="relative size-14 shrink-0 overflow-hidden rounded-[var(--radius-md)] bg-snow-ice">
-                    <Image src="/images/lesson-math.png" alt="" fill sizes="56px" className="object-cover" />
+                    <Image
+                      src={
+                        lesson.subject?.toLowerCase().includes("toán") || lesson.subject?.toLowerCase().includes("math")
+                          ? "/images/lesson-math-v2.png"
+                          : lesson.subject?.toLowerCase().includes("truyện") || lesson.subject?.toLowerCase().includes("story")
+                            ? "/images/lesson-story-v2.png"
+                            : lesson.subject?.toLowerCase().includes("xã hội") || lesson.subject?.toLowerCase().includes("social")
+                              ? "/images/lesson-social-v2.png"
+                              : "/images/lesson-abc-v2.png"
+                      }
+                      alt=""
+                      aria-hidden="true"
+                      fill
+                      sizes="56px"
+                      className="object-contain"
+                    />
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-sm font-black text-snow-primary-dark">{lesson.title}</p>

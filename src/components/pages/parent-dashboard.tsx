@@ -271,7 +271,7 @@ export function ParentDashboard() {
             <SnowCard className="w-full min-w-[300px] p-4">
               <div className="flex items-center gap-3">
                 <Image
-                  src={selectedChild.avatarUrl || "/images/snow-avatar-final.png"}
+                  src={selectedChild.avatarUrl || "/images/snow-avatar-v2.png"}
                   alt={selectedChild.name}
                   width={52}
                   height={52}
@@ -347,8 +347,9 @@ export function ParentDashboard() {
             </div>
           </div>
           <Image
-            src="/images/snow-mascot-ui.png"
+            src="/images/snow-mascot-v2.png"
             alt=""
+            aria-hidden="true"
             width={120}
             height={120}
             className="absolute bottom-0 right-2 h-24 w-24 object-contain opacity-90"
@@ -371,8 +372,9 @@ export function ParentDashboard() {
             </div>
           </div>
           <Image
-            src="/images/lesson-math.png"
+            src="/images/lesson-math-v2.png"
             alt=""
+            aria-hidden="true"
             width={120}
             height={120}
             className="absolute bottom-0 right-2 h-24 w-24 object-contain opacity-90"
@@ -495,7 +497,7 @@ export function ParentDashboard() {
             {latestCompletedLesson ? (
               <>
                 <div className="relative mx-5 h-44 overflow-hidden rounded-[var(--radius-lg)] bg-snow-ice">
-                  <Image src="/images/lesson-story.png" alt="" fill sizes="560px" className="object-cover" />
+                  <Image src="/images/lesson-story-v2.png" alt="" aria-hidden="true" fill sizes="560px" className="object-contain p-2" />
                   <span className="absolute inset-0 grid place-items-center">
                     <span className="grid size-14 place-items-center rounded-full bg-snow-surface text-snow-primary shadow-[var(--shadow-card)]">
                       <PlayCircle className="size-7" />
@@ -613,7 +615,7 @@ export function ParentDashboard() {
           </SnowCard>
 
           <SnowCard className="grid grid-cols-[74px_minmax(0,1fr)] items-center gap-4 bg-snow-lavender p-4">
-            <Image src="/images/snow-mascot-ui.png" alt="" width={72} height={72} className="object-contain" />
+            <Image src="/images/snow-mascot-v2.png" alt="" aria-hidden="true" width={72} height={72} className="object-contain" />
             <div>
               <p className="text-sm font-black text-snow-primary-dark">{t("parent", "dashboard.amazingJob")}</p>
               <p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">

@@ -101,7 +101,7 @@ export function AppShell({ activeNav, children, rightPanel, backHref }: AppShell
                 <Bell className="size-5" />
               </Link>
               <Link href="/session/settings" aria-label={t("common", "settings")} className="snow-focus-ring flex min-h-12 min-w-0 items-center gap-2 rounded-full border border-snow-border bg-snow-surface px-2 shadow-[var(--shadow-card)] transition hover:bg-snow-surface-soft sm:min-h-[52px] sm:gap-3 sm:px-3">
-                <Image src="/images/snow-avatar-final.png" alt="" width={40} height={40} className="rounded-full object-cover" />
+                <Image src="/images/snow-avatar-v2.png" alt="" aria-hidden="true" width={40} height={40} className="rounded-full object-cover" />
                 <span className="hidden text-sm leading-tight sm:block">
                   <strong className="block font-black text-snow-primary-dark">{childName ?? t("common", "childProfile")}</strong>
                   <span className="font-bold text-snow-muted">{ t("common", "success") }</span>

@@ -2,7 +2,7 @@ import { Box, SimpleGrid, VStack, HStack, Text, Heading } from "@chakra-ui/react
 import { useTranslation } from "react-i18next";
 import { Button } from "../../ui/button";
 
-const momoMascot = "./images/momo_mascot.png";
+const momoMascot = "./images/momo-mascot-v2.png";
 
 interface Assistant {
   id: string;

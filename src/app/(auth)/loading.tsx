@@ -6,7 +6,7 @@ export default function AuthLoading() {
     <div className="snow-page-bg min-h-[100dvh] flex flex-col items-center justify-center p-6 text-center">
       <div className="relative size-20 overflow-hidden rounded-full border-2 border-snow-border bg-snow-primary-soft shadow-[var(--shadow-card)] snow-float-soft">
         <Image
-          src="/images/snow-avatar-final.png"
+          src="/images/snow-avatar-v2.png"
           alt={t("auth", "loading.snowPreparing")}
           fill
           className="object-cover"

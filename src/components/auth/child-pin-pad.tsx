@@ -115,8 +115,9 @@ export function ChildPinPad({ child, onBack }: ChildPinPadProps) {
         <div className="flex items-center gap-2.5">
           <div className="relative size-9 overflow-hidden rounded-full border border-snow-border bg-snow-primary-soft">
             <Image
-              src={child.avatarUrl || "/images/snow-avatar-final.png"}
+              src={child.avatarUrl || "/images/snow-avatar-v2.png"}
               alt=""
+              aria-hidden="true"
               fill
               className="object-cover"
             />

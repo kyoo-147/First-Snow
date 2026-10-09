@@ -384,7 +384,7 @@ export function ParentChildrenScreen() {
                   <div className="grid gap-5 bg-snow-primary-soft/50 p-5 md:grid-cols-[auto_minmax(0,1fr)]">
                     <div className="relative size-28 overflow-hidden rounded-full border-8 border-snow-surface shadow-[var(--shadow-soft)]">
                       <Image
-                        src={selectedChild.avatarUrl || "/images/snow-avatar-final.png"}
+                        src={selectedChild.avatarUrl || "/images/snow-avatar-v2.png"}
                         alt={selectedChild.name}
                         fill
                         sizes="112px"
@@ -516,7 +516,7 @@ export function ParentChildrenScreen() {
                           >
                             <div className="relative size-[88px] overflow-hidden rounded-[var(--radius-lg)] border border-snow-border bg-snow-surface shadow-[var(--shadow-soft)]">
                               <Image
-                                src={child.avatarUrl || "/images/snow-avatar-final.png"}
+                                src={child.avatarUrl || "/images/snow-avatar-v2.png"}
                                 alt={child.name}
                                 fill
                                 sizes="88px"

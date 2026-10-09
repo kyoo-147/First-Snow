@@ -82,7 +82,7 @@ export function ExploreScreen() {
             {t("child", "explore.exploreCollection")} <ChevronRight className="size-4" />
           </Link>
         </div>
-        <Image src="/images/snow-mascot-ui.png" alt="" width={240} height={176} className="absolute bottom-0 right-8 hidden object-cover md:block" />
+        <Image src="/images/snow-mascot-v2.png" alt="" aria-hidden="true" width={240} height={176} className="absolute bottom-0 right-8 hidden object-contain md:block" />
       </section>
 
       <section>
