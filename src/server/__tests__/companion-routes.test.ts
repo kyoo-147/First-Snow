@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'node:crypto';
 import { setTestCompanionProvider } from '@/server/companion/contracts';
 
-const dbState = vi.hoisted(() => ({ rows: [] as unknown[][], inserts: 0, shouldThrow: false }));
+const dbState = vi.hoisted(() => ({ rows: [] as unknown[][], selects: 0, inserts: 0, shouldThrow: false }));
 const authState = vi.hoisted(() => ({ child: null as unknown, parent: null as unknown, household: null as unknown }));
 type Query = {
   from: () => Query;
@@ -22,6 +22,7 @@ type Query = {
 vi.mock('@/db/client', () => {
   const tx = {
     select: () => {
+      dbState.selects += 1;
       const query = {} as Query;
       query.from = () => query;
       query.innerJoin = () => query;
@@ -67,6 +68,7 @@ const message = { id: 'message-1', sessionId: 'session-1', childId: 'child-1', c
 
 beforeEach(() => {
   dbState.rows = [];
+  dbState.selects = 0;
   dbState.inserts = 0;
   dbState.shouldThrow = false;
   authState.child = { sub: 'child-1', householdId: 'house-1', actorType: 'child' };
@@ -108,15 +110,46 @@ describe('companion route contracts', () => {
     expect(crossChild.status).toBe(403);
   });
 
-  it('returns the persisted child message on a retry without inserting a duplicate', async () => {
+  it('normal message path skips assistant retry DB lookup and executes bounded history select', async () => {
     const { POST } = await import('@/app/api/companion/sessions/[sessionId]/messages/route');
-    dbState.rows = [[session], [message], [message, { ...message, id: 'assistant-1', clientMessageId: null, speaker: 'snow', text: 'Hello back.' }]];
+    setTestCompanionProvider(async () => 'Hello child!');
+    // 1: ownedSession, 2: existingMessage lookup (none), 3: insert child message returning, 4: bounded history select, 5: insert assistant message returning
+    dbState.rows = [
+      [session],
+      [],
+      [message],
+      [{ speaker: 'child', text: 'hello' }],
+      [{ id: 'assistant-1', sessionId: 'session-1', childId: 'child-1', clientMessageId: null, speaker: 'snow', text: 'Hello child!', isFlagged: false, safetyScore: 0, createdAt: new Date() }],
+    ];
+    const request = new NextRequest('http://localhost/api/companion/sessions/session-1/messages', { method: 'POST', body: JSON.stringify({ clientMessageId: 'client-new', content: 'hello' }) });
+    const response = await POST(request, { params: Promise.resolve({ sessionId: 'session-1' }) });
+    expect(response.status).toBe(201);
+    expect(dbState.selects).toBe(3); // session + existingMessage check + bounded history (retry lookup was skipped!)
+    expect(dbState.inserts).toBe(2); // 1 child message + 1 assistant message
+  });
+
+  it('replay path executes retry lookup and skips provider/assistant generation', async () => {
+    const { POST } = await import('@/app/api/companion/sessions/[sessionId]/messages/route');
+    let providerCalled = false;
+    setTestCompanionProvider(async () => {
+      providerCalled = true;
+      return 'Should not be called';
+    });
+    // 1: ownedSession, 2: existingMessage lookup (found), 3: retry lookup (assistant message found)
+    dbState.rows = [
+      [session],
+      [message],
+      [{ ...message, id: 'assistant-1', clientMessageId: null, speaker: 'snow', text: 'Hello back.' }],
+    ];
     const request = new NextRequest('http://localhost/api/companion/sessions/session-1/messages', { method: 'POST', body: JSON.stringify({ clientMessageId: 'client-1', content: 'hello' }) });
     const response = await POST(request, { params: Promise.resolve({ sessionId: 'session-1' }) });
     expect(response.status).toBe(200);
     expect(await response.json()).toMatchObject({ id: 'message-1', role: 'child', content: 'hello' });
+    expect(providerCalled).toBe(false);
+    expect(dbState.selects).toBe(3); // session + existingMessage check + retryRows lookup
     expect(dbState.inserts).toBe(0);
   });
+
 
   it('fails closed on message database errors', async () => {
     const { GET } = await import('@/app/api/companion/sessions/[sessionId]/messages/route');
