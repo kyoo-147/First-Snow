@@ -73,9 +73,9 @@ Mỗi bài học được định nghĩa chuẩn xác với:
 
 ---
 
-## 4. Danh mục 24 Bài học MVP Tiếng Việt (Lesson Inventory)
+## 4. Danh mục 30 Bài học Tiếng Việt (Lesson Inventory)
 
-Hệ thống bao gồm tối thiểu 24 bài học hoàn chỉnh, mỗi bài tối thiểu 5 câu hỏi trải dài trên 5 nhóm môn học:
+Hệ thống bao gồm tối thiểu 30 bài học hoàn chỉnh (6 bài học cho mỗi track), mỗi bài tối thiểu 5 câu hỏi trải dài trên 5 nhóm môn học:
 
 | STT | Mã bài học | Tên bài học | Nhóm môn học (Track) | Độ tuổi / Lớp | Số câu hỏi | Tài nguyên ảnh được duyệt |
 |---|---|---|---|---|---|---|
@@ -103,6 +103,12 @@ Hệ thống bao gồm tối thiểu 24 bài học hoàn chỉnh, mỗi bài t�
 | 22 | `00000000-0000-4000-a000-000000000016` | Hạt mầm lớn lên thành cây | basic_science | 6-8 tuổi (Lớp 1 - 2) | 5 | `/images/lesson-story.png` |
 | 23 | `00000000-0000-4000-a000-000000000017` | Vòng tuần hoàn của giọt nước | basic_science | 6-9 tuổi (Lớp 1 - 3) | 5 | `/images/lesson-story.png` |
 | 24 | `00000000-0000-4000-a000-000000000018` | Mặt Trời, Mặt Trăng và bầu trời đêm | basic_science | 6-8 tuổi (Lớp 1 - 2) | 5 | `/images/lesson-story.png` |
+| 25 | `00000000-0000-4000-a000-000000000019` | Mở rộng vốn từ: Gia đình và Trường lớp | literacy | 6-8 tuổi (Lớp 1 - 2) | 5 | `/images/lesson-abc.png` |
+| 26 | `00000000-0000-4000-a000-00000000001a` | So sánh lớn hơn, bé hơn và bằng nhau | mathematics | 6-8 tuổi (Lớp 1 - 2) | 5 | `/images/lesson-math.png` |
+| 27 | `00000000-0000-4000-a000-00000000001b` | Cậu bé Tích Chu: Lòng hiếu thảo và tình yêu thương | stories_comprehension | 6-8 tuổi (Lớp 1 - 2) | 5 | `/images/lesson-story.png` |
+| 28 | `00000000-0000-4000-a000-00000000001c` | Kỹ năng an toàn khi tham gia giao thông và băng qua đường | social_emotional_safety | 6-8 tuổi (Lớp 1 - 2) | 5 | `/images/lesson-social.png` |
+| 29 | `00000000-0000-4000-a000-00000000001d` | Năm giác quan kỳ diệu của cơ thể bé | basic_science | 6-8 tuổi (Lớp 1 - 2) | 5 | `/images/lesson-story.png` |
+| 30 | `00000000-0000-4000-a000-00000000001e` | Động vật quanh em: Vật nuôi trong nhà và động vật hoang dã | basic_science | 6-8 tuổi (Lớp 1 - 2) | 5 | `/images/lesson-story.png` |
 
 ---
 

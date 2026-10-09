@@ -274,6 +274,32 @@ describe('Server-side deterministic grading and persistence', () => {
       expect((published?.steps[0] as any)?.correctAnswer).toBeUndefined();
       expect((published?.steps[0] as any)?.explanation).toBeUndefined();
     });
+
+    it('strips all secret grading keys from the entire 30-lesson catalog when publishing', async () => {
+      const { LESSON_CATALOG } = await import('@/db/seed-lessons');
+      const { stripAnswerKeys } = await import('@/server/learning');
+
+      for (const entry of LESSON_CATALOG) {
+        const parsed = JSON.parse(entry.lesson.content as string);
+        const stripped = stripAnswerKeys(parsed) as any;
+        const serialized = JSON.stringify(stripped);
+
+        expect(serialized).not.toContain('"canonicalAnswer"');
+        expect(serialized).not.toContain('"acceptedVariants"');
+        expect(serialized).not.toContain('"correctAnswer"');
+        expect(serialized).not.toContain('"explanation"');
+
+        // Verify steps retain student-facing properties
+        expect(stripped.steps).toBeDefined();
+        for (const step of stripped.steps) {
+          expect(step.canonicalAnswer).toBeUndefined();
+          expect(step.acceptedVariants).toBeUndefined();
+          expect(step.correctAnswer).toBeUndefined();
+          expect(step.explanation).toBeUndefined();
+          expect(step.prompt).toBeDefined();
+        }
+      }
+    });
   });
 
   describe('Defect 2: completeLessonAttempt fail-closed and score denominator', () => {

@@ -7,8 +7,8 @@ describe('production lesson catalog seed', () => {
   });
 
   describe('catalog content and deterministic structure', () => {
-    it('defines at least 24 substantive Vietnamese MVP lessons across 5 tracks with >= 5 questions each', () => {
-      expect(LESSON_CATALOG.length).toBeGreaterThanOrEqual(24);
+    it('defines at least 30 substantive Vietnamese MVP lessons across 5 tracks with >= 5 questions each', () => {
+      expect(LESSON_CATALOG.length).toBeGreaterThanOrEqual(30);
 
       const tracks = new Set<string>();
       const approvedImages = new Set([
@@ -51,6 +51,23 @@ describe('production lesson catalog seed', () => {
       expect(tracks.has('stories_comprehension')).toBe(true);
       expect(tracks.has('social_emotional_safety')).toBe(true);
       expect(tracks.has('basic_science')).toBe(true);
+    });
+
+    it('strictly satisfies LessonQuestionStepSchema and deterministic grading for all catalog steps', async () => {
+      const { LessonQuestionStepSchema } = await import('@/lib/lesson-engine/types');
+      const { gradeStepAnswer } = await import('@/lib/lesson-engine/grader');
+
+      for (const item of LESSON_CATALOG) {
+        const parsed = JSON.parse(item.lesson.content as string);
+        for (const step of parsed.steps) {
+          const validation = LessonQuestionStepSchema.safeParse(step);
+          expect(validation.success).toBe(true);
+
+          const result = gradeStepAnswer(step, step.canonicalAnswer);
+          expect(result.isCorrect).toBe(true);
+          expect(result.score).toBe(step.points ?? 10);
+        }
+      }
     });
 
     it('uses deterministic, valid RFC4122 UUIDs for all lessons and steps', () => {
