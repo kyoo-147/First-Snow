@@ -1,5 +1,6 @@
-import { t } from "@/i18n";
 "use client";
+
+import { t } from "@/i18n";
 
 import type { LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
