@@ -5,8 +5,8 @@ import { FiClock, FiMapPin, FiCalendar } from "react-icons/fi";
 
 interface EventItem {
   id: string;
-  title: string;
-  time: string;
+  titleKey: string;
+  timeKey: string;
   type: string;
   host: string;
   color: string;
@@ -16,8 +16,8 @@ interface EventItem {
 const EVENTS: EventItem[] = [
   {
     id: "event-1",
-    title: "Trò chuyện EQ: Nhận biết nụ cười cùng Momo",
-    time: "12:00 PM - 01:00 PM (Hôm nay)",
+    titleKey: "kid.event1Title",
+    timeKey: "kid.event1Time",
     type: "kid.eventTypeLiveChat",
     host: "kid.hostMomoCompanion",
     color: "#7C3AED",
@@ -25,8 +25,8 @@ const EVENTS: EventItem[] = [
   },
   {
     id: "event-2",
-    title: "Học ngoại ngữ: Phát âm tiếng Anh chuẩn cùng Luna",
-    time: "03:30 PM - 04:30 PM (Ngày mai)",
+    titleKey: "kid.event2Title",
+    timeKey: "kid.event2Time",
     type: "kid.eventTypeEnglishClass",
     host: "kid.hostLunaTutor",
     color: "#EC4899",
@@ -34,8 +34,8 @@ const EVENTS: EventItem[] = [
   },
   {
     id: "event-3",
-    title: "Kể chuyện tối: Câu chuyện về chú rùa dũng cảm",
-    time: "08:00 PM - 09:00 PM (12/06)",
+    titleKey: "kid.event3Title",
+    timeKey: "kid.event3Time",
     type: "kid.eventTypeBedtimeStory",
     host: "kid.hostMomoAssistant",
     color: "#D97706",
@@ -51,10 +51,10 @@ export default function EventsPage(): React.JSX.Element {
       {/* Page Title & Desc */}
       <VStack spaceY={1.5} alignItems="flex-start" mb={6}>
         <Heading size="md" color="#0F172A" fontWeight="bold">
-          Lịch hoạt động & Sự kiện học tập
+          {t("kid.eventsTitle")}
         </Heading>
         <Text fontSize="xs" color="#64748B">
-          Tham gia các buổi trò chuyện, lớp học tương tác trực tuyến cùng biệt đội Momo AI trợ lý.
+          {t("kid.eventsDesc")}
         </Text>
       </VStack>
 
@@ -67,18 +67,18 @@ export default function EventsPage(): React.JSX.Element {
           <Box p={6} bg="#FFFFFF" borderRadius="3xl" border="1px solid" borderColor="#E2E8F0" boxShadow="xs">
             <HStack justifyContent="space-between" mb={5}>
               <Heading size="xs" color="#0F172A" fontWeight="bold">
-                Tháng 6, 2026
+                {t("kid.juneCalendarTitle")}
               </Heading>
               <HStack spaceX={2}>
                 <Button size="xs" variant="outline" borderColor="#E2E8F0" borderRadius="lg" bg="white" color="#475569">◀</Button>
-                <Button size="xs" variant="outline" borderColor="#E2E8F0" borderRadius="lg" bg="white" color="#475569">Tuần này</Button>
+                <Button size="xs" variant="outline" borderColor="#E2E8F0" borderRadius="lg" bg="white" color="#475569">{t("kid.thisWeekBtn")}</Button>
                 <Button size="xs" variant="outline" borderColor="#E2E8F0" borderRadius="lg" bg="white" color="#475569">▶</Button>
               </HStack>
             </HStack>
 
             {/* Days grid layout matching mockup standard */}
             <SimpleGrid columns={7} spaceX={2} spaceY={2} textAlign="center" fontSize="11px" fontWeight="bold" color="#64748B" mb={2}>
-              {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map(d => <Box key={d} py={1}>{d}</Box>)}
+              {[t("kid.daySun"), t("kid.dayMon"), t("kid.dayTue"), t("kid.dayWed"), t("kid.dayThu"), t("kid.dayFri"), t("kid.daySat")].map((d, idx) => <Box key={idx} py={1}>{d}</Box>)}
             </SimpleGrid>
 
             <SimpleGrid columns={7} spaceX={2} spaceY={2} textAlign="center" fontSize="11px" fontWeight="bold">
@@ -112,7 +112,7 @@ export default function EventsPage(): React.JSX.Element {
         {/* Upcoming events timeline list (Right Column) */}
         <VStack spaceY={4} alignItems="stretch">
           <Heading size="xs" color="#0F172A" fontWeight="bold">
-            Sự kiện sắp diễn ra
+            {t("kid.upcomingEventsTitle")}
           </Heading>
 
           {EVENTS.map((event) => (
@@ -142,17 +142,17 @@ export default function EventsPage(): React.JSX.Element {
                     {t(event.type)}
                   </Box>
                   {event.joined && (
-                    <Text fontSize="9px" color="#10B981" fontWeight="bold">✓ Đã đăng ký</Text>
+                    <Text fontSize="9px" color="#10B981" fontWeight="bold">{t("kid.registeredBadge")}</Text>
                   )}
                 </HStack>
 
                 <Heading size="xs" color="#0F172A" fontWeight="bold" lineHeight="short">
-                  {event.title}
+                  {t(event.titleKey)}
                 </Heading>
 
                 <HStack spaceX={1.5} color="#64748B" fontSize="10px" fontWeight="semibold" pt={1}>
                   <FiClock size={11} />
-                  <Text>{event.time}</Text>
+                  <Text>{t(event.timeKey)}</Text>
                 </HStack>
                 
                 <HStack spaceX={1.5} color="#64748B" fontSize="10px" fontWeight="semibold" mt={-1}>
@@ -173,7 +173,7 @@ export default function EventsPage(): React.JSX.Element {
                   _hover={event.joined ? {} : { filter: "brightness(0.9)" }}
                   mt={2}
                 >
-                  {event.joined ? "Đang chờ lớp" : "Đăng ký tham gia"}
+                  {event.joined ? t("kid.waitingForClass") : t("kid.registerJoin")}
                 </Button>
               </VStack>
             </Box>

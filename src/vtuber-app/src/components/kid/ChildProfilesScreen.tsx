@@ -70,8 +70,8 @@ export default function ChildProfilesScreen({
   const handleSelectProfile = (profile: KidProfile) => {
     // Toast notification
     toaster.create({
-      title: `Đã kết nối với ${profile.name}`,
-      description: `Bắt đầu hành trình cùng ${profile.name} nhé!`,
+      title: t("kid.toastConnectedTitle", { name: profile.name }),
+      description: t("kid.toastConnectedDesc", { name: profile.name }),
       type: "success",
       duration: 3000,
     });
@@ -83,7 +83,7 @@ export default function ChildProfilesScreen({
     e.preventDefault();
     if (!newName.trim() || !newAge.trim()) {
       toaster.create({
-        title: "Vui lòng nhập đầy đủ thông tin",
+        title: t("kid.toastFillAllFields"),
         type: "error",
         duration: 3000,
       });
@@ -93,7 +93,7 @@ export default function ChildProfilesScreen({
     const ageNum = parseInt(newAge, 10);
     if (isNaN(ageNum) || ageNum <= 0) {
       toaster.create({
-        title: "Tuổi của bé không hợp lệ",
+        title: t("kid.toastInvalidAge"),
         type: "error",
         duration: 3000,
       });
@@ -118,7 +118,7 @@ export default function ChildProfilesScreen({
     setIsAddingNew(false);
 
     toaster.create({
-      title: `Đã thêm hồ sơ cho ${newProfile.name}`,
+      title: t("kid.toastProfileAdded", { name: newProfile.name }),
       type: "success",
       duration: 3000,
     });
@@ -171,7 +171,7 @@ export default function ChildProfilesScreen({
 
         <HStack spaceX={4}>
           <Text color="#64748B" fontSize="sm" display={{ base: "none", sm: "block" }}>
-            Tài khoản: {userEmail}
+            {t("kid.accountLabel", { email: userEmail })}
           </Text>
           <Button
             onClick={onLogout}
@@ -181,7 +181,7 @@ export default function ChildProfilesScreen({
             _hover={{ bg: "white", color: "#0F172A" }}
             size="sm"
           >
-            <FiLogOut style={{ marginRight: "6px" }} /> Đăng xuất
+            <FiLogOut style={{ marginRight: "6px" }} /> {t("kid.logout")}
           </Button>
         </HStack>
       </Flex>
@@ -202,10 +202,10 @@ export default function ChildProfilesScreen({
             >
               <VStack spaceY={3} mb={{ base: 10, md: 14 }}>
                 <Heading size="3xl" color="#0F172A" fontWeight="bold" letterSpacing="tight">
-                  Chào mừng ba mẹ quay lại!
+                  {t("kid.welcomeParentTitle")}
                 </Heading>
                 <Text color="#475569" fontSize="md" maxW="550px">
-                  Chọn hồ sơ của bé để bắt đầu hành trình tương tác cảm xúc hàng ngày hoặc quản lý không gian của riêng bé.
+                  {t("kid.welcomeParentSubtitle")}
                 </Text>
               </VStack>
 
@@ -286,7 +286,7 @@ export default function ChildProfilesScreen({
                       {profile.name}
                     </Heading>
                     <Text color="#64748B" fontSize="xs" mb={8}>
-                      Độ tuổi: {profile.age} tuổi
+                      {t("kid.ageYearsOld", { age: profile.age })}
                     </Text>
 
                     <Button
@@ -300,7 +300,7 @@ export default function ChildProfilesScreen({
                       _hover={{ filter: "brightness(0.92)" }}
                       _active={{ transform: "scale(0.98)" }}
                     >
-                      Chọn Hồ Sơ <FiArrowRight style={{ marginLeft: "8px" }} />
+                      {t("kid.selectProfileBtn")} <FiArrowRight style={{ marginLeft: "8px" }} />
                     </Button>
                   </MotionBox>
                 ))}
@@ -341,10 +341,10 @@ export default function ChildProfilesScreen({
                     <FiPlus size={28} />
                   </Flex>
                   <Heading size="md" color="#1E293B" fontWeight="bold">
-                    Thêm bé mới
+                    {t("kid.addNewChildTitle")}
                   </Heading>
                   <Text color="#64748B" fontSize="xs" mt={2} textAlign="center" maxW="200px">
-                    Tạo hồ sơ học tập cảm xúc mới cho bé nhà bạn.
+                    {t("kid.addNewChildDesc")}
                   </Text>
                 </MotionBox>
               </SimpleGrid>
@@ -367,21 +367,21 @@ export default function ChildProfilesScreen({
             >
               <HStack spaceX={2} mb={6} cursor="pointer" onClick={() => setIsAddingNew(false)} color="#64748B" _hover={{ color: "#0F172A" }}>
                 <FiArrowLeft />
-                <Text fontSize="sm" fontWeight="semibold">Quay lại danh sách</Text>
+                <Text fontSize="sm" fontWeight="semibold">{t("kid.backToList")}</Text>
               </HStack>
 
               <Heading size="2xl" color="#0F172A" fontWeight="bold" mb={2}>
-                Tạo hồ sơ cho bé
+                {t("kid.createProfileTitle")}
               </Heading>
               <Text color="#64748B" fontSize="sm" mb={8}>
-                Nhập các thông tin để cá nhân hóa người bạn Momo phù hợp nhất với bé.
+                {t("kid.createProfileSubtitle")}
               </Text>
 
               <form onSubmit={handleAddProfile}>
                 <VStack spaceY={5} alignItems="stretch" width="100%">
-                  <Field label="Tên của bé (Biệt danh)" required>
+                  <Field label={t("kid.childNameLabel")} required>
                     <Input
-                      placeholder="VD: Bé Leo, Tin Tin, Su Su"
+                      placeholder={t("kid.childNamePlaceholder")}
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
                       borderRadius="xl"
@@ -392,10 +392,10 @@ export default function ChildProfilesScreen({
                     />
                   </Field>
 
-                  <Field label="Tuổi của bé" required>
+                  <Field label={t("kid.childAgeLabel")} required>
                     <Input
                       type="number"
-                      placeholder="VD: 5"
+                      placeholder={t("kid.childAgePlaceholder")}
                       value={newAge}
                       onChange={(e) => setNewAge(e.target.value)}
                       borderRadius="xl"
@@ -407,7 +407,7 @@ export default function ChildProfilesScreen({
                   </Field>
 
                   <VStack align="stretch" spaceY={2.5}>
-                    <Text fontSize="sm" fontWeight="semibold" color="#1E293B">Chọn ảnh đại diện</Text>
+                    <Text fontSize="sm" fontWeight="semibold" color="#1E293B">{t("kid.chooseAvatarLabel")}</Text>
                     <HStack spaceX={4} justifyContent="flex-start">
                       {avatarOptions.map((avatar, index) => (
                         <Box
@@ -448,7 +448,7 @@ export default function ChildProfilesScreen({
                     mt={6}
                     _hover={{ bg: "#0284C7" }}
                   >
-                    Tạo Hồ Sơ Mới
+                    {t("kid.createProfileBtn")}
                   </Button>
                 </VStack>
               </form>
@@ -459,7 +459,7 @@ export default function ChildProfilesScreen({
 
       {/* Footer bar */}
       <Box zIndex={1} textAlign="center" mt={12} color="#94A3B8" fontSize="xs">
-        © 2026 KindredAI Platform. Thiết kế hướng tới sự an toàn và phát triển cảm xúc của trẻ.
+        {t("kid.footerSafetyNotice")}
       </Box>
     </Flex>
   );

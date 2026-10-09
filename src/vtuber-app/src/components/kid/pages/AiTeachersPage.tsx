@@ -1,70 +1,72 @@
 import { Box, SimpleGrid, VStack, HStack, Text, Heading } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../ui/button";
 
 const momoMascot = "./images/momo_mascot.png";
 
 interface LessonQuiz {
   id: string;
-  title: string;
-  desc: string;
+  titleKey: string;
+  descKey: string;
   color: string;
   emoji: string;
-  question: string;
-  options: string[];
+  questionKey: string;
+  optionsKeys: string[];
   correctAnswer: number;
-  correctFeedback: string;
+  correctFeedbackKey: string;
 }
 
-const LESSONS: LessonQuiz[] = [
+const LESSON_CONFIGS: LessonQuiz[] = [
   {
     id: "lesson-1",
-    title: "Nhận Biết Cảm Xúc",
-    desc: "Học cách nhận biết Vui, Buồn, Giận dữ thông qua biểu cảm khuôn mặt cùng Momo.",
+    titleKey: "kid.lesson1QuizTitle",
+    descKey: "kid.lesson1QuizDesc",
     color: "#7C3AED",
     emoji: "😊",
-    question: "Momo đang cười tươi rói, hai mắt híp lại và vẫy tay chào con như thế này. Đố bé biết Momo đang cảm thấy thế nào?",
-    options: [
-      "Momo đang rất Vui vẻ và Hạnh phúc",
-      "Momo đang Buồn bã muốn khóc",
-      "Momo đang Giận dữ muốn la hét"
+    questionKey: "kid.lesson1Scenario",
+    optionsKeys: [
+      "kid.lesson1Opt1",
+      "kid.lesson1Opt2",
+      "kid.lesson1Opt3"
     ],
     correctAnswer: 0,
-    correctFeedback: "Chính xác rồi! Bé giỏi quá! Khi vui cười hân hoan, chúng ta sẽ mở lòng và tràn đầy năng lượng tích cực đấy! 🌟"
+    correctFeedbackKey: "kid.lesson1Feedback"
   },
   {
     id: "lesson-2",
-    title: "Giải Quyết Mâu Thuẫn",
-    desc: "Làm gì khi bị bạn vô tình làm hỏng đồ chơi? Học cách ứng xử thấu cảm.",
+    titleKey: "kid.lesson2QuizTitle",
+    descKey: "kid.lesson2QuizDesc",
     color: "#E11D48",
     emoji: "🤝",
-    question: "Bạn Bin vô tình giẫm lên mô hình đất sét Momo vừa nặn xong làm nó bẹp dúm. Con nên làm gì để giải quyết mâu thuẫn này?",
-    options: [
-      "La hét mắng bạn và đẩy bạn ngã đền mô hình mới",
-      "Hít thở sâu để bình tĩnh, lắng nghe lời xin lỗi của bạn và cùng bạn nặn lại mô hình mới",
-      "Khóc lóc ăn vạ và bảo ba mẹ mắng phạt bạn Bin"
+    questionKey: "kid.lesson2Scenario",
+    optionsKeys: [
+      "kid.lesson2Opt1",
+      "kid.lesson2Opt2",
+      "kid.lesson2Opt3"
     ],
     correctAnswer: 1,
-    correctFeedback: "Tuyệt vời! Con rất biết giữ bình tĩnh và tha thứ. Cùng nhau sửa chữa lỗi lầm sẽ giúp tình bạn thêm bền chặt! 💖"
+    correctFeedbackKey: "kid.lesson2Feedback"
   },
   {
     id: "lesson-3",
-    title: "Vượt Qua Nỗi Sợ",
-    desc: "Cách bé tự tạo cảm giác an toàn và dũng cảm đối diện với nỗi sợ bóng tối.",
+    titleKey: "kid.lesson3QuizTitle",
+    descKey: "kid.lesson3QuizDesc",
     color: "#D97706",
     emoji: "🧸",
-    question: "Buổi tối khi ngủ tắt đèn, phòng tối ôm làm con cảm thấy lo lắng sợ hãi có quái vật. Con sẽ làm gì để dũng cảm vượt qua nỗi sợ?",
-    options: [
-      "Trùm chăn kín đầu khóc thút thít cả đêm",
-      "Hét to lên kêu ba mẹ sang nằm cùng",
-      "Ôm gấu bông Momo ngoan ngoãn, hít thở đều và nghĩ về thế giới kẹo ngọt vui vẻ"
+    questionKey: "kid.lesson3Scenario",
+    optionsKeys: [
+      "kid.lesson3Opt1",
+      "kid.lesson3Opt2",
+      "kid.lesson3Opt3"
     ],
     correctAnswer: 2,
-    correctFeedback: "Đúng rồi! Gấu bông và suy nghĩ tích cực là liều thuốc dũng cảm giúp xua tan bóng tối và ngủ ngon lành! 😴"
+    correctFeedbackKey: "kid.lesson3Feedback"
   }
 ];
 
 export default function AiTeachersPage(): React.JSX.Element {
+  const { t } = useTranslation();
   const [activeLesson, setActiveLesson] = useState<LessonQuiz | null>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState<boolean>(false);
@@ -117,8 +119,8 @@ export default function AiTeachersPage(): React.JSX.Element {
       const logs = logsStr ? JSON.parse(logsStr) : [];
       const newLog = {
         id: Date.now().toString(),
-        emotion: `Tự hào 🌟 (+100 điểm)`,
-        note: `Hoàn thành xuất sắc bài học: "${activeLesson?.title}"`,
+        emotion: t("kid.prideRewardDiary"),
+        note: t("kid.completedLessonDiary", { title: activeLesson ? t(activeLesson.titleKey) : "" }),
         date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
       };
       localStorage.setItem("kid_emotion_diary", JSON.stringify([newLog, ...logs]));
@@ -131,16 +133,16 @@ export default function AiTeachersPage(): React.JSX.Element {
       {/* Page Title & Desc */}
       <VStack spaceY={1.5} alignItems="flex-start" mb={6}>
         <Heading size="md" color="#0F172A" fontWeight="bold">
-          Lớp học cảm xúc cùng Momo
+          {t("kid.teachersTitle")}
         </Heading>
         <Text fontSize="xs" color="#64748B">
-          Các bài tập xử lý tình huống mẫu giúp bé rèn luyện trí tuệ cảm xúc (EQ) và khả năng ứng xử ôn hòa.
+          {t("kid.teachersDesc")}
         </Text>
       </VStack>
 
       {/* Grid of lessons */}
       <SimpleGrid columns={{ base: 1, md: 3 }} spaceX={6} spaceY={6}>
-        {LESSONS.map((lesson) => (
+        {LESSON_CONFIGS.map((lesson) => (
           <Box
             key={lesson.id}
             p={6}
@@ -159,10 +161,10 @@ export default function AiTeachersPage(): React.JSX.Element {
             <VStack spaceY={3} alignItems="flex-start">
               <Box fontSize="2xl">{lesson.emoji}</Box>
               <Heading size="xs" color="#0F172A" fontWeight="bold">
-                {lesson.title}
+                {t(lesson.titleKey)}
               </Heading>
               <Text fontSize="11px" color="#64748B" lineHeight="relaxed">
-                {lesson.desc}
+                {t(lesson.descKey)}
               </Text>
             </VStack>
 
@@ -177,7 +179,7 @@ export default function AiTeachersPage(): React.JSX.Element {
               fontWeight="bold"
               _hover={{ filter: "brightness(0.9)" }}
             >
-              Bắt đầu bài tập
+              {t("kid.startExercise")}
             </Button>
           </Box>
         ))}
@@ -216,10 +218,10 @@ export default function AiTeachersPage(): React.JSX.Element {
                 </Box>
                 <VStack spaceY={0} alignItems="flex-start">
                   <Text fontSize="9px" fontWeight="bold" color="#7C3AED" textTransform="uppercase" letterSpacing="0.05em">
-                    Lớp học cảm xúc cùng Momo
+                    {t("kid.teachersTitle")}
                   </Text>
                   <Text fontSize="xs" fontWeight="bold" color="#0F172A" mt={-0.5}>
-                    Bài học: {activeLesson.title}
+                    {t("kid.lessonPrefix", { title: t(activeLesson.titleKey) })}
                   </Text>
                 </VStack>
               </HStack>
@@ -242,17 +244,17 @@ export default function AiTeachersPage(): React.JSX.Element {
               </Box>
               <VStack spaceY={0.5} alignItems="flex-start">
                 <Text fontSize="9px" fontWeight="extrabold" color="#0284C7" textTransform="uppercase">
-                  🤖 Momo hỏi:
+                  🤖 {t("kid.momoAsks")}
                 </Text>
                 <Text fontSize="xs" color="#0369A1" fontWeight="bold" lineHeight="relaxed">
-                  {activeLesson.question}
+                  {t(activeLesson.questionKey)}
                 </Text>
               </VStack>
             </HStack>
 
             {/* Multiple Choice Options */}
             <VStack spaceY={3.5} alignItems="stretch" mb={4}>
-              {activeLesson.options.map((option, idx) => {
+              {activeLesson.optionsKeys.map((optKey, idx) => {
                 const isCorrect = idx === activeLesson.correctAnswer;
                 const isSelected = selectedOption === idx;
                 
@@ -293,7 +295,7 @@ export default function AiTeachersPage(): React.JSX.Element {
                   >
                     <HStack spaceX={2.5}>
                       <span>{idx === 0 ? "😀" : idx === 1 ? "🥺" : "😡"}</span>
-                      <Text>{option}</Text>
+                      <Text>{t(optKey)}</Text>
                     </HStack>
 
                     {showFeedback && isCorrect && <Text color="#10B981" fontWeight="extrabold">✓</Text>}
@@ -320,8 +322,8 @@ export default function AiTeachersPage(): React.JSX.Element {
                     lineHeight="relaxed"
                   >
                     {selectedOption === activeLesson.correctAnswer
-                      ? activeLesson.correctFeedback
-                      : "Ơ kìa, chưa đúng rồi con ơi! Hãy thử suy nghĩ lại cách giải quyết tốt và ôn hòa hơn xem nhé! 💡"}
+                      ? t(activeLesson.correctFeedbackKey)
+                      : t("kid.retryIncorrect")}
                   </Text>
                 </Box>
 
@@ -336,7 +338,7 @@ export default function AiTeachersPage(): React.JSX.Element {
                   fontSize="xs"
                   _hover={{ filter: "brightness(0.9)" }}
                 >
-                  Hoàn thành
+                  {t("kid.completeBtn")}
                 </Button>
               </VStack>
             )}

@@ -34,7 +34,7 @@ export default function AnalyticsPage(): React.JSX.Element {
           {t("kid.analyticsEqTitle")}
         </Heading>
         <Text fontSize="xs" color="#64748B">
-          Báo cáo chi tiết về mức độ tiến bộ năng lực cảm xúc, điểm rèn luyện và thời lượng học tập.
+          {t("kid.analyticsDesc")}
         </Text>
       </VStack>
 
@@ -45,14 +45,14 @@ export default function AnalyticsPage(): React.JSX.Element {
           <VStack spaceY={2.5} alignItems="flex-start">
             <HStack spaceX={2} color="#7C3AED">
               <FiTrendingUp size={16} />
-              <Text fontSize="xs" fontWeight="bold" textTransform="uppercase" letterSpacing="0.05em">Điểm tích lũy rèn luyện</Text>
+              <Text fontSize="xs" fontWeight="bold" textTransform="uppercase" letterSpacing="0.05em">{t("kid.trainingPoints")}</Text>
             </HStack>
             <Heading size="2xl" color="#0F172A" fontWeight="extrabold" letterSpacing="-0.02em" mt={1}>
               {kidPoints} XP
             </Heading>
           </VStack>
           <Text fontSize="10px" color="#94A3B8" fontWeight="semibold">
-            Bé đạt top 10% học sinh xuất sắc nhất tuần này!
+            {t("kid.topTenPercent")}
           </Text>
         </Box>
 
@@ -61,14 +61,14 @@ export default function AnalyticsPage(): React.JSX.Element {
           <VStack spaceY={2.5} alignItems="flex-start">
             <HStack spaceX={2} color="#0EA5E9">
               <FiActivity size={16} />
-              <Text fontSize="xs" fontWeight="bold" textTransform="uppercase" letterSpacing="0.05em">Thời gian rèn luyện tuần</Text>
+              <Text fontSize="xs" fontWeight="bold" textTransform="uppercase" letterSpacing="0.05em">{t("kid.weeklyTrainingTime")}</Text>
             </HStack>
             <Heading size="2xl" color="#0F172A" fontWeight="extrabold" letterSpacing="-0.02em" mt={1}>
-              8.5 giờ
+              {t("kid.weeklyHoursValue")}
             </Heading>
           </VStack>
           <Text fontSize="10px" color="#94A3B8" fontWeight="semibold">
-            Giới hạn tối đa khuyên nghị: 10 giờ / tuần.
+            {t("kid.weeklyTimeLimitNote")}
           </Text>
         </Box>
 
@@ -77,14 +77,14 @@ export default function AnalyticsPage(): React.JSX.Element {
           <VStack spaceY={2.5} alignItems="flex-start">
             <HStack spaceX={2} color="#10B981">
               <FiCheckCircle size={16} />
-              <Text fontSize="xs" fontWeight="bold" textTransform="uppercase" letterSpacing="0.05em">Bài học đã hoàn thành</Text>
+              <Text fontSize="xs" fontWeight="bold" textTransform="uppercase" letterSpacing="0.05em">{t("kid.completedLessons")}</Text>
             </HStack>
             <Heading size="2xl" color="#0F172A" fontWeight="extrabold" letterSpacing="-0.02em" mt={1}>
-              {kidPoints >= 300 ? "3 / 3" : "0 / 3"} bài
+              {t("kid.completedLessonsCount", { count: kidPoints >= 300 ? "3" : "0" })}
             </Heading>
           </VStack>
           <Text fontSize="10px" color="#94A3B8" fontWeight="semibold">
-            Đã hoàn thành toàn bộ khóa nhận thức cơ bản!
+            {t("kid.completedCourseNote")}
           </Text>
         </Box>
 
@@ -93,16 +93,16 @@ export default function AnalyticsPage(): React.JSX.Element {
       {/* Detail EQ Radar Breakdown */}
       <Box p={6} bg="#FFFFFF" borderRadius="3xl" border="1px solid" borderColor="#E2E8F0" boxShadow="xs" mt={6}>
         <Heading size="xs" color="#0F172A" fontWeight="bold" mb={5}>
-          Chi tiết 5 nhóm năng lực trí tuệ cảm xúc (EQ) của {kidName}
+          {t("kid.eqBreakdownTitle", { name: kidName })}
         </Heading>
 
         <VStack spaceY={4.5} alignItems="stretch">
           {[
-            { label: "1. Tự nhận thức (Self-Awareness) - Nhận diện biểu cảm khuôn mặt", val: "85%", color: "#7C3AED", desc: "Bé phản ứng rất nhanh với nụ cười và ánh mắt thân thiện của Momo." },
-            { label: "2. Tự điều chỉnh (Self-Regulation) - Giữ bình tĩnh trước mâu thuẫn", val: "90%", color: "#EC4899", desc: "Bé chọn giải pháp ôn hòa cùng bạn nặn lại mô hình đất sét bị hỏng." },
-            { label: "3. Thấu cảm (Empathy) - Hiểu và chia sẻ cảm xúc", val: "75%", color: "#0EA5E9", desc: "Bé thể hiện mong muốn được ôm gấu bông an ủi khi người khác buồn." },
-            { label: "4. Động lực (Motivation) - Ham học hỏi và vươn lên", val: "80%", color: "#F59E0B", desc: "Bé hăng hái tham gia bài tập tình huống để tích lũy điểm thưởng." },
-            { label: "5. Kỹ năng xã hội (Social Skills) - Giao tiếp ôn hòa", val: "85%", color: "#10B981", desc: "Bé tự tin chào hỏi và có phản xạ trò chuyện lịch sự tự nhiên." }
+            { label: t("kid.eqGroup1Label"), val: "85%", color: "#7C3AED", desc: t("kid.eqGroup1Desc") },
+            { label: t("kid.eqGroup2Label"), val: "90%", color: "#EC4899", desc: t("kid.eqGroup2Desc") },
+            { label: t("kid.eqGroup3Label"), val: "75%", color: "#0EA5E9", desc: t("kid.eqGroup3Desc") },
+            { label: t("kid.eqGroup4Label"), val: "80%", color: "#F59E0B", desc: t("kid.eqGroup4Desc") },
+            { label: t("kid.eqGroup5Label"), val: "85%", color: "#10B981", desc: t("kid.eqGroup5Desc") }
           ].map((item, idx) => (
             <VStack key={idx} spaceY={1.5} alignItems="stretch">
               <HStack justifyContent="space-between" fontSize="xs" fontWeight="bold" color="#334155">

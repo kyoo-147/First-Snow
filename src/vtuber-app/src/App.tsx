@@ -30,6 +30,7 @@ import { ModeProvider, useMode } from "./context/mode-context";
 import AuthScreen from "./components/kid/AuthScreen";
 import ChildProfilesScreen from "./components/kid/ChildProfilesScreen";
 import { Button } from "./components/ui/button";
+import { useTranslation } from "react-i18next";
 
 // Subpage content components
 import DashboardLayout from "./components/kid/DashboardLayout";
@@ -45,6 +46,7 @@ import SpeechToTextPage from "./components/kid/pages/SpeechToTextPage";
 import VoiceoverPage from "./components/kid/pages/VoiceoverPage";
 
 function AppContent(): React.JSX.Element {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { mode } = useMode();
@@ -248,7 +250,7 @@ function AppContent(): React.JSX.Element {
                         shadow="md"
                         _hover={{ bg: "#0284C7" }}
                       >
-                        Menu chính
+                        {t("kid.mainMenu")}
                       </Button>
                     </Box>
 

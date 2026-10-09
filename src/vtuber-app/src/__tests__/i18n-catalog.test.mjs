@@ -119,6 +119,15 @@ test('wired VTuber components use the i18next translation hook', () => {
     'hooks/sidebar/use-camera-panel.ts',
     'hooks/utils/use-mic-toggle.ts',
     'context/mode-context.tsx',
+    'components/kid/pages/AiTeachersPage.tsx',
+    'components/kid/pages/AiWriterPage.tsx',
+    'components/kid/pages/AnalyticsPage.tsx',
+    'components/kid/pages/AssistantsPage.tsx',
+    'components/kid/pages/DashboardPage.tsx',
+    'components/kid/pages/DocumentsPage.tsx',
+    'components/kid/pages/EventsPage.tsx',
+    'components/kid/pages/SpeechToTextPage.tsx',
+    'components/kid/pages/VoiceoverPage.tsx',
   ];
   for (const rel of wired) {
     const src = readSrc(rel);
@@ -126,7 +135,7 @@ test('wired VTuber components use the i18next translation hook', () => {
   }
 });
 
-test('wired components no longer contain former hardcoded English literals', () => {
+test('wired components no longer contain former hardcoded English or Vietnamese literals', () => {
   const checks = [
     ['components/kid/ModeSelectionScreen.tsx', 'placeholder="Search anything"'],
     ['components/kid/ModeSelectionScreen.tsx', 'placeholder="Placeholder"'],
@@ -157,6 +166,11 @@ test('wired components no longer contain former hardcoded English literals', () 
     ['hooks/utils/use-mic-toggle.ts', 'Microphone unavailable: server capability grant required'],
     ['context/mode-context.tsx', '"Pet mode unavailable"'],
     ['context/mode-context.tsx', '"Pet mode is only available in the desktop application"'],
+    ['components/kid/pages/DashboardPage.tsx', '>Thời lượng sử dụng<'],
+    ['components/kid/pages/DocumentsPage.tsx', '>Quản lý thời gian & Quyền riêng tư<'],
+    ['components/kid/pages/EventsPage.tsx', '>Lịch hoạt động & Sự kiện học tập<'],
+    ['components/kid/pages/SpeechToTextPage.tsx', '>Phòng luyện nói cùng Momo AI<'],
+    ['components/kid/pages/VoiceoverPage.tsx', '>Phòng tạo giọng nói Momo AI<'],
   ];
   for (const [rel, needle] of checks) {
     const src = readSrc(rel);

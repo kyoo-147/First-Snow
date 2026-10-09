@@ -7,10 +7,10 @@ const momoMascot = "./images/momo_mascot.png";
 
 interface Companion {
   id: string;
-  name: string;
+  nameKey: string;
   avatar: string;
-  role: string;
-  description: string;
+  roleKey: string;
+  descriptionKey: string;
   color: string;
   status: "Active" | "Resting" | "Offline";
 }
@@ -18,19 +18,19 @@ interface Companion {
 const COMPANIONS: Companion[] = [
   {
     id: "momo",
-    name: "Bạn đồng hành Momo",
+    nameKey: "kid.compMomoName",
     avatar: momoMascot,
-    role: "kid.roleEmotionalCompanion",
-    description: "Người bạn ảo 3D/Live2D đáng yêu sẵn sàng trò chuyện, kể chuyện cổ tích, giải đáp các thắc mắc và ôm ấp vỗ về cảm xúc của con suốt cả ngày.",
+    roleKey: "kid.roleEmotionalCompanion",
+    descriptionKey: "kid.compMomoDesc",
     color: "#7C3AED",
     status: "Active"
   },
   {
     id: "luna",
-    name: "Gia sư Tiếng Anh Luna",
+    nameKey: "kid.compLunaName",
     avatar: momoMascot,
-    role: "kid.roleLanguageTutor",
-    description: "Giáo viên tiếng Anh bản xứ ảo giúp con làm quen từ vựng, học giao tiếp phản xạ tự nhiên thông qua hình thức đố vui tiếng Anh ngộ nghĩnh.",
+    roleKey: "kid.roleLanguageTutor",
+    descriptionKey: "kid.compLunaDesc",
     color: "#EC4899",
     status: "Resting"
   }
@@ -48,10 +48,10 @@ export default function AiWriterPage({ onLaunchVtuber }: AiWriterPageProps): Rea
       {/* Page Title & Desc */}
       <VStack spaceY={1.5} alignItems="flex-start" mb={6}>
         <Heading size="md" color="#0F172A" fontWeight="bold">
-          Không gian bạn đồng hành Momo AI
+          {t("kid.writerTitle")}
         </Heading>
         <Text fontSize="xs" color="#64748B">
-          Lựa chọn người bạn học tập thông minh và khởi chạy không gian Live2D Vtuber tương tác giọng nói trực tiếp.
+          {t("kid.writerDesc")}
         </Text>
       </VStack>
 
@@ -119,15 +119,15 @@ export default function AiWriterPage({ onLaunchVtuber }: AiWriterPageProps): Rea
 
               <VStack spaceY={0.5} alignItems="flex-start" mt={2}>
                 <Heading size="xs" color="#0F172A" fontWeight="bold">
-                  {comp.name}
+                  {t(comp.nameKey)}
                 </Heading>
                 <Text fontSize="10px" color={comp.color} fontWeight="bold">
-                  {t(comp.role)}
+                  {t(comp.roleKey)}
                 </Text>
               </VStack>
 
               <Text fontSize="11px" color="#64748B" lineHeight="relaxed">
-                {comp.description}
+                {t(comp.descriptionKey)}
               </Text>
             </VStack>
 
@@ -143,7 +143,7 @@ export default function AiWriterPage({ onLaunchVtuber }: AiWriterPageProps): Rea
               fontWeight="bold"
               _hover={comp.id === "momo" ? { filter: "brightness(0.9)" } : {}}
             >
-              {comp.id === "momo" ? "Khởi chạy Bạn đồng hành (Live2D)" : "Đang phát triển"}
+              {comp.id === "momo" ? t("kid.launchVtuberBtn") : t("kid.inDevelopmentBtn")}
             </Button>
           </Box>
         ))}

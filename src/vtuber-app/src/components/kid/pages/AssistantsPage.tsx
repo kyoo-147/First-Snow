@@ -8,9 +8,9 @@ interface Assistant {
   id: string;
   name: string;
   avatar: string;
-  role: string;
+  roleKey: string;
   color: string;
-  skills: string[];
+  skillsKeys: string[];
 }
 
 const ASSISTANTS: Assistant[] = [
@@ -18,25 +18,25 @@ const ASSISTANTS: Assistant[] = [
     id: "coteacher",
     name: "AI Coteacher",
     avatar: momoMascot,
-    role: "Hỗ trợ học tập đa môn",
+    roleKey: "kid.assistant1Role",
     color: "#6366F1",
-    skills: ["Giải toán tiểu học", "Kể chuyện lịch sử", "Đố vui địa lý"]
+    skillsKeys: ["kid.assistant1Skill1", "kid.assistant1Skill2", "kid.assistant1Skill3"]
   },
   {
     id: "commoncore",
     name: "Common Core Bot",
     avatar: momoMascot,
-    role: "Ôn tập kiến thức nền tảng",
+    roleKey: "kid.assistant2Role",
     color: "#E11D48",
-    skills: ["Tiếng Việt lớp 1-3", "Tập viết chữ số", "Phép nhân cơ bản"]
+    skillsKeys: ["kid.assistant2Skill1", "kid.assistant2Skill2", "kid.assistant2Skill3"]
   },
   {
     id: "curriculum",
     name: "Curriculum Advisor",
     avatar: momoMascot,
-    role: "Lên thời khóa biểu & lộ trình",
+    roleKey: "kid.assistant3Role",
     color: "#06B6D4",
-    skills: ["Gợi ý lộ trình EQ", "Phân phối giờ chơi", "Lời khuyên ba mẹ"]
+    skillsKeys: ["kid.assistant3Skill1", "kid.assistant3Skill2", "kid.assistant3Skill3"]
   }
 ];
 
@@ -51,7 +51,7 @@ export default function AssistantsPage(): React.JSX.Element {
           {t("kid.assistantsPlayground")}
         </Heading>
         <Text fontSize="xs" color="#64748B">
-          Gặp gỡ biệt đội trợ lý AI học tập đa tài giúp bé rèn luyện kỹ năng toàn diện.
+          {t("kid.assistantsDesc")}
         </Text>
       </VStack>
 
@@ -77,12 +77,12 @@ export default function AssistantsPage(): React.JSX.Element {
                 </Box>
                 <VStack spaceY={0} alignItems="flex-start">
                   <Heading size="xs" color="#0F172A" fontWeight="bold">{ass.name}</Heading>
-                  <Text fontSize="10px" color={ass.color} fontWeight="bold">{ass.role}</Text>
+                  <Text fontSize="10px" color={ass.color} fontWeight="bold">{t(ass.roleKey)}</Text>
                 </VStack>
               </HStack>
 
               <HStack wrap="wrap" gap={1.5} pt={1} width="100%">
-                {ass.skills.map((skill, index) => (
+                {ass.skillsKeys.map((skillKey, index) => (
                   <Box
                     key={index}
                     px={2.5}
@@ -93,7 +93,7 @@ export default function AssistantsPage(): React.JSX.Element {
                     fontSize="10px"
                     fontWeight="bold"
                   >
-                    {skill}
+                    {t(skillKey)}
                   </Box>
                 ))}
               </HStack>
@@ -111,7 +111,7 @@ export default function AssistantsPage(): React.JSX.Element {
               fontWeight="bold"
               _hover={{ bg: "#F1F5F9", borderColor: "#CBD5E1" }}
             >
-              Trò chuyện ngay
+              {t("kid.chatNowBtn")}
             </Button>
           </Box>
         ))}

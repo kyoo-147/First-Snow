@@ -125,7 +125,7 @@ export default function DashboardLayout({
           {/* Search Input Box */}
           <Box position="relative" width="100%">
             <Input
-              placeholder="Tìm kiếm nhanh..."
+              placeholder={t("kid.quickSearch")}
               size="sm"
               borderRadius="xl"
               borderColor="#E2E8F0"
@@ -466,11 +466,11 @@ export default function DashboardLayout({
           <Box p={4} bg="#F5F3FF" borderRadius="2xl" border="1px solid" borderColor="#DDD6FE">
             <VStack spaceY={2.5} alignItems="stretch">
               <HStack justifyContent="space-between" fontSize="11px" fontWeight="bold" color="#6D28D9">
-                <Text>Cấp độ bé</Text>
-                <Text>Cấp 3</Text>
+                <Text>{t("kid.levelLabel")}</Text>
+                <Text>{t("kid.levelValue")}</Text>
               </HStack>
               <HStack justifyContent="space-between" fontSize="11px" fontWeight="bold" color="#6D28D9" mt={-1}>
-                <Text>Điểm tích lũy</Text>
+                <Text>{t("kid.pointsAccumulated")}</Text>
                 <Text>{activeProfile?.points || 0} XP</Text>
               </HStack>
 
@@ -493,7 +493,7 @@ export default function DashboardLayout({
                 _hover={{ bg: "#F3E8FF" }}
                 mt={1}
               >
-                Đổi quà thưởng
+                {t("kid.redeemRewards")}
               </Button>
             </VStack>
           </Box>
@@ -502,12 +502,12 @@ export default function DashboardLayout({
           <VStack spaceY={1.5} px={1}>
             <HStack spaceX={3} py={1} cursor="pointer" color="#64748B" _hover={{ color: "#0F172A" }} onClick={() => navigate("/documents")}>
               <FiBriefcase size={13} />
-              <Text fontSize="xs" fontWeight="semibold">Hướng dẫn phụ huynh</Text>
+              <Text fontSize="xs" fontWeight="semibold">{t("kid.parentGuide")}</Text>
             </HStack>
             
             <HStack spaceX={3} py={1} cursor="pointer" color="#64748B" _hover={{ color: "#0F172A" }}>
               <FiMessageSquare size={13} />
-              <Text fontSize="xs" fontWeight="semibold">Hỗ trợ kỹ thuật</Text>
+              <Text fontSize="xs" fontWeight="semibold">{t("kid.techSupport")}</Text>
             </HStack>
 
             <Box borderTop="1px solid" borderColor="#E2E8F0" my={1} />
@@ -524,7 +524,7 @@ export default function DashboardLayout({
                 p={0}
                 _hover={{ bg: "transparent", color: "#0F172A" }}
               >
-                Đổi hồ sơ bé
+                {t("kid.switchProfile")}
               </Button>
               <Button
                 onClick={onLogout}
@@ -536,7 +536,7 @@ export default function DashboardLayout({
                 p={0}
                 _hover={{ bg: "transparent", color: "#9F1239" }}
               >
-                Đăng xuất
+                {t("kid.logout")}
               </Button>
             </HStack>
           </VStack>

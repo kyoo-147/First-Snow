@@ -1,9 +1,11 @@
 import { Box, VStack, HStack, Text, Heading, Input } from "@chakra-ui/react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../ui/button";
 
 export default function VoiceoverPage(): React.JSX.Element {
-  const [inputText, setInputText] = useState<string>("Xin chào các bạn nhỏ! Mình là Momo đây! Hôm nay chúng ta cùng học bài mới nhé!");
+  const { t } = useTranslation();
+  const [inputText, setInputText] = useState<string>(t("kid.defaultVoiceText"));
   const [selectedEmotion, setSelectedEmotion] = useState<string>("happy");
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
@@ -24,10 +26,10 @@ export default function VoiceoverPage(): React.JSX.Element {
       {/* Page Title & Desc */}
       <VStack spaceY={1.5} alignItems="flex-start" mb={6}>
         <Heading size="md" color="#0F172A" fontWeight="bold">
-          Phòng tạo giọng nói Momo AI
+          {t("kid.voiceoverTitle")}
         </Heading>
         <Text fontSize="xs" color="#64748B">
-          Nhập văn bản và chọn ngữ điệu cảm xúc để Momo phát âm thành giọng nói ngộ nghĩnh!
+          {t("kid.voiceoverDesc")}
         </Text>
       </VStack>
 
@@ -35,11 +37,11 @@ export default function VoiceoverPage(): React.JSX.Element {
         
         {/* Input Textbox */}
         <VStack spaceY={2} alignItems="flex-start">
-          <Text fontSize="xs" fontWeight="bold" color="#334155">Nhập câu nói muốn Momo nói:</Text>
+          <Text fontSize="xs" fontWeight="bold" color="#334155">{t("kid.inputSentenceLabel")}</Text>
           <Input
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Ví dụ: Xin chào các bạn nhỏ..."
+            placeholder={t("kid.voiceoverPlaceholder")}
             size="sm"
             borderRadius="xl"
             borderColor="#E2E8F0"
@@ -52,13 +54,13 @@ export default function VoiceoverPage(): React.JSX.Element {
 
         {/* Emotion Presets */}
         <VStack spaceY={2.5} alignItems="flex-start">
-          <Text fontSize="xs" fontWeight="bold" color="#334155">Chọn âm điệu cảm xúc:</Text>
+          <Text fontSize="xs" fontWeight="bold" color="#334155">{t("kid.selectToneLabel")}</Text>
           <HStack spaceX={2.5} width="100%" overflowX="auto" pb={1} css={{ "&::-webkit-scrollbar": { display: "none" } }}>
             {[
-              { id: "happy", label: "Vui vẻ (Happy)", emoji: "😊" },
-              { id: "calm", label: "Điềm tĩnh (Calm)", emoji: "🧘" },
-              { id: "excited", label: "Hào hứng (Excited)", emoji: "🎉" },
-              { id: "sleepy", label: "Buồn ngủ (Sleepy)", emoji: "😴" }
+              { id: "happy", label: t("kid.toneHappy"), emoji: "😊" },
+              { id: "calm", label: t("kid.toneCalm"), emoji: "🧘" },
+              { id: "excited", label: t("kid.toneExcited"), emoji: "🎉" },
+              { id: "sleepy", label: t("kid.toneSleepy"), emoji: "😴" }
             ].map((emo) => (
               <Box
                 key={emo.id}
@@ -119,7 +121,7 @@ export default function VoiceoverPage(): React.JSX.Element {
             fontSize="xs"
             _hover={{ filter: "brightness(0.9)" }}
           >
-            {isPlaying ? "Dừng giọng nói" : "🔊 Cho Momo nói câu này"}
+            {isPlaying ? t("kid.stopVoiceBtn") : t("kid.playVoiceBtn")}
           </Button>
         </VStack>
 

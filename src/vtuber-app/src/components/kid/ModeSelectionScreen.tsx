@@ -55,61 +55,61 @@ interface ModeSelectionScreenProps {
 
 interface LessonQuiz {
   id: string;
-  title: string;
-  desc: string;
+  titleKey: string;
+  descKey: string;
   color: string;
   emoji: string;
-  scenario: string;
-  options: { key: string; text: string; isCorrect: boolean }[];
-  correctFeedback: string;
-  wrongFeedback: string;
+  scenarioKey: string;
+  options: { key: string; textKey: string; isCorrect: boolean }[];
+  correctFeedbackKey: string;
+  wrongFeedbackKey: string;
 }
 
 const LESSONS: LessonQuiz[] = [
   {
     id: "lesson-1",
-    title: "Nhận Biết Cảm Xúc",
-    desc: "Học cách nhận biết Vui, Buồn, Giận dữ thông qua biểu cảm khuôn mặt cùng Momo.",
+    titleKey: "kid.lesson1QuizTitle",
+    descKey: "kid.lesson1QuizDesc",
     color: "#7C3AED", // Violet
     emoji: "😊",
-    scenario: "Momo đang cười tươi rói, hai mắt híp lại và vẫy tay chào con như thế này. Đố bé biết Momo đang cảm thấy thế nào?",
+    scenarioKey: "kid.modeScenario1",
     options: [
-      { key: "A", text: "😊 Momo đang rất Vui vẻ và Hạnh phúc", isCorrect: true },
-      { key: "B", text: "😢 Momo đang Buồn bã muốn khóc", isCorrect: false },
-      { key: "C", text: "😡 Momo đang Giận dữ muốn la hét", isCorrect: false },
+      { key: "A", textKey: "kid.lesson1Opt1", isCorrect: true },
+      { key: "B", textKey: "kid.lesson1Opt2", isCorrect: false },
+      { key: "C", textKey: "kid.lesson1Opt3", isCorrect: false },
     ],
-    correctFeedback: "Chính xác rồi! Bé giỏi quá! Khi vui cười hân hoan, chúng ta sẽ mở lòng và tràn đầy năng lượng tích cực đấy! 🌟",
-    wrongFeedback: "Chưa đúng rồi! Nhìn nụ cười rạng rỡ của Momo xem, bé suy nghĩ kỹ lại xem nào! 💡"
+    correctFeedbackKey: "kid.lesson1Feedback",
+    wrongFeedbackKey: "kid.toastTryAgain"
   },
   {
     id: "lesson-2",
-    title: "Giải Quyết Mâu Thuẫn",
-    desc: "Làm gì khi bị bạn vô tình làm hỏng đồ chơi? Học cách ứng xử thấu cảm.",
+    titleKey: "kid.lesson2QuizTitle",
+    descKey: "kid.lesson2QuizDesc",
     color: "#E11D48", // Pink
     emoji: "🤝",
-    scenario: "Bé vẽ xong bức tranh rất đẹp, nhưng bạn lỡ tay làm đổ nước làm nhòe tranh. Lúc này bé nên làm thế nào cho đúng nhất?",
+    scenarioKey: "kid.modeScenario2",
     options: [
-      { key: "A", text: "😡 Tức giận la mắng bạn và xé bức tranh của bạn", isCorrect: false },
-      { key: "B", text: "😢 Khóc thật to rồi chạy đi mách ba mẹ/cô giáo ngay", isCorrect: false },
-      { key: "C", text: "🗣️ Bình tĩnh nói: Lần sau bạn cẩn thận nhé, rồi rủ bạn cùng vẽ lại", isCorrect: true },
+      { key: "A", textKey: "kid.modeScenario2OptA", isCorrect: false },
+      { key: "B", textKey: "kid.modeScenario2OptB", isCorrect: false },
+      { key: "C", textKey: "kid.modeScenario2OptC", isCorrect: true },
     ],
-    correctFeedback: "Tuyệt vời! Bé xử sự rất thấu cảm và dũng cảm đấy. Chia sẻ cảm xúc ôn hòa giúp tình bạn thêm bền chặt! 🤝",
-    wrongFeedback: "Làm như vậy có thể khiến bạn sợ hãi và làm mâu thuẫn lớn hơn đấy. Thử chọn cách giải quyết thông minh khác xem nào!"
+    correctFeedbackKey: "kid.modeScenario2Feedback",
+    wrongFeedbackKey: "kid.modeScenario2Wrong"
   },
   {
     id: "lesson-3",
-    title: "Vượt Qua Nỗi Sợ",
-    desc: "Cách bé tự tạo cảm giác an toàn và dũng cảm đối diện với nỗi sợ bóng tối.",
+    titleKey: "kid.lesson3QuizTitle",
+    descKey: "kid.lesson3QuizDesc",
     color: "#D97706", // Amber
     emoji: "🧸",
-    scenario: "Khi ba mẹ tắt đèn phòng ngủ, bóng tối bao trùm khiến bé thấy hơi sợ hãi. Hành động nào sẽ giúp bé bình tĩnh và dũng cảm hơn?",
+    scenarioKey: "kid.modeScenario3",
     options: [
-      { key: "A", text: "🧸 Ôm chặt gấu bông, nhắm mắt lại hít thở sâu 3 nhịp", isCorrect: true },
-      { key: "B", text: "😱 Trùm chăn kín mít đầu và khóc thầm lo lắng", isCorrect: false },
-      { key: "C", text: "🚪 Mở tung cửa phòng chạy sang bắt ba mẹ bật đèn sáng trưng", isCorrect: false },
+      { key: "A", textKey: "kid.modeScenario3OptA", isCorrect: true },
+      { key: "B", textKey: "kid.modeScenario3OptB", isCorrect: false },
+      { key: "C", textKey: "kid.modeScenario3OptC", isCorrect: false },
     ],
-    correctFeedback: "Tuyệt hảo! Hít thở sâu và ôm vật yêu thích sẽ báo hiệu cho não bộ rằng bé đang an toàn. Chúc bé có giấc ngủ thật ngon! 🧸",
-    wrongFeedback: "Trùm chăn kín có thể khiến bé ngột ngạt và sợ hãi hơn đó. Thử một giải pháp giúp bình tĩnh cơ thể xem nào!"
+    correctFeedbackKey: "kid.modeScenario3Feedback",
+    wrongFeedbackKey: "kid.modeScenario3Wrong"
   }
 ];
 
@@ -143,9 +143,9 @@ export default function ModeSelectionScreen({
     if (logs) return JSON.parse(logs);
     
     const defaultLogs = [
-      { id: "1", emotion: "Vui vẻ 😊", note: "Bé đã học bài nhận biết cảm xúc đạt điểm tối đa.", date: "24 Tháng 8, 2026", color: "#7C3AED" },
-      { id: "2", emotion: "Hào hứng 🤩", note: "Bé trò chuyện cùng người bạn thông minh Momo rất ngoan.", date: "25 Tháng 8, 2026", color: "#D97706" },
-      { id: "3", emotion: "Lo sợ 😨", note: "Bé ban đầu còn bỡ ngỡ nhưng đã nhanh chóng tự tin dọn dẹp đồ chơi.", date: "26 Tháng 8, 2026", color: "#E11D48" }
+      { id: "1", emotion: t("kid.defaultLog1Emotion"), note: t("kid.defaultLog1Note"), date: t("kid.defaultLog1Date"), color: "#7C3AED" },
+      { id: "2", emotion: t("kid.defaultLog2Emotion"), note: t("kid.defaultLog2Note"), date: t("kid.defaultLog2Date"), color: "#D97706" },
+      { id: "3", emotion: t("kid.defaultLog3Emotion"), note: t("kid.defaultLog3Note"), date: t("kid.defaultLog3Date"), color: "#E11D48" }
     ];
     localStorage.setItem("kid_emotion_diary", JSON.stringify(defaultLogs));
     return defaultLogs;
@@ -161,7 +161,7 @@ export default function ModeSelectionScreen({
     setIsAnswered(true);
     
     if (isCorrect) {
-      setQuizFeedback(currentQuiz?.correctFeedback || "Chính xác!");
+      setQuizFeedback(currentQuiz ? t(currentQuiz.correctFeedbackKey) : "");
       
       // Add points to child profile
       if (activeProfile) {
@@ -182,9 +182,9 @@ export default function ModeSelectionScreen({
       // Add to emotion logs
       const newLog = {
         id: Date.now().toString(),
-        emotion: "Tự hào 🌟",
-        note: `Hoàn thành bài học: ${currentQuiz?.title} và đạt 100 điểm.`,
-        date: "27 Tháng 8, 2026",
+        emotion: t("kid.emotionProudLabel"),
+        note: `${t("kid.diaryItem1Title")}: ${currentQuiz ? t(currentQuiz.titleKey) : ""}`,
+        date: t("kid.defaultLog1Date"),
         color: "#7C3AED"
       };
       const updatedLogs = [newLog, ...diaryLogs];
@@ -192,14 +192,14 @@ export default function ModeSelectionScreen({
       localStorage.setItem("kid_emotion_diary", JSON.stringify(updatedLogs));
 
       toaster.create({
-        title: "Chính xác! +100 điểm",
+        title: t("kid.toastCorrectPlus100"),
         type: "success",
         duration: 2500
       });
     } else {
-      setQuizFeedback(currentQuiz?.wrongFeedback || "Chưa đúng!");
+      setQuizFeedback(currentQuiz ? t(currentQuiz.wrongFeedbackKey) : "");
       toaster.create({
-        title: "Hãy thử lại nhé!",
+        title: t("kid.toastTryAgain"),
         type: "error",
         duration: 2000
       });
@@ -217,7 +217,7 @@ export default function ModeSelectionScreen({
     localStorage.removeItem("kid_emotion_diary");
     setDiaryLogs([]);
     toaster.create({
-      title: "Đã xóa toàn bộ nhật ký cảm xúc của bé",
+      title: t("kid.toastDiaryCleared"),
       type: "info",
       duration: 2000
     });
@@ -537,7 +537,7 @@ export default function ModeSelectionScreen({
                 p={0}
                 _hover={{ bg: "transparent", color: "#0F172A" }}
               >
-                Đổi hồ sơ bé
+                {t("kid.switchProfile")}
               </Button>
               <Button
                 onClick={onLogout}
@@ -549,7 +549,7 @@ export default function ModeSelectionScreen({
                 p={0}
                 _hover={{ bg: "transparent", color: "#9F1239" }}
               >
-                Đăng xuất
+                {t("kid.logout")}
               </Button>
             </HStack>
           </VStack>
@@ -861,13 +861,13 @@ export default function ModeSelectionScreen({
                                     textTransform="uppercase"
                                     letterSpacing="0.02em"
                                   >
-                                    {lesson.title}
+                                    {t(lesson.titleKey)}
                                   </Box>
                                   <Box color="#94A3B8" cursor="pointer">•••</Box>
                                 </HStack>
 
                                 <Heading size="xs" color="#0F172A" fontWeight="bold" lineHeight="short">
-                                  {lesson.desc}
+                                  {t(lesson.descKey)}
                                 </Heading>
                               </VStack>
 
@@ -1305,21 +1305,21 @@ export default function ModeSelectionScreen({
 
                       <VStack spaceY={2}>
                         <Heading size="xl" color="#7C3AED" fontWeight="bold">
-                          Bạn đồng hành thông minh Momo
+                          {t("kid.modeMomoTitle")}
                         </Heading>
                         <Text color="#475569" fontSize="sm" maxW="450px">
-                          Bắt đầu cuộc trò chuyện tương tác trực tiếp bằng giọng nói, hoạt cảnh Live2D biểu cảm sinh động cùng chú robot Momo.
+                          {t("kid.modeMomoDesc")}
                         </Text>
                       </VStack>
 
                       <Box bg="#F5F3FF" p={4.5} borderRadius="2xl" border="1px solid" borderColor="#DDD6FE" width="100%" textAlign="left">
                         <Heading size="xs" color="#7C3AED" mb={2.5} fontWeight="bold">
-                          💡 Hướng dẫn cho bé:
+                          {t("kid.instructionsForChild")}
                         </Heading>
                         <VStack spaceY={1.5} alignItems="flex-start" fontSize="xs" color="#6D28D9">
-                          <Text>1. Nhấp chuột vào nút "Bắt đầu trò chuyện" ở bên dưới.</Text>
-                          <Text>2. Cho phép thiết bị truy cập Microphone để nói chuyện cùng Momo.</Text>
-                          <Text>3. Nhấn nút "Menu chính" ở góc trên cùng bên phải để quay lại bảng điều khiển bất cứ lúc nào.</Text>
+                          <Text>{t("kid.instructionStep1")}</Text>
+                          <Text>{t("kid.instructionStep2")}</Text>
+                          <Text>{t("kid.instructionStep3")}</Text>
                         </VStack>
                       </Box>
 
@@ -1335,7 +1335,7 @@ export default function ModeSelectionScreen({
                         shadow="md"
                         h="50px"
                       >
-                        Bắt đầu trò chuyện <FiChevronRight style={{ marginLeft: "4px" }} />
+                        {t("kid.startChattingBtn")} <FiChevronRight style={{ marginLeft: "4px" }} />
                       </Button>
                     </VStack>
                   </Box>
@@ -1354,10 +1354,10 @@ export default function ModeSelectionScreen({
                 width="100%"
               >
                 <Heading size="md" color="#1E293B" fontWeight="bold" mb={2}>
-                  Lớp học cảm xúc cùng Momo
+                  {t("kid.aiTeachers")}
                 </Heading>
                 <Text color="#64748B" fontSize="sm" mb={6}>
-                  Các bài tập xử lý tình huống mẫu giúp bé rèn luyện trí tuệ cảm xúc (EQ) và khả năng ứng xử ôn hòa.
+                  {t("kid.coursesDesc", { name: username })}
                 </Text>
 
                 <SimpleGrid columns={{ base: 1, md: 3 }} spaceX={6} spaceY={6}>
@@ -1394,7 +1394,7 @@ export default function ModeSelectionScreen({
                         </Flex>
 
                         <Heading size="xs" color="#1E293B" fontWeight="bold">
-                          {lesson.title}
+                          {t(lesson.titleKey)}
                         </Heading>
                       </VStack>
 
@@ -1408,7 +1408,7 @@ export default function ModeSelectionScreen({
                         fontWeight="bold"
                         _hover={{ filter: "brightness(0.9)" }}
                       >
-                        Bắt đầu bài tập
+                        {t("kid.rec1Button")}
                       </Button>
                     </Box>
                   ))}
@@ -1430,7 +1430,7 @@ export default function ModeSelectionScreen({
                   {t("kid.documentsParentReports")}
                 </Heading>
                 <Text color="#64748B" fontSize="sm" mb={6}>
-                  Biểu đồ phân tích mức độ cân bằng cảm xúc của bé và các thông số cài đặt quản trị của phụ huynh.
+                  {t("kid.documentsDesc")}
                 </Text>
 
                 <SimpleGrid columns={{ base: 1, lg: 2 }} spaceX={6} spaceY={6}>
@@ -1441,14 +1441,14 @@ export default function ModeSelectionScreen({
                     {/* Emotion percentage stats */}
                     <Box p={6} bg="#FFFFFF" borderRadius="3xl" border="1px solid" borderColor="#E2E8F0" boxShadow="xs">
                       <Heading size="xs" color="#0F172A" fontWeight="bold" mb={4}>
-                        Biểu đồ xu hướng cảm xúc tuần này
+                        {t("kid.weeklyTrendChart")}
                       </Heading>
 
                       <VStack spaceY={4} alignItems="stretch">
                         <Box>
                           <HStack justifyContent="space-between" mb={1} fontSize="xs">
-                            <Text fontWeight="semibold" color="#475569">Vui vẻ & Hạnh phúc (😊)</Text>
-                            <Text fontWeight="extrabold" color="#7C3AED">60% thời gian</Text>
+                            <Text fontWeight="semibold" color="#475569">{t("kid.emotionHappyLabel")}</Text>
+                            <Text fontWeight="extrabold" color="#7C3AED">{t("kid.emotionHappyTime")}</Text>
                           </HStack>
                           <Box w="100%" bg="#F1F5F9" h="8px" borderRadius="full" overflow="hidden">
                             <Box w="60%" bg="#7C3AED" h="100%" borderRadius="full" />
@@ -1457,8 +1457,8 @@ export default function ModeSelectionScreen({
 
                         <Box>
                           <HStack justifyContent="space-between" mb={1} fontSize="xs">
-                            <Text fontWeight="semibold" color="#475569">Tự hào & Tự tin (🤩)</Text>
-                            <Text fontWeight="extrabold" color="#0EA5E9">25% thời gian</Text>
+                            <Text fontWeight="semibold" color="#475569">{t("kid.emotionProudLabel")}</Text>
+                            <Text fontWeight="extrabold" color="#0EA5E9">{t("kid.emotionProudTime")}</Text>
                           </HStack>
                           <Box w="100%" bg="#F1F5F9" h="8px" borderRadius="full" overflow="hidden">
                             <Box w="25%" bg="#0EA5E9" h="100%" borderRadius="full" />
@@ -1467,8 +1467,8 @@ export default function ModeSelectionScreen({
 
                         <Box>
                           <HStack justifyContent="space-between" mb={1} fontSize="xs">
-                            <Text fontWeight="semibold" color="#475569">Lo lắng & Sợ hãi (😨)</Text>
-                            <Text fontWeight="extrabold" color="#D97706">15% thời gian</Text>
+                            <Text fontWeight="semibold" color="#475569">{t("kid.emotionAnxiousLabel")}</Text>
+                            <Text fontWeight="extrabold" color="#D97706">{t("kid.emotionAnxiousTime")}</Text>
                           </HStack>
                           <Box w="100%" bg="#F1F5F9" h="8px" borderRadius="full" overflow="hidden">
                             <Box w="15%" bg="#D97706" h="100%" borderRadius="full" />
@@ -1483,12 +1483,12 @@ export default function ModeSelectionScreen({
                         <HStack spaceX={2} color="#6D28D9">
                           <FiSmile size={18} />
                           <Heading size="xs" fontWeight="bold">
-                            Tư vấn giáo dục từ Momo AI
+                            {t("kid.parentAdvisorTitle")}
                           </Heading>
                         </HStack>
 
                         <Text fontSize="xs" color="#6D28D9" lineHeight="tall">
-                          Bé <strong>{username}</strong> thể hiện sự phản xạ thấu cảm và dũng cảm rất cao trong 3 bài tập cảm xúc thực tế. Khuyên ba mẹ tiếp tục khích lệ bé nói lời cảm ơn và giúp đỡ việc nhỏ trong gia đình.
+                          {t("kid.parentAdvisorAdvice", { name: username })}
                         </Text>
                       </VStack>
                     </Box>
@@ -1501,7 +1501,7 @@ export default function ModeSelectionScreen({
                     {/* Time limit controls */}
                     <Box p={6} bg="#FFFFFF" borderRadius="3xl" border="1px solid" borderColor="#E2E8F0" boxShadow="xs">
                       <Heading size="xs" color="#0F172A" fontWeight="bold" mb={4}>
-                        Quản lý thời gian & Quyền riêng tư
+                        {t("kid.timePrivacyTitle")}
                       </Heading>
 
                       <VStack spaceY={5} alignItems="stretch">
@@ -1509,9 +1509,9 @@ export default function ModeSelectionScreen({
                           <HStack justifyContent="space-between" mb={2}>
                             <HStack spaceX={2} color="#475569">
                               <FiClock size={13} />
-                              <Text fontSize="xs" fontWeight="semibold">Giới hạn thời gian sử dụng</Text>
+                              <Text fontSize="xs" fontWeight="semibold">{t("kid.usageTimeLimit")}</Text>
                             </HStack>
-                            <Text fontSize="xs" fontWeight="bold" color="#7C3AED">{timeLimit} phút</Text>
+                            <Text fontSize="xs" fontWeight="bold" color="#7C3AED">{t("kid.minutesValue", { count: timeLimit })}</Text>
                           </HStack>
                           
                           <input
@@ -1527,12 +1527,12 @@ export default function ModeSelectionScreen({
 
                         <VStack spaceY={3} alignItems="stretch" pt={4} borderTop="1px solid" borderColor="#F1F5F9">
                           <HStack justifyContent="space-between" fontSize="xs">
-                            <Text fontWeight="semibold" color="#475569">Gửi báo cáo qua Email hàng tuần</Text>
+                            <Text fontWeight="semibold" color="#475569">{t("kid.emailWeeklyReport")}</Text>
                             <input type="checkbox" defaultChecked style={{ accentColor: "#7C3AED" }} />
                           </HStack>
 
                           <HStack justifyContent="space-between" fontSize="xs">
-                            <Text fontWeight="semibold" color="#475569">Nhận thông báo khi bé gặp khó khăn cảm xúc</Text>
+                            <Text fontWeight="semibold" color="#475569">{t("kid.alertDifficultyLabel")}</Text>
                             <input type="checkbox" defaultChecked style={{ accentColor: "#7C3AED" }} />
                           </HStack>
                         </VStack>
@@ -1549,7 +1549,7 @@ export default function ModeSelectionScreen({
                             fontWeight="bold"
                             _hover={{ bg: "#FFF1F2" }}
                           >
-                            Xóa lịch sử nhật ký cảm xúc
+                            {t("kid.clearDiaryHistoryBtn")}
                           </Button>
                         </Box>
                       </VStack>
@@ -1629,10 +1629,10 @@ export default function ModeSelectionScreen({
                   </Flex>
                   <VStack spaceY={0} alignItems="flex-start">
                     <Text fontSize="9px" color={currentQuiz.color} fontWeight="extrabold" textTransform="uppercase" letterSpacing="0.05em">
-                      LỚP HỌC CẢM XÚC CÙNG MOMO
+                      {t("kid.aiTeachers")}
                     </Text>
                     <Heading size="xs" color="#0F172A" fontWeight="bold">
-                      Bài học: {currentQuiz.title}
+                      {t("kid.lessonPlan")}: {t(currentQuiz.titleKey)}
                     </Heading>
                   </VStack>
                 </HStack>
@@ -1643,9 +1643,9 @@ export default function ModeSelectionScreen({
                 <HStack spaceX={4} bg="#F5F3FF" p={4} borderRadius="2xl" border="1px solid" borderColor="#E9D5FF" alignItems="flex-start">
                   <img src={momoMascot} alt="" style={{ width: "45px", height: "auto", marginTop: "2px" }} />
                   <VStack spaceY={1} alignItems="flex-start">
-                    <Text fontSize="9px" color="#7C3AED" fontWeight="extrabold">🤖 MOMO HỎI:</Text>
+                    <Text fontSize="9px" color="#7C3AED" fontWeight="extrabold">🤖 {t("live2d.companionName")}:</Text>
                     <Text fontSize="xs" fontWeight="bold" color="#1E293B" lineHeight="relaxed">
-                      {currentQuiz.scenario}
+                      {t(currentQuiz.scenarioKey)}
                     </Text>
                   </VStack>
                 </HStack>
@@ -1671,7 +1671,7 @@ export default function ModeSelectionScreen({
                       _hover={!isAnswered ? { bg: "#F8FAFC", borderColor: currentQuiz.color } : {}}
                       position="relative"
                     >
-                      <Text>{option.text}</Text>
+                      <Text>{t(option.textKey)}</Text>
                       {isAnswered && option.isCorrect && (
                         <Box position="absolute" right="16px" color="#10B981" fontSize="md">✓</Box>
                       )}
@@ -1710,7 +1710,7 @@ export default function ModeSelectionScreen({
                     fontWeight="bold"
                     _hover={{ opacity: 0.9 }}
                   >
-                    {selectedOption === currentQuiz.options.find(o => o.isCorrect)?.key ? "Hoàn thành" : "Đóng và học lại"}
+                    {selectedOption === currentQuiz.options.find(o => o.isCorrect)?.key ? t("kid.diaryItem1Title") : t("kid.closeAndLearnAgain")}
                   </Button>
                 )}
 
