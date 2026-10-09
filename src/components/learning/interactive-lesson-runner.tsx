@@ -494,6 +494,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
                             type="button"
                             role="radio"
                             aria-checked={isSelected}
+                            aria-pressed={isSelected}
                             onClick={() => handleSelectOption(opt.id)}
                             className={cn(
                               "snow-interactive-card snow-focus-ring flex min-h-[84px] w-full items-center gap-4 rounded-[var(--radius-lg)] border p-4 text-left transition-all",

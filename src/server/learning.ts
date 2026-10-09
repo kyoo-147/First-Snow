@@ -169,25 +169,32 @@ export async function getPublishedLesson(lessonId: string) {
     : [];
   const steps = storedSteps.map((stored, index) => {
     const authored = contentSteps[index] ?? {};
-    return {
+    return stripAnswerKeys({
       ...authored,
       id: stored.id,
       title: typeof authored.title === 'string' ? authored.title : stored.prompt,
       prompt: typeof authored.prompt === 'string' ? authored.prompt : stored.prompt,
       stepType: stored.stepType,
       stepOrder: stored.stepOrder,
-    };
+    }) as Record<string, unknown>;
   });
 
   return { ...lesson, content: publicContent, steps };
 }
 
-function stripAnswerKeys(value: unknown): unknown {
+const STRIPPED_GRADING_KEYS = new Set([
+  'correctAnswer',
+  'canonicalAnswer',
+  'acceptedVariants',
+  'explanation',
+]);
+
+export function stripAnswerKeys(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(stripAnswerKeys);
   if (!value || typeof value !== 'object') return value;
   return Object.fromEntries(
     Object.entries(value as Record<string, unknown>)
-      .filter(([key]) => key !== 'correctAnswer')
+      .filter(([key]) => !STRIPPED_GRADING_KEYS.has(key))
       .map(([key, entry]) => [key, stripAnswerKeys(entry)]),
   );
 }
@@ -319,6 +326,19 @@ export async function saveLessonAnswer(
   });
 }
 
+export class IncompleteLessonAttemptError extends Error {
+  code = 'INCOMPLETE_ATTEMPT';
+  totalSteps: number;
+  answeredSteps: number;
+
+  constructor(totalSteps: number, answeredSteps: number) {
+    super(`Cannot complete lesson attempt: ${answeredSteps} of ${totalSteps} required steps answered.`);
+    this.name = 'IncompleteLessonAttemptError';
+    this.totalSteps = totalSteps;
+    this.answeredSteps = answeredSteps;
+  }
+}
+
 export async function completeLessonAttempt(childId: string, attemptId: string) {
   return db.transaction(async (tx) => {
     const [attempt] = await tx
@@ -330,13 +350,27 @@ export async function completeLessonAttempt(childId: string, attemptId: string) 
     if (!attempt) return null;
     if (attempt.status === 'completed') return attempt;
 
-    const graded = await tx
-      .select({ isCorrect: lessonStepAnswers.isCorrect })
+    const requiredSteps = await tx
+      .select({ id: lessonSteps.id })
+      .from(lessonSteps)
+      .where(eq(lessonSteps.lessonId, attempt.lessonId));
+
+    const totalRequired = requiredSteps.length;
+
+    const gradedAnswers = await tx
+      .select({ stepId: lessonStepAnswers.stepId, isCorrect: lessonStepAnswers.isCorrect })
       .from(lessonStepAnswers)
       .where(and(eq(lessonStepAnswers.attemptId, attemptId), isNotNull(lessonStepAnswers.isCorrect)));
-    const score = graded.length
-      ? Math.round((graded.filter((answer) => answer.isCorrect).length / graded.length) * 100)
-      : null;
+
+    const answeredStepIds = new Set(gradedAnswers.map((a) => a.stepId));
+    const allAnswered = totalRequired > 0 && requiredSteps.every((s) => answeredStepIds.has(s.id));
+
+    if (!allAnswered) {
+      throw new IncompleteLessonAttemptError(totalRequired, answeredStepIds.size);
+    }
+
+    const correctCount = gradedAnswers.filter((a) => a.isCorrect).length;
+    const score = Math.round((correctCount / totalRequired) * 100);
     const now = new Date();
     const [completed] = await tx
       .update(lessonAttempts)

@@ -144,4 +144,20 @@ describe('learning API routes', () => {
     expect(mocks.completeLessonAttempt).toHaveBeenCalledTimes(2);
     expect(mocks.completeLessonAttempt).toHaveBeenCalledWith(childId, attemptId);
   });
+
+  it('returns a 409 conflict when completeLessonAttempt throws IncompleteLessonAttemptError', async () => {
+    const error = new Error('Cannot complete lesson attempt: 2 of 5 required steps answered.');
+    (error as any).code = 'INCOMPLETE_ATTEMPT';
+    (error as any).name = 'IncompleteLessonAttemptError';
+    mocks.completeLessonAttempt.mockRejectedValue(error);
+
+    const route = await import('@/app/api/lesson-attempts/[attemptId]/complete/route');
+    const params = { params: Promise.resolve({ attemptId }) };
+    const request = new Request('http://local', { method: 'POST', body: '{}' });
+    const response = await route.POST(request, params);
+    expect(response.status).toBe(409);
+    const body = await response.json();
+    expect(body.error.code).toBe('CONFLICT');
+    expect(body.error.message).toContain('Cannot complete lesson attempt');
+  });
 });
