@@ -56,4 +56,44 @@ describe("Mia AI-chat CTA navigation contract", () => {
     expect(read("src/app/(child)/companion/page.tsx")).toContain("Compatibility entry point");
     expect(read("src/app/(child)/companion/talk/page.tsx")).toContain('redirect("/companion")');
   });
+
+  it("enforces child auth and role guards for /mia in proxy configuration", () => {
+    const proxySource = read("src/proxy.ts");
+    expect(proxySource).toContain("CHILD_ROUTES");
+    expect(proxySource).toContain("'/mia'");
+    expect(proxySource).toContain("'/mia/:path*'");
+    expect(proxySource).toContain("verifyChildSession");
+    expect(proxySource).toContain("isDbSessionValid");
+  });
+
+  it("preserves avatar-mode back navigation to /mia with accessible focus ring", () => {
+    const avatarPage = read("src/app/(child)/companion/avatar/page.tsx");
+    expect(avatarPage).toContain('href="/mia"');
+    expect(avatarPage).toContain("snow-focus-ring");
+    expect(avatarPage).toContain("<ChevronLeft");
+    expect(avatarPage).toContain("avatar.backToApp");
+  });
+
+  it("ensures embedded VTuber controls maintain local scope without hijacking navigation", () => {
+    const vtuberWrapper = read("src/components/vtuber-wrapper.tsx");
+    expect(vtuberWrapper).toContain("<Live2D />");
+    expect(vtuberWrapper).toContain("<Sidebar");
+    expect(vtuberWrapper).toContain("<Footer");
+    expect(vtuberWrapper).not.toContain('href="/companion"');
+    expect(vtuberWrapper).not.toContain('router.push("/companion")');
+  });
+
+  it("preserves lessons, settings, safety, and support controls without redirecting to /mia", () => {
+    const lessonCard = read("src/components/lessons/lesson-card.tsx");
+    expect(lessonCard).toContain("/session/lessons/");
+    expect(lessonCard).not.toContain("/mia");
+
+    const settingsScreen = read("src/components/pages/settings-screen.tsx");
+    expect(settingsScreen).toContain("/parent/settings/account");
+    expect(settingsScreen).not.toContain("/mia");
+
+    const exploreScreen = read("src/components/pages/explore-screen.tsx");
+    expect(exploreScreen).toContain("/session/lessons");
+    expect(exploreScreen).not.toContain("/mia");
+  });
 });
