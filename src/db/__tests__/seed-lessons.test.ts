@@ -9,7 +9,7 @@ describe('production lesson catalog seed', () => {
   describe('catalog content and deterministic structure', () => {
     it('defines at least 24 substantive Vietnamese MVP lessons across 5 tracks with >= 5 questions each', () => {
       expect(LESSON_CATALOG.length).toBeGreaterThanOrEqual(24);
-      
+
       const tracks = new Set<string>();
       const approvedImages = new Set([
         '/images/lesson-abc.png',
