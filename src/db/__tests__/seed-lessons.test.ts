@@ -7,15 +7,50 @@ describe('production lesson catalog seed', () => {
   });
 
   describe('catalog content and deterministic structure', () => {
-    it('defines a non-empty catalog of published, child-safe lessons', () => {
-      expect(LESSON_CATALOG.length).toBeGreaterThanOrEqual(4);
+    it('defines at least 24 substantive Vietnamese MVP lessons across 5 tracks with >= 5 questions each', () => {
+      expect(LESSON_CATALOG.length).toBeGreaterThanOrEqual(24);
+      
+      const tracks = new Set<string>();
+      const approvedImages = new Set([
+        '/images/lesson-abc.png',
+        '/images/lesson-math.png',
+        '/images/lesson-story.png',
+        '/images/lesson-social.png',
+      ]);
+
       for (const item of LESSON_CATALOG) {
         expect(item.lesson.isPublished).toBe(true);
         expect(item.lesson.title.trim().length).toBeGreaterThan(0);
         expect(item.lesson.subject.trim().length).toBeGreaterThan(0);
         expect(item.lesson.estimatedMinutes).toBeGreaterThan(0);
-        expect(item.steps.length).toBeGreaterThanOrEqual(3);
+
+        const content = JSON.parse(item.lesson.content);
+        expect(content.track).toBeDefined();
+        tracks.add(content.track);
+
+        expect(approvedImages.has(content.image)).toBe(true);
+
+        // At least 5 questions
+        const questionSteps = item.steps.filter((s) => s.stepType === 'question' || s.stepType === 'activity');
+        expect(questionSteps.length).toBeGreaterThanOrEqual(5);
+
+        // Validate each step in content has instruction and Vietnamese prompt
+        expect(Array.isArray(content.steps)).toBe(true);
+        for (const st of content.steps) {
+          if (st.questionType) {
+            expect(st.canonicalAnswer).toBeDefined();
+            expect(st.prompt).toBeDefined();
+            expect(st.explanation).toBeDefined();
+          }
+        }
       }
+
+      // Verify all 5 tracks are covered
+      expect(tracks.has('literacy')).toBe(true);
+      expect(tracks.has('mathematics')).toBe(true);
+      expect(tracks.has('stories_comprehension')).toBe(true);
+      expect(tracks.has('social_emotional_safety')).toBe(true);
+      expect(tracks.has('basic_science')).toBe(true);
     });
 
     it('uses deterministic, valid RFC4122 UUIDs for all lessons and steps', () => {
