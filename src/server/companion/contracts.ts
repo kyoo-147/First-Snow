@@ -12,18 +12,178 @@ export function setTestCompanionProvider(provider: Provider | null): void {
 // example after an env update) the provider is rebuilt, resetting routing state.
 let cachedProvider: { key: string; provider: Provider } | null = null;
 
+export type ProviderDiagnostics = {
+  configured: boolean;
+  provider: 'openai' | 'deepseek' | 'gemini' | 'none';
+  model?: string;
+  models?: string[];
+};
+
+export async function getProviderDiagnostics(
+  env: Readonly<Record<string, string | undefined>> = process.env,
+): Promise<ProviderDiagnostics> {
+  const explicitProvider = env.COMPANION_PROVIDER?.trim().toLowerCase();
+
+  if (explicitProvider === 'gemini' || explicitProvider === 'google') {
+    const { readGeminiProviderConfig } = await import('./gemini-provider');
+    const geminiConfig = readGeminiProviderConfig(env);
+    if (geminiConfig) {
+      return {
+        configured: true,
+        provider: 'gemini',
+        model: geminiConfig.model,
+        models: geminiConfig.models,
+      };
+    }
+  }
+
+  if (explicitProvider === 'deepseek') {
+    const { readDeepSeekProviderConfig } = await import('./deepseek-provider');
+    const deepseekConfig = readDeepSeekProviderConfig(env);
+    if (deepseekConfig) {
+      return {
+        configured: true,
+        provider: 'deepseek',
+        model: deepseekConfig.model,
+        models: deepseekConfig.models,
+      };
+    }
+  }
+
+  if (explicitProvider === 'openai') {
+    const { readOpenAiProviderConfig } = await import('./openai-provider');
+    const openaiConfig = readOpenAiProviderConfig(env);
+    if (openaiConfig) {
+      return {
+        configured: true,
+        provider: 'openai',
+        model: openaiConfig.model,
+        models: openaiConfig.models,
+      };
+    }
+  }
+
+  // Without explicit COMPANION_PROVIDER, auto-detect in prioritized order:
+  // 1. DeepSeek
+  const { readDeepSeekProviderConfig } = await import('./deepseek-provider');
+  const deepseekConfig = readDeepSeekProviderConfig(env);
+  if (deepseekConfig && (env.COMPANION_DEEPSEEK_API_KEY || env.DEEPSEEK_API_KEY)) {
+    return {
+      configured: true,
+      provider: 'deepseek',
+      model: deepseekConfig.model,
+      models: deepseekConfig.models,
+    };
+  }
+
+  // 2. Gemini
+  const { readGeminiProviderConfig } = await import('./gemini-provider');
+  const geminiConfig = readGeminiProviderConfig(env);
+  if (geminiConfig && (env.GOOGLE_AI_API_KEYS || env.COMPANION_GEMINI_API_KEYS || env.COMPANION_GOOGLE_AI_API_KEYS || env.COMPANION_GEMINI_API_KEY)) {
+    return {
+      configured: true,
+      provider: 'gemini',
+      model: geminiConfig.model,
+      models: geminiConfig.models,
+    };
+  }
+
+  // 3. OpenAI / generic OpenAI-compatible
+  const { readOpenAiProviderConfig } = await import('./openai-provider');
+  const openaiConfig = readOpenAiProviderConfig(env);
+  if (openaiConfig) {
+    return {
+      configured: true,
+      provider: 'openai',
+      model: openaiConfig.model,
+      models: openaiConfig.models,
+    };
+  }
+
+  return {
+    configured: false,
+    provider: 'none',
+  };
+}
+
 export async function generateReply(input: ProviderInput): Promise<string> {
   const provider = testProvider;
   if (provider) return provider(input);
-  const { readOpenAiProviderConfig, createOpenAiCompanionProvider } = await import('./openai-provider');
-  const config = readOpenAiProviderConfig();
-  if (config) {
-    const key = JSON.stringify(config);
+
+  const env = process.env;
+  const explicitProvider = env.COMPANION_PROVIDER?.trim().toLowerCase();
+
+  // Route based on explicit COMPANION_PROVIDER or auto-detection
+  if (explicitProvider === 'gemini' || explicitProvider === 'google') {
+    const { readGeminiProviderConfig, createGeminiCompanionProvider } = await import('./gemini-provider');
+    const config = readGeminiProviderConfig(env);
+    if (config) {
+      const key = `gemini:${JSON.stringify(config)}`;
+      if (!cachedProvider || cachedProvider.key !== key) {
+        cachedProvider = { key, provider: createGeminiCompanionProvider(config) };
+      }
+      return cachedProvider.provider(input);
+    }
+    throw new Error('COMPANION_PROVIDER_UNAVAILABLE');
+  }
+
+  if (explicitProvider === 'deepseek') {
+    const { readDeepSeekProviderConfig, createDeepSeekCompanionProvider } = await import('./deepseek-provider');
+    const config = readDeepSeekProviderConfig(env);
+    if (config) {
+      const key = `deepseek:${JSON.stringify(config)}`;
+      if (!cachedProvider || cachedProvider.key !== key) {
+        cachedProvider = { key, provider: createDeepSeekCompanionProvider(config) };
+      }
+      return cachedProvider.provider(input);
+    }
+    throw new Error('COMPANION_PROVIDER_UNAVAILABLE');
+  }
+
+  if (explicitProvider === 'openai') {
+    const { readOpenAiProviderConfig, createOpenAiCompanionProvider } = await import('./openai-provider');
+    const config = readOpenAiProviderConfig(env);
+    if (config) {
+      const key = `openai:${JSON.stringify(config)}`;
+      if (!cachedProvider || cachedProvider.key !== key) {
+        cachedProvider = { key, provider: createOpenAiCompanionProvider(config) };
+      }
+      return cachedProvider.provider(input);
+    }
+    throw new Error('COMPANION_PROVIDER_UNAVAILABLE');
+  }
+
+  // Auto-detect: DeepSeek -> Gemini -> OpenAI
+  const { readDeepSeekProviderConfig, createDeepSeekCompanionProvider } = await import('./deepseek-provider');
+  const deepseekConfig = readDeepSeekProviderConfig(env);
+  if (deepseekConfig && (env.COMPANION_DEEPSEEK_API_KEY || env.DEEPSEEK_API_KEY)) {
+    const key = `deepseek:${JSON.stringify(deepseekConfig)}`;
     if (!cachedProvider || cachedProvider.key !== key) {
-      cachedProvider = { key, provider: createOpenAiCompanionProvider(config) };
+      cachedProvider = { key, provider: createDeepSeekCompanionProvider(deepseekConfig) };
     }
     return cachedProvider.provider(input);
   }
+
+  const { readGeminiProviderConfig, createGeminiCompanionProvider } = await import('./gemini-provider');
+  const geminiConfig = readGeminiProviderConfig(env);
+  if (geminiConfig && (env.GOOGLE_AI_API_KEYS || env.COMPANION_GEMINI_API_KEYS || env.COMPANION_GOOGLE_AI_API_KEYS || env.COMPANION_GEMINI_API_KEY)) {
+    const key = `gemini:${JSON.stringify(geminiConfig)}`;
+    if (!cachedProvider || cachedProvider.key !== key) {
+      cachedProvider = { key, provider: createGeminiCompanionProvider(geminiConfig) };
+    }
+    return cachedProvider.provider(input);
+  }
+
+  const { readOpenAiProviderConfig, createOpenAiCompanionProvider } = await import('./openai-provider');
+  const openaiConfig = readOpenAiProviderConfig(env);
+  if (openaiConfig) {
+    const key = `openai:${JSON.stringify(openaiConfig)}`;
+    if (!cachedProvider || cachedProvider.key !== key) {
+      cachedProvider = { key, provider: createOpenAiCompanionProvider(openaiConfig) };
+    }
+    return cachedProvider.provider(input);
+  }
+
   throw new Error('COMPANION_PROVIDER_UNAVAILABLE');
 }
 
@@ -102,4 +262,3 @@ export function resolveCompanionPublicOrigin(
     return reqParsed.origin;
   } catch { return null; }
 }
-

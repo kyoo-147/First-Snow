@@ -14,7 +14,11 @@ describe('health endpoint', () => {
     const response = await GET();
 
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ status: 'ok', checks: { database: 'ok' } });
+    const body = await response.json();
+    expect(body.status).toBe('ok');
+    expect(body.checks.database).toBe('ok');
+    expect(body.checks.ai_provider).toBeDefined();
+    expect(typeof body.checks.ai_provider.configured).toBe('boolean');
     expect(response.headers.get('cache-control')).toBe('no-store');
     expect(mocks.execute).toHaveBeenCalledTimes(1);
   });
@@ -25,6 +29,9 @@ describe('health endpoint', () => {
     const response = await GET();
 
     expect(response.status).toBe(503);
-    expect(await response.json()).toEqual({ status: 'unavailable', checks: { database: 'error' } });
+    const body = await response.json();
+    expect(body.status).toBe('unavailable');
+    expect(body.checks.database).toBe('error');
+    expect(body.checks.ai_provider).toBeDefined();
   });
 });
