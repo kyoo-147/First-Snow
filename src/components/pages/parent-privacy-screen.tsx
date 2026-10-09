@@ -25,6 +25,7 @@ import {
   DataExportDialog,
   DeletionRequestDialog,
   SafetyErrorBanner,
+  ReauthModal,
   SafetyLoadingSkeleton,
 } from "@/components/safety";
 import { SnowButton } from "@/components/ui/snow-button";
@@ -114,6 +115,9 @@ export function ParentPrivacyScreen() {
   // Dialog states
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isDeletionOpen, setIsDeletionOpen] = useState(false);
+  const [pendingPrivacyAction, setPendingPrivacyAction] = useState<{ key: keyof PrivacySettingsData; value: boolean } | null>(null);
+  const [isReauthOpen, setIsReauthOpen] = useState(false);
+  const [isReauthProcessing, setIsReauthProcessing] = useState(false);
 
   useEffect(() => {
     loadPrivacy();
@@ -172,6 +176,11 @@ export function ParentPrivacyScreen() {
       // Rollback optimistic update on error
       setSettings(settings);
       if (err instanceof SafetyApiError) {
+        if (err.isReauthRequired) {
+          setPendingPrivacyAction({ key, value: nextValue });
+          setIsReauthOpen(true);
+          return;
+        }
         setErrorMessage(err.message);
         setErrorCode(err.code);
         setRequestId(err.requestId);
@@ -179,6 +188,24 @@ export function ParentPrivacyScreen() {
         setErrorMessage(t("parent", "privacy.updateFailed", { key: String(key) }));
       }
     } finally {
+      setMutatingKey(null);
+    }
+  }
+
+  async function handlePrivacyReauth(password: string) {
+    if (!pendingPrivacyAction) return;
+    setIsReauthProcessing(true);
+    setMutatingKey(String(pendingPrivacyAction.key));
+    try {
+      const updated = await updatePrivacySettings({ [pendingPrivacyAction.key]: pendingPrivacyAction.value, reauthPassword: password });
+      setSettings(updated);
+      setIsReauthOpen(false);
+      setPendingPrivacyAction(null);
+      setSaveSuccessMessage(t("parent", "privacy.updateSuccess", { key: String(pendingPrivacyAction.key) }));
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof SafetyApiError ? err.message : t("parent", "privacy.updateFailed", { key: String(pendingPrivacyAction.key) }));
+    } finally {
+      setIsReauthProcessing(false);
       setMutatingKey(null);
     }
   }
@@ -415,6 +442,14 @@ export function ParentPrivacyScreen() {
         isOpen={isDeletionOpen}
         onClose={() => setIsDeletionOpen(false)}
         childName={t("parent", "safety.export.household")}
+      />
+      <ReauthModal
+        isOpen={isReauthOpen}
+        title={t("parent", "consent.reauthRequired")}
+        description={t("parent", "consent.reauthDesc")}
+        isProcessing={isReauthProcessing}
+        onConfirm={handlePrivacyReauth}
+        onClose={() => { setIsReauthOpen(false); setPendingPrivacyAction(null); setMutatingKey(null); }}
       />
     </ParentPageFrame>
   );

@@ -50,16 +50,18 @@ export async function GET(request: Request, context: { params: Promise<{ childId
   const date = new URL(request.url).searchParams.get('date') ?? todayInSaigon();
   if (!dateIsValid(date)) return ERRORS.validationFailed({ date: 'Date must be a valid YYYY-MM-DD value.' });
   try {
+    const parent = await getParentSession();
+    if (parent) {
+      const access = await parentOwnedChild(childId);
+      if (access instanceof Response) return access;
+      return NextResponse.json({ routines: await listRoutines(childId, date), date });
+    }
     const childSession = await getChildSession();
     if (childSession) {
       if (childSession.sub !== childId) return ERRORS.forbidden('Child can only access own routines.');
       return NextResponse.json({ routines: await listRoutines(childId, date, true), date });
     }
-    const parent = await getParentSession();
-    if (!parent) return ERRORS.unauthorized();
-    const access = await parentOwnedChild(childId);
-    if (access instanceof Response) return access;
-    return NextResponse.json({ routines: await listRoutines(childId, date), date });
+    return ERRORS.unauthorized();
   } catch (error) {
     console.error('[children/routines/GET]', error);
     return ERRORS.internal();

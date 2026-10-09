@@ -153,7 +153,7 @@ export interface PrivacySettingsData {
   updatedAt?: string;
 }
 
-export type UpdatePrivacyPayload = Partial<PrivacySettingsData>;
+export type UpdatePrivacyPayload = Partial<PrivacySettingsData> & { reauthPassword?: string };
 
 export async function getPrivacySettings(customFetch = fetch): Promise<PrivacySettingsData> {
   try {
