@@ -2,9 +2,26 @@ import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { IMAGE_ASSETS, getAssetPath, getLessonImageBySubject } from "@/lib/image-assets";
+import {
+  IMAGE_ASSETS,
+  IMAGE_ASSET_METRICS,
+  BLOCKED_VISUAL_CONCEPTS,
+  getAssetPath,
+  getFallbackPath,
+  getLessonImageBySubject,
+  getImageAccessibilityProps,
+} from "@/lib/image-assets";
 
 describe("Accepted image assets integration and fallback safety", () => {
+  const publicImagesDir = path.resolve(process.cwd(), "public/images");
+
+  it("defines exactly 10 accepted versioned assets and does not claim 47/47", () => {
+    const keys = Object.keys(IMAGE_ASSETS);
+    expect(keys.length).toBe(10);
+    expect(IMAGE_ASSET_METRICS.approvedAssetsCount).toBe(10);
+    expect(IMAGE_ASSET_METRICS.totalBaselineFiles).toBe(47);
+  });
+
   it("defines versioned paths for all accepted assets and fallbacks", () => {
     for (const [key, asset] of Object.entries(IMAGE_ASSETS)) {
       expect(asset.src).toMatch(/^\/images\/[\w-]+-v2\.png$/);
@@ -16,7 +33,6 @@ describe("Accepted image assets integration and fallback safety", () => {
   });
 
   it("verifies all versioned image files exist on disk in public/images", () => {
-    const publicImagesDir = path.resolve(process.cwd(), "public/images");
     for (const asset of Object.values(IMAGE_ASSETS)) {
       const fileName = path.basename(asset.src);
       const filePath = path.join(publicImagesDir, fileName);
@@ -28,7 +44,6 @@ describe("Accepted image assets integration and fallback safety", () => {
   });
 
   it("verifies all legacy fallback image files exist on disk in public/images", () => {
-    const publicImagesDir = path.resolve(process.cwd(), "public/images");
     for (const asset of Object.values(IMAGE_ASSETS)) {
       const fileName = path.basename(asset.fallback);
       const filePath = path.join(publicImagesDir, fileName);
@@ -37,27 +52,68 @@ describe("Accepted image assets integration and fallback safety", () => {
   });
 
   it("matches accepted asset SHA256 hashes against original accepted research assets", () => {
-    const publicImagesDir = path.resolve(process.cwd(), "public/images");
-
-    const expectedHashes: Record<string, string> = {
-      "snow-mascot-v2.png": "84e278137328579cd4363fce04c14ef70e6a0a820597de20738859a183d6135d",
-      "snow-avatar-v2.png": "21199e4135d7c3c674728e8da4c6b206a3e1f5002998dd6dbcfa1eb6a0e6beb3",
-      "momo-mascot-v2.png": "dc5a02fdc8a1c290d16e7badd42488e75f6442bebf0211d4442d8ce57f7fef45",
-      "leo-avatar-v2.png": "316818e132260bb0504599a8d79dd96b963835919239526a7cd30ad7986d1a7e",
-      "nana-avatar-v2.png": "1884d652c10e3c9053a217916047272684cb6b3f7dcf9e1a1603cb69d914fb0b",
-      "snow-classroom-empty-stage-v2.png": "ce78cda4e2a17a7b5fd1437bfd3574d855d5da0d871c8379c2f0acd8c1344239",
-      "lesson-abc-v2.png": "7dc06995de4c522d56c0710d3e2e158f4905ba404a9a54525ff895f2beaa7096",
-      "lesson-math-v2.png": "ebc6da88c745655b91a20173487e13dfc381c12179c60bfe441cf1d98bf12d90",
-      "lesson-story-v2.png": "9a0f1447b6bbbd24e67b097343e07f4490bfcc12be47fa3ea71424490b4b3d1b",
-      "lesson-social-v2.png": "822d7d8cc746832fea80166b3aaba52aee9915842ca14f7b7b6f16a182ba1710",
-    };
-
-    for (const [fileName, expectedHash] of Object.entries(expectedHashes)) {
+    for (const [key, asset] of Object.entries(IMAGE_ASSETS)) {
+      const fileName = path.basename(asset.src);
       const filePath = path.join(publicImagesDir, fileName);
       const buf = fs.readFileSync(filePath);
       const hash = crypto.createHash("sha256").update(buf).digest("hex");
-      expect(hash).toBe(expectedHash);
+      expect(hash).toBe(asset.sha256);
     }
+  });
+
+  it("verifies exact pixel dimensions and PNG formats", () => {
+    for (const [key, asset] of Object.entries(IMAGE_ASSETS)) {
+      const fileName = path.basename(asset.src);
+      const filePath = path.join(publicImagesDir, fileName);
+      const buf = fs.readFileSync(filePath);
+
+      // Verify PNG magic header
+      expect(buf.slice(0, 8).toString("hex")).toBe("89504e470d0a1a0a");
+
+      // Verify dimensions from IHDR chunk
+      const width = buf.readUInt32BE(16);
+      const height = buf.readUInt32BE(20);
+      expect(width).toBe(asset.width);
+      expect(height).toBe(asset.height);
+
+      if (key === "classroomStage") {
+        expect(width).toBe(1536);
+        expect(height).toBe(1024);
+      } else {
+        expect(width).toBe(1024);
+        expect(height).toBe(1024);
+      }
+    }
+  });
+
+  it("verifies genuine alpha transparency for cutouts and RGB mode for stage background", () => {
+    for (const [key, asset] of Object.entries(IMAGE_ASSETS)) {
+      const fileName = path.basename(asset.src);
+      const filePath = path.join(publicImagesDir, fileName);
+      const buf = fs.readFileSync(filePath);
+      const colorType = buf[25];
+
+      if (key === "classroomStage") {
+        // Full bleed background is RGB (ColorType 2)
+        expect(colorType).toBe(2);
+        expect(asset.hasAlpha).toBe(false);
+      } else {
+        // Cutouts and avatars are RGBA (ColorType 6)
+        expect(colorType).toBe(6);
+        expect(asset.hasAlpha).toBe(true);
+      }
+    }
+  });
+
+  it("verifies stage background uses empty classroom to avoid duplicate mascot collisions", () => {
+    expect(IMAGE_ASSETS.classroomStage.src).toBe("/images/snow-classroom-empty-stage-v2.png");
+    expect(IMAGE_ASSETS.classroomStage.fallback).toBe("/images/snow-companion-stage.png");
+    // Verify that the empty stage asset is distinct from legacy mascot-baked stage
+    const emptyBuf = fs.readFileSync(path.join(publicImagesDir, "snow-classroom-empty-stage-v2.png"));
+    const legacyBuf = fs.readFileSync(path.join(publicImagesDir, "snow-companion-stage.png"));
+    const emptySha = crypto.createHash("sha256").update(emptyBuf).digest("hex");
+    const legacySha = crypto.createHash("sha256").update(legacyBuf).digest("hex");
+    expect(emptySha).not.toBe(legacySha);
   });
 
   it("maps subject strings to the appropriate versioned lesson image", () => {
@@ -72,8 +128,34 @@ describe("Accepted image assets integration and fallback safety", () => {
     expect(getLessonImageBySubject("/custom/image.png", "Toán học")).toBe("/custom/image.png");
   });
 
-  it("correctly resolves getAssetPath helper", () => {
+  it("correctly resolves getAssetPath and getFallbackPath helpers", () => {
     expect(getAssetPath("snowMascot")).toBe("/images/snow-mascot-v2.png");
+    expect(getFallbackPath("snowMascot")).toBe("/images/snow-mascot-ui.png");
     expect(getAssetPath("classroomStage")).toBe("/images/snow-classroom-empty-stage-v2.png");
+    expect(getFallbackPath("classroomStage")).toBe("/images/snow-companion-stage.png");
+  });
+
+  it("provides Vietnamese accessibility and decorative semantics", () => {
+    for (const key of Object.keys(IMAGE_ASSETS) as (keyof typeof IMAGE_ASSETS)[]) {
+      const informativeProps = getImageAccessibilityProps(key, false);
+      expect(informativeProps.alt).toBe(IMAGE_ASSETS[key].altVi);
+      expect(informativeProps["aria-hidden"]).toBeUndefined();
+
+      const decorativeProps = getImageAccessibilityProps(key, true);
+      expect(decorativeProps.alt).toBe("");
+      expect(decorativeProps["aria-hidden"]).toBe(true);
+    }
+  });
+
+  it("documents blocked visual concepts with truthful status and reasons", () => {
+    expect(BLOCKED_VISUAL_CONCEPTS.length).toBeGreaterThan(0);
+    for (const concept of BLOCKED_VISUAL_CONCEPTS) {
+      expect(concept.id.length).toBeGreaterThan(0);
+      expect(concept.concept.length).toBeGreaterThan(0);
+      expect(concept.originalFile.length).toBeGreaterThan(0);
+      expect(["BLOCKED", "UNVERIFIED", "SUPERSEDED", "DEPRECATED", "STATIC_EDITORIAL_ONLY", "REJECTED", "BLOCKED_EXTERNAL"]).toContain(concept.status);
+      expect(concept.reason.length).toBeGreaterThan(0);
+      expect(concept.disposition.length).toBeGreaterThan(0);
+    }
   });
 });
