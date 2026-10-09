@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   gradeStepAnswer,
   normalizeShortAnswer,
+} from '../grader';
+import {
   type LessonQuestionStep,
   type GradingResult,
-} from '../grader';
+} from '../types';
 
 describe('Deterministic Lesson Engine - Grader', () => {
   describe('normalizeShortAnswer', () => {

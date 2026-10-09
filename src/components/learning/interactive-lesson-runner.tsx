@@ -6,8 +6,12 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
+  ArrowDown,
   Check,
   CheckCircle2,
+  XCircle,
+  HelpCircle,
   AlertCircle,
   RefreshCw,
   RotateCcw,
@@ -105,21 +109,57 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
   const isLastStep = lesson ? currentStepIndex === lesson.steps.length - 1 : false;
   const isCompleted = attempt?.status === "completed";
 
-  const handleSelectOption = async (optionId: string) => {
+  const [showHint, setShowHint] = useState(false);
+  const [lastGrading, setLastGrading] = useState<{
+    isCorrect: boolean;
+    score: number;
+    explanation?: string;
+    hint?: string;
+    validationError?: string;
+  } | null>(null);
+
+  const handleUpdateAnswer = async (newVal: unknown) => {
     if (!currentStep || !attempt || isCompleted) return;
 
-    const newAnswers = { ...answers, [currentStep.id]: optionId };
+    const newAnswers = { ...answers, [currentStep.id]: newVal };
     setAnswers(newAnswers);
     setIsChecked(false);
     setSaveStatus("saving");
 
     try {
-      const updated = await saveAttemptAnswer(attempt.id, currentStep.id, optionId);
+      const updated = await saveAttemptAnswer(attempt.id, currentStep.id, newVal);
       setAttempt(updated);
+      if (updated.grading) {
+        setLastGrading(updated.grading);
+      }
       setSaveStatus("saved");
     } catch {
       setSaveStatus("error");
     }
+  };
+
+  const handleSelectOption = (optionId: string) => {
+    handleUpdateAnswer(optionId);
+  };
+
+  const handleToggleMultiSelect = (optionId: string) => {
+    const currentList = Array.isArray(currentAnswer) ? (currentAnswer as string[]) : [];
+    const exists = currentList.includes(optionId);
+    const updated = exists ? currentList.filter((id) => id !== optionId) : [...currentList, optionId];
+    handleUpdateAnswer(updated);
+  };
+
+  const handleMoveOrderItem = (index: number, direction: "up" | "down") => {
+    const defaultList = options.map((o) => o.id);
+    const list = Array.isArray(currentAnswer) && currentAnswer.length === defaultList.length
+      ? [...(currentAnswer as string[])]
+      : [...defaultList];
+    const targetIdx = direction === "up" ? index - 1 : index + 1;
+    if (targetIdx < 0 || targetIdx >= list.length) return;
+    const temp = list[index];
+    list[index] = list[targetIdx];
+    list[targetIdx] = temp;
+    handleUpdateAnswer(list);
   };
 
   const handleRetrySave = async () => {
@@ -128,6 +168,9 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
     try {
       const updated = await saveAttemptAnswer(attempt.id, currentStep.id, currentAnswer);
       setAttempt(updated);
+      if (updated.grading) {
+        setLastGrading(updated.grading);
+      }
       setSaveStatus("saved");
     } catch {
       setSaveStatus("error");
@@ -139,6 +182,8 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
     if (currentStepIndex < lesson.steps.length - 1) {
       setCurrentStepIndex((prev) => prev + 1);
       setIsChecked(false);
+      setShowHint(false);
+      setLastGrading(null);
       setSaveStatus("idle");
     }
   };
@@ -147,6 +192,8 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
     if (currentStepIndex > 0) {
       setCurrentStepIndex((prev) => prev - 1);
       setIsChecked(false);
+      setShowHint(false);
+      setLastGrading(null);
       setSaveStatus("idle");
     }
   };
@@ -424,62 +471,250 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
 
             {/* Choices & Actions */}
             <div className="space-y-3">
-              {!hasOptions ? (
-                <div className="rounded-[var(--radius-lg)] border border-dashed border-snow-border bg-snow-surface-soft p-6 text-center">
-                  <p className="text-base font-black text-snow-primary-dark">{t("learning", "runner.choicesUnavailable")}</p>
-                  <p className="mt-1 text-sm font-semibold text-snow-muted">
-                    {t("learning", "runner.choicesUnavailableDesc")}
-                  </p>
-                </div>
-              ) : (
-                options.map((opt) => {
-                  const isSelected = currentAnswer === opt.id;
-                  return (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      onClick={() => handleSelectOption(opt.id)}
-                      aria-pressed={isSelected}
-                      className={cn(
-                        "snow-interactive-card snow-focus-ring flex min-h-[92px] w-full items-center gap-4 rounded-[var(--radius-lg)] border p-4 text-left transition-all",
-                        isSelected
-                          ? "border-snow-primary bg-snow-primary-soft shadow-sm"
-                          : "border-snow-border bg-snow-surface-soft hover:bg-snow-surface"
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "grid size-12 shrink-0 place-items-center rounded-full font-black text-snow-primary-dark",
-                          opt.tone || "bg-snow-cream"
-                        )}
-                      >
-                        <Sparkles className="size-5" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-lg font-black text-snow-primary-dark">{opt.label}</span>
-                        {opt.helper && (
-                          <span className="mt-1 block text-sm font-semibold text-snow-muted">{opt.helper}</span>
-                        )}
-                      </span>
-                      {isSelected && <Check className="size-5 shrink-0 text-snow-primary snow-pop-soft" />}
-                    </button>
-                  );
-                })
-              )}
+              {/* Question Type specific interaction */}
+              {(() => {
+                const qType = currentStep?.questionType || (hasOptions ? "single_choice" : "unsupported");
 
-              {hasOptions && (
+                if (qType === "single_choice") {
+                  if (!hasOptions) {
+                    return (
+                      <div className="rounded-[var(--radius-lg)] border border-dashed border-snow-border bg-snow-surface-soft p-6 text-center">
+                        <p className="text-base font-black text-snow-primary-dark">{t("learning", "runner.choicesUnavailable")}</p>
+                        <p className="mt-1 text-sm font-semibold text-snow-muted">{t("learning", "runner.choicesUnavailableDesc")}</p>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="space-y-3" role="radiogroup" aria-label={currentStep?.prompt || "Single choice"}>
+                      {options.map((opt) => {
+                        const isSelected = currentAnswer === opt.id;
+                        return (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            role="radio"
+                            aria-checked={isSelected}
+                            onClick={() => handleSelectOption(opt.id)}
+                            className={cn(
+                              "snow-interactive-card snow-focus-ring flex min-h-[84px] w-full items-center gap-4 rounded-[var(--radius-lg)] border p-4 text-left transition-all",
+                              isSelected
+                                ? "border-snow-primary bg-snow-primary-soft shadow-sm ring-2 ring-snow-primary/30"
+                                : "border-snow-border bg-snow-surface-soft hover:bg-snow-surface"
+                            )}
+                          >
+                            <span className={cn("grid size-11 shrink-0 place-items-center rounded-full font-black text-snow-primary-dark", opt.tone || "bg-snow-cream")}>
+                              <Sparkles className="size-5" />
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-base font-black text-snow-primary-dark">{opt.label}</span>
+                              {opt.helper && <span className="mt-0.5 block text-xs font-semibold text-snow-muted">{opt.helper}</span>}
+                            </span>
+                            {isSelected && <Check className="size-5 shrink-0 text-snow-primary snow-pop-soft" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+
+                if (qType === "multiple_choice") {
+                  const selectedIds = Array.isArray(currentAnswer) ? (currentAnswer as string[]) : [];
+                  return (
+                    <div className="space-y-3" role="group" aria-label={currentStep?.prompt || "Multiple choice"}>
+                      {options.map((opt) => {
+                        const isSelected = selectedIds.includes(opt.id);
+                        return (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            role="checkbox"
+                            aria-checked={isSelected}
+                            onClick={() => handleToggleMultiSelect(opt.id)}
+                            className={cn(
+                              "snow-interactive-card snow-focus-ring flex min-h-[84px] w-full items-center gap-4 rounded-[var(--radius-lg)] border p-4 text-left transition-all",
+                              isSelected
+                                ? "border-snow-primary bg-snow-primary-soft shadow-sm ring-2 ring-snow-primary/30"
+                                : "border-snow-border bg-snow-surface-soft hover:bg-snow-surface"
+                            )}
+                          >
+                            <div className={cn("grid size-6 shrink-0 place-items-center rounded border transition-colors", isSelected ? "border-snow-primary bg-snow-primary text-white" : "border-snow-border bg-white")}>
+                              {isSelected && <Check className="size-4" />}
+                            </div>
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-base font-black text-snow-primary-dark">{opt.label}</span>
+                              {opt.helper && <span className="mt-0.5 block text-xs font-semibold text-snow-muted">{opt.helper}</span>}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+
+                if (qType === "ordering") {
+                  const defaultList = options.map((o) => o.id);
+                  const currentOrder = Array.isArray(currentAnswer) && currentAnswer.length === defaultList.length
+                    ? (currentAnswer as string[])
+                    : defaultList;
+
+                  return (
+                    <div className="space-y-2.5" role="list" aria-label="Ordering list">
+                      {currentOrder.map((optId, idx) => {
+                        const opt = options.find((o) => o.id === optId);
+                        if (!opt) return null;
+                        return (
+                          <div
+                            key={optId}
+                            role="listitem"
+                            className="flex items-center justify-between gap-3 rounded-[var(--radius-lg)] border border-snow-border bg-snow-surface-soft p-3.5 transition-all"
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <span className="grid size-7 shrink-0 place-items-center rounded-full bg-snow-primary-soft text-xs font-black text-snow-primary">
+                                {idx + 1}
+                              </span>
+                              <span className="text-sm font-black text-snow-primary-dark truncate">{opt.label}</span>
+                            </div>
+                            <div className="flex items-center gap-1 shrink-0">
+                              <button
+                                type="button"
+                                aria-label={`${t("learning", "runner.moveUp")} ${idx + 1}`}
+                                disabled={idx === 0}
+                                onClick={() => handleMoveOrderItem(idx, "up")}
+                                className={cn("grid size-8 place-items-center rounded-md border border-snow-border bg-snow-surface hover:bg-snow-cream", idx === 0 && "opacity-30 cursor-not-allowed")}
+                              >
+                                <ArrowUp className="size-4 text-snow-primary" />
+                              </button>
+                              <button
+                                type="button"
+                                aria-label={`${t("learning", "runner.moveDown")} ${idx + 1}`}
+                                disabled={idx === currentOrder.length - 1}
+                                onClick={() => handleMoveOrderItem(idx, "down")}
+                                className={cn("grid size-8 place-items-center rounded-md border border-snow-border bg-snow-surface hover:bg-snow-cream", idx === currentOrder.length - 1 && "opacity-30 cursor-not-allowed")}
+                              >
+                                <ArrowDown className="size-4 text-snow-primary" />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+
+                if (qType === "true_false") {
+                  return (
+                    <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label={currentStep?.prompt || "True False"}>
+                      {[true, false].map((val) => {
+                        const isSelected = currentAnswer === val;
+                        return (
+                          <button
+                            key={String(val)}
+                            type="button"
+                            role="radio"
+                            aria-checked={isSelected}
+                            onClick={() => handleUpdateAnswer(val)}
+                            className={cn(
+                              "snow-interactive-card snow-focus-ring flex min-h-[90px] flex-col items-center justify-center gap-2 rounded-[var(--radius-lg)] border p-4 text-center transition-all",
+                              isSelected
+                                ? "border-snow-primary bg-snow-primary-soft shadow-sm ring-2 ring-snow-primary/30"
+                                : "border-snow-border bg-snow-surface-soft hover:bg-snow-surface"
+                            )}
+                          >
+                            <span className="text-lg font-black text-snow-primary-dark">
+                              {val ? t("learning", "runner.trueLabel") : t("learning", "runner.falseLabel")}
+                            </span>
+                            {isSelected && <Check className="size-4 text-snow-primary" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+
+                if (qType === "fill_blank" || qType === "short_answer") {
+                  const textVal = typeof currentAnswer === "string" ? currentAnswer : "";
+                  return (
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        value={textVal}
+                        onChange={(e) => handleUpdateAnswer(e.target.value)}
+                        placeholder={t("learning", "runner.inputPlaceholder")}
+                        className="w-full rounded-[var(--radius-lg)] border border-snow-border bg-snow-surface p-4 text-base font-bold text-snow-primary-dark placeholder:text-snow-muted focus:border-snow-primary focus:outline-none focus:ring-2 focus:ring-snow-primary/20"
+                      />
+                    </div>
+                  );
+                }
+
+                return null;
+              })()}
+
+              {/* Action: Check Answer */}
+              <div className="pt-2">
                 <SnowButton
-                  disabled={!currentAnswer}
-                  className={cn("mt-2 w-full justify-center", !currentAnswer && "pointer-events-none opacity-55")}
+                  disabled={currentAnswer === undefined || currentAnswer === ""}
+                  className={cn("w-full justify-center", (currentAnswer === undefined || currentAnswer === "") && "pointer-events-none opacity-55")}
                   onClick={() => setIsChecked(true)}
                 >
                   {t("learning", "runner.checkAnswer")}
                 </SnowButton>
+              </div>
+
+              {/* Feedback and Explanations */}
+              {isChecked && (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className={cn(
+                    "rounded-[var(--radius-md)] border p-4 text-sm font-semibold leading-6 snow-pop-soft",
+                    lastGrading?.isCorrect
+                      ? "border-snow-success/40 bg-snow-success/15 text-snow-primary-dark"
+                      : "border-snow-warning/40 bg-snow-cream text-snow-primary-dark"
+                  )}
+                >
+                  <div className="flex items-center gap-2 mb-1.5">
+                    {lastGrading?.isCorrect ? (
+                      <>
+                        <CheckCircle2 className="size-5 text-snow-success shrink-0" aria-hidden="true" />
+                        <span className="font-black text-snow-success inline-flex items-center gap-1.5">
+                          [{t("learning", "runner.statusCorrectBadge")}] {t("learning", "runner.feedbackCorrect")}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="size-5 text-snow-warning shrink-0" aria-hidden="true" />
+                        <span className="font-black text-snow-primary-dark inline-flex items-center gap-1.5">
+                          [{t("learning", "runner.statusIncorrectBadge")}] {t("learning", "runner.feedbackIncorrect")}
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  {(currentStep?.explanation || lastGrading?.explanation) && (
+                    <div className="mt-2.5 pt-2.5 border-t border-snow-border/50 text-xs font-medium text-snow-primary-dark">
+                      <p className="font-bold uppercase tracking-wider text-snow-muted mb-0.5">{t("learning", "runner.feedbackExplanation")}:</p>
+                      <p>{currentStep?.explanation || lastGrading?.explanation}</p>
+                    </div>
+                  )}
+                </div>
               )}
 
-              {isChecked && (
-                <div className="rounded-[var(--radius-md)] bg-snow-success/15 p-4 text-sm font-semibold leading-6 text-snow-primary-dark snow-pop-soft">
-                  {selectedOption ? t("learning", "runner.feedbackGood", { choice: selectedOption.label }) : t("learning", "runner.feedbackDefault")}
+              {/* Hint toggle if authored */}
+              {currentStep?.hint && (
+                <div className="pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowHint((prev) => !prev)}
+                    className="inline-flex items-center gap-1.5 text-xs font-black text-snow-primary hover:underline"
+                  >
+                    <HelpCircle className="size-3.5" />
+                    {showHint ? "Ẩn gợi ý" : t("learning", "runner.hintLabel")}
+                  </button>
+                  {showHint && (
+                    <div className="mt-2 rounded-[var(--radius-md)] bg-snow-surface-soft border border-snow-border p-3 text-xs font-semibold text-snow-muted">
+                      {currentStep.hint}
+                    </div>
+                  )}
                 </div>
               )}
 

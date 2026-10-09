@@ -109,12 +109,16 @@ export interface LessonStepOption {
 export interface LessonStep {
   id: string;
   title: string;
+  questionType?: "single_choice" | "multiple_choice" | "ordering" | "true_false" | "fill_blank" | "short_answer";
   prompt?: string;
   instruction?: string;
   helper?: string;
+  hint?: string;
+  explanation?: string;
   image?: string;
   options?: LessonStepOption[];
   correctAnswer?: string;
+  points?: number;
   audioUrl?: string;
 }
 
@@ -251,11 +255,15 @@ function normalizeStep(raw: unknown, index: number): LessonStep | null {
   return {
     id,
     title,
+    ...(typeof s.questionType === "string" ? { questionType: s.questionType as LessonStep["questionType"] } : {}),
     ...(typeof s.prompt === "string" ? { prompt: s.prompt } : {}),
     ...(typeof s.instruction === "string" ? { instruction: s.instruction } : {}),
     ...(typeof s.helper === "string" ? { helper: s.helper } : {}),
+    ...(typeof s.hint === "string" ? { hint: s.hint } : {}),
+    ...(typeof s.explanation === "string" ? { explanation: s.explanation } : {}),
     ...(typeof s.image === "string" ? { image: s.image } : {}),
     ...(typeof s.correctAnswer === "string" ? { correctAnswer: s.correctAnswer } : {}),
+    ...(typeof s.points === "number" ? { points: s.points } : {}),
     ...(typeof s.audioUrl === "string" ? { audioUrl: s.audioUrl } : {}),
     ...(options !== undefined ? { options } : {}),
   };
