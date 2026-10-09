@@ -38,6 +38,8 @@ function CameraPlaceholder() {
 }
 
 function CameraFailClosedNotice() {
+  const { t } = useTranslation();
+
   return (
     <VStack
       position="absolute"
@@ -52,10 +54,10 @@ function CameraFailClosedNotice() {
         <FiLock size={20} />
       </Box>
       <Text color="whiteAlpha.900" fontSize="xs" fontWeight="bold">
-        Camera Unavailable
+        {t('camera.unavailable')}
       </Text>
       <Text color="whiteAlpha.600" fontSize="10px" lineHeight="1.3">
-        Fail-closed: Awaiting server capability grant (parental consent & safety policy required)
+        {t('camera.failClosedNote')}
       </Text>
     </VStack>
   );
@@ -111,7 +113,7 @@ function CameraPanel(): React.JSX.Element {
         showArrow
         content={
           !isCameraGranted
-            ? 'Camera unavailable: Server grant required'
+            ? t('camera.unavailableTooltip')
             : isStreaming
               ? t('footer.cameraStopping')
               : t('footer.cameraControl')

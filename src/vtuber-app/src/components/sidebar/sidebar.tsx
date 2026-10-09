@@ -12,6 +12,7 @@ import HistoryDrawer from './history-drawer';
 import { useSidebar } from '@/hooks/sidebar/use-sidebar';
 import GroupDrawer from './group-drawer';
 import { ModeType } from '@/context/mode-context';
+import { useTranslation } from 'react-i18next';
 
 // Type definitions
 interface SidebarProps {
@@ -49,36 +50,39 @@ const ModeMenu = memo(({ setMode, currentMode, isElectron }: {
   setMode: (mode: ModeType) => void
   currentMode: ModeType
   isElectron: boolean
-}) => (
-  <Menu.Root>
-    <Menu.Trigger as={Button} aria-label="Mode Menu" title="Change Mode">
-      <FiLayers />
-    </Menu.Trigger>
-    <Menu.Positioner>
-      <Menu.Content>
-        <Menu.RadioItemGroup value={currentMode}>
-          <Menu.RadioItem value="window" onClick={() => setMode('window')}>
-            <Menu.ItemIndicator />
-            Live Mode
-          </Menu.RadioItem>
-          <Menu.RadioItem 
-            value="pet" 
-            onClick={() => {
-              if (isElectron) {
-                setMode('pet');
-              }
-            }}
-            disabled={!isElectron}
-            title={!isElectron ? "Pet mode is only available in desktop app" : undefined}
-          >
-            <Menu.ItemIndicator />
-            Pet Mode
-          </Menu.RadioItem>
-        </Menu.RadioItemGroup>
-      </Menu.Content>
-    </Menu.Positioner>
-  </Menu.Root>
-));
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Menu.Root>
+      <Menu.Trigger as={Button} aria-label={t('sidebar.modeMenu')} title={t('sidebar.changeMode')}>
+        <FiLayers />
+      </Menu.Trigger>
+      <Menu.Positioner>
+        <Menu.Content>
+          <Menu.RadioItemGroup value={currentMode}>
+            <Menu.RadioItem value="window" onClick={() => setMode('window')}>
+              <Menu.ItemIndicator />
+              {t('sidebar.liveMode')}
+            </Menu.RadioItem>
+            <Menu.RadioItem
+              value="pet"
+              onClick={() => {
+                if (isElectron) {
+                  setMode('pet');
+                }
+              }}
+              disabled={!isElectron}
+              title={!isElectron ? t('sidebar.petModeDesktopOnly') : undefined}
+            >
+              <Menu.ItemIndicator />
+              {t('sidebar.petMode')}
+            </Menu.RadioItem>
+          </Menu.RadioItemGroup>
+        </Menu.Content>
+      </Menu.Positioner>
+    </Menu.Root>
+  );
+});
 
 ModeMenu.displayName = 'ModeMenu';
 

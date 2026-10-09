@@ -29,6 +29,7 @@ import {
   FiGrid,
   FiBriefcase
 } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 const momoMascot = "./images/momo_mascot.png";
 
@@ -118,6 +119,7 @@ export default function ModeSelectionScreen({
   onLogout,
   onChangeProfile,
 }: ModeSelectionScreenProps): React.JSX.Element {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"dashboard" | "vtuber" | "lessons" | "parent">("dashboard");
   const [activeProfile, setActiveProfile] = useState<KidProfile | null>(null);
   
@@ -141,9 +143,9 @@ export default function ModeSelectionScreen({
     if (logs) return JSON.parse(logs);
     
     const defaultLogs = [
-      { id: "1", emotion: "Vui vẻ 😊", note: "Bé đã học bài nhận biết cảm xúc đạt điểm tối đa.", date: "Aug 24, 2026", color: "#7C3AED" },
-      { id: "2", emotion: "Hào hứng 🤩", note: "Bé trò chuyện cùng người bạn thông minh Momo rất ngoan.", date: "Aug 25, 2026", color: "#D97706" },
-      { id: "3", emotion: "Lo sợ 😨", note: "Bé ban đầu còn bỡ ngỡ nhưng đã nhanh chóng tự tin dọn dẹp đồ chơi.", date: "Aug 26, 2026", color: "#E11D48" }
+      { id: "1", emotion: "Vui vẻ 😊", note: "Bé đã học bài nhận biết cảm xúc đạt điểm tối đa.", date: "24 Tháng 8, 2026", color: "#7C3AED" },
+      { id: "2", emotion: "Hào hứng 🤩", note: "Bé trò chuyện cùng người bạn thông minh Momo rất ngoan.", date: "25 Tháng 8, 2026", color: "#D97706" },
+      { id: "3", emotion: "Lo sợ 😨", note: "Bé ban đầu còn bỡ ngỡ nhưng đã nhanh chóng tự tin dọn dẹp đồ chơi.", date: "26 Tháng 8, 2026", color: "#E11D48" }
     ];
     localStorage.setItem("kid_emotion_diary", JSON.stringify(defaultLogs));
     return defaultLogs;
@@ -182,7 +184,7 @@ export default function ModeSelectionScreen({
         id: Date.now().toString(),
         emotion: "Tự hào 🌟",
         note: `Hoàn thành bài học: ${currentQuiz?.title} và đạt 100 điểm.`,
-        date: "Aug 27, 2026",
+        date: "27 Tháng 8, 2026",
         color: "#7C3AED"
       };
       const updatedLogs = [newLog, ...diaryLogs];
@@ -274,7 +276,7 @@ export default function ModeSelectionScreen({
           {/* Search Input Box */}
           <Box position="relative" width="100%">
             <Input
-              placeholder="Placeholder"
+              placeholder={t("kid.searchPlaceholder")}
               size="sm"
               borderRadius="xl"
               borderColor="#E2E8F0"
@@ -320,7 +322,7 @@ export default function ModeSelectionScreen({
               <HStack spaceX={3} zIndex={1}>
                 <FiHome size={14} color={activeTab === "dashboard" ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={activeTab === "dashboard" ? "bold" : "semibold"} color={activeTab === "dashboard" ? "#0F172A" : "#64748B"}>
-                  Dashboard
+                  {t("kid.dashboard")}
                 </Text>
               </HStack>
             </Box>
@@ -350,7 +352,7 @@ export default function ModeSelectionScreen({
               <HStack spaceX={3} zIndex={1}>
                 <FiFileText size={14} color={activeTab === "parent" ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={activeTab === "parent" ? "bold" : "semibold"} color={activeTab === "parent" ? "#0F172A" : "#64748B"}>
-                  Documents
+                  {t("kid.documents")}
                 </Text>
               </HStack>
             </Box>
@@ -360,7 +362,7 @@ export default function ModeSelectionScreen({
           <VStack spaceY={1} alignItems="stretch" width="100%">
             <HStack justifyContent="space-between" px={3.5} py={1}>
               <Text fontSize="10px" fontWeight="extrabold" color="#94A3B8" textTransform="uppercase" letterSpacing="0.05em">
-                Study Tools
+                {t("kid.sectionStudyTools")}
               </Text>
               <Box color="#94A3B8" cursor="pointer"><FiPlus size={10} /></Box>
             </HStack>
@@ -389,7 +391,7 @@ export default function ModeSelectionScreen({
               <HStack spaceX={3} zIndex={1}>
                 <FiEdit3 size={13} color={activeTab === "vtuber" ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={activeTab === "vtuber" ? "bold" : "semibold"} color={activeTab === "vtuber" ? "#0F172A" : "#64748B"}>
-                  AI Writer
+                  {t("kid.aiWriter")}
                 </Text>
               </HStack>
             </Box>
@@ -418,7 +420,7 @@ export default function ModeSelectionScreen({
               <HStack spaceX={3} zIndex={1}>
                 <FiBookOpen size={13} color={activeTab === "lessons" ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={activeTab === "lessons" ? "bold" : "semibold"} color={activeTab === "lessons" ? "#0F172A" : "#64748B"}>
-                  AI Teachers
+                  {t("kid.aiTeachers")}
                 </Text>
               </HStack>
             </Box>
@@ -426,25 +428,25 @@ export default function ModeSelectionScreen({
             {/* Assistants */}
             <HStack spaceX={3} h="36px" px={3.5} cursor="pointer" borderRadius="xl" _hover={{ bg: "#F8FAFC" }} color="#64748B">
               <FiUser size={13} />
-              <Text fontSize="xs" fontWeight="semibold">Assistants</Text>
+              <Text fontSize="xs" fontWeight="semibold">{t("kid.assistants")}</Text>
             </HStack>
 
             {/* Analytics */}
             <HStack spaceX={3} h="36px" px={3.5} cursor="pointer" borderRadius="xl" _hover={{ bg: "#F8FAFC" }} color="#64748B">
               <FiActivity size={13} />
-              <Text fontSize="xs" fontWeight="semibold">Analytics</Text>
+              <Text fontSize="xs" fontWeight="semibold">{t("kid.analytics")}</Text>
             </HStack>
 
             {/* Courses */}
             <HStack spaceX={3} h="36px" px={3.5} cursor="pointer" borderRadius="xl" _hover={{ bg: "#F8FAFC" }} color="#64748B">
               <FiGrid size={13} />
-              <Text fontSize="xs" fontWeight="semibold">Courses</Text>
+              <Text fontSize="xs" fontWeight="semibold">{t("kid.courses")}</Text>
             </HStack>
 
             {/* Events */}
             <HStack spaceX={3} h="36px" px={3.5} cursor="pointer" borderRadius="xl" _hover={{ bg: "#F8FAFC" }} color="#64748B">
               <FiCalendar size={13} />
-              <Text fontSize="xs" fontWeight="semibold">Events</Text>
+              <Text fontSize="xs" fontWeight="semibold">{t("kid.events")}</Text>
             </HStack>
           </VStack>
 
@@ -452,7 +454,7 @@ export default function ModeSelectionScreen({
           <VStack spaceY={1} alignItems="stretch" width="100%">
             <HStack justifyContent="space-between" px={3.5} py={1}>
               <Text fontSize="10px" fontWeight="extrabold" color="#94A3B8" textTransform="uppercase" letterSpacing="0.05em">
-                AI Voice Tools
+                {t("kid.sectionAiVoiceTools")}
               </Text>
               <Box color="#94A3B8" cursor="pointer"><FiPlus size={10} /></Box>
             </HStack>
@@ -460,13 +462,13 @@ export default function ModeSelectionScreen({
             {/* Speech to Text */}
             <HStack spaceX={3} h="36px" px={3.5} cursor="pointer" borderRadius="xl" _hover={{ bg: "#F8FAFC" }} color="#64748B">
               <FiVolume2 size={13} />
-              <Text fontSize="xs" fontWeight="semibold">Speech to Text</Text>
+              <Text fontSize="xs" fontWeight="semibold">{t("kid.speechToText")}</Text>
             </HStack>
 
             {/* Voiceover */}
             <HStack spaceX={3} h="36px" px={3.5} cursor="pointer" borderRadius="xl" _hover={{ bg: "#F8FAFC" }} color="#64748B">
               <FiVolume2 size={13} />
-              <Text fontSize="xs" fontWeight="semibold">Voiceover</Text>
+              <Text fontSize="xs" fontWeight="semibold">{t("kid.voiceover")}</Text>
             </HStack>
           </VStack>
         </VStack>
@@ -478,11 +480,11 @@ export default function ModeSelectionScreen({
           <Box p={4} bg="#F5F3FF" borderRadius="2xl" border="1px solid" borderColor="#DDD6FE">
             <VStack spaceY={2.5} alignItems="stretch">
               <HStack justifyContent="space-between" fontSize="11px" fontWeight="bold" color="#6D28D9">
-                <Text>Words</Text>
+                <Text>{t("kid.words")}</Text>
                 <Text>9,959</Text>
               </HStack>
               <HStack justifyContent="space-between" fontSize="11px" fontWeight="bold" color="#6D28D9" mt={-1}>
-                <Text>Images</Text>
+                <Text>{t("kid.images")}</Text>
                 <Text>10</Text>
               </HStack>
 
@@ -504,7 +506,7 @@ export default function ModeSelectionScreen({
                 _hover={{ bg: "#F3E8FF" }}
                 mt={1}
               >
-                Upgrade
+                {t("kid.upgrade")}
               </Button>
             </VStack>
           </Box>
@@ -513,12 +515,12 @@ export default function ModeSelectionScreen({
           <VStack spaceY={1.5} px={1}>
             <HStack spaceX={3} py={1} cursor="pointer" color="#64748B" _hover={{ color: "#0F172A" }}>
               <FiBriefcase size={13} />
-              <Text fontSize="xs" fontWeight="semibold">Get 1 Month Free</Text>
+              <Text fontSize="xs" fontWeight="semibold">{t("kid.freeMonth")}</Text>
             </HStack>
             
             <HStack spaceX={3} py={1} cursor="pointer" color="#64748B" _hover={{ color: "#0F172A" }}>
               <FiMessageSquare size={13} />
-              <Text fontSize="xs" fontWeight="semibold">Help & Support</Text>
+              <Text fontSize="xs" fontWeight="semibold">{t("kid.helpSupport")}</Text>
             </HStack>
 
             <Box borderTop="1px solid" borderColor="#E2E8F0" my={1} />
@@ -570,13 +572,13 @@ export default function ModeSelectionScreen({
         >
           {/* Page Title */}
           <Heading size="lg" color="#0F172A" fontWeight="bold" letterSpacing="-0.02em">
-            Dashboard
+            {t("kid.dashboard")}
           </Heading>
 
           {/* Search bar inside header */}
           <Box position="relative" width="280px">
             <Input
-              placeholder="Search anything"
+              placeholder={t("kid.searchAnything")}
               size="sm"
               borderRadius="xl"
               borderColor="#E2E8F0"
@@ -672,7 +674,7 @@ export default function ModeSelectionScreen({
                   {username}
                 </Text>
                 <Text fontSize="9px" color="#94A3B8" fontWeight="semibold" mt={-0.5}>
-                  Student
+                  {t("kid.student")}
                 </Text>
               </VStack>
               <FiChevronDown size={12} color="#94A3B8" />
@@ -698,11 +700,11 @@ export default function ModeSelectionScreen({
                 {/* Horizontal pill list tag filters */}
                 <HStack spaceX={2} mb={6} overflowX="auto" pb={1} css={{ "&::-webkit-scrollbar": { display: "none" } }}>
                   <Box px={3.5} py={1.5} bg="#7C3AED" color="#FFFFFF" borderRadius="full" fontSize="xs" fontWeight="bold" cursor="pointer">
-                    All
+                    {t("kid.all")}
                   </Box>
-                  {["AI Assistant", "Your Plan", "Friends", "Recent", "Documents", "Templates", "Overview"].map((tag) => (
+                  {["tagAiAssistant", "tagYourPlan", "tagFriends", "tagRecent", "documents", "tagTemplates", "tagOverview"].map((tagKey) => (
                     <Box
-                      key={tag}
+                      key={tagKey}
                       px={3.5}
                       py={1.5}
                       bg="#FFFFFF"
@@ -718,7 +720,7 @@ export default function ModeSelectionScreen({
                       _hover={{ borderColor: "#7C3AED", color: "#7C3AED" }}
                     >
                       <span style={{ color: "#7C3AED", marginRight: "5px", fontSize: "10px" }}>●</span>
-                      {tag}
+                      {t(`kid.${tagKey}`)}
                     </Box>
                   ))}
                 </HStack>
@@ -741,13 +743,13 @@ export default function ModeSelectionScreen({
                     >
                       <VStack spaceY={4} alignItems="flex-start">
                         <Heading size="xl" color="#0F172A" fontWeight="bold" letterSpacing="-0.02em">
-                          Hey, How can I help you?
+                          {t("kid.heroGreeting")}
                         </Heading>
                         
                         {/* Search bar inside Hero box */}
                         <Box position="relative" width="100%" maxW="480px">
                           <Input
-                            placeholder="Search for templates and documents"
+                            placeholder={t("kid.searchTemplatesDocuments")}
                             size="sm"
                             borderRadius="2xl"
                             borderColor="#DDD6FE"
@@ -780,9 +782,9 @@ export default function ModeSelectionScreen({
 
                         {/* Recommendation pills */}
                         <HStack spaceX={2}>
-                          {["Invoice Template", "Agreement", "Story Outline"].map((pill) => (
+                          {["pillInvoiceTemplate", "pillAgreement", "pillStoryOutline"].map((pillKey) => (
                             <Box
-                              key={pill}
+                              key={pillKey}
                               px={3.5}
                               py={1.5}
                               bg="#FFFFFF"
@@ -795,7 +797,7 @@ export default function ModeSelectionScreen({
                               cursor="pointer"
                               _hover={{ borderColor: "#7C3AED", color: "#7C3AED" }}
                             >
-                              {pill}
+                              {t(`kid.${pillKey}`)}
                             </Box>
                           ))}
                         </HStack>
@@ -810,7 +812,7 @@ export default function ModeSelectionScreen({
                     <Box>
                       <HStack justifyContent="space-between" mb={4}>
                         <Heading size="xs" color="#0F172A" fontWeight="bold" letterSpacing="-0.01em">
-                          Recently Launched
+                          {t("kid.recentlyLaunched")}
                         </Heading>
                         <Button
                           onClick={() => setActiveTab("lessons")}
@@ -820,7 +822,7 @@ export default function ModeSelectionScreen({
                           fontSize="xs"
                           _hover={{ bg: "transparent", color: "#0F172A" }}
                         >
-                          View all
+                          {t("kid.viewAll")}
                         </Button>
                       </HStack>
 
@@ -872,7 +874,7 @@ export default function ModeSelectionScreen({
                               <HStack justifyContent="space-between" width="100%">
                                 <HStack spaceX={1.5} color="#94A3B8">
                                   <FiCalendar size={11} />
-                                  <Text fontSize="10px" fontWeight="semibold">Aug 27, 2024</Text>
+                                  <Text fontSize="10px" fontWeight="semibold">{t("kid.august2024")}</Text>
                                 </HStack>
 
                                 <HStack
@@ -884,7 +886,7 @@ export default function ModeSelectionScreen({
                                   fontSize="10px"
                                   _hover={{ color: "#6D28D9" }}
                                 >
-                                  <Text>See more</Text>
+                                  {t("kid.seeMore")}
                                   <Box
                                     w="16px"
                                     h="16px"
@@ -910,7 +912,7 @@ export default function ModeSelectionScreen({
                     <Box bg="#FFFFFF" p={5} borderRadius="3xl" border="1px solid" borderColor="#E2E8F0" boxShadow="xs">
                       <HStack justifyContent="space-between" mb={5}>
                         <Heading size="xs" color="#0F172A" fontWeight="bold">
-                          Documents
+                          {t("kid.documents")}
                         </Heading>
                         <HStack spaceX={3}>
                           <Button
@@ -923,7 +925,7 @@ export default function ModeSelectionScreen({
                             bg="white"
                             _hover={{ bg: "#F8FAFC" }}
                           >
-                            <FiPlus size={11} style={{ marginRight: "4px" }} /> New Folder
+                            <FiPlus size={11} style={{ marginRight: "4px" }} /> {t("kid.newFolder")}
                           </Button>
                           <Box color="#64748B" cursor="pointer">•••</Box>
                         </HStack>
@@ -989,7 +991,7 @@ export default function ModeSelectionScreen({
                           fontWeight="bold"
                           _hover={{ bg: "#EDE9FE" }}
                         >
-                          Show All
+                          {t("kid.showAll")}
                         </Button>
                       </Box>
                     </Box>
@@ -1002,12 +1004,12 @@ export default function ModeSelectionScreen({
                     {/* Personalized Course Stats */}
                     <Box p={5} bg="#FFFFFF" borderRadius="3xl" border="1px solid" borderColor="#E2E8F0" boxShadow="xs">
                       <Heading size="xs" color="#0F172A" fontWeight="bold" mb={3}>
-                        Personalized Course
+                        {t("kid.personalizedCourse")}
                       </Heading>
 
                       <HStack spaceX={1.5} color="#64748B" mb={4}>
                         <FiClock size={11} />
-                        <Text fontSize="10px" fontWeight="bold">08 hours 30 minutes in total</Text>
+                        <Text fontSize="10px" fontWeight="bold">{t("kid.courseTotalTime")}</Text>
                       </HStack>
 
                       {/* Tri-color segment progress bar */}
@@ -1021,31 +1023,31 @@ export default function ModeSelectionScreen({
                       <HStack spaceX={4} fontSize="9px" fontWeight="bold" color="#64748B" mb={4}>
                         <HStack spaceX={1}>
                           <Box w="6px" h="6px" borderRadius="full" bg="#7C3AED" />
-                          <Text>Pause</Text>
+                          <Text>{t("kid.segPause")}</Text>
                         </HStack>
                         <HStack spaceX={1}>
                           <Box w="6px" h="6px" borderRadius="full" bg="#06B6D4" />
-                          <Text>Active</Text>
+                          <Text>{t("kid.segActive")}</Text>
                         </HStack>
                         <HStack spaceX={1}>
                           <Box w="6px" h="6px" borderRadius="full" bg="#F59E0B" />
-                          <Text>Extra</Text>
+                          <Text>{t("kid.segExtra")}</Text>
                         </HStack>
                       </HStack>
 
                       <Text fontSize="10px" color="#94A3B8" lineHeight="relaxed">
-                        Designed to foster inclusivity and leverage diverse perspectives.
+                        {t("kid.courseDesc")}
                       </Text>
                     </Box>
 
                     {/* Unlock AI Card */}
                     <Box p={5} bg="#FFFFFF" borderRadius="3xl" border="1px solid" borderColor="#E2E8F0" boxShadow="xs">
                       <Heading size="xs" color="#0F172A" fontWeight="bold" mb={4}>
-                        Unlock AI at your school
+                        {t("kid.unlockAiTitle")}
                       </Heading>
 
                       <SimpleGrid columns={2} spaceY={2.5} mb={4}>
-                        {["Unlimited Spaces", "Training & Support", "Mission Control+", "Latest AI models", "LMS Integrations", "and more!"].map((bullet) => (
+                        {(t("kid.unlockBullets", { returnObjects: true }) as string[]).map((bullet) => (
                           <HStack key={bullet} spaceX={1.5} alignItems="center">
                             <Box color="#7C3AED">✔</Box>
                             <Text fontSize="9px" fontWeight="bold" color="#475569">{bullet}</Text>
@@ -1061,7 +1063,7 @@ export default function ModeSelectionScreen({
                         fontSize="10px"
                         _hover={{ color: "#6D28D9" }}
                       >
-                        <Text>See more</Text>
+                        <Text>{t("kid.seeMore")}</Text>
                         <Box
                           w="16px"
                           h="16px"
@@ -1085,9 +1087,9 @@ export default function ModeSelectionScreen({
                         {/* Column 1: Assistants */}
                         <VStack spaceY={3} alignItems="stretch">
                           <Box alignSelf="flex-start" px={2} py={0.5} bg="#F5F3FF" color="#7C3AED" borderRadius="lg" fontSize="8px" fontWeight="extrabold" textTransform="uppercase">
-                            Assistants
+                            {t("kid.assistants")}
                           </Box>
-                          <Heading size="xs" color="#0F172A" fontWeight="bold" mt={1}>Chat with...</Heading>
+                          <Heading size="xs" color="#0F172A" fontWeight="bold" mt={1}>{t("kid.chatWith")}...</Heading>
                           
                           <VStack spaceY={2} alignItems="stretch" fontSize="10px" fontWeight="semibold" color="#475569">
                             <HStack spaceX={1.5} cursor="pointer" _hover={{ color: "#7C3AED" }}>
@@ -1112,27 +1114,27 @@ export default function ModeSelectionScreen({
                             fontSize="9px"
                             mt={2}
                           >
-                            <Text>See more</Text>
+                            <Text>{t("kid.seeMore")}</Text>
                             <Box w="12px" h="12px" borderRadius="full" bg="#7C3AED" color="white" display="flex" alignItems="center" justifyContent="center" fontSize="6px">➔</Box>
                           </HStack>
                         </VStack>
 
                         {/* Column 2: Let's write a... */}
                         <VStack spaceY={3} alignItems="stretch" borderLeft="1px solid" borderColor="#F1F5F9" pl={4}>
-                          <Heading size="xs" color="#0F172A" fontWeight="bold" mt={4}>Let's write a...</Heading>
+                          <Heading size="xs" color="#0F172A" fontWeight="bold" mt={4}>{t("kid.letsWrite")}...</Heading>
                           
                           <VStack spaceY={2} alignItems="stretch" fontSize="10px" fontWeight="semibold" color="#475569">
                             <HStack spaceX={1.5} cursor="pointer" _hover={{ color: "#6366F1" }}>
                               <FiFileText size={11} color="#6366F1" />
-                              <Text>Lesson Plan</Text>
+                              <Text>{t("kid.lessonPlan")}</Text>
                             </HStack>
                             <HStack spaceX={1.5} cursor="pointer" _hover={{ color: "#F59E0B" }}>
                               <FiFileText size={11} color="#F59E0B" />
-                              <Text>Worksheet</Text>
+                              <Text>{t("kid.worksheet")}</Text>
                             </HStack>
                             <HStack spaceX={1.5} cursor="pointer" _hover={{ color: "#10B981" }}>
                               <FiFileText size={11} color="#10B981" />
-                              <Text>Newsletter</Text>
+                              <Text>{t("kid.newsletter")}</Text>
                             </HStack>
                           </VStack>
                         </VStack>
@@ -1145,7 +1147,7 @@ export default function ModeSelectionScreen({
                       
                       <HStack justifyContent="space-between" mb={4}>
                         <Heading size="xs" color="#0F172A" fontWeight="bold">
-                          Learning Schedule
+                          {t("kid.learningSchedule")}
                         </Heading>
                         <Button
                           size="xs"
@@ -1158,14 +1160,14 @@ export default function ModeSelectionScreen({
                           h="26px"
                           _hover={{ bg: "#F8FAFC" }}
                         >
-                          <FiCalendar size={11} style={{ marginRight: "4px" }} /> Monthly
+                          <FiCalendar size={11} style={{ marginRight: "4px" }} /> {t("kid.monthly")}
                         </Button>
                       </HStack>
 
                       {/* Month arrow selector */}
                       <HStack justifyContent="space-between" mb={4}>
                         <Text fontSize="11px" fontWeight="extrabold" color="#0F172A">
-                          August 2024
+                          {t("kid.august2024")}
                         </Text>
                         <HStack spaceX={1}>
                           <Box cursor="pointer" p={1} borderRadius="md" _hover={{ bg: "#F1F5F9" }}><FiChevronLeft size={12} /></Box>
@@ -1175,10 +1177,10 @@ export default function ModeSelectionScreen({
 
                       {/* Week calendar block Mon-Sun */}
                       <HStack justifyContent="space-between" css={{ fontSize: "9px" }} fontWeight="bold" textAlign="center" mb={5} px={1}>
-                        <Box><Text color="#94A3B8">Mon</Text><Text color="#0F172A" mt={1}>15</Text></Box>
-                        <Box><Text color="#94A3B8">Tue</Text><Text color="#0F172A" mt={1}>16</Text></Box>
-                        <Box><Text color="#94A3B8">Wed</Text><Text color="#0F172A" mt={1}>17</Text></Box>
-                        <Box><Text color="#94A3B8">Thu</Text><Text color="#0F172A" mt={1}>18</Text></Box>
+                        <Box><Text color="#94A3B8">{t("kid.dayMon")}</Text><Text color="#0F172A" mt={1}>15</Text></Box>
+                        <Box><Text color="#94A3B8">{t("kid.dayTue")}</Text><Text color="#0F172A" mt={1}>16</Text></Box>
+                        <Box><Text color="#94A3B8">{t("kid.dayWed")}</Text><Text color="#0F172A" mt={1}>17</Text></Box>
+                        <Box><Text color="#94A3B8">{t("kid.dayThu")}</Text><Text color="#0F172A" mt={1}>18</Text></Box>
                         
                         {/* Active Purple Highlight day */}
                         <Box
@@ -1193,18 +1195,18 @@ export default function ModeSelectionScreen({
                           justifyContent="center"
                           mt={-1}
                         >
-                          <Text fontSize="7px" fontWeight="bold">Fri</Text>
+                          <Text fontSize="7px" fontWeight="bold">{t("kid.dayFri")}</Text>
                           <Text fontSize="9px" fontWeight="extrabold" mt={-0.5}>19</Text>
                         </Box>
                         
-                        <Box><Text color="#94A3B8">Sat</Text><Text color="#0F172A" mt={1}>20</Text></Box>
-                        <Box><Text color="#94A3B8">Sun</Text><Text color="#0F172A" mt={1}>21</Text></Box>
+                        <Box><Text color="#94A3B8">{t("kid.daySat")}</Text><Text color="#0F172A" mt={1}>20</Text></Box>
+                        <Box><Text color="#94A3B8">{t("kid.daySun")}</Text><Text color="#0F172A" mt={1}>21</Text></Box>
                       </HStack>
 
                       {/* Today list with event card */}
                       <VStack spaceY={2.5} alignItems="stretch">
                         <Text fontSize="10px" fontWeight="extrabold" color="#94A3B8" textTransform="uppercase" letterSpacing="0.05em">
-                          Today
+                          {t("kid.today")}
                         </Text>
                         
                         {/* Event Card */}
@@ -1212,7 +1214,7 @@ export default function ModeSelectionScreen({
                           <HStack justifyContent="space-between" alignItems="flex-start">
                             <VStack spaceY={1.5} alignItems="flex-start">
                               <Heading size="xs" color="#6D28D9" fontWeight="bold" letterSpacing="-0.01em">
-                                Figma Design Views
+                                {t("kid.figmaDesignViews")}
                               </Heading>
                               <HStack spaceX={1.5} color="#7C3AED">
                                 <FiClock size={11} />
@@ -1240,7 +1242,7 @@ export default function ModeSelectionScreen({
                               _hover={{ bg: "#6D28D9" }}
                               px={3.5}
                             >
-                              Join
+                              {t("kid.join")}
                             </Button>
                           </HStack>
                         </Box>
@@ -1292,7 +1294,7 @@ export default function ModeSelectionScreen({
                       >
                         <img
                           src={momoMascot}
-                          alt="Momo Mascot"
+                          alt={t("kid.momoMascot")}
                           style={{
                             width: "200px",
                             height: "auto",
@@ -1425,7 +1427,7 @@ export default function ModeSelectionScreen({
                 width="100%"
               >
                 <Heading size="md" color="#1E293B" fontWeight="bold" mb={2}>
-                  Documents & Parent Reports
+                  {t("kid.documentsParentReports")}
                 </Heading>
                 <Text color="#64748B" fontSize="sm" mb={6}>
                   Biểu đồ phân tích mức độ cân bằng cảm xúc của bé và các thông số cài đặt quản trị của phụ huynh.

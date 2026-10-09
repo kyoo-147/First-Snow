@@ -15,6 +15,7 @@ const StatusContent: React.FC<StatusContentProps> = ({ textKey }) => {
 const MemoizedStatusContent = memo(StatusContent);
 
 const WebSocketStatus = memo((): React.JSX.Element => {
+  const { t } = useTranslation();
   const {
     color,
     textKey,
@@ -64,9 +65,9 @@ const WebSocketStatus = memo((): React.JSX.Element => {
             fontWeight="medium"
             backdropFilter="blur(8px)"
             border="1px solid rgba(255, 255, 255, 0.15)"
-            title="Live2D model asset absent: Voice & Subtitle mode active"
+            title={t('wsStatus.modelAbsentTitle')}
           >
-            👤 Avatar Model Absent (Voice Mode)
+            {t('wsStatus.modelAbsentLabel')}
           </Box>
         )}
       </HStack>
@@ -82,9 +83,9 @@ const WebSocketStatus = memo((): React.JSX.Element => {
           fontSize="11px"
           fontWeight="semibold"
           backdropFilter="blur(4px)"
-          title={canUseMic ? "Microphone capability granted" : "Microphone blocked: Server capability grant required"}
+          title={canUseMic ? t('wsStatus.micGrantedTitle') : t('wsStatus.micBlockedTitle')}
         >
-          {canUseMic ? "🎤 Mic: Ready" : "🎤 Mic: Awaiting Grant"}
+          {canUseMic ? t('wsStatus.micReady') : t('wsStatus.micAwaiting')}
         </Box>
 
         <Box
@@ -96,9 +97,9 @@ const WebSocketStatus = memo((): React.JSX.Element => {
           fontSize="11px"
           fontWeight="semibold"
           backdropFilter="blur(4px)"
-          title={canUseCamera ? "Camera capability granted" : "Camera fail-closed: No server grant"}
+          title={canUseCamera ? t('wsStatus.cameraGrantedTitle') : t('wsStatus.cameraBlockedTitle')}
         >
-          {canUseCamera ? "📷 Camera: Enabled" : "📷 Camera: Fail-Closed"}
+          {canUseCamera ? t('wsStatus.cameraEnabled') : t('wsStatus.cameraFailClosed')}
         </Box>
 
         <Box
@@ -110,9 +111,9 @@ const WebSocketStatus = memo((): React.JSX.Element => {
           fontSize="11px"
           fontWeight="semibold"
           backdropFilter="blur(4px)"
-          title={canUseScreen ? "Screen capability granted" : "Screen fail-closed: No server grant"}
+          title={canUseScreen ? t('wsStatus.screenGrantedTitle') : t('wsStatus.screenBlockedTitle')}
         >
-          {canUseScreen ? "🖥️ Screen: Enabled" : "🖥️ Screen: Fail-Closed"}
+          {canUseScreen ? t('wsStatus.screenEnabled') : t('wsStatus.screenFailClosed')}
         </Box>
       </HStack>
     </Flex>

@@ -1,5 +1,6 @@
 import { Box, Flex, SimpleGrid, VStack, HStack, Text, Heading } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../ui/button";
 import { FiHeart } from "react-icons/fi";
 
@@ -85,9 +86,36 @@ const LESSONS: LessonItem[] = [
 ];
 
 export default function CoursesPage(): React.JSX.Element {
+  const { t } = useTranslation();
   const [kidName, setKidName] = useState<string>("Leo");
   const [activeFilter, setActiveFilter] = useState<string>("All Lessons");
   const [likedLessons, setLikedLessons] = useState<string[]>(["lesson-2"]); // Pre-fill "Indoor Voice" as liked matching mockup
+
+  // Display labels keyed by the stable internal content values above.
+  // Internal values stay English so filtering logic is untouched.
+  const T: Record<string, string> = {
+    "All Lessons": t("kid.filterAllLessons"),
+    "Social Skills": t("kid.filterSocialSkills"),
+    "Daily Life": t("kid.filterDailyLife"),
+    "Emotional Reg.": t("kid.filterEmotionalReg"),
+    "Language": t("kid.filterLanguage"),
+    "Taking Deep Breaths": t("kid.rec1Title"),
+    "Taking Turns": t("kid.rec2Title"),
+    "Brushing Teeth": t("kid.lesson1Title"),
+    "Indoor Voice": t("kid.lesson2Title"),
+    "Asking Nicely": t("kid.lesson3Title"),
+    "Going to the Park": t("kid.lesson4Title"),
+    "15 mins": t("kid.rec1Time"),
+    "10 mins": t("kid.rec2Time"),
+    "5m": t("kid.lesson1Time"),
+    "8m": t("kid.lesson2Time"),
+    "12m": t("kid.lesson3Time"),
+    "15m": t("kid.lesson4Time"),
+    "Mastering calm responses to unexpected changes in routine.": t("kid.rec1Desc"),
+    "Interactive scenarios about sharing toys and conversation flow.": t("kid.rec2Desc"),
+    "Start Lesson": t("kid.rec1Button"),
+    "Begin Module": t("kid.rec2Button"),
+  };
 
   useEffect(() => {
     const profileStr = localStorage.getItem("kid_active_profile");
@@ -127,10 +155,10 @@ export default function CoursesPage(): React.JSX.Element {
       {/* Page Title & Desc */}
       <VStack spaceY={1.5} alignItems="flex-start" mb={7}>
         <Heading size="md" color="#0F172A" fontWeight="extrabold" letterSpacing="-0.02em">
-          Interactive Lessons
+          {t("kid.coursesTitle")}
         </Heading>
         <Text fontSize="xs" color="#64748B" fontWeight="medium">
-          Personalized learning paths for {kidName}'s developmental journey.
+          {t("kid.coursesDesc", { name: kidName })}
         </Text>
       </VStack>
 
@@ -138,10 +166,10 @@ export default function CoursesPage(): React.JSX.Element {
       <VStack spaceY={4} alignItems="stretch" mb={8} width="100%">
         <HStack justifyContent="space-between" alignItems="center">
           <Heading size="xs" color="#1E293B" fontWeight="bold">
-            Recommended for Today
+            {t("kid.recommendedToday")}
           </Heading>
           <Text fontSize="xs" color="#0EA5E9" fontWeight="bold" cursor="pointer" _hover={{ textDecoration: "underline" }}>
-            View Schedule ➔
+            {t("kid.viewSchedule")}
           </Text>
         </HStack>
 
@@ -169,7 +197,7 @@ export default function CoursesPage(): React.JSX.Element {
                 overflow="hidden"
                 flexShrink={0}
               >
-                <img src={rec.image} alt={rec.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <img src={rec.image} alt={T[rec.title]} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               </Box>
 
               {/* Right Content Box */}
@@ -185,24 +213,24 @@ export default function CoursesPage(): React.JSX.Element {
                       fontSize="9px"
                       fontWeight="extrabold"
                     >
-                      {rec.category}
+                      {T[rec.category]}
                     </Box>
                     <Text fontSize="10px" color="#94A3B8" fontWeight="bold">
-                      {rec.time}
+                      {T[rec.time]}
                     </Text>
                   </HStack>
                   <Heading size="xs" color="#0F172A" fontWeight="bold" mt={1}>
-                    {rec.title}
+                    {T[rec.title]}
                   </Heading>
                   <Text fontSize="11px" color="#64748B" lineHeight="relaxed">
-                    {rec.description}
+                    {T[rec.description]}
                   </Text>
                 </VStack>
 
                 {/* Progress & Button */}
                 <VStack spaceY={2.5} alignItems="stretch" width="100%" mt={4}>
                   <HStack justifyContent="space-between" fontSize="9px" fontWeight="bold" color="#64748B">
-                    <Text>Progress</Text>
+                    <Text>{t("kid.progress")}</Text>
                     <Text color={rec.categoryColor}>{rec.progress}%</Text>
                   </HStack>
                   <Box w="100%" bg="#F1F5F9" h="6px" borderRadius="full" overflow="hidden">
@@ -220,7 +248,7 @@ export default function CoursesPage(): React.JSX.Element {
                     _hover={{ bg: "#bae6fd" }}
                     mt={1}
                   >
-                    {rec.buttonText}
+                    {T[rec.buttonText]}
                   </Button>
                 </VStack>
               </Flex>
@@ -249,15 +277,15 @@ export default function CoursesPage(): React.JSX.Element {
                 _hover={{ filter: "brightness(0.95)" }}
                 transition="all 0.15s"
               >
-                {filter}
+                {T[filter]}
               </Box>
             );
           })}
         </HStack>
 
         <HStack spaceX={1.5} fontSize="xs" fontWeight="bold" color="#475569" cursor="pointer">
-          <Text>SORT BY</Text>
-          <Text color="#0EA5E9">Recently Added ▾</Text>
+          <Text>{t("kid.sortBy")}</Text>
+          <Text color="#0EA5E9">{t("kid.recentlyAdded")}</Text>
         </HStack>
       </HStack>
 
@@ -281,24 +309,24 @@ export default function CoursesPage(): React.JSX.Element {
           >
             {/* Card Image */}
             <Box h="140px" w="100%" overflow="hidden" position="relative">
-              <img src={lesson.image} alt={lesson.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <img src={lesson.image} alt={T[lesson.title]} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </Box>
 
             {/* Card Info */}
             <VStack p={4.5} spaceY={3} alignItems="stretch" flexGrow={1} justifyContent="space-between">
               <VStack spaceY={1} alignItems="flex-start">
                 <Text fontSize="9px" fontWeight="bold" color={lesson.categoryColor} textTransform="uppercase" letterSpacing="wider">
-                  {lesson.category}
+                  {T[lesson.category]}
                 </Text>
                 <Heading size="xs" color="#0F172A" fontWeight="bold" lineClamp={2}>
-                  {lesson.title}
+                  {T[lesson.title]}
                 </Heading>
               </VStack>
 
               <HStack justifyContent="space-between" alignItems="center">
                 <HStack spaceX={1} color="#94A3B8" fontSize="10px" fontWeight="bold">
                   <span>⏱</span>
-                  <Text>{lesson.time}</Text>
+                   <Text>{T[lesson.time]}</Text>
                 </HStack>
 
                 <Box

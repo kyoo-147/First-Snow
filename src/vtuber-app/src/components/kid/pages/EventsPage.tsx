@@ -1,4 +1,5 @@
 import { Box, SimpleGrid, VStack, HStack, Text, Heading } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../ui/button";
 import { FiClock, FiMapPin, FiCalendar } from "react-icons/fi";
 
@@ -17,8 +18,8 @@ const EVENTS: EventItem[] = [
     id: "event-1",
     title: "Trò chuyện EQ: Nhận biết nụ cười cùng Momo",
     time: "12:00 PM - 01:00 PM (Hôm nay)",
-    type: "Momo Live Chat",
-    host: "Companion Bot Momo",
+    type: "kid.eventTypeLiveChat",
+    host: "kid.hostMomoCompanion",
     color: "#7C3AED",
     joined: false
   },
@@ -26,8 +27,8 @@ const EVENTS: EventItem[] = [
     id: "event-2",
     title: "Học ngoại ngữ: Phát âm tiếng Anh chuẩn cùng Luna",
     time: "03:30 PM - 04:30 PM (Ngày mai)",
-    type: "AI English Class",
-    host: "Luna Tutor",
+    type: "kid.eventTypeEnglishClass",
+    host: "kid.hostLunaTutor",
     color: "#EC4899",
     joined: true
   },
@@ -35,14 +36,15 @@ const EVENTS: EventItem[] = [
     id: "event-3",
     title: "Kể chuyện tối: Câu chuyện về chú rùa dũng cảm",
     time: "08:00 PM - 09:00 PM (12/06)",
-    type: "Bedtime Storytime",
-    host: "Momo Assistant",
+    type: "kid.eventTypeBedtimeStory",
+    host: "kid.hostMomoAssistant",
     color: "#D97706",
     joined: false
   }
 ];
 
 export default function EventsPage(): React.JSX.Element {
+  const { t } = useTranslation();
   return (
     <Box width="100%">
       
@@ -137,7 +139,7 @@ export default function EventsPage(): React.JSX.Element {
                     fontWeight="extrabold"
                     textTransform="uppercase"
                   >
-                    {event.type}
+                    {t(event.type)}
                   </Box>
                   {event.joined && (
                     <Text fontSize="9px" color="#10B981" fontWeight="bold">✓ Đã đăng ký</Text>
@@ -155,7 +157,7 @@ export default function EventsPage(): React.JSX.Element {
                 
                 <HStack spaceX={1.5} color="#64748B" fontSize="10px" fontWeight="semibold" mt={-1}>
                   <FiMapPin size={11} />
-                  <Text>Host: {event.host}</Text>
+                  <Text>{t("kid.hostLabel")} {t(event.host)}</Text>
                 </HStack>
 
                 <Button

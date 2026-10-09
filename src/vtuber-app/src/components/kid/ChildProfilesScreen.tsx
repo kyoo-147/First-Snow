@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Box, Flex, Text, Heading, SimpleGrid, VStack, HStack, Input } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../ui/button";
 import { Field } from "../ui/field";
 import { toaster } from "../ui/toaster";
@@ -48,6 +49,7 @@ export default function ChildProfilesScreen({
   onLogout,
   userEmail,
 }: ChildProfilesScreenProps): React.JSX.Element {
+  const { t } = useTranslation();
   const [profiles, setProfiles] = useState<KidProfile[]>([]);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newName, setNewName] = useState("");
@@ -153,14 +155,14 @@ export default function ChildProfilesScreen({
             border="1px solid"
             borderColor="rgba(14, 165, 233, 0.15)"
           >
-            <img src="./images/momo_mascot.png" alt="Momo Logo" style={{ width: "26px", height: "auto" }} />
+            <img src="./images/momo_mascot.png" alt={t("profiles.momoLogo")} style={{ width: "26px", height: "auto" }} />
           </Box>
           <VStack spaceY={0} alignItems="flex-start">
             <Heading size="md" color="#0F172A" fontWeight="bold">
               KindredAI
             </Heading>
             <Text color="#64748B" fontSize="10px" textTransform="uppercase" letterSpacing="wider">
-              Secure & Private
+              {t("profiles.securePrivate")}
             </Text>
           </VStack>
         </HStack>
@@ -254,7 +256,7 @@ export default function ChildProfilesScreen({
                         borderRadius="full"
                         bg={profile.status === "Active Session" ? "#10B981" : "#64748B"}
                       />
-                      {profile.status === "Active Session" ? "Active Session" : profile.status === "Resting" ? "Resting" : "Sẵn sàng"}
+                      {profile.status === "Active Session" ? t("profiles.statusActive") : profile.status === "Resting" ? t("profiles.statusResting") : t("profiles.statusReady")}
                     </Box>
 
                     {/* Avatar Circle Container */}

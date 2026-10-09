@@ -1,6 +1,7 @@
 import { Box, Flex, Text, Heading, VStack, HStack, Input } from "@chakra-ui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../ui/button";
 import {
   FiHome,
@@ -42,6 +43,7 @@ export default function DashboardLayout({
   onChangeProfile,
   onLogout
 }: DashboardLayoutProps): React.JSX.Element {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [activeProfile, setActiveProfile] = useState<KidProfile | null>(null);
@@ -56,6 +58,19 @@ export default function DashboardLayout({
   const username = activeProfile ? activeProfile.name : "Bé Leo";
   const userAvatar = activeProfile ? activeProfile.avatar : "./images/leo_avatar.png";
   const currentPath = location.pathname;
+
+  const pageTitles: Record<string, string> = {
+    "/dashboard": t("kid.dashboard"),
+    "/documents": t("kid.documents"),
+    "/ai-writer": t("kid.aiWriter"),
+    "/ai-teachers": t("kid.aiTeachers"),
+    "/assistants": t("kid.assistants"),
+    "/analysis": t("kid.analytics"),
+    "/course": t("kid.courses"),
+    "/events": t("kid.events"),
+    "/speech-to-text": t("kid.speechToText"),
+    "/voiceover": t("kid.voiceover"),
+  };
 
   const handleMenuClick = (path: string) => {
     navigate(path);
@@ -156,7 +171,7 @@ export default function DashboardLayout({
               <HStack spaceX={3} zIndex={1}>
                 <FiHome size={14} color={isActive("/dashboard") ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={isActive("/dashboard") ? "bold" : "semibold"} color={isActive("/dashboard") ? "#0F172A" : "#64748B"}>
-                  Dashboard
+                  {t("kid.dashboard")}
                 </Text>
               </HStack>
             </Box>
@@ -185,7 +200,7 @@ export default function DashboardLayout({
               <HStack spaceX={3} zIndex={1}>
                 <FiFileText size={14} color={isActive("/documents") ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={isActive("/documents") ? "bold" : "semibold"} color={isActive("/documents") ? "#0F172A" : "#64748B"}>
-                  Documents
+                  {t("kid.documents")}
                 </Text>
               </HStack>
             </Box>
@@ -195,7 +210,7 @@ export default function DashboardLayout({
           <VStack spaceY={1} alignItems="stretch" width="100%">
             <HStack justifyContent="space-between" px={3.5} py={1}>
               <Text fontSize="10px" fontWeight="extrabold" color="#94A3B8" textTransform="uppercase" letterSpacing="0.05em">
-                Study Tools
+                {t("kid.sectionStudyTools")}
               </Text>
               <Box color="#94A3B8" cursor="pointer"><FiPlus size={10} /></Box>
             </HStack>
@@ -224,7 +239,7 @@ export default function DashboardLayout({
               <HStack spaceX={3} zIndex={1}>
                 <FiEdit3 size={13} color={isActive("/ai-writer") ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={isActive("/ai-writer") ? "bold" : "semibold"} color={isActive("/ai-writer") ? "#0F172A" : "#64748B"}>
-                  AI Writer
+                  {t("kid.aiWriter")}
                 </Text>
               </HStack>
             </Box>
@@ -253,7 +268,7 @@ export default function DashboardLayout({
               <HStack spaceX={3} zIndex={1}>
                 <FiBookOpen size={13} color={isActive("/ai-teachers") ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={isActive("/ai-teachers") ? "bold" : "semibold"} color={isActive("/ai-teachers") ? "#0F172A" : "#64748B"}>
-                  AI Teachers
+                  {t("kid.aiTeachers")}
                 </Text>
               </HStack>
             </Box>
@@ -282,7 +297,7 @@ export default function DashboardLayout({
               <HStack spaceX={3} zIndex={1}>
                 <FiUser size={13} color={isActive("/assistants") ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={isActive("/assistants") ? "bold" : "semibold"} color={isActive("/assistants") ? "#0F172A" : "#64748B"}>
-                  Assistants
+                  {t("kid.assistants")}
                 </Text>
               </HStack>
             </Box>
@@ -311,7 +326,7 @@ export default function DashboardLayout({
               <HStack spaceX={3} zIndex={1}>
                 <FiActivity size={13} color={isActive("/analysis") ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={isActive("/analysis") ? "bold" : "semibold"} color={isActive("/analysis") ? "#0F172A" : "#64748B"}>
-                  Analytics
+                  {t("kid.analytics")}
                 </Text>
               </HStack>
             </Box>
@@ -340,7 +355,7 @@ export default function DashboardLayout({
               <HStack spaceX={3} zIndex={1}>
                 <FiGrid size={13} color={isActive("/course") ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={isActive("/course") ? "bold" : "semibold"} color={isActive("/course") ? "#0F172A" : "#64748B"}>
-                  Courses
+                  {t("kid.courses")}
                 </Text>
               </HStack>
             </Box>
@@ -369,7 +384,7 @@ export default function DashboardLayout({
               <HStack spaceX={3} zIndex={1}>
                 <FiCalendar size={13} color={isActive("/events") ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={isActive("/events") ? "bold" : "semibold"} color={isActive("/events") ? "#0F172A" : "#64748B"}>
-                  Events
+                  {t("kid.events")}
                 </Text>
               </HStack>
             </Box>
@@ -379,7 +394,7 @@ export default function DashboardLayout({
           <VStack spaceY={1} alignItems="stretch" width="100%">
             <HStack justifyContent="space-between" px={3.5} py={1}>
               <Text fontSize="10px" fontWeight="extrabold" color="#94A3B8" textTransform="uppercase" letterSpacing="0.05em">
-                AI Voice Tools
+                {t("kid.sectionAiVoiceTools")}
               </Text>
               <Box color="#94A3B8" cursor="pointer"><FiPlus size={10} /></Box>
             </HStack>
@@ -408,7 +423,7 @@ export default function DashboardLayout({
               <HStack spaceX={3} zIndex={1}>
                 <FiVolume2 size={13} color={isActive("/speech-to-text") ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={isActive("/speech-to-text") ? "bold" : "semibold"} color={isActive("/speech-to-text") ? "#0F172A" : "#64748B"}>
-                  Speech to Text
+                  {t("kid.speechToText")}
                 </Text>
               </HStack>
             </Box>
@@ -437,7 +452,7 @@ export default function DashboardLayout({
               <HStack spaceX={3} zIndex={1}>
                 <FiVolume2 size={13} color={isActive("/voiceover") ? "#6366F1" : "#64748B"} />
                 <Text fontSize="xs" fontWeight={isActive("/voiceover") ? "bold" : "semibold"} color={isActive("/voiceover") ? "#0F172A" : "#64748B"}>
-                  Voiceover
+                  {t("kid.voiceover")}
                 </Text>
               </HStack>
             </Box>
@@ -544,13 +559,13 @@ export default function DashboardLayout({
         >
           {/* Dynamic Page Title based on route */}
           <Heading size="lg" color="#0F172A" fontWeight="bold" letterSpacing="-0.02em" textTransform="capitalize">
-            {currentPath.replace("/", "") || "Dashboard"}
+            {pageTitles[currentPath] || t("kid.dashboard")}
           </Heading>
 
           {/* Search bar inside header */}
           <Box position="relative" width="280px">
             <Input
-              placeholder="Search anything"
+              placeholder={t("kid.searchAnything")}
               size="sm"
               borderRadius="xl"
               borderColor="#E2E8F0"
@@ -641,7 +656,7 @@ export default function DashboardLayout({
                   {username}
                 </Text>
                 <Text fontSize="9px" color="#94A3B8" fontWeight="semibold" mt={-0.5}>
-                  Student
+                  {t("kid.student")}
                 </Text>
               </VStack>
               <FiChevronDown size={12} color="#94A3B8" />

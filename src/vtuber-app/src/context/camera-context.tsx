@@ -97,7 +97,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const startCamera = useCallback(async () => {
     try {
       if (!wsService.getCapabilities().camera) {
-        const errorMsg = 'Camera unavailable: server capability grant required (parent consent & safety policy)';
+        const errorMsg = t('error.cameraGrantRequired');
         toaster.create({
           title: errorMsg,
           type: 'error',
@@ -152,7 +152,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const startBackgroundCamera = useCallback(async () => {
     try {
       if (!wsService.getCapabilities().camera) {
-        const errorMsg = 'Camera unavailable: server capability grant required (parent consent & safety policy)';
+        const errorMsg = t('error.cameraGrantRequired');
         toaster.create({
           title: errorMsg,
           type: 'error',

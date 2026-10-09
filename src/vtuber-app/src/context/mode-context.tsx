@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toaster } from '../components/ui/toaster';
 
 export type ModeType = 'window' | 'pet';
@@ -12,14 +13,15 @@ interface ModeContextType {
 const ModeContext = createContext<ModeContextType | undefined>(undefined);
 
 export const ModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const [mode, setModeState] = useState<ModeType>('window');
   const isElectron = window.api !== undefined;
 
   const setMode = (newMode: ModeType) => {
     if (newMode === 'pet' && !isElectron) {
       toaster.create({
-        title: "Pet mode unavailable",
-        description: "Pet mode is only available in the desktop application",
+        title: t('sidebar.petModeUnavailable'),
+        description: t('sidebar.petModeDesktopOnly'),
         type: "info",
         duration: 2000,
       });

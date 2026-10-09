@@ -12,12 +12,14 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInputSubtitle } from '@/hooks/electron/use-input-subtitle';
 import { useDraggable } from '@/hooks/electron/use-draggable';
 import { inputSubtitleStyles } from './electron-style';
 import { useMode } from '@/context/mode-context';
 
 export function InputSubtitle() {
+  const { t } = useTranslation();
   const {
     inputValue,
     handleInputChange,
@@ -97,7 +99,7 @@ export function InputSubtitle() {
     >
       <Box {...inputSubtitleStyles.box}>
         <IconButton
-          aria-label="Close subtitle"
+          aria-label={t('electron.closeSubtitle')}
           onClick={handleClose}
           {...inputSubtitleStyles.closeButton}
         >
@@ -128,14 +130,14 @@ export function InputSubtitle() {
 
             <Flex gap="2">
               <IconButton
-                aria-label="Toggle microphone"
+                aria-label={t('electron.toggleMicrophone')}
                 onClick={handleMicToggle}
                 {...inputSubtitleStyles.iconButton}
               >
                 {micOn ? <LuMic size={16} /> : <LuMicOff size={16} />}
               </IconButton>
               <IconButton
-                aria-label="Interrupt"
+                aria-label={t('electron.interrupt')}
                 onClick={handleInterrupt}
                 {...inputSubtitleStyles.iconButton}
               >
@@ -153,7 +155,7 @@ export function InputSubtitle() {
               onKeyDown={handleKeyPress}
               onCompositionStart={handleCompositionStart}
               onCompositionEnd={handleCompositionEnd}
-              placeholder="Type your message..."
+              placeholder={t('electron.typeYourMessage')}
               {...inputSubtitleStyles.input}
             />
             <Button

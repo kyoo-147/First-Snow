@@ -4,6 +4,7 @@
 import { memo, useRef, useEffect } from "react";
 import { Box, Flex, Text, VStack } from "@chakra-ui/react";
 import { Sparkles, Volume2, Mic } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useLive2DConfig } from "@/context/live2d-config-context";
 import { useIpcHandlers } from "@/hooks/utils/use-ipc-handlers";
 import { useInterrupt } from "@/hooks/utils/use-interrupt";
@@ -24,6 +25,7 @@ interface Live2DProps {
  * Complies with requirement: "Live2D model is absent: render honest unavailable/fallback status, do not invent asset. Preserve Snow design."
  */
 function FallbackSnowAvatar({ aiState }: { aiState: string }) {
+  const { t } = useTranslation();
   const isSpeaking = aiState === "thinking-speaking";
   const isListening = aiState === "listening";
 
@@ -97,13 +99,13 @@ function FallbackSnowAvatar({ aiState }: { aiState: string }) {
         >
           <Text fontSize="sm" fontWeight="bold" color="white">
             {isSpeaking
-              ? "AgentKid is talking..."
+              ? t("live2d.talking")
               : isListening
-                ? "Listening to you..."
-                : "Snow Voice Companion"}
+                ? t("live2d.listening")
+                : t("live2d.companionName")}
           </Text>
           <Text fontSize="xs" color="#94A3B8" mt={0.5}>
-            Live2D model absent • Running in voice & subtitle mode
+            {t("live2d.modelAbsentNote")}
           </Text>
         </Box>
 
@@ -116,10 +118,10 @@ function FallbackSnowAvatar({ aiState }: { aiState: string }) {
           border="1px solid rgba(226, 232, 240, 0.8)"
         >
           <Text fontSize="xs" fontWeight="semibold" color="#1E293B">
-            Avatar Model Unavailable
+            {t("live2d.avatarUnavailable")}
           </Text>
           <Text fontSize="11px" color="#64748B" mt={1}>
-            Live2D visual assets are pending license integration. Voice communication, audio playback, and real-time subtitles are fully active.
+            {t("live2d.avatarUnavailableDesc")}
           </Text>
         </Box>
       </VStack>

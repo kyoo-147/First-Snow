@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import { useVAD } from '@/context/vad-context';
 import { useAiState } from '@/context/ai-state-context';
 import { toaster } from '@/components/ui/toaster';
 
 export function useMicToggle() {
+  const { t } = useTranslation();
   const { startMic, stopMic, micOn, isMicGranted } = useVAD();
   const { aiState, setAiState } = useAiState();
 
@@ -15,7 +17,7 @@ export function useMicToggle() {
     } else {
       if (!isMicGranted) {
         toaster.create({
-          title: "Microphone unavailable: server capability grant required",
+          title: t('error.micGrantRequired'),
           type: "error",
           duration: 3000,
         });

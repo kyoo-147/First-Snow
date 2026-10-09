@@ -43,6 +43,8 @@ function ScreenPlaceholder() {
 }
 
 function ScreenFailClosedNotice() {
+  const { t } = useTranslation();
+
   return (
     <VStack
       position="absolute"
@@ -57,10 +59,10 @@ function ScreenFailClosedNotice() {
         <FiLock size={20} />
       </Box>
       <Text color="whiteAlpha.900" fontSize="xs" fontWeight="bold">
-        Screen Sharing Unavailable
+        {t('screen.sharingUnavailable')}
       </Text>
       <Text color="whiteAlpha.600" fontSize="10px" lineHeight="1.3">
-        Fail-closed: Awaiting server capability grant (parental consent & safety policy required)
+        {t('screen.failClosedNote')}
       </Text>
     </VStack>
   );
@@ -108,7 +110,7 @@ function ScreenPanel(): React.JSX.Element {
         showArrow
         content={
           !isScreenGranted
-            ? 'Screen sharing unavailable: Server grant required'
+            ? t('screen.unavailableTooltip')
             : isStreaming
               ? t('footer.screenStopping')
               : t('footer.screenControl')

@@ -1,4 +1,5 @@
 import { Box, SimpleGrid, VStack, HStack, Text, Heading } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../ui/button";
 
 const momoMascot = "./images/momo_mascot.png";
@@ -40,13 +41,14 @@ const ASSISTANTS: Assistant[] = [
 ];
 
 export default function AssistantsPage(): React.JSX.Element {
+  const { t } = useTranslation();
   return (
     <Box width="100%">
       
       {/* Page Title & Desc */}
       <VStack spaceY={1.5} alignItems="flex-start" mb={6}>
         <Heading size="md" color="#0F172A" fontWeight="bold">
-          AI Assistants Playground
+          {t("kid.assistantsPlayground")}
         </Heading>
         <Text fontSize="xs" color="#64748B">
           Gặp gỡ biệt đội trợ lý AI học tập đa tài giúp bé rèn luyện kỹ năng toàn diện.

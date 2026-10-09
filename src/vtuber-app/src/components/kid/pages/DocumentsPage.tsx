@@ -1,5 +1,6 @@
 import { Box, SimpleGrid, VStack, HStack, Text, Heading } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../ui/button";
 import { FiClock } from "react-icons/fi";
 
@@ -14,6 +15,7 @@ interface KidProfile {
 }
 
 export default function DocumentsPage(): React.JSX.Element {
+  const { t } = useTranslation();
   const [activeProfile, setActiveProfile] = useState<KidProfile | null>(null);
   const [_diaryLogs, setDiaryLogs] = useState<any[]>([]);
   const [playTime, setPlayTime] = useState<number>(30);
@@ -36,9 +38,9 @@ export default function DocumentsPage(): React.JSX.Element {
   const handleClearHistory = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa toàn bộ lịch sử nhật ký cảm xúc của bé?")) {
       const defaultLogs = [
-        { id: "1", emotion: "Vui vẻ 😄", note: "Bé đã học bài nhận biết cảm xúc đạt điểm tối đa.", date: "Aug 24, 2026" },
-        { id: "2", emotion: "Hào hứng 😻", note: "Bé trò chuyện cùng người bạn thông minh Momo rất ngoan.", date: "Aug 25, 2026" },
-        { id: "3", emotion: "Lo sợ 😨", note: "Bé ban đầu còn bỡ ngỡ nhưng đã nhanh chóng tự tin dọn dẹp đồ chơi.", date: "Aug 26, 2026" }
+        { id: "1", emotion: "Vui vẻ 😄", note: "Bé đã học bài nhận biết cảm xúc đạt điểm tối đa.", date: "24 Thg 8, 2026" },
+        { id: "2", emotion: "Hào hứng 😻", note: "Bé trò chuyện cùng người bạn thông minh Momo rất ngoan.", date: "25 Thg 8, 2026" },
+        { id: "3", emotion: "Lo sợ 😨", note: "Bé ban đầu còn bỡ ngỡ nhưng đã nhanh chóng tự tin dọn dẹp đồ chơi.", date: "26 Thg 8, 2026" }
       ];
       localStorage.setItem("kid_emotion_diary", JSON.stringify(defaultLogs));
       setDiaryLogs(defaultLogs);
@@ -51,7 +53,7 @@ export default function DocumentsPage(): React.JSX.Element {
       {/* Page Title & Desc */}
       <VStack spaceY={1.5} alignItems="flex-start" mb={6}>
         <Heading size="md" color="#0F172A" fontWeight="bold">
-          Documents & Parent Reports
+          {t("kid.documentsParentReports")}
         </Heading>
         <Text fontSize="xs" color="#64748B">
           Biểu đồ phân tích mức độ cân bằng cảm xúc của bé và các thông số cài đặt quản trị của phụ huynh.

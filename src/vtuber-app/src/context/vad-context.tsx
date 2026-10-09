@@ -324,7 +324,7 @@ export function VADProvider({ children }: { children: React.ReactNode }) {
   const startMic = useCallback(async () => {
     try {
       if (!wsService.getCapabilities().audio_input) {
-        const errorMsg = 'Microphone unavailable: server capability grant required';
+        const errorMsg = t('error.micGrantRequired');
         toaster.create({
           title: errorMsg,
           type: 'error',

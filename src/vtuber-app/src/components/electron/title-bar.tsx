@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Box, IconButton } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 import {
   FiMinus, FiMaximize2, FiMinimize2, FiX, FiChevronsDown,
 } from 'react-icons/fi';
 import { layoutStyles } from '@/layout';
 
 function TitleBar(): React.JSX.Element {
+  const { t } = useTranslation();
   const [isMaximized, setIsMaximized] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const isMac = window.electron?.process.platform === 'darwin';
@@ -37,9 +39,9 @@ function TitleBar(): React.JSX.Element {
   };
 
   const getButtonLabel = () => {
-    if (isFullScreen) return 'Exit Full Screen';
-    if (isMaximized) return 'Restore';
-    return 'Maximize';
+    if (isFullScreen) return t('titleBar.exitFullScreen');
+    if (isMaximized) return t('titleBar.restore');
+    return t('titleBar.maximize');
   };
 
   const getButtonIcon = () => {
@@ -52,7 +54,7 @@ function TitleBar(): React.JSX.Element {
     return (
       <Box {...layoutStyles.macTitleBar}>
         <Box {...layoutStyles.titleBarTitle}>
-          Open LLM VTuber
+          {t('titleBar.appTitle')}
         </Box>
       </Box>
     );
@@ -61,13 +63,13 @@ function TitleBar(): React.JSX.Element {
   return (
     <Box {...layoutStyles.windowsTitleBar}>
       <Box {...layoutStyles.titleBarTitle}>
-        Open LLM VTuber
+        {t('titleBar.appTitle')}
       </Box>
       <Box {...layoutStyles.titleBarButtons}>
         <IconButton
           {...layoutStyles.titleBarButton}
           onClick={() => window.electron?.ipcRenderer.send('window-minimize')}
-          aria-label="Minimize"
+          aria-label={t('titleBar.minimize')}
         >
           <FiMinus />
         </IconButton>
@@ -81,7 +83,7 @@ function TitleBar(): React.JSX.Element {
         <IconButton
           {...layoutStyles.closeButton}
           onClick={() => window.electron?.ipcRenderer.send('window-close')}
-          aria-label="Close"
+          aria-label={t('titleBar.close')}
         >
           <FiX />
         </IconButton>

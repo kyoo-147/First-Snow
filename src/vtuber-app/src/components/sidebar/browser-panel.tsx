@@ -46,7 +46,7 @@ function BrowserPanel(): React.JSX.Element {
         showArrow
         content={
           browserViewData
-            ? "Interactive browser view"
+            ? t('browser.interactiveView')
             : t('sidebar.noBrowserSession')
         }
         open={isHovering}

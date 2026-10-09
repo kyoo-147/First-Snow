@@ -1,10 +1,12 @@
 import { Box, Image } from '@chakra-ui/react';
 import { memo, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { canvasStyles } from './canvas-styles';
 import { useCamera } from '@/context/camera-context';
 import { useBgUrl } from '@/context/bgurl-context';
 
 const Background = memo(({ children }: { children?: React.ReactNode }) => {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const {
     backgroundStream, isBackgroundStreaming, startBackgroundCamera, stopBackgroundCamera,
@@ -44,7 +46,7 @@ const Background = memo(({ children }: { children?: React.ReactNode }) => {
         <Image
           {...canvasStyles.background.image}
           src={backgroundUrl || safeBackgroundUrl}
-          alt="background"
+          alt={t('ui.backgroundAlt')}
           onError={(event) => {
             const image = event.currentTarget as HTMLImageElement;
             if (!image.src.endsWith(safeBackgroundUrl)) {

@@ -1,5 +1,6 @@
 import { Box, VStack, HStack, Text, Heading, SimpleGrid } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../ui/button";
 
 const momoMascot = "./images/momo_mascot.png";
@@ -19,7 +20,7 @@ const COMPANIONS: Companion[] = [
     id: "momo",
     name: "Bạn đồng hành Momo",
     avatar: momoMascot,
-    role: "Emotional Companion AI (Live2D)",
+    role: "kid.roleEmotionalCompanion",
     description: "Người bạn ảo 3D/Live2D đáng yêu sẵn sàng trò chuyện, kể chuyện cổ tích, giải đáp các thắc mắc và ôm ấp vỗ về cảm xúc của con suốt cả ngày.",
     color: "#7C3AED",
     status: "Active"
@@ -28,7 +29,7 @@ const COMPANIONS: Companion[] = [
     id: "luna",
     name: "Gia sư Tiếng Anh Luna",
     avatar: momoMascot,
-    role: "Language Tutor AI",
+    role: "kid.roleLanguageTutor",
     description: "Giáo viên tiếng Anh bản xứ ảo giúp con làm quen từ vựng, học giao tiếp phản xạ tự nhiên thông qua hình thức đố vui tiếng Anh ngộ nghĩnh.",
     color: "#EC4899",
     status: "Resting"
@@ -40,6 +41,7 @@ interface AiWriterPageProps {
 }
 
 export default function AiWriterPage({ onLaunchVtuber }: AiWriterPageProps): React.JSX.Element {
+  const { t } = useTranslation();
   return (
     <Box width="100%">
       
@@ -107,7 +109,11 @@ export default function AiWriterPage({ onLaunchVtuber }: AiWriterPageProps): Rea
                   fontSize="9px"
                   fontWeight="extrabold"
                 >
-                  {comp.status}
+                  {comp.status === "Active"
+                    ? t("kid.companionActive")
+                    : comp.status === "Resting"
+                      ? t("kid.companionResting")
+                      : t("kid.companionOffline")}
                 </Box>
               </HStack>
 
@@ -116,7 +122,7 @@ export default function AiWriterPage({ onLaunchVtuber }: AiWriterPageProps): Rea
                   {comp.name}
                 </Heading>
                 <Text fontSize="10px" color={comp.color} fontWeight="bold">
-                  {comp.role}
+                  {t(comp.role)}
                 </Text>
               </VStack>
 

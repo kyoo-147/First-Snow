@@ -23,7 +23,7 @@ function ChatHistoryPanel(): React.JSX.Element {
   const { messages } = useChatHistory(); // Get messages directly from context
   const { confName } = useConfig();
   const { baseUrl } = useWebSocket();
-  const userName = "Me";
+  const userName = t('chat.me');
 
   const validMessages = messages.filter((msg) => msg.content || // Keep messages with content
      (msg.type === 'tool_call_status' && msg.status === 'running') || // Keep running tools
@@ -69,7 +69,7 @@ function ChatHistoryPanel(): React.JSX.Element {
                       />
                       <Text {...sidebarStyles.toolCallIndicator.text}>
                         {/* {msg.tool_name}: {msg.status === 'running' ? 'Running...' : msg.content} */}
-                        {msg.status === "running" ? `${msg.name} is using tool ${msg.tool_name}` : `${msg.name} used tool ${msg.tool_name}`}
+                        {msg.status === "running" ? t('chat.usingTool', { name: msg.name, tool: msg.tool_name }) : t('chat.usedTool', { name: msg.name, tool: msg.tool_name })}
                       </Text>
                       {/* Show spinner if running, checkmark if completed, maybe error icon? */}
                       {msg.status === "running" && (
@@ -103,7 +103,7 @@ function ChatHistoryPanel(): React.JSX.Element {
                       message: msg.content,
                       sentTime: msg.timestamp,
                       sender: msg.role === 'ai'
-                        ? (msg.name || confName || 'AI')
+                        ? (msg.name || confName || t('chat.ai'))
                         : userName,
                       direction: msg.role === 'ai' ? 'incoming' : 'outgoing',
                       position: 'single',
@@ -116,7 +116,7 @@ function ChatHistoryPanel(): React.JSX.Element {
                         msg.avatar ? (
                           <img
                             src={`${baseUrl}/avatars/${msg.avatar}`}
-                            alt="avatar"
+                            alt={t('ui.avatarAlt')}
                             style={{ width: '100%', height: '100%', borderRadius: '50%' }}
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;

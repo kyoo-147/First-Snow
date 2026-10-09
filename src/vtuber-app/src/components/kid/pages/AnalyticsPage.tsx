@@ -1,5 +1,6 @@
 import { Box, SimpleGrid, VStack, HStack, Text, Heading } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { FiTrendingUp, FiCheckCircle, FiActivity } from "react-icons/fi";
 
 interface KidProfile {
@@ -11,6 +12,7 @@ interface KidProfile {
 }
 
 export default function AnalyticsPage(): React.JSX.Element {
+  const { t } = useTranslation();
   const [activeProfile, setActiveProfile] = useState<KidProfile | null>(null);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function AnalyticsPage(): React.JSX.Element {
       {/* Page Title & Desc */}
       <VStack spaceY={1.5} alignItems="flex-start" mb={6}>
         <Heading size="md" color="#0F172A" fontWeight="bold">
-          Analytics & EQ Development Dashboard
+          {t("kid.analyticsEqTitle")}
         </Heading>
         <Text fontSize="xs" color="#64748B">
           Báo cáo chi tiết về mức độ tiến bộ năng lực cảm xúc, điểm rèn luyện và thời lượng học tập.

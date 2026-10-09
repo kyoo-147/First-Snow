@@ -1,8 +1,10 @@
 /* eslint-disable no-shadow */
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCamera } from '@/context/camera-context';
 
 export const useCameraPanel = () => {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string>('');
   const [isHovering, setIsHovering] = useState(false);
@@ -12,7 +14,7 @@ export const useCameraPanel = () => {
 
   const toggleCamera = async (): Promise<void> => {
     if (!isCameraGranted) {
-      setError('Camera unavailable: server capability grant required (parent consent & safety policy)');
+      setError(t('error.cameraGrantRequired'));
       return;
     }
 
@@ -24,7 +26,7 @@ export const useCameraPanel = () => {
       }
       setError('');
     } catch (error) {
-      let errorMessage = 'Unable to access camera';
+      let errorMessage = t('error.unableToAccessCamera');
       if (error instanceof Error) {
         errorMessage = error.message;
       }

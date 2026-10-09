@@ -1,9 +1,11 @@
 import { Box, Flex, SimpleGrid, VStack, HStack, Text, Heading, Input } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../ui/button";
 
 export default function DashboardPage(): React.JSX.Element {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [kidName, setKidName] = useState<string>("Bé");
 
@@ -119,13 +121,13 @@ export default function DashboardPage(): React.JSX.Element {
             
             <SimpleGrid columns={{ base: 1, md: 3 }} spaceX={4} spaceY={4}>
               {[
-                { tag: "EQ COURSE", title: "Nhận Biết Cảm Xúc", desc: "Học cách nhận biết Vui, Buồn, Giận dữ qua biểu cảm.", date: "Hôm nay", tagColor: "#8B5CF6", bgTag: "#EDE9FE" },
-                { tag: "EQ COURSE", title: "Giải Quyết Mâu Thuẫn", desc: "Làm gì khi bị bạn vô tình làm hỏng đồ chơi?", date: "Hôm qua", tagColor: "#EC4899", bgTag: "#FCE7F3" },
-                { tag: "EQ COURSE", title: "Vượt Qua Nỗi Sợ", desc: "Cách bé tự tạo cảm giác an toàn và dũng cảm.", date: "24 Thg 8, 2026", tagColor: "#F59E0B", bgTag: "#FEF3C7" },
+                { tag: "kid.tagEqCourse", title: "Nhận Biết Cảm Xúc", desc: "Học cách nhận biết Vui, Buồn, Giận dữ qua biểu cảm.", date: "Hôm nay", tagColor: "#8B5CF6", bgTag: "#EDE9FE" },
+                { tag: "kid.tagEqCourse", title: "Giải Quyết Mâu Thuẫn", desc: "Làm gì khi bị bạn vô tình làm hỏng đồ chơi?", date: "Hôm qua", tagColor: "#EC4899", bgTag: "#FCE7F3" },
+                { tag: "kid.tagEqCourse", title: "Vượt Qua Nỗi Sợ", desc: "Cách bé tự tạo cảm giác an toàn và dũng cảm.", date: "24 Thg 8, 2026", tagColor: "#F59E0B", bgTag: "#FEF3C7" },
               ].map((item, idx) => (
                 <Box key={idx} p={4} bg="white" border="1px solid #E2E8F0" borderRadius="2xl" display="flex" flexDirection="column" justifyContent="space-between" h="160px" _hover={{ boxShadow: "sm", borderColor: "#CBD5E1" }} transition="all 0.2s">
                   <VStack alignItems="flex-start" spaceY={3}>
-                    <Box px={2.5} py={0.5} bg={item.bgTag} color={item.tagColor} borderRadius="md" fontSize="9px" fontWeight="extrabold">{item.tag}</Box>
+                    <Box px={2.5} py={0.5} bg={item.bgTag} color={item.tagColor} borderRadius="md" fontSize="9px" fontWeight="extrabold">{t(item.tag)}</Box>
                     <VStack alignItems="flex-start" spaceY={1}>
                       <Heading size="xs" color="#0F172A" fontWeight="bold" lineClamp={1}>{item.title}</Heading>
                       <Text fontSize="11px" color="#64748B" lineClamp={2} lineHeight="short">{item.desc}</Text>
@@ -249,7 +251,7 @@ export default function DashboardPage(): React.JSX.Element {
                 <Heading size="xs" color="#0F172A" fontWeight="bold">Trò chuyện cùng...</Heading>
                 <VStack alignItems="stretch" spaceY={3}>
                   <HStack spaceX={2.5}><Box w="24px" h="24px" borderRadius="full" bg="#F5F3FF" display="flex" alignItems="center" justifyContent="center" fontSize="12px">🤖</Box><Text fontSize="11px" color="#475569" fontWeight="medium">Momo (EQ)</Text></HStack>
-                  <HStack spaceX={2.5}><Box w="24px" h="24px" borderRadius="full" bg="#FCE7F3" display="flex" alignItems="center" justifyContent="center" fontSize="12px">👩</Box><Text fontSize="11px" color="#475569" fontWeight="medium">Luna (English)</Text></HStack>
+                  <HStack spaceX={2.5}><Box w="24px" h="24px" borderRadius="full" bg="#FCE7F3" display="flex" alignItems="center" justifyContent="center" fontSize="12px">👩</Box><Text fontSize="11px" color="#475569" fontWeight="medium">{t("kid.assistantLunaEnglish")}</Text></HStack>
                   <HStack spaceX={2.5}><Box w="24px" h="24px" borderRadius="full" bg="#E0F2FE" display="flex" alignItems="center" justifyContent="center" fontSize="12px">🦊</Box><Text fontSize="11px" color="#475569" fontWeight="medium">Leo (Khám phá)</Text></HStack>
                 </VStack>
                 <Box onClick={() => navigate("/assistants")} mt={2} px={3} py={1} bg="#F5F3FF" color="#7C3AED" borderRadius="full" fontSize="10px" fontWeight="bold" display="inline-block" alignSelf="flex-start" cursor="pointer" _hover={{ bg: "#EDE9FE" }}>

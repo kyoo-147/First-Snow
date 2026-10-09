@@ -38,7 +38,7 @@ export function ScreenCaptureProvider({ children }: { children: ReactNode }) {
   const startCapture = async () => {
     try {
       if (!wsService.getCapabilities().screen) {
-        const errMsg = 'Screen capture unavailable: server capability grant required (parent consent & safety policy)';
+        const errMsg = t('error.screenGrantRequired');
         setError(errMsg);
         toaster.create({
           title: errMsg,
