@@ -35,5 +35,26 @@
     "required": "Trường bắt buộc"
   },
   "returnHome": "Về trang chủ",
-  "childProfile": "Hồ sơ học sinh"
+  "childProfile": "Hồ sơ học sinh",
+  "apiErrors": {
+    "generic": "Đã xảy ra lỗi. Vui lòng thử lại sau.",
+    "connectionFailed": "Không thể kết nối tới dịch vụ. Vui lòng kiểm tra mạng và thử lại.",
+    "cancelled": "Yêu cầu đã bị hủy. Vui lòng thử lại.",
+    "VALIDATION_FAILED": "Thông tin cung cấp không hợp lệ. Vui lòng kiểm tra lại.",
+    "INVALID_CREDENTIALS": "Thông tin xác thực không chính xác.",
+    "UNAUTHORIZED": "Phiên làm việc đã hết hạn hoặc cần đăng nhập.",
+    "PARENT_SESSION_REQUIRED": "Cần có phụ huynh đăng nhập để tiếp tục.",
+    "FORBIDDEN": "Bạn không có quyền thực hiện thao tác này.",
+    "NOT_FOUND": "Không tìm thấy tài nguyên yêu cầu.",
+    "CONFLICT": "Dữ liệu bị xung đột hoặc đã tồn tại.",
+    "PROVIDER_UNAVAILABLE": "Dịch vụ trợ lý tạm thời không khả dụng. Vui lòng thử lại sau.",
+    "PROVIDER_ERROR": "Không nhận được phản hồi từ dịch vụ trợ lý. Vui lòng thử lại.",
+    "PROVIDER_UNSAFE_OUTPUT": "Trợ lý không thể đưa ra phản hồi an toàn. Vui lòng thử câu hỏi khác.",
+    "REAUTH_REQUIRED": "Vui lòng nhập mật khẩu phụ huynh để xác nhận thao tác.",
+    "INVALID_PASSWORD": "Mật khẩu xác nhận không chính xác.",
+    "CAPABILITY_UNAVAILABLE": "Tính năng này hiện chưa được hỗ trợ hoặc chưa khả dụng.",
+    "PREFERENCE_UNAVAILABLE": "Tùy chọn này hiện chưa thể lưu trong hệ thống.",
+    "WORKER_UNAVAILABLE": "Dịch vụ xử lý nền hiện không khả dụng.",
+    "INTERNAL": "Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau."
+  }
 }

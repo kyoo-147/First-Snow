@@ -27,7 +27,12 @@
   "error": {
     "noResponse": "Trợ lý chưa trả lời được. Hãy thử lại nhé!",
     "connectionFailed": "Không thể kết nối. Vui lòng kiểm tra mạng.",
-    "sessionExpired": "Phiên trò chuyện đã hết hạn."
+    "sessionExpired": "Phiên trò chuyện đã hết hạn.",
+    "providerUnavailable": "Trợ lý tạm thời không khả dụng. Bạn hãy thử lại sau nhé!",
+    "providerError": "Không nhận được phản hồi từ trợ lý. Hãy thử lại nhé!",
+    "providerUnsafeOutput": "Trợ lý không thể đưa ra phản hồi an toàn. Bạn hãy thử câu hỏi khác nhé!",
+    "failedToSave": "Không thể lưu tin nhắn. Vui lòng thử lại.",
+    "generic": "Đã xảy ra lỗi khi trò chuyện cùng trợ lý."
   },
   "talk": {
     "title": "Trò chuyện cùng AgentKid",
