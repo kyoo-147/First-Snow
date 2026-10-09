@@ -178,6 +178,7 @@
     "illustrationAlt": "Hình ảnh minh họa bài học",
     "returnToLessons": "Quay lại bài học",
     "failedToLoad": "Không thể tải bài học. Vui lòng kiểm tra kết nối và thử lại.",
-    "failedToComplete": "Chưa thể hoàn thành bài học. Vui lòng thử lại sau."
+    "failedToComplete": "Chưa thể hoàn thành bài học. Vui lòng thử lại sau.",
+    "orderingList": "Danh sách sắp xếp"
   }
 }

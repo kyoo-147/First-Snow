@@ -330,6 +330,10 @@ export default function CoursesPage(): React.JSX.Element {
                 </HStack>
 
                 <Box
+                  as="button"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={isLiked(lesson.id) ? t("kid.unlikeLesson", { title: T[lesson.title] || lesson.title }) : t("kid.likeLesson", { title: T[lesson.title] || lesson.title })}
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleLike(lesson.id);

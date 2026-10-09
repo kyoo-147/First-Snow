@@ -2,12 +2,17 @@ import { describe, it, expect, vi } from "vitest";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ProgressStrip } from "@/components/ui/progress-strip";
 import NotFound from "@/app/not-found";
+import RootLoading from "@/app/loading";
+import RootError from "@/app/error";
+import { AuthShell } from "@/components/auth/auth-shell";
 import { ChildProfileSelector } from "@/components/auth/child-profile-selector";
 import { ParentPrivacyScreen } from "@/components/pages/parent-privacy-screen";
 import { ParentTimelineScreen } from "@/components/pages/parent-timeline-screen";
 import { SimpleParentScreen } from "@/components/pages/simple-parent-screen";
+import { formatTranscriptStatusTiles } from "@/components/pages/parent-transcripts-screen";
 
 // Mock next/image and next/link
 vi.mock("next/image", () => ({
@@ -115,5 +120,51 @@ describe("Vietnamese-first Residual Regression Tests", () => {
     expect(html).toContain("45 phút");
     expect(html).toContain("Đang hoạt động");
     expect(html).toContain("2 người lớn");
+  });
+
+  it("EmptyState renders localized default title and role='status'", () => {
+    const html = renderToStaticMarkup(<EmptyState />);
+    expect(html).toContain('role="status"');
+    expect(html).toContain("Chưa có dữ liệu");
+  });
+
+  it("RootLoading renders accessible status role and Vietnamese loading label", () => {
+    const html = renderToStaticMarkup(<RootLoading />);
+    expect(html).toContain('role="status"');
+    expect(html).toContain('aria-busy="true"');
+    expect(html).toContain("Đang tải…");
+    expect(html).toContain('alt="Linh vật Snow"');
+  });
+
+  it("RootError renders accessible alert role and Vietnamese recovery copy", () => {
+    const html = renderToStaticMarkup(
+      <RootError error={new Error("Test crash")} reset={vi.fn()} />
+    );
+    expect(html).toContain('role="alert"');
+    expect(html).toContain("Đã xảy ra lỗi ngoài ý muốn");
+    expect(html).toContain("AgentKid gặp chút sự cố khi tải trang này. Hãy thử lại nhé.");
+    expect(html).toContain("Thử lại");
+    expect(html).toContain("Về trang chủ");
+  });
+
+  it("AuthShell renders localized mascot alt in Vietnamese when mascotSpeech is provided", () => {
+    const html = renderToStaticMarkup(
+      <AuthShell title="Đăng nhập" mode="neutral" mascotSpeech="Xin chào bạn!">
+        <div>Nội dung</div>
+      </AuthShell>
+    );
+    expect(html).toContain('alt="Linh vật Snow"');
+    expect(html).toContain("Xin chào bạn!");
+  });
+
+  it("formatTranscriptStatusTiles produces Vietnamese status labels", () => {
+    const tiles = formatTranscriptStatusTiles(
+      "ready",
+      { id: "sess-abcdef", messageCount: 5, firstAt: "2026-10-09T08:00:00.000Z" },
+      5
+    );
+    expect(tiles.latestSession.value).toContain("Phiên abcdef");
+    expect(tiles.storedTranscript.value).toBe("5 tin nhắn");
+    expect(tiles.storedTranscript.detail).toBe("Hồ sơ cho phiên");
   });
 });

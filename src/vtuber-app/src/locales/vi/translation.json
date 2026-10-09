@@ -337,6 +337,8 @@
     "lesson3Time": "12 phút",
     "lesson4Title": "Đi công viên",
     "lesson4Time": "15 phút",
+    "likeLesson": "Yêu thích bài học {{title}}",
+    "unlikeLesson": "Bỏ yêu thích bài học {{title}}",
     "mainMenu": "Menu chính",
     "quickSearch": "Tìm kiếm nhanh...",
     "levelLabel": "Cấp độ bé",

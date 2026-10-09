@@ -337,6 +337,8 @@
     "lesson3Time": "12m",
     "lesson4Title": "Going to the Park",
     "lesson4Time": "15m",
+    "likeLesson": "Favorite lesson {{title}}",
+    "unlikeLesson": "Unfavorite lesson {{title}}",
     "mainMenu": "Main Menu",
     "quickSearch": "Quick search...",
     "levelLabel": "Child level",

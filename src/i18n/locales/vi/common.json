@@ -70,5 +70,7 @@
     "title": "Không tìm thấy trang",
     "description": "Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.",
     "returnHome": "Về trang chủ"
-  }
+  },
+  "snowMascot": "Linh vật Snow",
+  "agentKid": "AgentKid"
 }

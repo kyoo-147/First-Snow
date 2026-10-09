@@ -21,9 +21,9 @@ function localDate(): string {
 async function readError(response: Response): Promise<string> {
   try {
     const body = await response.json();
-    return body?.error?.message ?? body?.message ?? `Request failed (${response.status})`;
+    return body?.error?.message ?? body?.message ?? t("common", "error");
   } catch {
-    return `Request failed (${response.status})`;
+    return t("common", "error");
   }
 }
 

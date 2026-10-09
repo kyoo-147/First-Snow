@@ -62,7 +62,7 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
           setError(
             err instanceof Error
               ? err.message
-              : "Failed to load child learning progress. Please try again."
+              : t("parent", "learningView.unableToLoad")
           );
           setIsLoading(false);
         }
@@ -129,14 +129,14 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
           <div className="grid gap-4 md:grid-cols-4">
             <StatusTile
               label={t("parent", "learningView.practiceTime")}
-              value={`${progress?.practiceTimeMinutes ?? 0} min`}
+              value={`${progress?.practiceTimeMinutes ?? 0} ${t("parent", "learningView.minutesUnit")}`}
               detail={t("parent", "learningView.recordedLearningTime")}
               icon={<Clock className="size-5 text-snow-primary" />}
             />
             <StatusTile
               label={t("parent", "learningView.lessonsCompleted")}
               value={`${progress?.lessonsCompleted ?? attempts.filter((a) => a.status === "completed").length}`}
-              detail={progress?.totalLessons ? `of ${progress.totalLessons} available` : "Total finished"}
+              detail={progress?.totalLessons ? t("parent", "learningView.ofAvailable", { total: progress.totalLessons }) : t("parent", "learningView.totalFinished")}
               icon={<BookOpen className="size-5 text-snow-primary" />}
               tone="bg-snow-ice"
             />
@@ -238,7 +238,7 @@ export function ParentLearningView({ childId, childName = "Child" }: ParentLearn
                         )}
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-black text-snow-primary-dark">
-                            {att.lessonTitle || `Lesson ${att.lessonId.slice(0, 8)}`}
+                            {att.lessonTitle || t("parent", "learningView.lesson", { id: att.lessonId.slice(0, 8) })}
                           </p>
                           <p className="text-xs font-semibold text-snow-muted">
                             {att.status === "completed"

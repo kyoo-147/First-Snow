@@ -408,13 +408,13 @@ export function ParentPrivacyScreen() {
       <DataExportDialog
         isOpen={isExportOpen}
         onClose={() => setIsExportOpen(false)}
-        childName="your household"
+        childName={t("parent", "safety.export.household")}
       />
 
       <DeletionRequestDialog
         isOpen={isDeletionOpen}
         onClose={() => setIsDeletionOpen(false)}
-        childName="your household"
+        childName={t("parent", "safety.export.household")}
       />
     </ParentPageFrame>
   );

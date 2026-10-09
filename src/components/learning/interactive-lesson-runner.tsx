@@ -559,7 +559,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
                     : defaultList;
 
                   return (
-                    <div className="space-y-2.5" role="list" aria-label="Ordering list">
+                    <div className="space-y-2.5" role="list" aria-label={t("learning", "runner.orderingList")}>
                       {currentOrder.map((optId, idx) => {
                         const opt = options.find((o) => o.id === optId);
                         if (!opt) return null;

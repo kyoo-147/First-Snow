@@ -258,7 +258,7 @@ export function ParentDashboard() {
     );
   }
 
-  const childName = selectedChild?.name ?? "Child";
+  const childName = selectedChild?.name ?? t("parent", "dashboard.defaultChildName");
 
   return (
     <ParentPageFrame>
@@ -296,7 +296,7 @@ export function ParentDashboard() {
                     )}
                   </div>
                   <p className="snow-body-small snow-font-readable font-bold text-snow-muted">
-                    {selectedChild.age ? `Age ${selectedChild.age}` : t("parent", "dashboard.ageNotSet")}{" "}
+                    {selectedChild.age ? t("parent", "dashboard.ageYears", { age: selectedChild.age }) : t("parent", "dashboard.ageNotSet")}{" "}
                     {selectedChild.grade ? `• ${selectedChild.grade}` : ""}
                   </p>
                 </div>

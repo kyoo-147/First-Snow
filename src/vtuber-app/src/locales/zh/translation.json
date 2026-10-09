@@ -337,6 +337,8 @@
     "lesson3Time": "12分钟",
     "lesson4Title": "去公园",
     "lesson4Time": "15分钟",
+    "likeLesson": "收藏课程 {{title}}",
+    "unlikeLesson": "取消收藏课程 {{title}}",
     "mainMenu": "主菜单",
     "quickSearch": "快速搜索...",
     "levelLabel": "孩子等级",

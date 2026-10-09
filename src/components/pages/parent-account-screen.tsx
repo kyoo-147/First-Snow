@@ -35,7 +35,7 @@ export function ParentAccountScreen() {
       setCapabilities(result.capabilities);
       setDisplayName(result.account.displayName);
     } catch (caught) {
-      setError(messageFor(caught, "Account details could not be loaded."));
+      setError(messageFor(caught, t("parent", "account.errorLoadAccount")));
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +46,7 @@ export function ParentAccountScreen() {
     try {
       setSessions(await getAccountSessions());
     } catch (caught) {
-      setError(messageFor(caught, "Active sessions could not be loaded."));
+      setError(messageFor(caught, t("parent", "account.errorLoadSessions")));
     } finally {
       setIsLoadingSessions(false);
     }
@@ -69,7 +69,7 @@ export function ParentAccountScreen() {
       setConfirmRevokeOthers(false);
       await loadSessions();
     } catch (caught) {
-      setError(messageFor(caught, "Other sessions could not be revoked."));
+      setError(messageFor(caught, t("parent", "account.errorRevokeOthers")));
     } finally {
       setSessionAction(null);
     }
@@ -85,7 +85,7 @@ export function ParentAccountScreen() {
       setConfirmSessionId(null);
       await loadSessions();
     } catch (caught) {
-      setError(messageFor(caught, "That session could not be revoked."));
+      setError(messageFor(caught, t("parent", "account.errorRevokeSession")));
     } finally {
       setSessionAction(null);
     }
@@ -102,7 +102,7 @@ export function ParentAccountScreen() {
       setDisplayName(result.account.displayName);
       setSuccess(result.message);
     } catch (caught) {
-      setError(messageFor(caught, "Profile changes could not be saved."));
+      setError(messageFor(caught, t("parent", "account.errorSaveProfile")));
     } finally {
       setIsSaving(false);
     }
@@ -118,7 +118,7 @@ export function ParentAccountScreen() {
     setError(null);
     setSuccess(null);
     if (newPassword !== confirmPassword) {
-      setError("New password confirmation does not match.");
+      setError(t("parent", "account.passwordMismatch"));
       return;
     }
     setIsChangingPassword(true);
@@ -127,7 +127,7 @@ export function ParentAccountScreen() {
       form.reset();
       setSuccess(result.message);
     } catch (caught) {
-      setError(messageFor(caught, "Password could not be changed."));
+      setError(messageFor(caught, t("parent", "account.errorChangePassword")));
     } finally {
       setIsChangingPassword(false);
     }
@@ -224,7 +224,7 @@ export function ParentAccountScreen() {
 
 function messageFor(error: unknown, fallback: string) { return error instanceof AccountApiError ? error.message : fallback; }
 function deviceLabel(userAgent: string | null) {
-  if (!userAgent) return "Unknown device";
+  if (!userAgent) return t("parent", "account.unknownDevice");
   const browser = /Edg\//.test(userAgent) ? "Edge" : /Chrome\//.test(userAgent) ? "Chrome" : /Firefox\//.test(userAgent) ? "Firefox" : /Safari\//.test(userAgent) ? "Safari" : "Browser";
   const platform = /Windows/.test(userAgent) ? "Windows" : /Macintosh|Mac OS X/.test(userAgent) ? "macOS" : /Android/.test(userAgent) ? "Android" : /iPhone|iPad|iOS/.test(userAgent) ? "iOS" : /Linux/.test(userAgent) ? "Linux" : "device";
   return `${browser} on ${platform}`;

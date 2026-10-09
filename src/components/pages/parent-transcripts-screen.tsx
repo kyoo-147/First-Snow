@@ -57,18 +57,18 @@ export function formatTranscriptStatusTiles(
     latestSession: {
       value: isReady
         ? activeSession
-          ? `Session ${activeSession.id.slice(-6)}`
-          : "No sessions"
+          ? `${t("parent", "transcripts.session")} ${activeSession.id.slice(-6)}`
+          : t("parent", "transcripts.noSessions")
         : "—",
       detail: isReady
         ? activeSession
           ? formatSnowDateTime(activeSession.firstAt)
-          : "No session records"
-        : "Status unavailable",
+          : t("parent", "transcripts.noSessionRecords")
+        : t("parent", "transcripts.statusUnavailable"),
     },
     storedTranscript: {
-      value: isReady ? `${transcriptsCount} messages` : "—",
-      detail: isReady ? "Records for session" : "Status unavailable",
+      value: isReady ? t("parent", "transcripts.messagesCount", { count: transcriptsCount }) : "—",
+      detail: isReady ? t("parent", "transcripts.recordsForSession") : t("parent", "transcripts.statusUnavailable"),
     },
   };
 }
@@ -93,7 +93,7 @@ function ParentTranscriptsContent({
 
   const handleFetch = async () => {
     if (!childId || !childId.trim()) {
-      setErrorMessage("childId is required to fetch transcripts");
+      setErrorMessage(t("parent", "transcripts.errorChildId"));
       setStatus("error");
       return;
     }
@@ -116,7 +116,7 @@ function ParentTranscriptsContent({
           ? e.message
           : e instanceof Error
             ? e.message
-            : "Failed to load transcripts",
+            : t("parent", "transcripts.errorLoad"),
       );
       setStatus("error");
     }
@@ -128,7 +128,7 @@ function ParentTranscriptsContent({
     async function loadTranscripts() {
       if (!childId || !childId.trim()) {
         if (cancelled) return;
-        setErrorMessage("childId is required to fetch transcripts");
+        setErrorMessage(t("parent", "transcripts.errorChildId"));
         setStatus("error");
         return;
       }
@@ -152,7 +152,7 @@ function ParentTranscriptsContent({
             ? e.message
             : e instanceof Error
               ? e.message
-              : "Failed to load transcripts",
+              : t("parent", "transcripts.errorLoad"),
         );
         setStatus("error");
       }

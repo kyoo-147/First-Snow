@@ -82,7 +82,7 @@ export function AuthShell({
               <div className="relative size-14 shrink-0 overflow-hidden rounded-full border-2 border-snow-border bg-snow-primary-soft shadow-[var(--shadow-card)]">
                 <Image
                   src="/images/snow-avatar-v2.png"
-                  alt="Snow Mascot"
+                  alt={t("common", "snowMascot")}
                   fill
                   className="object-cover"
                   priority

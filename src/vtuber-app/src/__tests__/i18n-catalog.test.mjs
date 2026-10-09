@@ -123,6 +123,7 @@ test('wired VTuber components use the i18next translation hook', () => {
     'components/kid/pages/AiWriterPage.tsx',
     'components/kid/pages/AnalyticsPage.tsx',
     'components/kid/pages/AssistantsPage.tsx',
+    'components/kid/pages/CoursesPage.tsx',
     'components/kid/pages/DashboardPage.tsx',
     'components/kid/pages/DocumentsPage.tsx',
     'components/kid/pages/EventsPage.tsx',

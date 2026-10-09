@@ -12,6 +12,8 @@
     "dayTitle": "Ngày của {{name}}",
     "dayDesc": "Góc nhìn hàng ngày bình yên về cách {{name}} đã học, phản hồi và tham gia các phiên hôm nay cùng AgentKid.",
     "ageNotSet": "Chưa đặt tuổi",
+    "ageYears": "{{age}} tuổi",
+    "defaultChildName": "Học sinh",
     "review": "Đánh giá",
     "openApp": "Mở ứng dụng",
     "selectChild": "Chọn trẻ",
@@ -126,6 +128,7 @@
       "dialogTitle": "Xuất dữ liệu của trẻ",
       "dialogDesc": "Chọn định dạng và danh mục dữ liệu để đưa vào tệp lưu trữ. Việc tạo tệp lưu trữ lớn có thể mất vài phút.",
       "defaultChildName": "trẻ",
+      "household": "gia đình của bạn",
       "target": "Dữ liệu đích: lịch sử học tập và bản ghi của {{name}}",
       "closeAria": "Đóng hộp thoại xuất",
       "formatLabel": "Định dạng lưu trữ",
@@ -571,7 +574,15 @@
     "accountUnavailable": "Tài khoản không khả dụng",
     "noAccountData": "Không có dữ liệu tài khoản nào được tải.",
     "tryAgain": "Thử lại",
-    "loadingAccountDetails": "Đang tải chi tiết tài khoản"
+    "loadingAccountDetails": "Đang tải chi tiết tài khoản",
+    "errorLoadAccount": "Không thể tải thông tin chi tiết tài khoản.",
+    "errorLoadSessions": "Không thể tải danh sách phiên hoạt động.",
+    "errorRevokeOthers": "Không thể thu hồi các phiên khác.",
+    "errorRevokeSession": "Không thể thu hồi phiên đó.",
+    "errorSaveProfile": "Không thể lưu các thay đổi hồ sơ.",
+    "passwordMismatch": "Xác nhận mật khẩu mới không khớp.",
+    "errorChangePassword": "Không thể đổi mật khẩu.",
+    "unknownDevice": "Thiết bị không xác định"
   },
   "routines": {
     "routineTitle": "Tiêu đề lịch trình",
@@ -1101,6 +1112,7 @@
     "completed": "�� ho�n th�nh",
     "completedScore": "�� ho�n th�nh � �i?m: {{score}}%",
     "inProgress": "�ang ti?n h�nh",
-    "lesson": "B�i h?c {{id}}"
+    "lesson": "B�i h?c {{id}}",
+    "minutesUnit": "phút"
   }
 }
