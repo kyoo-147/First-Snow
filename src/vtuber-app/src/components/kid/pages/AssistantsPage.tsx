@@ -7,6 +7,7 @@ const momoMascot = "./images/momo_mascot.png";
 interface Assistant {
   id: string;
   name: string;
+  nameKey: string;
   avatar: string;
   roleKey: string;
   color: string;
@@ -17,6 +18,7 @@ const ASSISTANTS: Assistant[] = [
   {
     id: "coteacher",
     name: "AI Coteacher",
+    nameKey: "kid.assistant1Name",
     avatar: momoMascot,
     roleKey: "kid.assistant1Role",
     color: "#6366F1",
@@ -25,6 +27,7 @@ const ASSISTANTS: Assistant[] = [
   {
     id: "commoncore",
     name: "Common Core Bot",
+    nameKey: "kid.assistant2Name",
     avatar: momoMascot,
     roleKey: "kid.assistant2Role",
     color: "#E11D48",
@@ -33,6 +36,7 @@ const ASSISTANTS: Assistant[] = [
   {
     id: "curriculum",
     name: "Curriculum Advisor",
+    nameKey: "kid.assistant3Name",
     avatar: momoMascot,
     roleKey: "kid.assistant3Role",
     color: "#06B6D4",
@@ -76,7 +80,7 @@ export default function AssistantsPage(): React.JSX.Element {
                   <img src={ass.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                 </Box>
                 <VStack spaceY={0} alignItems="flex-start">
-                  <Heading size="xs" color="#0F172A" fontWeight="bold">{ass.name}</Heading>
+                  <Heading size="xs" color="#0F172A" fontWeight="bold">{t(ass.nameKey)}</Heading>
                   <Text fontSize="10px" color={ass.color} fontWeight="bold">{t(ass.roleKey)}</Text>
                 </VStack>
               </HStack>

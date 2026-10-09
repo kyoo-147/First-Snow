@@ -4,15 +4,15 @@ import { SnowCard } from "@/components/ui/snow-card";
 
 export function LibraryScreen() {
   const favorites = [
-    { id: 1, title: "The Brave Little Fox", type: "Story", time: "5 min", color: "text-snow-primary", bg: "bg-snow-primary/10", img: "/images/lesson-story.png" },
-    { id: 2, title: "Deep Belly Breaths", type: "Calm", time: "3 min", color: "text-snow-aqua", bg: "bg-snow-aqua/10", img: "/images/lesson-story.png" },
-    { id: 3, title: "Magic Numbers", type: "Math", time: "10 min", color: "text-snow-aqua", bg: "bg-snow-ice", img: "/images/lesson-story.png" },
+    { id: 1, title: "Chú cáo nhỏ dũng cảm", type: "Câu chuyện", time: "5 phút", color: "text-snow-primary", bg: "bg-snow-primary/10", img: "/images/lesson-story.png" },
+    { id: 2, title: "Hơi thở sâu êm dịu", type: "Thư giãn", time: "3 phút", color: "text-snow-aqua", bg: "bg-snow-aqua/10", img: "/images/lesson-story.png" },
+    { id: 3, title: "Những con số kỳ diệu", type: "Toán học", time: "10 phút", color: "text-snow-aqua", bg: "bg-snow-ice", img: "/images/lesson-story.png" },
   ];
 
   const recent = [
-    { id: 1, title: "Counting Stars", date: "Yesterday", icon: <Star className="size-4" /> },
-    { id: 2, title: "Feelings Check-in", date: "2 days ago", icon: <Heart className="size-4" /> },
-    { id: 3, title: "Morning Stretch", date: "3 days ago", icon: <Clock className="size-4" /> },
+    { id: 1, title: "Đếm những vì sao", date: "Hôm qua", icon: <Star className="size-4" /> },
+    { id: 2, title: "Kiểm tra cảm xúc", date: "2 ngày trước", icon: <Heart className="size-4" /> },
+    { id: 3, title: "Vươn vai buổi sáng", date: "3 ngày trước", icon: <Clock className="size-4" /> },
   ];
 
   return (
@@ -20,16 +20,16 @@ export function LibraryScreen() {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div>
-          <h1 className="text-4xl font-black text-snow-primary-dark mb-2">My Library</h1>
-          <p className="text-sm font-bold text-snow-muted">Your favorite stories and saved activities.</p>
+          <h1 className="text-4xl font-black text-snow-primary-dark mb-2">Thư viện của bé</h1>
+          <p className="text-sm font-bold text-snow-muted">Những câu chuyện yêu thích và hoạt động đã lưu.</p>
         </div>
         
         {/* Search Bar */}
         <div className="hidden md:flex items-center bg-white rounded-full px-4 py-2 border-2 border-snow-border focus-within:border-snow-primary/50 transition-colors shadow-sm w-64">
           <Search className="size-4 text-snow-muted mr-2" />
-          <input 
-            type="text" 
-            placeholder="Search..." 
+          <input
+            type="text"
+            placeholder="Tìm kiếm..."
             className="bg-transparent border-none outline-none text-sm font-bold text-snow-primary-dark w-full placeholder:text-snow-muted"
           />
         </div>
@@ -44,10 +44,10 @@ export function LibraryScreen() {
           <section>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-black text-snow-primary-dark flex items-center gap-2">
-                <Bookmark className="size-5 text-snow-warning fill-snow-warning" /> Favorites
+                <Bookmark className="size-5 text-snow-warning fill-snow-warning" /> Yêu thích
               </h2>
               <button className="text-sm font-bold text-snow-primary flex items-center hover:opacity-80">
-                See all <ChevronRight className="size-4 ml-1" />
+                Xem tất cả <ChevronRight className="size-4 ml-1" />
               </button>
             </div>
             
@@ -75,14 +75,14 @@ export function LibraryScreen() {
           {/* Collections Grid */}
           <section className="mt-4">
             <h2 className="text-xl font-black text-snow-primary-dark mb-4 flex items-center gap-2">
-              <Folder className="size-5 text-snow-primary" /> Collections
+              <Folder className="size-5 text-snow-primary" /> Bộ sưu tập
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { title: "Stories", icon: BookOpen, count: "12", bg: "bg-snow-lavender" },
-                { title: "Calm", icon: Wind, count: "8", bg: "bg-snow-ice" },
-                { title: "Math", icon: Calculator, count: "15", bg: "bg-snow-primary-soft" },
-                { title: "Games", icon: Gamepad2, count: "6", bg: "bg-snow-cream" },
+                { title: "Câu chuyện", icon: BookOpen, count: "12", bg: "bg-snow-lavender" },
+                { title: "Thư giãn", icon: Wind, count: "8", bg: "bg-snow-ice" },
+                { title: "Toán học", icon: Calculator, count: "15", bg: "bg-snow-primary-soft" },
+                { title: "Trò chơi", icon: Gamepad2, count: "6", bg: "bg-snow-cream" },
               ].map((cat, i) => {
                 const Icon = cat.icon;
 
@@ -90,7 +90,7 @@ export function LibraryScreen() {
                 <SnowCard key={i} className={`p-4 flex flex-col items-center justify-center text-center cursor-pointer hover:scale-105 transition-transform ${cat.bg} border-none`}>
                   <Icon className="mb-2 size-7 text-snow-primary" />
                   <h3 className="text-sm font-black text-snow-primary-dark">{cat.title}</h3>
-                  <p className="text-[10px] font-bold text-snow-primary-dark/60 mt-1">{cat.count} items</p>
+                  <p className="text-[10px] font-bold text-snow-primary-dark/60 mt-1">{cat.count} mục</p>
                 </SnowCard>
               );
               })}
@@ -107,19 +107,19 @@ export function LibraryScreen() {
             </div>
             <div className="relative z-10">
               <span className="inline-flex items-center gap-1 bg-white/20 px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider mb-3">
-                Continue
+                Tiếp tục
               </span>
-              <h3 className="text-xl font-black mb-2 leading-tight">The Magic Treehouse</h3>
-              <p className="text-sm font-semibold text-white/80 mb-6">You stopped at Page 4. Want to keep reading?</p>
+              <h3 className="text-xl font-black mb-2 leading-tight">Ngôi nhà trên cây kỳ diệu</h3>
+              <p className="text-sm font-semibold text-white/80 mb-6">Bé đã dừng lại ở trang 4. Bé có muốn đọc tiếp không?</p>
               <button className="w-full bg-white text-snow-primary-dark font-black py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:scale-105 transition-transform">
-                Resume <Play className="size-4" />
+                Đọc tiếp <Play className="size-4" />
               </button>
             </div>
           </SnowCard>
 
           {/* Recently Viewed */}
           <SnowCard className="p-5 flex-1">
-            <h2 className="text-sm font-black text-snow-primary-dark mb-4">Recently Viewed</h2>
+            <h2 className="text-sm font-black text-snow-primary-dark mb-4">Xem gần đây</h2>
             <div className="space-y-3">
               {recent.map((item) => (
                 <div key={item.id} className="flex items-center gap-3 p-2 hover:bg-snow-surface rounded-xl cursor-pointer transition-colors">

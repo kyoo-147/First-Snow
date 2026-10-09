@@ -9,17 +9,17 @@ export function CreateStoryScreen() {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
   const steps = [
-    { id: 1, title: "Who" },
-    { id: 2, title: "Where" },
-    { id: 3, title: "Problem" },
-    { id: 4, title: "Solution" },
-    { id: 5, title: "Read" },
+    { id: 1, title: "Nhân vật" },
+    { id: 2, title: "Nơi chốn" },
+    { id: 3, title: "Thử thách" },
+    { id: 4, title: "Giải pháp" },
+    { id: 5, title: "Đọc truyện" },
   ];
 
   const characters = [
-    { id: 1, title: "A Brave Fox", img: "/images/lesson-story.png", bg: "bg-snow-primary/10" },
-    { id: 2, title: "A Baby Penguin", img: "/images/lesson-math.png", bg: "bg-snow-warning/10" },
-    { id: 3, title: "Two Kind Friends", img: "/images/lesson-social.png", bg: "bg-snow-aqua/10" },
+    { id: 1, title: "Chú cáo dũng cảm", img: "/images/lesson-story.png", bg: "bg-snow-primary/10" },
+    { id: 2, title: "Chú chim cánh cụt nhỏ", img: "/images/lesson-math.png", bg: "bg-snow-warning/10" },
+    { id: 3, title: "Hai người bạn tốt bụng", img: "/images/lesson-social.png", bg: "bg-snow-aqua/10" },
   ];
 
   return (
@@ -63,9 +63,9 @@ export function CreateStoryScreen() {
         <div className="text-center mb-10 mt-4">
           <div className="inline-flex items-center gap-2 px-4 py-1 bg-snow-primary/10 rounded-full mb-4">
             <Sparkles className="size-4 text-snow-primary" />
-            <span className="text-xs font-black text-snow-primary uppercase tracking-wider">Step {currentStep}</span>
+            <span className="text-xs font-black text-snow-primary uppercase tracking-wider">Bước {currentStep}</span>
           </div>
-        <h1 className="text-4xl font-black text-snow-primary-dark md:text-5xl">Who is the hero of our story?</h1>
+        <h1 className="text-4xl font-black text-snow-primary-dark md:text-5xl">Ai là người hùng của câu chuyện?</h1>
         </div>
 
         {/* Options Grid */}
@@ -113,7 +113,7 @@ export function CreateStoryScreen() {
           }`}
           disabled={currentStep === 1}
         >
-          <ChevronLeft className="size-5" /> Go Back
+          <ChevronLeft className="size-5" /> Quay lại
         </button>
         
         <button 
@@ -125,7 +125,7 @@ export function CreateStoryScreen() {
           }`}
           disabled={!selectedOption}
         >
-          Next Step <ChevronRight className="size-5" />
+          Bước tiếp theo <ChevronRight className="size-5" />
         </button>
       </div>
     </div>

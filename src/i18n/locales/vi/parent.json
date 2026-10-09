@@ -450,6 +450,7 @@
   },
   "privacy": {
     "title": "Quyền riêng tư & Quản lý dữ liệu",
+    "eyebrow": "An toàn & Quản trị",
     "notice": "Kiểm soát truy cập dữ liệu và phần cứng.",
     "syncStatus": "Đồng bộ trạng thái",
     "fetchError": "Không thể tải tùy chọn quyền riêng tư từ dịch vụ an toàn.",
@@ -466,7 +467,11 @@
     "allowed": "Cho phép",
     "parentGating": "Kiểm soát bởi phụ huynh",
     "activeConsents": "Quyền đang hoạt động",
+    "activeConsentsCount": "{{count}} trên 4",
     "activeConsentsDetail": "Mic, camera, tầm nhìn, màn hình",
+    "toggleAria": "Bật/tắt {{name}}",
+    "selectAria": "Chọn {{name}}",
+    "daysUnit": "{{count}} ngày",
     "hardwareAndStorage": "Phần cứng & Lưu trữ",
     "hardwareDesc": "Quản lý truy cập phần cứng và lưu trữ dữ liệu.",
     "fetching": "Đang tải...",
@@ -696,7 +701,80 @@
     "safetyLocks": "Khóa an toàn",
     "careTeam": "Đội ngũ chăm sóc",
     "parentNote": "Ghi chú phụ huynh",
-    "parentNoteDesc": "AgentKid tránh dùng nhãn y tế. Hãy xem xét với Minh khi có thể."
+    "parentNoteDesc": "AgentKid tránh dùng nhãn y tế. Hãy xem xét với Minh khi có thể.",
+    "rows": {
+      "settings": {
+        "notifications": {
+          "title": "Tùy chọn thông báo",
+          "desc": "Chọn cập nhật qua email và thông báo đẩy về tiến trình và an toàn.",
+          "status": "Đã bật email và thông báo đẩy"
+        },
+        "verification": {
+          "title": "Xác thực phụ huynh",
+          "desc": "Các thay đổi nhạy cảm yêu cầu mã PIN phụ huynh trước khi lưu.",
+          "status": "Được bảo vệ"
+        },
+        "routines": {
+          "title": "Lịch trình sinh hoạt",
+          "desc": "Học tập sau giờ học và thư giãn trước giờ ngủ đang hoạt động.",
+          "status": "2 lịch trình đã đặt"
+        },
+        "careTeam": {
+          "title": "Chia sẻ với người chăm sóc",
+          "desc": "Chia sẻ bản tóm tắt tiến trình nhẹ nhàng với người lớn đáng tin cậy.",
+          "status": "2 thành viên đã kết nối"
+        }
+      },
+      "safety": {
+        "safeMode": {
+          "title": "Chế độ an toàn cho bé",
+          "desc": "Lọc nội dung không phù hợp và giữ chế độ trẻ em đơn giản.",
+          "status": "Bật"
+        },
+        "voiceAccess": {
+          "title": "Quyền truy cập giọng nói",
+          "desc": "Tương tác giọng nói được giới hạn ở các câu hỏi an toàn cho bé.",
+          "status": "Đã kích hoạt"
+        },
+        "supportLanguage": {
+          "title": "Ngôn ngữ hỗ trợ",
+          "desc": "AgentKid sử dụng ngôn ngữ khuyến khích, dựa trên quan sát.",
+          "status": "Bình tĩnh"
+        },
+        "downloadData": {
+          "title": "Tải xuống dữ liệu",
+          "desc": "Xuất tóm tắt tiến trình và quyền riêng tư để xem xét.",
+          "status": "Khả dụng"
+        }
+      },
+      "reports": {
+        "learningReport": {
+          "title": "Báo cáo học tập",
+          "desc": "Xem lại bài học gần đây, luyện đọc và xu hướng hoàn thành.",
+          "status": "Đã cập nhật hôm nay"
+        },
+        "observationNotes": {
+          "title": "Ghi chú quan sát",
+          "desc": "Xem những gì AgentKid nhận thấy bằng ngôn ngữ thân thiện với phụ huynh.",
+          "status": "2 ghi chú mới"
+        },
+        "progressExport": {
+          "title": "Xuất tiến trình",
+          "desc": "Tải xuống bản tóm tắt tuần thân thiện với phụ huynh của bé.",
+          "status": "PDF đã sẵn sàng"
+        },
+        "careTeam": {
+          "title": "Đội ngũ chăm sóc",
+          "desc": "Quản lý người lớn đáng tin cậy có thể xem tóm tắt phụ huynh.",
+          "status": "2 người lớn"
+        }
+      }
+    },
+    "metrics": {
+      "screenTimeValue": "45 phút",
+      "safetyLocksValue": "Đang hoạt động",
+      "careTeamValue": "2 người lớn"
+    }
   },
   "alertDetail": {
     "loading": "Đang tải đánh giá an toàn…",

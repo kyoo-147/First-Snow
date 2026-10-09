@@ -1094,15 +1094,15 @@ export default function ModeSelectionScreen({
                           <VStack spaceY={2} alignItems="stretch" fontSize="10px" fontWeight="semibold" color="#475569">
                             <HStack spaceX={1.5} cursor="pointer" _hover={{ color: "#7C3AED" }}>
                               <span style={{ color: "#7C3AED" }}>👤</span>
-                              <Text>Coteacher</Text>
+                              <Text>{t("kid.assistant1Name")}</Text>
                             </HStack>
                             <HStack spaceX={1.5} cursor="pointer" _hover={{ color: "#E11D48" }}>
                               <span style={{ color: "#E11D48" }}>👤</span>
-                              <Text>Common Core</Text>
+                              <Text>{t("kid.assistant2Name")}</Text>
                             </HStack>
                             <HStack spaceX={1.5} cursor="pointer" _hover={{ color: "#06B6D4" }}>
                               <span style={{ color: "#06B6D4" }}>👤</span>
-                              <Text>Curriculum</Text>
+                              <Text>{t("kid.assistant3Name")}</Text>
                             </HStack>
                           </VStack>
 

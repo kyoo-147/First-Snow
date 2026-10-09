@@ -45,7 +45,7 @@ export function ChildProfileSelector({
           </h2>
           <p className="snow-body-small snow-font-readable mt-1.5 text-snow-muted font-semibold max-w-[360px] mx-auto">
             {authErrorMessage ||
-              "Please sign in with your guardian account to load family child profiles and secret PINs."}
+              t("auth", "child.profileSelector.guardianRequiredNotice")}
           </p>
         </div>
         <div className="pt-2 flex flex-col gap-2.5">

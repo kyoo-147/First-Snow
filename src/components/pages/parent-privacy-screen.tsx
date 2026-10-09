@@ -39,8 +39,8 @@ import { cn } from "@/lib/utils";
 
 interface PrivacyItemConfig {
   key: keyof PrivacySettingsData;
-  title: string;
-  detail: string;
+  titleKey: "microphoneAccess" | "cameraAccess" | "cameraPreviewSetting" | "visionAiAccess" | "screenCaptureAccess" | "transcriptStorageDays" | "emotionTimelineStorage";
+  detailKey: "microphoneAccessDesc" | "cameraAccessDesc" | "cameraPreviewSettingDesc" | "visionAiAccessDesc" | "screenCaptureAccessDesc" | "transcriptStorageDaysDesc" | "emotionTimelineStorageDesc";
   icon: LucideIcon;
   kind: "toggle" | "select";
   options?: number[];
@@ -49,51 +49,51 @@ interface PrivacyItemConfig {
 const PRIVACY_ITEMS: PrivacyItemConfig[] = [
   {
     key: "microphoneAccess",
-    title: "Microphone Voice Access",
-    detail: "Available exclusively during child-initiated speech turns.",
+    titleKey: "microphoneAccess",
+    detailKey: "microphoneAccessDesc",
     icon: Mic,
     kind: "toggle",
   },
   {
     key: "cameraAccess",
-    title: "Camera Video Access",
-    detail: "Parent-controlled and off by default. Requires active guardian consent.",
+    titleKey: "cameraAccess",
+    detailKey: "cameraAccessDesc",
     icon: Camera,
     kind: "toggle",
   },
   {
     key: "cameraPreview",
-    title: "Camera Video Preview",
-    detail: "Hidden unless a guardian explicitly enables the visual self-preview.",
+    titleKey: "cameraPreviewSetting",
+    detailKey: "cameraPreviewSettingDesc",
     icon: VideoOff,
     kind: "toggle",
   },
   {
     key: "visionAiAccess",
-    title: "Vision AI Analysis",
-    detail: "Visual scene and flashcard reasoning is disabled for everyday chat sessions.",
+    titleKey: "visionAiAccess",
+    detailKey: "visionAiAccessDesc",
     icon: Eye,
     kind: "toggle",
   },
   {
     key: "screenCaptureAccess",
-    title: "Screen Homework Review",
-    detail: "Screen sharing is active only during guided homework and interactive learning.",
+    titleKey: "screenCaptureAccess",
+    detailKey: "screenCaptureAccessDesc",
     icon: Monitor,
     kind: "toggle",
   },
   {
     key: "transcriptStorageDays",
-    title: "Transcript Retention Window",
-    detail: "Conversation transcripts are retained for the selected duration before secure purge.",
+    titleKey: "transcriptStorageDays",
+    detailKey: "transcriptStorageDaysDesc",
     icon: FileCheck,
     kind: "select",
     options: [7, 14, 30, 60, 90],
   },
   {
     key: "emotionTimelineStorage",
-    title: "Emotion Timeline Observation",
-    detail: "Recorded using calm, non-clinical observation phrasing for parent review.",
+    titleKey: "emotionTimelineStorage",
+    detailKey: "emotionTimelineStorageDesc",
     icon: Heart,
     kind: "toggle",
   },
@@ -143,7 +143,7 @@ export function ParentPrivacyScreen() {
         setErrorCode(err.code);
         setRequestId(err.requestId);
       } else {
-        setErrorMessage("Failed to load privacy preferences from the safety service.");
+        setErrorMessage(t("parent", "privacy.fetchError"));
       }
     } finally {
       setIsLoading(false);
@@ -166,17 +166,17 @@ export function ParentPrivacyScreen() {
       const updated = await updatePrivacySettings({ [key]: nextValue });
       // Update with server response (no fake success)
       setSettings(updated);
-      setSaveSuccessMessage(`Updated ${key} successfully.`);
+      setSaveSuccessMessage(t("parent", "privacy.updateSuccess", { key: String(key) }));
       setTimeout(() => setSaveSuccessMessage(null), 3000);
     } catch (err: unknown) {
       // Rollback optimistic update on error
       setSettings(settings);
       if (err instanceof SafetyApiError) {
-        setErrorMessage(`Failed to update ${key}: ${err.message}`);
+        setErrorMessage(err.message);
         setErrorCode(err.code);
         setRequestId(err.requestId);
       } else {
-        setErrorMessage(`Failed to update ${key}. Change was rolled back.`);
+        setErrorMessage(t("parent", "privacy.updateFailed", { key: String(key) }));
       }
     } finally {
       setMutatingKey(null);
@@ -197,7 +197,7 @@ export function ParentPrivacyScreen() {
     try {
       const updated = await updatePrivacySettings({ [key]: value });
       setSettings(updated);
-      setSaveSuccessMessage(`Updated retention window to ${value} days.`);
+      setSaveSuccessMessage(t("parent", "privacy.retentionSuccess", { days: value }));
       setTimeout(() => setSaveSuccessMessage(null), 3000);
     } catch (err: unknown) {
       setSettings((prev) => (prev ? { ...prev, [key]: previousValue } : prev));
@@ -206,7 +206,7 @@ export function ParentPrivacyScreen() {
         setErrorCode(err.code);
         setRequestId(err.requestId);
       } else {
-        setErrorMessage("Failed to update retention days.");
+        setErrorMessage(t("parent", "privacy.retentionFailed"));
       }
     } finally {
       setMutatingKey(null);
@@ -216,7 +216,7 @@ export function ParentPrivacyScreen() {
   return (
     <ParentPageFrame>
       <PageHeader
-        eyebrow="Safety & Governance"
+        eyebrow={t("parent", "privacy.eyebrow")}
         title={t("parent", "privacy.title")}
         description={t("parent", "privacy.notice")}
         action={
@@ -227,7 +227,7 @@ export function ParentPrivacyScreen() {
             className="text-xs font-bold"
           >
             <RefreshCw className={cn("mr-1.5 size-3.5", isLoading && "animate-spin")} />
-            Sync Status
+            {t("parent", "privacy.syncStatus")}
           </SnowButton>
         }
       />
@@ -253,22 +253,22 @@ export function ParentPrivacyScreen() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <StatusTile
-          label="Camera preview"
-          value={settings?.cameraPreview ? "Active" : "Off"}
-          detail={settings?.cameraPreview ? "Preview visible" : "Hidden by default"}
+          label={t("parent", "privacy.cameraPreview")}
+          value={settings?.cameraPreview ? t("parent", "privacy.active") : t("parent", "privacy.off")}
+          detail={settings?.cameraPreview ? t("parent", "privacy.previewVisible") : t("parent", "privacy.hiddenDefault")}
           icon={<VideoOff className="size-5 text-snow-primary" />}
         />
         <StatusTile
-          label="Vision AI"
-          value={settings?.visionAiAccess ? "Allowed" : "Off"}
-          detail="Parent-controlled gating"
+          label={t("parent", "privacy.visionAi")}
+          value={settings?.visionAiAccess ? t("parent", "privacy.allowed") : t("parent", "privacy.off")}
+          detail={t("parent", "privacy.parentGating")}
           icon={<Eye className="size-5 text-snow-primary" />}
           tone="bg-snow-ice"
         />
         <StatusTile
-          label="Active Consents"
-          value={isLoading ? "..." : `${consentActiveCount} of 4`}
-          detail="Mic, camera, vision, screen"
+          label={t("parent", "privacy.activeConsents")}
+          value={isLoading ? "..." : t("parent", "privacy.activeConsentsCount", { count: consentActiveCount })}
+          detail={t("parent", "privacy.activeConsentsDetail")}
           icon={<FileCheck className="size-5 text-snow-primary" />}
           tone="bg-snow-lavender"
         />
@@ -288,6 +288,8 @@ export function ParentPrivacyScreen() {
               const Icon = item.icon;
               const isMutatingThis = mutatingKey === item.key;
               const value = settings[item.key];
+              const title = t("parent", `privacy.${item.titleKey}`);
+              const detail = t("parent", `privacy.${item.detailKey}`);
 
               return (
                 <div
@@ -299,9 +301,9 @@ export function ParentPrivacyScreen() {
                       <Icon className="size-5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black text-snow-primary-dark">{item.title}</p>
+                      <p className="text-sm font-black text-snow-primary-dark">{title}</p>
                       <p className="mt-0.5 text-xs font-semibold leading-5 text-snow-muted">
-                        {item.detail}
+                        {detail}
                       </p>
                     </div>
                   </div>
@@ -312,7 +314,7 @@ export function ParentPrivacyScreen() {
                         type="button"
                         role="switch"
                         aria-checked={Boolean(value)}
-                        aria-label={`Toggle ${item.title}`}
+                        aria-label={t("parent", "privacy.toggleAria", { name: title })}
                         disabled={isMutatingThis}
                         onClick={() => handleToggle(item.key)}
                         className={cn(
@@ -329,7 +331,7 @@ export function ParentPrivacyScreen() {
                       </button>
                     ) : item.kind === "select" && item.options ? (
                       <select
-                        aria-label={`Select ${item.title}`}
+                        aria-label={t("parent", "privacy.selectAria", { name: title })}
                         disabled={isMutatingThis}
                         value={Number(value) || 30}
                         onChange={(e) => handleSelectChange(item.key, Number(e.target.value))}
@@ -337,7 +339,7 @@ export function ParentPrivacyScreen() {
                       >
                         {item.options.map((opt) => (
                           <option key={opt} value={opt}>
-                            {opt} days
+                            {t("parent", "privacy.daysUnit", { count: opt })}
                           </option>
                         ))}
                       </select>
@@ -352,7 +354,7 @@ export function ParentPrivacyScreen() {
             })
           ) : (
             <p className="py-6 text-center text-xs text-snow-muted">
-              Privacy settings could not be retrieved. Click Sync Status to try again.
+              {t("parent", "privacy.fetchFailed")}
             </p>
           )}
         </SettingsSection>
@@ -369,10 +371,10 @@ export function ParentPrivacyScreen() {
             >
               <span className="flex items-center gap-3">
                 <Download className="size-4 text-snow-primary" />
-                Export Child Data
+                {t("parent", "privacy.exportData")}
               </span>
               <span className="rounded-full bg-snow-ice px-2 py-0.5 text-[10px] font-bold text-snow-primary">
-                ZIP / JSON
+                {t("parent", "privacy.zipJson")}
               </span>
             </button>
 
@@ -383,10 +385,10 @@ export function ParentPrivacyScreen() {
             >
               <span className="flex items-center gap-3">
                 <Trash2 className="size-4 text-snow-danger" />
-                Request Data Deletion
+                {t("parent", "privacy.requestDeletion")}
               </span>
               <span className="rounded-full bg-snow-blush px-2 py-0.5 text-[10px] font-bold text-snow-danger">
-                Permanent Purge
+                {t("parent", "privacy.permanentPurge")}
               </span>
             </button>
           </SettingsSection>
@@ -397,8 +399,7 @@ export function ParentPrivacyScreen() {
               <h2 className="text-sm font-black text-snow-primary-dark">{t("parent", "privacy.calmCopyRule")}</h2>
             </div>
             <p className="mt-2 text-xs font-semibold leading-5 text-snow-primary-dark">
-              AgentKid records observations, not diagnostic labels. Child memories and transcripts
-              remain strictly bounded to your household.
+              {t("parent", "privacy.calmCopyDesc")}
             </p>
           </div>
         </aside>

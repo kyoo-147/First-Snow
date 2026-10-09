@@ -36,9 +36,9 @@ export function SimpleParentScreen({ title }: { title: string }) {
           <SnowCard className="p-5">
             <h2 className="text-lg font-black text-snow-primary-dark">{t("parent", "simple.summary")}</h2>
             <div className="mt-5 space-y-4">
-              <Metric label={t("parent", "simple.screenTime")} value="45 min" />
-              <Metric label={t("parent", "simple.safetyLocks")} value="Active" />
-              <Metric label={t("parent", "simple.careTeam")} value="2 adults" />
+              <Metric label={t("parent", "simple.screenTime")} value={t("parent", "simple.metrics.screenTimeValue")} />
+              <Metric label={t("parent", "simple.safetyLocks")} value={t("parent", "simple.metrics.safetyLocksValue")} />
+              <Metric label={t("parent", "simple.careTeam")} value={t("parent", "simple.metrics.careTeamValue")} />
             </div>
           </SnowCard>
           <SnowCard className="bg-snow-lavender p-5">
@@ -61,28 +61,112 @@ function Metric({ label, value }: { label: string; value: string }) {
 }
 
 function getRows(title: string) {
-  if (title.includes("Settings")) {
+  if (title.includes("Settings") || title.includes("Cài đặt")) {
     return [
-      { title: "Notification Preferences", desc: "Choose email and push updates for progress and safety.", status: "Email and push enabled", icon: Bell, bg: "bg-snow-primary/15", color: "text-snow-primary" },
-      { title: "Parent Verification", desc: "Sensitive changes require a parent PIN before saving.", status: "Protected", icon: Lock, bg: "bg-snow-lavender", color: "text-snow-primary" },
-      { title: "Routine Schedule", desc: "After-school learning and bedtime wind-down are active.", status: "2 routines set", icon: Calendar, bg: "bg-snow-warning/20", color: "text-snow-warning" },
-      { title: "Care Team Sharing", desc: "Share gentle progress summaries with trusted adults.", status: "2 members connected", icon: Users, bg: "bg-snow-aqua/20", color: "text-snow-aqua" },
+      {
+        title: t("parent", "simple.rows.settings.notifications.title"),
+        desc: t("parent", "simple.rows.settings.notifications.desc"),
+        status: t("parent", "simple.rows.settings.notifications.status"),
+        icon: Bell,
+        bg: "bg-snow-primary/15",
+        color: "text-snow-primary",
+      },
+      {
+        title: t("parent", "simple.rows.settings.verification.title"),
+        desc: t("parent", "simple.rows.settings.verification.desc"),
+        status: t("parent", "simple.rows.settings.verification.status"),
+        icon: Lock,
+        bg: "bg-snow-lavender",
+        color: "text-snow-primary",
+      },
+      {
+        title: t("parent", "simple.rows.settings.routines.title"),
+        desc: t("parent", "simple.rows.settings.routines.desc"),
+        status: t("parent", "simple.rows.settings.routines.status"),
+        icon: Calendar,
+        bg: "bg-snow-warning/20",
+        color: "text-snow-warning",
+      },
+      {
+        title: t("parent", "simple.rows.settings.careTeam.title"),
+        desc: t("parent", "simple.rows.settings.careTeam.desc"),
+        status: t("parent", "simple.rows.settings.careTeam.status"),
+        icon: Users,
+        bg: "bg-snow-aqua/20",
+        color: "text-snow-aqua",
+      },
     ];
   }
 
-  if (title.includes("Safety")) {
+  if (title.includes("Safety") || title.includes("An toàn")) {
     return [
-      { title: "Child Safe Mode", desc: "Filters inappropriate content and keeps child mode simple.", status: "On", icon: ShieldCheck, bg: "bg-snow-success/15", color: "text-snow-success" },
-      { title: "Voice Access", desc: "Voice interactions are limited to child-safe prompts.", status: "Enabled", icon: Lock, bg: "bg-snow-primary/15", color: "text-snow-primary" },
-      { title: "Support Language", desc: "AgentKid uses encouraging, observation-based language.", status: "Calm", icon: Mail, bg: "bg-snow-aqua/20", color: "text-snow-aqua" },
-      { title: "Download Data", desc: "Export progress and privacy summaries for review.", status: "Available", icon: Download, bg: "bg-snow-warning/20", color: "text-snow-warning" },
+      {
+        title: t("parent", "simple.rows.safety.safeMode.title"),
+        desc: t("parent", "simple.rows.safety.safeMode.desc"),
+        status: t("parent", "simple.rows.safety.safeMode.status"),
+        icon: ShieldCheck,
+        bg: "bg-snow-success/15",
+        color: "text-snow-success",
+      },
+      {
+        title: t("parent", "simple.rows.safety.voiceAccess.title"),
+        desc: t("parent", "simple.rows.safety.voiceAccess.desc"),
+        status: t("parent", "simple.rows.safety.voiceAccess.status"),
+        icon: Lock,
+        bg: "bg-snow-primary/15",
+        color: "text-snow-primary",
+      },
+      {
+        title: t("parent", "simple.rows.safety.supportLanguage.title"),
+        desc: t("parent", "simple.rows.safety.supportLanguage.desc"),
+        status: t("parent", "simple.rows.safety.supportLanguage.status"),
+        icon: Mail,
+        bg: "bg-snow-aqua/20",
+        color: "text-snow-aqua",
+      },
+      {
+        title: t("parent", "simple.rows.safety.downloadData.title"),
+        desc: t("parent", "simple.rows.safety.downloadData.desc"),
+        status: t("parent", "simple.rows.safety.downloadData.status"),
+        icon: Download,
+        bg: "bg-snow-warning/20",
+        color: "text-snow-warning",
+      },
     ];
   }
 
   return [
-    { title: "Learning Report", desc: "Review recent lessons, reading practice, and completion trends.", status: "Updated today", icon: BookOpen, bg: "bg-snow-primary/15", color: "text-snow-primary" },
-    { title: "Observation Notes", desc: "See what AgentKid noticed in gentle parent-friendly language.", status: "2 new notes", icon: Mail, bg: "bg-snow-aqua/20", color: "text-snow-aqua" },
-    { title: "Progress Export", desc: "Download a parent-friendly summary of Minh's week.", status: "PDF ready", icon: Download, bg: "bg-snow-warning/20", color: "text-snow-warning" },
-    { title: "Care Team", desc: "Manage trusted adults who can view parent summaries.", status: "2 adults", icon: Users, bg: "bg-snow-lavender", color: "text-snow-primary" },
+    {
+      title: t("parent", "simple.rows.reports.learningReport.title"),
+      desc: t("parent", "simple.rows.reports.learningReport.desc"),
+      status: t("parent", "simple.rows.reports.learningReport.status"),
+      icon: BookOpen,
+      bg: "bg-snow-primary/15",
+      color: "text-snow-primary",
+    },
+    {
+      title: t("parent", "simple.rows.reports.observationNotes.title"),
+      desc: t("parent", "simple.rows.reports.observationNotes.desc"),
+      status: t("parent", "simple.rows.reports.observationNotes.status"),
+      icon: Mail,
+      bg: "bg-snow-aqua/20",
+      color: "text-snow-aqua",
+    },
+    {
+      title: t("parent", "simple.rows.reports.progressExport.title"),
+      desc: t("parent", "simple.rows.reports.progressExport.desc"),
+      status: t("parent", "simple.rows.reports.progressExport.status"),
+      icon: Download,
+      bg: "bg-snow-warning/20",
+      color: "text-snow-warning",
+    },
+    {
+      title: t("parent", "simple.rows.reports.careTeam.title"),
+      desc: t("parent", "simple.rows.reports.careTeam.desc"),
+      status: t("parent", "simple.rows.reports.careTeam.status"),
+      icon: Users,
+      bg: "bg-snow-lavender",
+      color: "text-snow-primary",
+    },
   ];
 }

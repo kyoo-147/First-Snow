@@ -17,10 +17,12 @@ import { t } from "@/i18n";
 import { formatSnowDate } from "@/lib/format";
 
 function formatMinutes(total: number): string {
-  if (!total) return "0 min";
+  if (!total) return t("learning", "progressScreen.zeroMinutes");
   const hours = Math.floor(total / 60);
   const minutes = total % 60;
-  return hours > 0 ? `${hours}h ${minutes}m` : `${minutes} min`;
+  return hours > 0
+    ? t("learning", "progressScreen.hoursMinutesUnit", { hours, minutes })
+    : t("learning", "progressScreen.minutesUnit", { count: minutes });
 }
 
 export function ProgressScreen() {

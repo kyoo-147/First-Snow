@@ -91,7 +91,7 @@ export function ParentTimelineScreen({ childId }: { childId: string }) {
   return (
     <ParentPageFrame>
       <PageHeader
-        eyebrow={child ? `${child.name}'s timeline` : "Activity timeline"}
+        eyebrow={child ? t("parent", "timeline.timelineFor", { name: child.name }) : t("parent", "timeline.activityTimeline")}
         title={t("parent", "timeline.recordedActivity")}
         description={t("parent", "timeline.recordedDesc")}
         action={
@@ -102,9 +102,9 @@ export function ParentTimelineScreen({ childId }: { childId: string }) {
       />
 
       <div className="grid gap-4 md:grid-cols-3">
-        <StatusTile label={t("parent", "timeline.completedLessons")} value={loading ? "â€”" : `${completedLessons}`} detail={t("parent", "timeline.persistedAttempts")} icon={<BookCheck className="size-5 text-snow-primary" />} />
-        <StatusTile label={t("parent", "timeline.safetyReviews")} value={loading ? "â€”" : `${alerts.length}`} detail={t("parent", "timeline.persistedFlagged")} icon={<AlertTriangle className="size-5 text-snow-primary" />} tone="bg-snow-ice" />
-        <StatusTile label={t("parent", "timeline.needsReview")} value={loading ? "â€”" : `${unreadAlerts}`} detail={t("parent", "timeline.unreadSafety")} icon={<CalendarClock className="size-5 text-snow-primary" />} tone="bg-snow-lavender" />
+        <StatusTile label={t("parent", "timeline.completedLessons")} value={loading ? "—" : `${completedLessons}`} detail={t("parent", "timeline.persistedAttempts")} icon={<BookCheck className="size-5 text-snow-primary" />} />
+        <StatusTile label={t("parent", "timeline.safetyReviews")} value={loading ? "—" : `${alerts.length}`} detail={t("parent", "timeline.persistedFlagged")} icon={<AlertTriangle className="size-5 text-snow-primary" />} tone="bg-snow-ice" />
+        <StatusTile label={t("parent", "timeline.needsReview")} value={loading ? "—" : `${unreadAlerts}`} detail={t("parent", "timeline.unreadSafety")} icon={<CalendarClock className="size-5 text-snow-primary" />} tone="bg-snow-lavender" />
       </div>
 
       {loading ? <SnowCard className="p-8 text-center"><p role="status">{t("parent", "timeline.loading")}</p></SnowCard> : null}

@@ -56,5 +56,19 @@
     "PREFERENCE_UNAVAILABLE": "Tùy chọn này hiện chưa thể lưu trong hệ thống.",
     "WORKER_UNAVAILABLE": "Dịch vụ xử lý nền hiện không khả dụng.",
     "INTERNAL": "Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau."
+  },
+  "errorState": {
+    "defaultTitle": "Đã xảy ra lỗi ngoài ý muốn",
+    "defaultDescription": "AgentKid gặp chút sự cố khi tải trang này. Hãy thử lại nhé.",
+    "retry": "Thử lại"
+  },
+  "progress": "Tiến độ",
+  "emptyState": {
+    "noData": "Chưa có dữ liệu"
+  },
+  "notFoundState": {
+    "title": "Không tìm thấy trang",
+    "description": "Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.",
+    "returnHome": "Về trang chủ"
   }
 }

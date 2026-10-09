@@ -6,8 +6,8 @@ export function ActivitiesScreen() {
   return (
     <div className="flex h-full flex-col">
       <div className="mb-8">
-        <h1 className="text-4xl font-black text-snow-primary-dark mb-2">Today&apos;s Activities</h1>
-        <p className="text-base font-bold text-snow-muted">Missions, games, and breaks to keep you moving!</p>
+        <h1 className="text-4xl font-black text-snow-primary-dark mb-2">Hoạt động hôm nay</h1>
+        <p className="text-base font-bold text-snow-muted">Nhiệm vụ, trò chơi và giải lao giúp bé năng động!</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -22,11 +22,11 @@ export function ActivitiesScreen() {
           <div className="relative z-20 max-w-sm">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-snow-primary/10 rounded-full mb-4">
               <Flame className="size-4 text-snow-primary" />
-              <span className="text-xs font-black text-snow-primary uppercase tracking-wider">Daily Goal</span>
+              <span className="text-xs font-black text-snow-primary uppercase tracking-wider">Mục tiêu ngày</span>
             </div>
-            <h2 className="text-3xl font-black text-snow-primary-dark mb-3">Missions</h2>
+            <h2 className="text-3xl font-black text-snow-primary-dark mb-3">Nhiệm vụ</h2>
             <p className="text-sm font-semibold text-snow-muted mb-6 leading-relaxed">
-              Complete your 3 daily missions to earn a special badge!
+              Hoàn thành 3 nhiệm vụ mỗi ngày để nhận huy hiệu đặc biệt!
             </p>
             
             <div className="space-y-3 mb-6">
@@ -34,24 +34,24 @@ export function ActivitiesScreen() {
                 <div className="grid size-8 place-items-center rounded-full bg-snow-success text-white">
                   <Check className="size-4" />
                 </div>
-                <p className="text-sm font-bold text-snow-primary-dark flex-1 line-through opacity-70">Read a calm story</p>
+                <p className="text-sm font-bold text-snow-primary-dark flex-1 line-through opacity-70">Đọc một câu chuyện nhẹ nhàng</p>
               </div>
               <div className="flex items-center gap-3 bg-white p-3 rounded-2xl shadow-sm border border-snow-primary/30 ring-1 ring-snow-primary/10">
                 <div className="grid size-8 place-items-center rounded-full bg-snow-surface border-2 border-snow-primary text-snow-primary">
                   2
                 </div>
-                <p className="text-sm font-bold text-snow-primary-dark flex-1">Match the feelings</p>
+                <p className="text-sm font-bold text-snow-primary-dark flex-1">Nối cảm xúc phù hợp</p>
               </div>
               <div className="flex items-center gap-3 bg-white p-3 rounded-2xl shadow-sm opacity-60">
                 <div className="grid size-8 place-items-center rounded-full bg-snow-surface border-2 border-snow-border text-snow-muted">
                   3
                 </div>
-                <p className="text-sm font-bold text-snow-muted flex-1">Take a deep breath</p>
+                <p className="text-sm font-bold text-snow-muted flex-1">Hít một hơi thật sâu</p>
               </div>
             </div>
 
             <button className="flex items-center justify-center gap-2 bg-snow-primary text-white px-6 py-3 rounded-full font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">
-              Start Mission 2 <Play className="size-4 fill-white" />
+              Bắt đầu nhiệm vụ 2 <Play className="size-4 fill-white" />
             </button>
           </div>
         </SnowCard>
@@ -62,10 +62,10 @@ export function ActivitiesScreen() {
             <div className="grid size-16 place-items-center rounded-full bg-snow-aqua/20 mb-4 group-hover:scale-110 transition-transform">
               <Puzzle className="size-8 text-snow-aqua" />
             </div>
-            <h3 className="text-xl font-black text-snow-primary-dark mb-2">Quick Activities</h3>
-            <p className="text-sm font-semibold text-snow-muted mb-4">Fast games for busy minds</p>
+            <h3 className="text-xl font-black text-snow-primary-dark mb-2">Hoạt động nhanh</h3>
+            <p className="text-sm font-semibold text-snow-muted mb-4">Trò chơi ngắn cho trí óc bận rộn</p>
             <div className="mt-auto text-snow-primary font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-              See all <ChevronRight className="size-4" />
+              Xem tất cả <ChevronRight className="size-4" />
             </div>
           </SnowCard>
           
@@ -74,10 +74,10 @@ export function ActivitiesScreen() {
             <div className="grid size-16 place-items-center rounded-full bg-white shadow-sm mb-4">
               <span className="text-3xl">🏃‍♂️</span>
             </div>
-            <h3 className="text-xl font-black text-snow-peach mb-2">Movement Breaks</h3>
-            <p className="text-sm font-semibold text-snow-muted mb-4">Wiggle, stretch, and jump!</p>
+            <h3 className="text-xl font-black text-snow-peach mb-2">Nghỉ vận động</h3>
+            <p className="text-sm font-semibold text-snow-muted mb-4">Lắc lư, vươn vai và nhảy nhót!</p>
             <button className="mt-auto bg-snow-peach text-white px-5 py-2 rounded-full font-bold text-sm shadow-sm group-hover:bg-opacity-90 transition-opacity">
-              Let&apos;s go
+              Bắt đầu nào
             </button>
           </SnowCard>
         </div>
@@ -97,14 +97,14 @@ export function ActivitiesScreen() {
             <div className="max-w-md">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full mb-3 backdrop-blur-sm">
                 <span className="text-lg">🦊</span>
-                <span className="text-xs font-black text-white uppercase tracking-wider">Featured Game</span>
+                <span className="text-xs font-black text-white uppercase tracking-wider">Trò chơi nổi bật</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-black mb-3 text-white">Animal Match</h2>
+              <h2 className="text-3xl md:text-4xl font-black mb-3 text-white">Nối đôi bạn động vật</h2>
               <p className="text-sm font-semibold text-white/80 mb-6 leading-relaxed">
-                Can you match the animal friends with their favorite foods? A fun logic game for focus.
+                Bé có thể nối các bạn động vật với món ăn yêu thích không? Trò chơi logic thú vị giúp rèn luyện tập trung.
               </p>
               <button className="flex items-center justify-center gap-2 bg-white text-snow-primary-dark px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all">
-                Play now <Play className="size-4 fill-snow-primary-dark" />
+                Chơi ngay <Play className="size-4 fill-snow-primary-dark" />
               </button>
             </div>
             
