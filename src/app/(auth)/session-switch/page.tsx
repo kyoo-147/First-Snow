@@ -1,18 +1,19 @@
 import { AuthShell } from "@/components/auth/auth-shell";
 import { SessionSwitchView } from "@/components/auth/session-switch-view";
+import { t } from "@/i18n";
 
 export const metadata = {
-  title: "Switch Profile - AgentKid Snow",
-  description: "Switch between child profiles and guardian portal in AgentKid Snow",
+  title: "Chuyển đổi Hồ sơ - AgentKid Snow",
+  description: "Chuyển đổi giữa hồ sơ học sinh và cổng thông tin phụ huynh trong AgentKid Snow",
 };
 
 export default function SessionSwitchPage() {
   return (
     <AuthShell
-      title="Switch Profile"
-      subtitle="Change learner or jump between child mode and guardian portal."
+      title={t("auth", "sessionSwitch.title")}
+      subtitle={t("auth", "sessionSwitch.subtitle")}
       mode="neutral"
-      mascotSpeech="Where would you like to go next?"
+      mascotSpeech={t("auth", "sessionSwitch.mascotSpeech")}
       maxWidth="md"
     >
       <SessionSwitchView />

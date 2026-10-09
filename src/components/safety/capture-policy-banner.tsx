@@ -3,64 +3,57 @@
 import { useState } from "react";
 import { Camera, ChevronDown, ChevronUp, Eye, Lock, Mic, Monitor, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface CapturePolicyItem {
-  icon: typeof Mic;
-  title: string;
-  badge: string;
-  summary: string;
-  details: string[];
-}
-
-const capturePolicies: CapturePolicyItem[] = [
-  {
-    icon: Mic,
-    title: "Microphone Audio Governance",
-    badge: "Turn-by-turn",
-    summary: "Active exclusively during child-initiated speech turns in supported activities.",
-    details: [
-      "Hardware capture is initiated only after a session has begun and speech input is active.",
-      "Hardware muting is targeted while Snow is speaking or thinking.",
-      "Audio is processed for immediate speech-to-text without continuous ambient background listening.",
-    ],
-  },
-  {
-    icon: Camera,
-    title: "Camera & Video Input Governance",
-    badge: "Parent-gated",
-    summary: "Turned off by default. Requires active guardian consent before any stream is opened.",
-    details: [
-      "Camera preview remains completely hidden unless the guardian explicitly opts in.",
-      "Policy specifies in-memory frame processing for interactive learning without persistent cloud media archives.",
-      "Policy specifies no facial recognition, biometric profiling, or emotion classification scoring on captured frames.",
-    ],
-  },
-  {
-    icon: Eye,
-    title: "Vision AI & Visual Understanding",
-    badge: "Opt-in only",
-    summary: "Visual reasoning operates solely during guardian-approved visual exercises.",
-    details: [
-      "Visual inputs are analyzed ephemerally in active lesson contexts (e.g. storybook drawings or homework flashcards).",
-      "Analysis is constrained by child-safe content guardrails before passing to AI reasoning engines.",
-      "All visual understanding events are logged for guardian transparency in the parent portal.",
-    ],
-  },
-  {
-    icon: Monitor,
-    title: "Screen & Homework Review Capture",
-    badge: "Session-scoped",
-    summary: "Screen sharing operates only during guided homework and interactive learning sessions.",
-    details: [
-      "Screen capture is strictly bound to the active tab or approved window; whole-desktop capture is disallowed.",
-      "Capture is targeted to terminate when the child exits the lesson or when the guardian revokes permission.",
-      "Policy targets in-memory learning extraction without persistent raw screen recordings.",
-    ],
-  },
-];
+import { t } from "@/i18n";
 
 export function CapturePolicyBanner({ className }: { className?: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const capturePolicies = [
+    {
+      icon: Mic,
+      title: t("parent", "safety.capturePolicy.policies.microphone.title"),
+      badge: t("parent", "safety.capturePolicy.policies.microphone.badge"),
+      summary: t("parent", "safety.capturePolicy.policies.microphone.summary"),
+      details: [
+        t("parent", "safety.capturePolicy.policies.microphone.details.0" as any),
+        t("parent", "safety.capturePolicy.policies.microphone.details.1" as any),
+        t("parent", "safety.capturePolicy.policies.microphone.details.2" as any),
+      ],
+    },
+    {
+      icon: Camera,
+      title: t("parent", "safety.capturePolicy.policies.camera.title"),
+      badge: t("parent", "safety.capturePolicy.policies.camera.badge"),
+      summary: t("parent", "safety.capturePolicy.policies.camera.summary"),
+      details: [
+        t("parent", "safety.capturePolicy.policies.camera.details.0" as any),
+        t("parent", "safety.capturePolicy.policies.camera.details.1" as any),
+        t("parent", "safety.capturePolicy.policies.camera.details.2" as any),
+      ],
+    },
+    {
+      icon: Eye,
+      title: t("parent", "safety.capturePolicy.policies.vision.title"),
+      badge: t("parent", "safety.capturePolicy.policies.vision.badge"),
+      summary: t("parent", "safety.capturePolicy.policies.vision.summary"),
+      details: [
+        t("parent", "safety.capturePolicy.policies.vision.details.0" as any),
+        t("parent", "safety.capturePolicy.policies.vision.details.1" as any),
+        t("parent", "safety.capturePolicy.policies.vision.details.2" as any),
+      ],
+    },
+    {
+      icon: Monitor,
+      title: t("parent", "safety.capturePolicy.policies.screen.title"),
+      badge: t("parent", "safety.capturePolicy.policies.screen.badge"),
+      summary: t("parent", "safety.capturePolicy.policies.screen.summary"),
+      details: [
+        t("parent", "safety.capturePolicy.policies.screen.details.0" as any),
+        t("parent", "safety.capturePolicy.policies.screen.details.1" as any),
+        t("parent", "safety.capturePolicy.policies.screen.details.2" as any),
+      ],
+    },
+  ];
 
   return (
     <div
@@ -76,10 +69,10 @@ export function CapturePolicyBanner({ className }: { className?: string }) {
           </div>
           <div>
             <h2 className="text-sm font-black text-snow-primary-dark">
-              Device Capture & Privacy Policy
+              {t("parent", "safety.capturePolicy.title")}
             </h2>
             <p className="mt-0.5 text-xs font-semibold text-snow-muted">
-              Policy target: sensitive capture remains unavailable until backend consent/grant enforcement is verified.
+              {t("parent", "safety.capturePolicy.subtitle")}
             </p>
           </div>
         </div>
@@ -90,7 +83,7 @@ export function CapturePolicyBanner({ className }: { className?: string }) {
           onClick={() => setIsExpanded((prev) => !prev)}
           className="snow-focus-ring flex items-center justify-between gap-1.5 self-start rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft px-3 py-1.5 text-xs font-black text-snow-primary-dark transition hover:bg-snow-lavender/50 sm:self-center"
         >
-          <span>{isExpanded ? "Hide policy details" : "Review capture governance"}</span>
+          <span>{isExpanded ? t("parent", "safety.capturePolicy.hideDetails") : t("parent", "safety.capturePolicy.showDetails")}</span>
           {isExpanded ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
         </button>
       </div>
@@ -99,7 +92,8 @@ export function CapturePolicyBanner({ className }: { className?: string }) {
         <div className="flex items-start gap-2.5">
           <Lock className="mt-0.5 size-4 shrink-0 text-snow-primary" />
           <p className="text-xs font-semibold leading-5 text-snow-primary-dark">
-            <strong>Policy target:</strong> Sensitive capture remains unavailable until backend consent/grant enforcement is verified. Hardware streams require explicit guardian authorization before activation.
+            <strong>{t("parent", "safety.capturePolicy.bannerNoteTitle")}</strong>{" "}
+            {t("parent", "safety.capturePolicy.bannerNoteDesc")}
           </p>
         </div>
       </div>

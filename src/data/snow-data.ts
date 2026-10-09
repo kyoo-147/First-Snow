@@ -39,31 +39,31 @@ export const topNavItems: SnowNavItem[] = [
 
 export const parentNavGroups: ParentNavGroup[] = [
   {
-    group: "Main",
+    group: "Chính",
     items: [
-      { label: "Dashboard", href: "/parent", icon: Home, key: "dashboard" },
-      { label: "My Child", href: "/parent/children", icon: User, key: "children" },
-      { label: "Sessions", href: "/parent/children/:childId/sessions", icon: History, key: "sessions" },
-      { label: "Activity", href: "/parent/children/:childId/timeline", icon: Heart, key: "timeline" },
-      { label: "Transcripts", href: "/parent/children/:childId/transcripts", icon: MessageSquare, key: "transcripts" },
-      { label: "Learning", href: "/parent/children/:childId/learning", icon: GraduationCap, key: "learning" },
-      { label: "Routines", href: "/parent/children/:childId/routines", icon: CalendarCheck, key: "routines" },
+      { label: "Bảng điều khiển", href: "/parent", icon: Home, key: "dashboard" },
+      { label: "Học sinh", href: "/parent/children", icon: User, key: "children" },
+      { label: "Phiên học", href: "/parent/children/:childId/sessions", icon: History, key: "sessions" },
+      { label: "Dòng thời gian hoạt động", href: "/parent/children/:childId/timeline", icon: Heart, key: "timeline" },
+      { label: "Bản ghi trò chuyện", href: "/parent/children/:childId/transcripts", icon: MessageSquare, key: "transcripts" },
+      { label: "Trọng tâm học tập", href: "/parent/children/:childId/learning", icon: GraduationCap, key: "learning" },
+      { label: "Lịch trình & Thời gian", href: "/parent/children/:childId/routines", icon: CalendarCheck, key: "routines" },
     ],
   },
   {
-    group: "Safety",
+    group: "An toàn",
     items: [
-      { label: "Alerts", href: "/parent/alerts", icon: Bell, key: "alerts" },
-      { label: "Privacy", href: "/parent/privacy", icon: Shield, key: "privacy" },
-      { label: "Consent", href: "/parent/consent", icon: FileCheck, key: "consent" },
-      { label: "Emergency", href: "/parent/settings/emergency", icon: PhoneCall, key: "emergency" },
+      { label: "Cảnh báo", href: "/parent/alerts", icon: Bell, key: "alerts" },
+      { label: "Quyền riêng tư & Đồng ý", href: "/parent/privacy", icon: Shield, key: "privacy" },
+      { label: "Đồng ý", href: "/parent/consent", icon: FileCheck, key: "consent" },
+      { label: "Khẩn cấp", href: "/parent/settings/emergency", icon: PhoneCall, key: "emergency" },
     ],
   },
   {
-    group: "System",
+    group: "Hệ thống",
     items: [
-      { label: "Settings", href: "/parent/settings", icon: Settings, key: "settings" },
-      { label: "Notifications", href: "/parent/settings/notifications", icon: BellRing, key: "notifications" },
+      { label: "Cài đặt", href: "/parent/settings", icon: Settings, key: "settings" },
+      { label: "Thông báo", href: "/parent/settings/notifications", icon: BellRing, key: "notifications" },
     ],
   },
 ];
@@ -126,21 +126,21 @@ export const moods: MoodOption[] = [
 
 export const parentInsights: ParentInsight[] = [
   {
-    title: "Expressing more feelings",
-    description: "AgentKid noticed Minh used more feeling words during picture choices today.",
-    metric: "+4 feeling words",
+    title: "Bộc lộ nhiều cảm xúc hơn",
+    description: "AgentKid nhận thấy Minh đã dùng nhiều từ ngữ cảm xúc hơn trong các lựa chọn hình ảnh hôm nay.",
+    metric: "+4 từ cảm xúc",
     tone: "success",
   },
   {
-    title: "Responded well to visual choices",
-    description: "Minh selected answers more comfortably when choices included pictures.",
-    metric: "8 calm responses",
+    title: "Phản hồi tốt với các lựa chọn hình ảnh",
+    description: "Minh chọn câu trả lời thoải mái hơn khi các phương án có kèm hình ảnh.",
+    metric: "8 phản hồi bình tĩnh",
     tone: "calm",
   },
   {
-    title: "Needed extra time during transitions",
-    description: "AgentKid gave Minh a slower pace before moving from stories to math.",
-    metric: "2 gentle pauses",
+    title: "Cần thêm thời gian khi chuyển đổi hoạt động",
+    description: "AgentKid đã cho Minh nhịp độ chậm rãi hơn trước khi chuyển từ truyện kể sang toán học.",
+    metric: "2 lần tạm dừng nhẹ nhàng",
     tone: "warm",
   },
 ];

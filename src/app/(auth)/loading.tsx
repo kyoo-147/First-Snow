@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { t } from "@/i18n";
 
 export default function AuthLoading() {
   return (
@@ -6,17 +7,17 @@ export default function AuthLoading() {
       <div className="relative size-20 overflow-hidden rounded-full border-2 border-snow-border bg-snow-primary-soft shadow-[var(--shadow-card)] snow-float-soft">
         <Image
           src="/images/snow-avatar-final.png"
-          alt="Snow is preparing"
+          alt={t("auth", "loading.snowPreparing")}
           fill
           className="object-cover"
         />
       </div>
       <div className="mt-5 space-y-2">
         <h2 className="snow-heading font-black text-snow-primary-dark">
-          Connecting with Snow...
+          {t("auth", "loading.connecting")}
         </h2>
         <p className="snow-body-small snow-font-readable font-semibold text-snow-muted">
-          Setting up your safe and calm space.
+          {t("auth", "loading.settingUp")}
         </p>
       </div>
       <div className="mt-4 flex items-center justify-center gap-2">

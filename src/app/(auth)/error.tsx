@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { AlertCircle, RotateCcw } from "lucide-react";
 import { SnowButton } from "@/components/ui/snow-button";
+import { t } from "@/i18n";
 
 export default function AuthError({
   error,
@@ -25,20 +26,20 @@ export default function AuthError({
 
       <div className="mt-4 max-w-[420px] space-y-2">
         <h2 className="snow-heading font-black text-snow-primary-dark">
-          Something went wrong
+          {t("auth", "error.somethingWentWrong")}
         </h2>
         <p className="snow-body-small snow-font-readable font-semibold text-snow-muted">
-          We had trouble loading this authentication page. Snow recommends trying again.
+          {t("auth", "error.authLoadTrouble")}
         </p>
       </div>
 
       <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
         <SnowButton onClick={() => reset()} variant="primary" className="min-w-[140px]">
-          <RotateCcw className="size-4" /> Try Again
+          <RotateCcw className="size-4" /> {t("common", "retry")}
         </SnowButton>
         <Link href="/">
           <SnowButton variant="ghost" className="min-w-[140px]">
-            Return Home
+            {t("common", "returnHome")}
           </SnowButton>
         </Link>
       </div>

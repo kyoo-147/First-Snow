@@ -1,19 +1,20 @@
 import { AuthShell } from "@/components/auth/auth-shell";
 import { ParentRegisterForm } from "@/components/auth/parent-register-form";
+import { t } from "@/i18n";
 
 export const metadata = {
-  title: "Guardian Registration - AgentKid Snow",
-  description: "Create a guardian account for AgentKid Snow to guide and protect your child",
+  title: "Đăng ký Phụ huynh - AgentKid Snow",
+  description: "Tạo tài khoản phụ huynh cho AgentKid Snow để hướng dẫn và bảo vệ học sinh",
 };
 
 export default function RegisterPage() {
   return (
     <AuthShell
-      eyebrow="New Guardian Setup"
-      title="Create Guardian Account"
-      subtitle="Set up your family profile to protect and guide your child's learning journey."
+      eyebrow={t("auth", "register.eyebrow")}
+      title={t("auth", "register.title")}
+      subtitle={t("auth", "register.subtitle")}
       mode="parent"
-      mascotSpeech="Welcome! Let's get your family safely started with Snow."
+      mascotSpeech={t("auth", "register.mascotSpeech")}
     >
       <ParentRegisterForm />
     </AuthShell>

@@ -1,25 +1,26 @@
 import { Suspense } from "react";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { ParentLoginForm } from "@/components/auth/parent-login-form";
+import { t } from "@/i18n";
 
 export const metadata = {
-  title: "Guardian Sign In - AgentKid Snow",
-  description: "Secure login for parents and guardians in AgentKid Snow",
+  title: "Đăng nhập Phụ huynh - AgentKid Snow",
+  description: "Đăng nhập an toàn cho phụ huynh và người giám hộ trong AgentKid Snow",
 };
 
 export default function LoginPage() {
   return (
     <AuthShell
-      eyebrow="Parent Access"
-      title="Guardian Sign In"
-      subtitle="Access safety controls, learning insights, routines, and account settings."
+      eyebrow={t("auth", "login.eyebrow")}
+      title={t("auth", "login.title")}
+      subtitle={t("auth", "login.subtitle")}
       mode="parent"
-      mascotSpeech="Hello grown-up! Welcome back to AgentKid Snow."
+      mascotSpeech={t("auth", "login.mascotSpeech")}
     >
       <Suspense
         fallback={
           <div className="py-8 text-center text-sm font-semibold text-snow-muted">
-            Loading sign in form...
+            {t("auth", "login.loadingForm")}
           </div>
         }
       >

@@ -224,10 +224,124 @@
         "failed": "Quá trình xóa bị gián đoạn"
       }
     },
+    "stateViews": {
+      "loadingSettings": "Đang tải cài đặt an toàn...",
+      "errorTitle": "Không thể tải các kiểm soát an toàn",
+      "retry": "Thử lại",
+      "codeLabel": "Mã: {{code}}",
+      "requestIdLabel": "Mã yêu cầu: {{requestId}}"
+    },
+    "capturePolicy": {
+      "title": "Chính sách Thu thập Thiết bị & Quyền riêng tư",
+      "subtitle": "Mục tiêu chính sách: tính năng thu thập nhạy cảm sẽ không khả dụng cho đến khi việc thực thi đồng ý/cấp quyền từ phía máy chủ được xác minh.",
+      "showDetails": "Xem xét quản trị thu thập",
+      "hideDetails": "Ẩn chi tiết chính sách",
+      "bannerNoteTitle": "Mục tiêu chính sách:",
+      "bannerNoteDesc": "Tính năng thu thập nhạy cảm sẽ không khả dụng cho đến khi việc thực thi đồng ý/cấp quyền từ phía máy chủ được xác minh. Các luồng phần cứng yêu cầu sự ủy quyền rõ ràng của phụ huynh trước khi kích hoạt.",
+      "policies": {
+        "microphone": {
+          "title": "Quản trị Âm thanh Micrô",
+          "badge": "Theo từng lượt",
+          "summary": "Chỉ hoạt động trong các lượt nói do trẻ khởi xướng trong các hoạt động được hỗ trợ.",
+          "details": [
+            "Thu thập phần cứng chỉ được bắt đầu sau khi phiên đã mở và nhập giọng nói đang hoạt động.",
+            "Tắt tiếng phần cứng được định hướng trong khi Snow đang nói hoặc suy nghĩ.",
+            "Âm thanh được xử lý cho chuyển văn bản thành giọng nói tức thì mà không nghe nền liên tục xung quanh."
+          ]
+        },
+        "camera": {
+          "title": "Quản trị Camera & Đầu vào Video",
+          "badge": "Cần phụ huynh duyệt",
+          "summary": "Tắt theo mặc định. Yêu cầu sự đồng ý chủ động của phụ huynh trước khi mở bất kỳ luồng nào.",
+          "details": [
+            "Xem trước camera hoàn toàn ẩn trừ khi phụ huynh chọn bật rõ ràng.",
+            "Chính sách quy định xử lý khung hình trong bộ nhớ cho học tập tương tác mà không lưu trữ đám mây liên tục.",
+            "Chính sách quy định không nhận dạng khuôn mặt, hồ sơ sinh trắc học hoặc chấm điểm cảm xúc trên các khung hình thu thập."
+          ]
+        },
+        "vision": {
+          "title": "AI Thị giác & Hiểu hình ảnh",
+          "badge": "Chỉ khi chọn bật",
+          "summary": "Lập luận thị giác chỉ hoạt động trong các bài tập thị giác được phụ huynh phê duyệt.",
+          "details": [
+            "Đầu vào thị giác được phân tích tạm thời trong ngữ cảnh bài học đang hoạt động (ví dụ: tranh vẽ truyện hoặc thẻ ghi nhớ).",
+            "Phân tích được kiểm soát bởi các rào chắn nội dung an toàn cho trẻ trước khi chuyển đến động cơ lập luận AI.",
+            "Tất cả sự kiện hiểu thị giác đều được ghi lại để phụ huynh theo dõi minh bạch trong cổng thông tin."
+          ]
+        },
+        "screen": {
+          "title": "Thu thập Màn hình & Đánh giá Bài tập",
+          "badge": "Theo phạm vi phiên",
+          "summary": "Chia sẻ màn hình chỉ hoạt động trong các buổi hướng dẫn làm bài tập và học tập tương tác.",
+          "details": [
+            "Thu thập màn hình bị giới hạn nghiêm ngặt ở tab đang hoạt động hoặc cửa sổ được duyệt; không cho phép toàn màn hình.",
+            "Thu thập dừng lại khi trẻ thoát khỏi bài học hoặc khi phụ huynh thu hồi quyền.",
+            "Chính sách hướng tới trích xuất học tập trong bộ nhớ mà không ghi lại video màn hình thô liên tục."
+          ]
+        }
+      }
+    },
+    "consentScopeCard": {
+      "scopes": {
+        "microphone": {
+          "title": "Truy cập Giọng nói Micrô",
+          "description": "Cho phép nhận dạng giọng nói do trẻ khởi xướng trong các phiên học tương tác.",
+          "governanceNote": "Mục tiêu giọng nói theo lượt; thu thập nhạy cảm không khả dụng cho đến khi sự đồng ý từ máy chủ được xác minh."
+        },
+        "camera": {
+          "title": "Đầu vào Video Camera",
+          "description": "Cho phép luồng video tùy chọn trong tương tác hình ảnh đối mặt được hỗ trợ.",
+          "governanceNote": "Xem trước ẩn theo mặc định; thu thập video không khả dụng cho đến khi sự đồng ý từ máy chủ được xác minh."
+        },
+        "vision": {
+          "title": "Phân tích AI Thị giác",
+          "description": "Cho phép hiểu hình ảnh của thẻ học vật lý, bài tập và tranh vẽ.",
+          "governanceNote": "Mục tiêu bài tập chọn bật; lập luận thị giác không khả dụng cho đến khi sự đồng ý từ máy chủ được xác minh."
+        },
+        "screen": {
+          "title": "Truy cập Thu thập Màn hình",
+          "description": "Cho phép chia sẻ màn hình trong quá trình hướng dẫn làm bài tập và bài tập đọc.",
+          "governanceNote": "Đánh giá theo phiên học; thu thập màn hình không khả dụng cho đến khi sự đồng ý từ máy chủ được xác minh."
+        }
+      },
+      "activeConsent": "Đồng ý Đang hoạt động",
+      "pendingReview": "Chờ Xem xét",
+      "revokedOff": "Đã thu hồi / Tắt",
+      "policyVersion": "Chính sách {{version}}",
+      "governanceRule": "Quy tắc quản trị:",
+      "authorizedAt": "Đã ủy quyền: {{date}}",
+      "revokedAt": "Đã thu hồi: {{date}}",
+      "grantConsent": "Cấp sự đồng ý",
+      "revokeConsent": "Thu hồi sự đồng ý",
+      "updating": "Đang cập nhật..."
+    },
     "emergency": {
       "parentGate": "Escalation an toàn dành cho phụ huynh",
       "closeAria": "Đóng hộp thoại",
-      "markPrimary": "Đặt làm liên hệ chính"
+      "markPrimary": "Đặt làm liên hệ chính",
+      "editTitle": "Chỉnh sửa Người liên hệ Khẩn cấp",
+      "addTitle": "Thêm Người liên hệ Khẩn cấp",
+      "nameLabel": "Họ và tên",
+      "namePlaceholder": "vd: Sarah Nguyễn",
+      "relationLabel": "Mối quan hệ",
+      "relationPlaceholder": "vd: Mẹ, Bố",
+      "phoneLabel": "Số điện thoại",
+      "phonePlaceholder": "vd: +84 912 345 678",
+      "emailLabel": "Địa chỉ Email (Tùy chọn)",
+      "emailPlaceholder": "vd: phuhuynh@example.com",
+      "primaryHelp": "Được liên hệ đầu tiên trong các tình huống hỗ trợ khẩn cấp hoặc an toàn.",
+      "providerNotice": "Việc gửi cảnh báo tự động tới các liên hệ hiện chưa khả dụng cho đến khi nhà cung cấp thông báo được cấu hình, do đó không có tùy chọn cảnh báo nào được lưu cho liên hệ này.",
+      "removeConfirmTitle": "Xóa {{name}} khỏi danh sách liên hệ khẩn cấp?",
+      "removeConfirmDesc": "Người liên hệ này sẽ không còn nhận thông báo khẩn cấp hoặc xuất hiện trong các trường hợp leo thang an toàn.",
+      "remove": "Xóa",
+      "confirmRemove": "Xác nhận Xóa",
+      "removing": "Đang xóa...",
+      "cancel": "Hủy",
+      "saveContact": "Lưu Liên hệ",
+      "saving": "Đang lưu...",
+      "validationName": "Tên liên hệ phải có ít nhất 2 ký tự.",
+      "validationRelation": "Vui lòng chỉ định mối quan hệ (ví dụ: Mẹ, Bố, Người giám hộ).",
+      "validationPhone": "Vui lòng cung cấp số điện thoại khẩn cấp hợp lệ."
     },
     "reauth": {
       "parentGate": "Kiểm soát bảo mật của phụ huynh",
@@ -236,7 +350,16 @@
       "zeroCompromise": "Quản trị không thỏa hiệp",
       "cancel": "Hủy",
       "confirm": "Tiếp tục",
-      "confirming": "Đang xác minh..."
+      "confirming": "Đang xác minh...",
+      "defaultTitle": "Yêu cầu Xác thực lại Quyền Phụ huynh",
+      "defaultDesc": "Để bảo vệ quyền riêng tư của trẻ và cấu hình an toàn, vui lòng nhập mật khẩu tài khoản phụ huynh để ủy quyền thao tác này.",
+      "defaultAction": "Xác nhận Ủy quyền",
+      "passwordLabel": "Mật khẩu Phụ huynh",
+      "passwordRequired": "Vui lòng nhập mật khẩu phụ huynh của bạn.",
+      "failed": "Xác thực lại thất bại. Vui lòng kiểm tra mật khẩu và thử lại.",
+      "showPassword": "Hiện mật khẩu",
+      "hidePassword": "Ẩn mật khẩu",
+      "directAuthNotice": "Thông tin đăng nhập được xác thực trực tiếp với máy chủ và không bao giờ được lưu trữ trong trình duyệt."
     }
   },
   "nav": {

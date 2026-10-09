@@ -17,14 +17,18 @@ export interface ReauthModalProps {
 }
 
 function ReauthModalInner({
-  title = "Guardian Re-Authentication Required",
-  description = "To protect child privacy and safety configurations, please enter your guardian account password to authorize this action.",
-  actionLabel = "Confirm Authorization",
+  title,
+  description,
+  actionLabel,
   isProcessing = false,
   errorMessage = null,
   onConfirm,
   onClose,
 }: Omit<ReauthModalProps, "isOpen">) {
+  const displayTitle = title ?? t("parent", "safety.reauth.defaultTitle");
+  const displayDescription = description ?? t("parent", "safety.reauth.defaultDesc");
+  const displayActionLabel = actionLabel ?? t("parent", "safety.reauth.defaultAction");
+
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -47,7 +51,7 @@ function ReauthModalInner({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!password.trim()) {
-      setLocalError("Please enter your guardian password.");
+      setLocalError(t("parent", "safety.reauth.passwordRequired"));
       passwordInputRef.current?.focus();
       return;
     }
@@ -58,7 +62,7 @@ function ReauthModalInner({
       if (err instanceof Error) {
         setLocalError(err.message);
       } else {
-        setLocalError("Re-authentication failed. Please check your password and try again.");
+        setLocalError(t("parent", "safety.reauth.failed"));
       }
     }
   }
@@ -81,7 +85,7 @@ function ReauthModalInner({
             </div>
             <div>
               <h2 id="reauth-dialog-title" className="text-base font-black text-snow-primary-dark">
-                {title}
+                {displayTitle}
               </h2>
               <p className="text-xs font-semibold text-snow-muted">{t("parent", "safety.reauth.parentGate")}</p>
             </div>
@@ -98,7 +102,7 @@ function ReauthModalInner({
         </div>
 
         <p id="reauth-dialog-desc" className="mt-3 text-xs font-semibold leading-5 text-snow-muted">
-          {description}
+          {displayDescription}
         </p>
 
         {effectiveError ? (
@@ -116,7 +120,7 @@ function ReauthModalInner({
               htmlFor="reauth-password-input"
               className="block text-xs font-black text-snow-primary-dark"
             >
-              Guardian Password
+              {t("parent", "safety.reauth.passwordLabel")}
             </label>
             <div className="relative mt-1">
               <input
@@ -132,7 +136,7 @@ function ReauthModalInner({
               />
               <button
                 type="button"
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? t("parent", "safety.reauth.hidePassword") : t("parent", "safety.reauth.showPassword")}
                 tabIndex={-1}
                 disabled={isProcessing}
                 onClick={() => setShowPassword((prev) => !prev)}
@@ -149,7 +153,7 @@ function ReauthModalInner({
               <span>{t("parent", "safety.reauth.zeroCompromise")}</span>
             </div>
             <p className="mt-1 text-[11px] leading-4 text-snow-muted">
-              Credentials are authenticated directly with the backend and never stored in the browser.
+              {t("parent", "safety.reauth.directAuthNotice")}
             </p>
           </div>
 
@@ -161,7 +165,7 @@ function ReauthModalInner({
               onClick={onClose}
               className="min-h-9 px-4 text-xs font-bold"
             >
-              Cancel
+              {t("parent", "safety.reauth.cancel")}
             </SnowButton>
             <SnowButton
               type="submit"
@@ -172,12 +176,12 @@ function ReauthModalInner({
               {isProcessing ? (
                 <>
                   <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                  Verifying...
+                  {t("parent", "safety.reauth.confirming")}
                 </>
               ) : (
                 <>
                   <Lock className="mr-1.5 size-3.5" />
-                  {actionLabel}
+                  {displayActionLabel}
                 </>
               )}
             </SnowButton>

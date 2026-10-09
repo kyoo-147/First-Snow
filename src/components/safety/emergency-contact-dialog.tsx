@@ -38,15 +38,15 @@ function EmergencyContactDialogInner({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || name.trim().length < 2) {
-      setValidationError("Contact name must be at least 2 characters long.");
+      setValidationError(t("parent", "safety.emergency.validationName"));
       return;
     }
     if (!relation.trim()) {
-      setValidationError("Please specify the relation (e.g. Mother, Father, Guardian).");
+      setValidationError(t("parent", "safety.emergency.validationRelation"));
       return;
     }
     if (!phone.trim() || phone.trim().length < 7) {
-      setValidationError("Please provide a valid emergency phone number.");
+      setValidationError(t("parent", "safety.emergency.validationPhone"));
       return;
     }
 
@@ -77,7 +77,7 @@ function EmergencyContactDialogInner({
             </div>
             <div>
               <h2 id="contact-dialog-title" className="text-base font-black text-snow-primary-dark">
-                {isEditing ? "Edit Emergency Contact" : "Add Emergency Contact"}
+                {isEditing ? t("parent", "safety.emergency.editTitle") : t("parent", "safety.emergency.addTitle")}
               </h2>
               <p className="text-xs font-semibold text-snow-muted">{t("parent", "safety.emergency.parentGate")}</p>
             </div>
@@ -105,10 +105,10 @@ function EmergencyContactDialogInner({
         {showDeleteConfirm && contact && onDelete ? (
           <div className="mt-4 rounded-[var(--radius-md)] border border-snow-danger/40 bg-snow-blush/40 p-4 space-y-3">
             <p className="text-xs font-black text-snow-danger">
-              Remove {contact.name} from emergency contacts?
+              {t("parent", "safety.emergency.removeConfirmTitle", { name: contact.name })}
             </p>
             <p className="text-[11px] text-snow-muted">
-              This contact will no longer receive emergency alerts or be surfaced during safety escalations.
+              {t("parent", "safety.emergency.removeConfirmDesc")}
             </p>
             <div className="flex justify-end gap-2 pt-1">
               <SnowButton
@@ -118,7 +118,7 @@ function EmergencyContactDialogInner({
                 onClick={() => setShowDeleteConfirm(false)}
                 className="min-h-8 px-3 text-xs"
               >
-                Cancel
+                {t("parent", "safety.emergency.cancel")}
               </SnowButton>
               <SnowButton
                 type="button"
@@ -130,10 +130,10 @@ function EmergencyContactDialogInner({
                 {isDeleting ? (
                   <>
                     <Loader2 className="mr-1.5 size-3 animate-spin" />
-                    Removing...
+                    {t("parent", "safety.emergency.removing")}
                   </>
                 ) : (
-                  "Confirm Remove"
+                  t("parent", "safety.emergency.confirmRemove")
                 )}
               </SnowButton>
             </div>
@@ -142,7 +142,7 @@ function EmergencyContactDialogInner({
           <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
             <div>
               <label htmlFor="contact-name" className="block text-xs font-black text-snow-primary-dark">
-                Full Name
+                {t("parent", "safety.emergency.nameLabel")}
               </label>
               <div className="relative mt-1">
                 <input
@@ -151,7 +151,7 @@ function EmergencyContactDialogInner({
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Sarah Nguyen"
+                  placeholder={t("parent", "safety.emergency.namePlaceholder")}
                   className="snow-focus-ring w-full rounded-[var(--radius-md)] border border-snow-border bg-white px-3 py-2 text-xs font-semibold text-snow-primary-dark placeholder:text-snow-muted/70"
                 />
               </div>
@@ -163,7 +163,7 @@ function EmergencyContactDialogInner({
                   htmlFor="contact-relation"
                   className="block text-xs font-black text-snow-primary-dark"
                 >
-                  Relation
+                  {t("parent", "safety.emergency.relationLabel")}
                 </label>
                 <input
                   id="contact-relation"
@@ -171,14 +171,14 @@ function EmergencyContactDialogInner({
                   required
                   value={relation}
                   onChange={(e) => setRelation(e.target.value)}
-                  placeholder="e.g. Mother, Father"
+                  placeholder={t("parent", "safety.emergency.relationPlaceholder")}
                   className="snow-focus-ring mt-1 w-full rounded-[var(--radius-md)] border border-snow-border bg-white px-3 py-2 text-xs font-semibold text-snow-primary-dark placeholder:text-snow-muted/70"
                 />
               </div>
 
               <div>
                 <label htmlFor="contact-phone" className="block text-xs font-black text-snow-primary-dark">
-                  Phone Number
+                  {t("parent", "safety.emergency.phoneLabel")}
                 </label>
                 <input
                   id="contact-phone"
@@ -186,7 +186,7 @@ function EmergencyContactDialogInner({
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="e.g. +1 555-0101"
+                  placeholder={t("parent", "safety.emergency.phonePlaceholder")}
                   className="snow-focus-ring mt-1 w-full rounded-[var(--radius-md)] border border-snow-border bg-white px-3 py-2 text-xs font-semibold text-snow-primary-dark placeholder:text-snow-muted/70"
                 />
               </div>
@@ -194,14 +194,14 @@ function EmergencyContactDialogInner({
 
             <div>
               <label htmlFor="contact-email" className="block text-xs font-black text-snow-primary-dark">
-                Email Address (Optional)
+                {t("parent", "safety.emergency.emailLabel")}
               </label>
               <input
                 id="contact-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g. parent@example.com"
+                placeholder={t("parent", "safety.emergency.emailPlaceholder")}
                 className="snow-focus-ring mt-1 w-full rounded-[var(--radius-md)] border border-snow-border bg-white px-3 py-2 text-xs font-semibold text-snow-primary-dark placeholder:text-snow-muted/70"
               />
             </div>
@@ -217,14 +217,13 @@ function EmergencyContactDialogInner({
                 <div>
                   <span className="font-bold">{t("parent", "safety.emergency.markPrimary")}</span>
                   <p className="text-[11px] text-snow-muted">
-                    Contacted first during urgent support or safety moments.
+                    {t("parent", "safety.emergency.primaryHelp")}
                   </p>
                 </div>
               </label>
 
               <p className="rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft p-2.5 text-[11px] font-semibold text-snow-muted">
-                Automatic alert delivery to contacts is unavailable until a notification provider
-                is configured, so no alert preference is stored for this contact.
+                {t("parent", "safety.emergency.providerNotice")}
               </p>
             </div>
 
@@ -236,7 +235,7 @@ function EmergencyContactDialogInner({
                   className="snow-focus-ring inline-flex items-center gap-1 rounded text-xs font-bold text-snow-danger hover:underline"
                 >
                   <Trash2 className="size-3.5" />
-                  Remove
+                  {t("parent", "safety.emergency.remove")}
                 </button>
               ) : (
                 <div />
@@ -250,7 +249,7 @@ function EmergencyContactDialogInner({
                   onClick={onClose}
                   className="min-h-9 px-3.5 text-xs font-bold"
                 >
-                  Cancel
+                  {t("parent", "safety.emergency.cancel")}
                 </SnowButton>
                 <SnowButton
                   type="submit"
@@ -260,10 +259,10 @@ function EmergencyContactDialogInner({
                   {isSaving ? (
                     <>
                       <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                      Saving...
+                      {t("parent", "safety.emergency.saving")}
                     </>
                   ) : (
-                    "Save Contact"
+                    t("parent", "safety.emergency.saveContact")
                   )}
                 </SnowButton>
               </div>

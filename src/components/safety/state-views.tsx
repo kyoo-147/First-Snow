@@ -4,14 +4,17 @@ import type { ReactNode } from "react";
 import { AlertCircle, AlertTriangle, Loader2, RefreshCw } from "lucide-react";
 import { SnowButton } from "@/components/ui/snow-button";
 import { cn } from "@/lib/utils";
+import { t } from "@/i18n";
 
 export function SafetyLoadingSkeleton({
-  label = "Loading safety settings...",
+  label,
   count = 3,
 }: {
   label?: string;
   count?: number;
 }) {
+  const displayLabel = label ?? t("parent", "safety.stateViews.loadingSettings");
+
   return (
     <div
       role="status"
@@ -21,7 +24,7 @@ export function SafetyLoadingSkeleton({
     >
       <div className="flex items-center gap-3 text-sm font-bold text-snow-muted">
         <Loader2 className="size-5 animate-spin text-snow-primary" />
-        <span>{label}</span>
+        <span>{displayLabel}</span>
       </div>
       <div className="space-y-3">
         {Array.from({ length: count }).map((_, i) => (
@@ -45,7 +48,7 @@ export function SafetyLoadingSkeleton({
 }
 
 export function SafetyErrorBanner({
-  title = "Failed to load safety controls",
+  title,
   message,
   code,
   requestId,
@@ -59,6 +62,8 @@ export function SafetyErrorBanner({
   onRetry?: () => void;
   className?: string;
 }) {
+  const displayTitle = title ?? t("parent", "safety.stateViews.errorTitle");
+
   return (
     <div
       role="alert"
@@ -70,17 +75,17 @@ export function SafetyErrorBanner({
       <div className="flex items-start gap-3">
         <AlertCircle className="mt-0.5 size-5 shrink-0 text-snow-danger" />
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-black text-snow-danger">{title}</p>
+          <p className="text-sm font-black text-snow-danger">{displayTitle}</p>
           <p className="mt-1 text-xs font-semibold leading-5 text-snow-primary-dark/80">
             {message}
           </p>
           {code || requestId ? (
             <div className="mt-2 flex flex-wrap gap-2 text-[11px] font-mono text-snow-muted">
               {code ? (
-                <span className="rounded bg-white/70 px-2 py-0.5">Code: {code}</span>
+                <span className="rounded bg-white/70 px-2 py-0.5">{t("parent", "safety.stateViews.codeLabel", { code })}</span>
               ) : null}
               {requestId ? (
-                <span className="rounded bg-white/70 px-2 py-0.5">Request ID: {requestId}</span>
+                <span className="rounded bg-white/70 px-2 py-0.5">{t("parent", "safety.stateViews.requestIdLabel", { requestId })}</span>
               ) : null}
             </div>
           ) : null}
@@ -92,7 +97,7 @@ export function SafetyErrorBanner({
             className="shrink-0 text-xs text-snow-primary-dark"
           >
             <RefreshCw className="mr-1.5 size-3.5" />
-            Retry
+            {t("parent", "safety.stateViews.retry")}
           </SnowButton>
         ) : null}
       </div>

@@ -5,39 +5,14 @@ import { Camera, CheckCircle2, Eye, Loader2, Mic, Monitor, ShieldAlert, XCircle 
 import { SnowButton } from "@/components/ui/snow-button";
 import type { ConsentRecord, ConsentScope } from "@/lib/safety-client";
 import { cn } from "@/lib/utils";
+import { t } from "@/i18n";
+import { formatSnowDateTime } from "@/lib/format";
 
-interface ScopeMeta {
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  governanceNote: string;
-}
-
-const SCOPE_METAS: Record<ConsentScope, ScopeMeta> = {
-  microphone: {
-    title: "Microphone Voice Access",
-    description: "Permits child-initiated speech recognition during interactive learning sessions.",
-    icon: Mic,
-    governanceNote: "Turn-by-turn speech target; sensitive capture remains unavailable until backend consent is verified.",
-  },
-  camera: {
-    title: "Camera Video Input",
-    description: "Allows optional video feed during supported face-to-face visual interaction.",
-    icon: Camera,
-    governanceNote: "Preview hidden by default; video capture remains unavailable until backend consent is verified.",
-  },
-  vision: {
-    title: "Vision AI Analysis",
-    description: "Enables visual understanding of physical flashcards, worksheets, and drawings.",
-    icon: Eye,
-    governanceNote: "Opt-in exercise target; visual reasoning remains unavailable until backend consent is verified.",
-  },
-  screen: {
-    title: "Screen Capture Access",
-    description: "Permits screen sharing during guided homework review and reading exercises.",
-    icon: Monitor,
-    governanceNote: "Session-scoped review; screen capture remains unavailable until backend consent is verified.",
-  },
+const SCOPE_ICONS: Record<ConsentScope, LucideIcon> = {
+  microphone: Mic,
+  camera: Camera,
+  vision: Eye,
+  screen: Monitor,
 };
 
 export interface ConsentScopeCardProps {
@@ -53,11 +28,14 @@ export function ConsentScopeCard({
   isMutating = false,
   onToggleConsent,
 }: ConsentScopeCardProps) {
-  const meta = SCOPE_METAS[scope];
-  const Icon = meta.icon;
+  const Icon = SCOPE_ICONS[scope];
   const isGranted = record?.status === "granted" || (record?.granted ?? false);
   const status = record?.status ?? (isGranted ? "granted" : "revoked");
   const policyVersion = record?.policyVersion ?? "v1.2";
+
+  const title = t("parent", `safety.consentScopeCard.scopes.${scope}.title` as any);
+  const description = t("parent", `safety.consentScopeCard.scopes.${scope}.description` as any);
+  const governanceNote = t("parent", `safety.consentScopeCard.scopes.${scope}.governanceNote` as any);
 
   return (
     <div
@@ -82,43 +60,43 @@ export function ConsentScopeCard({
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-black text-snow-primary-dark">{meta.title}</h3>
+            <h3 className="text-sm font-black text-snow-primary-dark">{title}</h3>
             {status === "granted" ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-snow-success/15 px-2.5 py-0.5 text-[11px] font-black text-snow-success">
                 <CheckCircle2 className="size-3" />
-                Active Consent
+                {t("parent", "safety.consentScopeCard.activeConsent")}
               </span>
             ) : status === "pending" ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-snow-warning/20 px-2.5 py-0.5 text-[11px] font-black text-snow-warning">
                 <ShieldAlert className="size-3" />
-                Pending Review
+                {t("parent", "safety.consentScopeCard.pendingReview")}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 rounded-full bg-snow-surface px-2.5 py-0.5 text-[11px] font-black text-snow-muted border border-snow-border">
                 <XCircle className="size-3" />
-                Revoked / Off
+                {t("parent", "safety.consentScopeCard.revokedOff")}
               </span>
             )}
             <span className="text-[10px] font-mono text-snow-muted/80">
-              Policy {policyVersion}
+              {t("parent", "safety.consentScopeCard.policyVersion", { version: policyVersion })}
             </span>
           </div>
 
           <p className="mt-1 text-xs font-semibold leading-5 text-snow-muted">
-            {meta.description}
+            {description}
           </p>
 
           <p className="mt-1.5 text-[11px] font-medium text-snow-primary-dark/75">
-            <strong>Governance rule:</strong> {meta.governanceNote}
+            <strong>{t("parent", "safety.consentScopeCard.governanceRule")}</strong> {governanceNote}
           </p>
 
           {record?.grantedAt ? (
             <p className="mt-1 text-[10px] text-snow-muted font-mono">
-              Authorized: {new Date(record.grantedAt).toLocaleString()}
+              {t("parent", "safety.consentScopeCard.authorizedAt", { date: formatSnowDateTime(record.grantedAt) })}
             </p>
           ) : record?.revokedAt ? (
             <p className="mt-1 text-[10px] text-snow-muted font-mono">
-              Revoked: {new Date(record.revokedAt).toLocaleString()}
+              {t("parent", "safety.consentScopeCard.revokedAt", { date: formatSnowDateTime(record.revokedAt) })}
             </p>
           ) : null}
         </div>
@@ -138,12 +116,12 @@ export function ConsentScopeCard({
           {isMutating ? (
             <>
               <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-              Updating...
+              {t("parent", "safety.consentScopeCard.updating")}
             </>
           ) : isGranted ? (
-            "Revoke Consent"
+            t("parent", "safety.consentScopeCard.revokeConsent")
           ) : (
-            "Grant Consent"
+            t("parent", "safety.consentScopeCard.grantConsent")
           )}
         </SnowButton>
       </div>

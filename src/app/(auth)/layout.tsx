@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
 export const metadata = {
-  title: "Authentication - AgentKid Snow",
-  description: "Secure, gentle parent and child authentication for AgentKid Snow",
+  title: "Xác thực - AgentKid Snow",
+  description: "Xác thực an toàn, nhẹ nhàng cho phụ huynh và học sinh cho AgentKid Snow",
 };
 
 export default function AuthLayout({ children }: { children: ReactNode }) {

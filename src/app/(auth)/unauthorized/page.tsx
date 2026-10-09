@@ -1,17 +1,18 @@
 import { AuthShell } from "@/components/auth/auth-shell";
 import { UnauthorizedView } from "@/components/auth/unauthorized-view";
+import { t } from "@/i18n";
 
 export const metadata = {
-  title: "Sign In Required - AgentKid Snow",
-  description: "Sign in to access your AgentKid Snow account",
+  title: "Yêu cầu Đăng nhập - AgentKid Snow",
+  description: "Đăng nhập để truy cập tài khoản AgentKid Snow của bạn",
 };
 
 export default function UnauthorizedPage() {
   return (
     <AuthShell
-      title="Access Restricted"
+      title={t("auth", "unauthorized.title")}
       mode="neutral"
-      mascotSpeech="Let's make sure you're signed in before we play or look at settings."
+      mascotSpeech={t("auth", "unauthorized.mascotSpeech")}
       maxWidth="sm"
     >
       <UnauthorizedView />

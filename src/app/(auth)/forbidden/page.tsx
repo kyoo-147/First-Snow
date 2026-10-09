@@ -1,18 +1,19 @@
 import { AuthShell } from "@/components/auth/auth-shell";
 import { ForbiddenView } from "@/components/auth/forbidden-view";
+import { t } from "@/i18n";
 
 export const metadata = {
-  title: "Parent Access Required - AgentKid Snow",
-  description: "Guardian authentication required to access safety and account controls",
+  title: "Yêu cầu Quyền truy cập Phụ huynh - AgentKid Snow",
+  description: "Yêu cầu xác thực của phụ huynh để truy cập an toàn và kiểm soát tài khoản",
 };
 
 export default function ForbiddenPage() {
   return (
     <AuthShell
-      eyebrow="Protected Area"
-      title="Parent Access Only"
+      eyebrow={t("auth", "forbidden.eyebrow")}
+      title={t("auth", "forbidden.title")}
       mode="neutral"
-      mascotSpeech="Hold on, friend! This part of Snow has controls for grown-ups only."
+      mascotSpeech={t("auth", "forbidden.mascotSpeech")}
       maxWidth="sm"
     >
       <ForbiddenView />

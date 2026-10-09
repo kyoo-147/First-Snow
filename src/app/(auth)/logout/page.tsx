@@ -1,17 +1,18 @@
 import { AuthShell } from "@/components/auth/auth-shell";
 import { LogoutView } from "@/components/auth/logout-view";
+import { t } from "@/i18n";
 
 export const metadata = {
-  title: "Sign Out - AgentKid Snow",
-  description: "Sign out securely from AgentKid Snow",
+  title: "Đăng xuất - AgentKid Snow",
+  description: "Đăng xuất an toàn khỏi AgentKid Snow",
 };
 
 export default function LogoutPage() {
   return (
     <AuthShell
-      title="Sign Out"
+      title={t("auth", "logout.title")}
       mode="neutral"
-      mascotSpeech="Take care! Snow will be right here waiting for you next time."
+      mascotSpeech={t("auth", "logout.mascotSpeech")}
       maxWidth="sm"
     >
       <LogoutView />
