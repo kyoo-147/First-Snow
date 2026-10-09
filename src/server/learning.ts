@@ -246,8 +246,46 @@ export async function saveLessonAnswer(
       .limit(1);
     if (!step) return null;
 
+    const [lesson] = await tx
+      .select({ id: lessons.id, content: lessons.content })
+      .from(lessons)
+      .where(eq(lessons.id, attempt.lessonId))
+      .limit(1);
+
+    let parsedContent: Record<string, unknown> | null = null;
+    if (lesson?.content) {
+      if (typeof lesson.content === 'string') {
+        try { parsedContent = JSON.parse(lesson.content); } catch { parsedContent = null; }
+      } else if (typeof lesson.content === 'object') {
+        parsedContent = lesson.content as Record<string, unknown>;
+      }
+    }
+
+    const contentSteps = (parsedContent && Array.isArray(parsedContent.steps))
+      ? (parsedContent.steps as Record<string, unknown>[])
+      : [];
+
+    const authoredStep = contentSteps.find((s) => s.id === stepId);
+
+    const { gradeStepAnswer } = await import('@/lib/lesson-engine/grader');
+
+    let isCorrect: boolean | null = null;
+    let gradingResult: ReturnType<typeof gradeStepAnswer> | undefined;
+
+    if (authoredStep && authoredStep.questionType) {
+      gradingResult = gradeStepAnswer(authoredStep as any, answer);
+      isCorrect = gradingResult.isCorrect;
+    } else {
+      const serialized = typeof answer === 'string' ? answer : JSON.stringify(answer);
+      isCorrect = step.correctAnswer === null ? null : serialized === step.correctAnswer;
+      gradingResult = {
+        isCorrect: isCorrect ?? false,
+        score: isCorrect ? 10 : 0,
+        maxScore: 10,
+      };
+    }
+
     const serialized = typeof answer === 'string' ? answer : JSON.stringify(answer);
-    const isCorrect = step.correctAnswer === null ? null : serialized === step.correctAnswer;
     const now = new Date();
     const updatedAnswers = {
       ...((attempt.answers && typeof attempt.answers === 'object' ? attempt.answers : {}) as Record<string, unknown>),
@@ -273,7 +311,11 @@ export async function saveLessonAnswer(
       .set({ answers: updatedAnswers, updatedAt: now } as Partial<typeof lessonAttempts.$inferInsert>)
       .where(eq(lessonAttempts.id, attemptId))
       .returning();
-    return updated;
+
+    return {
+      ...updated,
+      grading: gradingResult,
+    };
   });
 }
 

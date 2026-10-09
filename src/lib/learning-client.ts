@@ -141,6 +141,14 @@ export interface LessonAttempt {
   status: "not_started" | "in_progress" | "completed";
   score?: number | null;
   answers?: Record<string, unknown> | null;
+  grading?: {
+    isCorrect: boolean;
+    score: number;
+    maxScore: number;
+    explanation?: string;
+    hint?: string;
+    validationError?: string;
+  };
   startedAt?: string | null;
   completedAt?: string | null;
   createdAt?: string | null;
