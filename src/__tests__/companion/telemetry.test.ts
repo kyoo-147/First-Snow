@@ -60,4 +60,3 @@ test('CompanionTelemetryCollector emits exactly one redacted summary payload on 
     console.info = originalInfo;
   }
 });
-
