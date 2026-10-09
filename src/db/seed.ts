@@ -22,6 +22,17 @@ export async function runSeed(databaseUrl?: string) {
 
   console.log('[seed] Seeding database...');
 
+  if (process.env.NODE_ENV === 'production' && process.env.SEED_DEMO_DATA !== '1') {
+    console.log('[seed] Production mode: skipping demo users, household, and children.');
+    const lessonResult = await seedLessonCatalog({ db });
+    console.log(
+      `[seed] Seeded ${lessonResult.lessonsSeeded} lessons and ${lessonResult.stepsSeeded} steps.`,
+    );
+    console.log('[seed] Seeding complete.');
+    await client.end();
+    return;
+  }
+
   // 1. System Admin user
   const adminPasswordHash = await hashSeedCredential('Admin@Password1!');
   const [admin] = await db

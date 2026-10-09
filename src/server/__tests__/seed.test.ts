@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 const hoisted = vi.hoisted(() => {
   const rows = [{ id: 'generated-id' }];
@@ -38,6 +38,10 @@ describe('runSeed wires the lesson catalog into the standard seed', () => {
     vi.clearAllMocks();
   });
 
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
   it('seeds the lesson catalog with the same database connection and closes the client', async () => {
     await runSeed(TEST_URL);
 
@@ -51,6 +55,17 @@ describe('runSeed wires the lesson catalog into the standard seed', () => {
     await runSeed(TEST_URL);
 
     expect(seedLessonCatalog).toHaveBeenCalledTimes(2);
+  });
+
+  it('seeds only the lesson catalog in production unless demo data is explicitly enabled', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('SEED_DEMO_DATA', '0');
+
+    await runSeed(TEST_URL);
+
+    expect(seedLessonCatalog).toHaveBeenCalledTimes(1);
+    expect(hoisted.db.insert).not.toHaveBeenCalled();
+    expect(hoisted.client.end).toHaveBeenCalledTimes(1);
   });
 
   it('requires DATABASE_URL when no connection string is given', async () => {
