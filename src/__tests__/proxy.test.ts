@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
-import { proxy } from '../proxy';
+import { config, proxy } from '../proxy';
 import {
   createParentSession,
   createChildSession,
@@ -231,6 +231,11 @@ describe('src/proxy.ts Route Guards (DB-backed revocation)', () => {
       expect(res.status).toBe(307);
       expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
     });
+    it('redirects unauthenticated request on /mia to /child-login', async () => {
+      const res = await proxy(createMockRequest('/mia/chat'));
+      expect(res.status).toBe(307);
+      expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
+    });
 
     it('redirects unauthenticated request on /lessons to /child-login', async () => {
       const res = await proxy(createMockRequest('/lessons/math-1'));
@@ -248,6 +253,24 @@ describe('src/proxy.ts Route Guards (DB-backed revocation)', () => {
       const res = await proxy(createMockRequest('/session/active', { [CHILD_COOKIE_NAME]: token }));
       expect(res.status).toBe(200);
       expect(res.headers.get('location')).toBeNull();
+    });
+
+    it('applies the same active child-session guard to /mia as /companion', async () => {
+      const token = await childToken();
+      const activeRows = [
+        [childSessionRow('child-user-uuid')],
+        [{ id: 'child-user-uuid', isActive: true }],
+      ];
+
+      state.queryResults = [...activeRows];
+      const miaRes = await proxy(createMockRequest('/mia/chat', { [CHILD_COOKIE_NAME]: token }));
+
+      state.queryResults = [...activeRows];
+      const companionRes = await proxy(createMockRequest('/companion/snow', { [CHILD_COOKIE_NAME]: token }));
+
+      expect(miaRes.status).toBe(companionRes.status);
+      expect(miaRes.status).toBe(200);
+      expect(miaRes.headers.get('location')).toBe(companionRes.headers.get('location'));
     });
 
     it('redirects when the child session was revoked after login', async () => {
@@ -279,6 +302,22 @@ describe('src/proxy.ts Route Guards (DB-backed revocation)', () => {
       );
       expect(res.status).toBe(307);
       expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
+    });
+    it('rejects parent-only credentials on /mia', async () => {
+      const res = await proxy(
+        createMockRequest('/mia/chat', {
+          [PARENT_COOKIE_NAME]: await parentToken('parent'),
+        }),
+      );
+      expect(res.status).toBe(307);
+      expect(res.headers.get('location')).toBe('http://localhost:3000/child-login');
+    });
+
+    it('keeps /mia in the protected matcher without changing public or unrelated routes', () => {
+      expect(config.matcher).toContain('/mia/:path*');
+      expect(config.matcher).toContain('/companion/:path*');
+      expect(config.matcher).not.toContain('/child-login/:path*');
+      expect(config.matcher).not.toContain('/api/:path*');
     });
   });
 

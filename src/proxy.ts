@@ -9,7 +9,7 @@ import { isDbSessionValid } from '@/server/auth';
 
 const ADMIN_ROUTES = ['/admin'];
 const PARENT_ROUTES = ['/parent'];
-const CHILD_ROUTES = ['/session', '/companion', '/lessons', '/activities', '/rewards'];
+const CHILD_ROUTES = ['/session', '/companion', '/mia', '/lessons', '/activities', '/rewards'];
 
 /**
  * Next.js 16 Proxy route guard (formerly middleware.ts).
@@ -94,6 +94,7 @@ export const config = {
     '/parent/:path*',
     '/session/:path*',
     '/companion/:path*',
+    '/mia/:path*',
     '/lessons/:path*',
     '/activities/:path*',
     '/rewards/:path*',
