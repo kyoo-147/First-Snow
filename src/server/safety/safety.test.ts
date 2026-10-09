@@ -105,14 +105,14 @@ describe('safety service', () => {
     expect(preferences).not.toHaveProperty('updatedAt');
   });
 
-  it('rejects enabling contact alerts instead of saving them as disabled', async () => {
+  it('rejects enabling contact alerts when Twilio is not fully configured', async () => {
     const { POST } = await import('@/app/api/emergency-contacts/route');
     const response = await POST(new Request('http://localhost/api/emergency-contacts', { method: 'POST', body: JSON.stringify({ name: 'Caregiver', relation: 'Parent', phone: '555-0100', notifyOnAlert: true }) }));
     expect(response.status).toBe(503);
-    expect(await response.json()).toMatchObject({ error: { code: 'PREFERENCE_UNAVAILABLE' } });
+    expect(await response.json()).toMatchObject({ error: { code: 'PROVIDER_UNAVAILABLE' } });
   });
 
-  it('does not fabricate a contact priority and reports the unavailable alert default as false', async () => {
+  it('does not fabricate a contact priority and defaults legacy alert preference to false', async () => {
     const { mapEmergencyContact } = await import('@/app/api/emergency-contacts/route');
     const contact = mapEmergencyContact({ id: 'contact-a', name: 'Caregiver', relationship: 'Parent', phone: '555-0100', email: null, isPrimary: false, createdAt: new Date('2026-01-01T00:00:00Z'), updatedAt: new Date('2026-01-01T00:00:00Z') } as never);
     expect(contact.notifyOnAlert).toBe(false);

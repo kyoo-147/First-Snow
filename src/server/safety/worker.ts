@@ -8,14 +8,18 @@ export interface ObjectStore {
 }
 
 export interface DeliveryAdapter {
-  /** Implementations must deduplicate sends by this key to cover a provider acknowledgement followed by a database rollback. */
-  send(message: { recipientId: string; subject: string | null; body: string }, idempotencyKey: string): Promise<{ acknowledged: true }>;
+  send(
+    message: { recipientId: string; destination?: string; subject: string | null; body: string },
+    idempotencyKey: string,
+  ): Promise<{ acknowledged: true; providerReference?: string; providerStatus?: string }>;
 }
 
 export interface WorkerAdapters {
   objectStore?: ObjectStore;
   email?: DeliveryAdapter;
   push?: DeliveryAdapter;
+  sms?: DeliveryAdapter;
+  voice?: DeliveryAdapter;
 }
 
 export interface ExportJob {
@@ -41,7 +45,8 @@ export interface DeletionJob {
 export interface NotificationJob {
   id: string;
   recipientId: string;
-  channel: 'email' | 'push' | 'in_app';
+  channel: 'email' | 'push' | 'in_app' | 'sms' | 'voice';
+  destination?: string;
   subject: string | null;
   body: string;
 }
@@ -139,7 +144,15 @@ export async function runSafetyJobsOnce(options: RunOnceOptions): Promise<RunOnc
 
   const notifications = await repository.listPendingNotifications(limit, options.retryFailed ?? false);
   for (const job of notifications) {
-    const adapter = job.channel === 'email' ? adapters.email : job.channel === 'push' ? adapters.push : undefined;
+    const adapter = job.channel === 'email'
+      ? adapters.email
+      : job.channel === 'push'
+        ? adapters.push
+        : job.channel === 'sms'
+          ? adapters.sms
+          : job.channel === 'voice'
+            ? adapters.voice
+            : undefined;
     const state = await repository.deliverNotification(job, adapter);
     if (state === 'sent') result.notifications.sent++;
     if (state === 'failed') result.notifications.failed++;

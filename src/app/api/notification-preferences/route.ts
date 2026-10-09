@@ -4,17 +4,58 @@ import { db } from '@/db/client';
 import { notificationPreferences } from '@/db/schema';
 import { requireParentSession } from '@/server/auth';
 import { audit, context, SafetyError, safetyErrorResponse } from '@/server/safety';
+import { readTwilioConfig } from '@/server/safety/twilio';
 import { z } from 'zod';
 
-const channels = ['email', 'push', 'in_app'] as const;
+const channels = ['email', 'push', 'in_app', 'sms', 'voice'] as const;
 export function mapNotificationPreferences(rows: Array<typeof notificationPreferences.$inferSelect>) {
-  const enabled = (channel: string) => rows.find((r) => r.channel === channel)?.enabled ?? false;
-  const emailAlerts = enabled('email'), pushAlerts = enabled('push'), weeklyReport = enabled('in_app');
+  const enabled = (channel: typeof channels[number]) => rows.find((row) => row.channel === channel)?.enabled ?? false;
+  const emailAlerts = enabled('email');
+  const pushAlerts = enabled('push');
+  const weeklyReport = enabled('in_app');
+  const emergencySmsAlerts = enabled('sms') && enabled('voice');
   const channel = emailAlerts && pushAlerts ? 'both' : emailAlerts ? 'email' : pushAlerts ? 'push' : 'none';
   const updatedAt = rows.reduce<Date | undefined>((latest, row) => !latest || row.updatedAt > latest ? row.updatedAt : latest, undefined);
-  return { emailAlerts, pushAlerts, weeklyReport, emergencySmsAlerts: false, reportCadence: 'weekly' as const, deliveryPreference: { channel, frequency: 'immediate' as const, quietHoursEnabled: false }, ...(updatedAt ? { updatedAt: updatedAt.toISOString() } : {}) };
+  return { emailAlerts, pushAlerts, weeklyReport, emergencySmsAlerts, reportCadence: 'weekly' as const, deliveryPreference: { channel, frequency: 'immediate' as const, quietHoursEnabled: false }, ...(updatedAt ? { updatedAt: updatedAt.toISOString() } : {}) };
 }
-async function read(userId: string) { const rows = await db.select().from(notificationPreferences).where(eq(notificationPreferences.userId, userId)); return mapNotificationPreferences(rows); }
-export async function GET() { try { const s = await requireParentSession(); if (s instanceof Response) return s; await context(s); return NextResponse.json({ preferences: await read(s.sub) }); } catch (e) { return safetyErrorResponse(e); } }
+async function read(userId: string) { return mapNotificationPreferences(await db.select().from(notificationPreferences).where(eq(notificationPreferences.userId, userId))); }
+
+export async function GET() {
+  try {
+    const session = await requireParentSession();
+    if (session instanceof Response) return session;
+    await context(session);
+    return NextResponse.json({ preferences: await read(session.sub), emergencyProviderConfigured: Boolean(readTwilioConfig()) });
+  } catch (error) { return safetyErrorResponse(error); }
+}
+
 const schema = z.object({ emailAlerts: z.boolean().optional(), pushAlerts: z.boolean().optional(), weeklyReport: z.boolean().optional(), emergencySmsAlerts: z.boolean().optional(), reportCadence: z.enum(['daily', 'weekly', 'monthly']).optional(), deliveryPreference: z.object({ channel: z.enum(['email', 'push', 'both', 'none']).optional(), frequency: z.enum(['immediate', 'digest_daily', 'digest_weekly']).optional(), quietHoursEnabled: z.boolean().optional(), quietHoursStart: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).optional(), quietHoursEnd: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).optional() }).strict().optional() }).strict();
-export async function PATCH(request: Request) { try { const s = await requireParentSession(); if (s instanceof Response) return s; const parsed = schema.safeParse(await request.json()); if (!parsed.success) throw new SafetyError(400, 'VALIDATION_FAILED', 'Invalid notification preferences.', parsed.error.flatten().fieldErrors as Record<string, string[]>); await context(s); const p = parsed.data; if (p.emergencySmsAlerts) throw new SafetyError(503, 'PROVIDER_UNAVAILABLE', 'SMS notifications are unavailable because no delivery provider is configured.'); if (p.reportCadence && p.reportCadence !== 'weekly') throw new SafetyError(503, 'WORKER_UNAVAILABLE', 'Report scheduling is unavailable because no scheduler is configured.'); if (p.deliveryPreference && (p.deliveryPreference.frequency !== undefined && p.deliveryPreference.frequency !== 'immediate' || p.deliveryPreference.quietHoursEnabled || p.deliveryPreference.quietHoursStart || p.deliveryPreference.quietHoursEnd)) throw new SafetyError(503, 'WORKER_UNAVAILABLE', 'Digest and quiet hour scheduling are unavailable because no scheduler is configured.'); const channelValues = { email: p.emailAlerts, push: p.pushAlerts, in_app: p.weeklyReport }; const deliveryChannel = p.deliveryPreference?.channel; if (deliveryChannel) { if (p.emailAlerts === undefined) channelValues.email = deliveryChannel === 'email' || deliveryChannel === 'both'; if (p.pushAlerts === undefined) channelValues.push = deliveryChannel === 'push' || deliveryChannel === 'both'; } for (const channel of channels) { const enabled = channelValues[channel]; if (enabled === undefined) continue; const [existing] = await db.select({ id: notificationPreferences.id }).from(notificationPreferences).where(and(eq(notificationPreferences.userId, s.sub), eq(notificationPreferences.channel, channel))).limit(1); if (existing) await db.update(notificationPreferences).set({ enabled, updatedAt: new Date() } as Partial<typeof notificationPreferences.$inferInsert>).where(eq(notificationPreferences.id, existing.id)); else await db.insert(notificationPreferences).values({ userId: s.sub, channel, enabled, updatedAt: new Date() } as typeof notificationPreferences.$inferInsert); } await audit(s.sub, 'notification_preferences.updated', 'notification_preferences', s.sub, { fields: Object.keys(p) }); return NextResponse.json({ preferences: await read(s.sub) }); } catch (e) { return safetyErrorResponse(e); } }
+
+export async function PATCH(request: Request) {
+  try {
+    const session = await requireParentSession();
+    if (session instanceof Response) return session;
+    const parsed = schema.safeParse(await request.json());
+    if (!parsed.success) throw new SafetyError(400, 'VALIDATION_FAILED', 'Invalid notification preferences.', parsed.error.flatten().fieldErrors as Record<string, string[]>);
+    await context(session);
+    const values = parsed.data;
+    if (values.emergencySmsAlerts === true && !readTwilioConfig()) throw new SafetyError(503, 'PROVIDER_UNAVAILABLE', 'Twilio SMS and Voice are not fully configured.');
+    if (values.reportCadence && values.reportCadence !== 'weekly') throw new SafetyError(503, 'WORKER_UNAVAILABLE', 'Report scheduling is unavailable because no scheduler is configured.');
+    if (values.deliveryPreference && (values.deliveryPreference.frequency !== undefined && values.deliveryPreference.frequency !== 'immediate' || values.deliveryPreference.quietHoursEnabled || values.deliveryPreference.quietHoursStart || values.deliveryPreference.quietHoursEnd)) throw new SafetyError(503, 'WORKER_UNAVAILABLE', 'Digest and quiet hour scheduling are unavailable because no scheduler is configured.');
+    const channelValues: Partial<Record<typeof channels[number], boolean>> = { email: values.emailAlerts, push: values.pushAlerts, in_app: values.weeklyReport, sms: values.emergencySmsAlerts, voice: values.emergencySmsAlerts };
+    const deliveryChannel = values.deliveryPreference?.channel;
+    if (deliveryChannel) {
+      if (values.emailAlerts === undefined) channelValues.email = deliveryChannel === 'email' || deliveryChannel === 'both';
+      if (values.pushAlerts === undefined) channelValues.push = deliveryChannel === 'push' || deliveryChannel === 'both';
+    }
+    for (const channel of channels) {
+      const enabled = channelValues[channel];
+      if (enabled === undefined) continue;
+      const [existing] = await db.select({ id: notificationPreferences.id }).from(notificationPreferences).where(and(eq(notificationPreferences.userId, session.sub), eq(notificationPreferences.channel, channel))).limit(1);
+      if (existing) await db.update(notificationPreferences).set({ enabled, updatedAt: new Date() }).where(eq(notificationPreferences.id, existing.id));
+      else await db.insert(notificationPreferences).values({ userId: session.sub, channel, enabled, updatedAt: new Date() });
+    }
+    await audit(session.sub, 'notification_preferences.updated', 'notification_preferences', session.sub, { fields: Object.keys(values) });
+    return NextResponse.json({ preferences: await read(session.sub) });
+  } catch (error) { return safetyErrorResponse(error); }
+}

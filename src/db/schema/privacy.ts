@@ -122,6 +122,9 @@ export const emergencyContacts = pgTable('emergency_contacts', {
   phone: varchar('phone', { length: 30 }),
   email: varchar('email', { length: 255 }),
   isPrimary: boolean('is_primary').notNull().default(false),
+  notifyOnAlert: boolean('notify_on_alert').notNull().default(false),
+  consentGrantedAt: timestamp('consent_granted_at', { withTimezone: true }),
+  verifiedAt: timestamp('verified_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

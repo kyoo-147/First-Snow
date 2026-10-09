@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { sql } from 'drizzle-orm';
 import { db } from '@/db/client';
 import { getDiscordDiagnostics, getProviderDiagnostics } from '@/server/companion/contracts';
+import { readTwilioConfig } from '@/server/safety/twilio';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +23,10 @@ export async function GET(): Promise<NextResponse> {
 
   const aiProvider = await getProviderDiagnostics();
   const discordBoundary = getDiscordDiagnostics();
+  const twilio = readTwilioConfig();
+  const emergencyDelivery = twilio
+    ? { configured: true, enabled: true, sms: true, voice: true, callback: 'configured' }
+    : { configured: false, enabled: process.env.TWILIO_ENABLED === 'true', sms: false, voice: false, callback: 'unavailable' };
 
   return NextResponse.json(
     {
@@ -30,6 +35,7 @@ export async function GET(): Promise<NextResponse> {
         database: databaseOk ? 'ok' : 'error',
         ai_provider: aiProvider,
         discord_boundary: discordBoundary,
+        emergency_delivery: emergencyDelivery,
       },
     },
     {

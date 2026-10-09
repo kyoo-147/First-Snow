@@ -4,13 +4,106 @@ import { db } from '@/db/client';
 import { emergencyContacts } from '@/db/schema';
 import { requireParentSession } from '@/server/auth';
 import { audit, context, reauthenticate, SafetyError, safetyErrorResponse } from '@/server/safety';
+import { normalizeE164, readTwilioConfig } from '@/server/safety/twilio';
 import { z } from 'zod';
 
-export function mapEmergencyContact(row: typeof emergencyContacts.$inferSelect) { return { id: row.id, name: row.name, relation: row.relationship ?? '', phone: row.phone ?? '', ...(row.email ? { email: row.email } : {}), isPrimary: row.isPrimary, notifyOnAlert: false, createdAt: row.createdAt.toISOString(), updatedAt: row.updatedAt.toISOString() }; }
-export async function GET() { try { const s = await requireParentSession(); if (s instanceof Response) return s; const { household } = await context(s); const rows = await db.select().from(emergencyContacts).where(eq(emergencyContacts.householdId, household.id)).orderBy(desc(emergencyContacts.isPrimary), desc(emergencyContacts.createdAt)); return NextResponse.json({ contacts: rows.map(mapEmergencyContact) }); } catch (e) { return safetyErrorResponse(e); } }
-const fields = { name: z.string().trim().min(1).max(255), relation: z.string().trim().min(1).max(100), phone: z.string().trim().min(3).max(30), email: z.string().trim().email().max(255).optional(), isPrimary: z.boolean().optional(), notifyOnAlert: z.boolean().optional() };
+export function mapEmergencyContact(row: typeof emergencyContacts.$inferSelect) {
+  return {
+    id: row.id,
+    name: row.name,
+    relation: row.relationship ?? '',
+    phone: row.phone ?? '',
+    ...(row.email ? { email: row.email } : {}),
+    isPrimary: row.isPrimary,
+    notifyOnAlert: row.notifyOnAlert ?? false,
+    consentGrantedAt: row.consentGrantedAt?.toISOString(),
+    verifiedAt: row.verifiedAt?.toISOString(),
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
+export async function GET() {
+  try {
+    const session = await requireParentSession();
+    if (session instanceof Response) return session;
+    const { household } = await context(session);
+    const rows = await db.select().from(emergencyContacts).where(eq(emergencyContacts.householdId, household.id)).orderBy(desc(emergencyContacts.isPrimary), desc(emergencyContacts.createdAt));
+    return NextResponse.json({ contacts: rows.map(mapEmergencyContact), providerConfigured: Boolean(readTwilioConfig()) });
+  } catch (error) { return safetyErrorResponse(error); }
+}
+
+const fields = {
+  name: z.string().trim().min(1).max(255),
+  relation: z.string().trim().min(1).max(100),
+  phone: z.string().trim().min(3).max(30),
+  email: z.string().trim().email().max(255).optional(),
+  isPrimary: z.boolean().optional(),
+  notifyOnAlert: z.boolean().optional(),
+};
 const createSchema = z.object(fields).strict();
-export async function POST(request: Request) { try { const s = await requireParentSession(); if (s instanceof Response) return s; const p = createSchema.safeParse(await request.json()); if (!p.success) throw new SafetyError(400, 'VALIDATION_FAILED', 'Invalid emergency contact.', p.error.flatten().fieldErrors as Record<string, string[]>); if (p.data.notifyOnAlert === true) throw new SafetyError(503, 'PREFERENCE_UNAVAILABLE', 'Per contact alerts cannot be enabled because the database cannot persist that preference.'); const { household } = await context(s); const [row] = await db.insert(emergencyContacts).values({ householdId: household.id, name: p.data.name, relationship: p.data.relation, phone: p.data.phone, email: p.data.email ?? null, isPrimary: p.data.isPrimary ?? false } as typeof emergencyContacts.$inferInsert).returning(); if (!row) throw new Error('Contact insert returned no row'); await audit(s.sub, 'emergency_contact.created', 'emergency_contact', row.id, { alertPreference: false }); return NextResponse.json({ contact: mapEmergencyContact(row), message: 'Contact saved. Per contact alerts are disabled because this database cannot persist that preference and no delivery provider is configured.' }, { status: 201 }); } catch (e) { return safetyErrorResponse(e); } }
+
+function deliveryFields(phone: string, enabled: boolean) {
+  if (!enabled) return { phone, notifyOnAlert: false, consentGrantedAt: null, verifiedAt: null };
+  if (!readTwilioConfig()) throw new SafetyError(503, 'PROVIDER_UNAVAILABLE', 'Twilio emergency delivery is not fully configured.');
+  const normalized = normalizeE164(phone);
+  if (!normalized) throw new SafetyError(400, 'VALIDATION_FAILED', 'Emergency alert phone must be a valid E.164 or Vietnamese mobile number.', { phone: ['Use +849... or 09... format.'] });
+  const now = new Date();
+  return { phone: normalized, notifyOnAlert: true, consentGrantedAt: now, verifiedAt: now };
+}
+
+export async function POST(request: Request) {
+  try {
+    const session = await requireParentSession();
+    if (session instanceof Response) return session;
+    const parsed = createSchema.safeParse(await request.json());
+    if (!parsed.success) throw new SafetyError(400, 'VALIDATION_FAILED', 'Invalid emergency contact.', parsed.error.flatten().fieldErrors as Record<string, string[]>);
+    const delivery = deliveryFields(parsed.data.phone, parsed.data.notifyOnAlert === true);
+    const { household } = await context(session);
+    const [row] = await db.insert(emergencyContacts).values({ householdId: household.id, name: parsed.data.name, relationship: parsed.data.relation, ...delivery, email: parsed.data.email ?? null, isPrimary: parsed.data.isPrimary ?? false } as typeof emergencyContacts.$inferInsert).returning();
+    if (!row) throw new Error('Contact insert returned no row');
+    await audit(session.sub, 'emergency_contact.created', 'emergency_contact', row.id, { alertPreference: row.notifyOnAlert, consentConfirmed: Boolean(row.consentGrantedAt) });
+    return NextResponse.json({ contact: mapEmergencyContact(row), message: row.notifyOnAlert ? 'Đã lưu liên hệ và xác nhận đồng ý nhận cảnh báo khẩn cấp.' : 'Đã lưu liên hệ; cảnh báo tự động đang tắt.' }, { status: 201 });
+  } catch (error) { return safetyErrorResponse(error); }
+}
+
 const patchSchema = z.object({ id: z.string().uuid(), name: fields.name.optional(), relation: fields.relation.optional(), phone: fields.phone.optional(), email: fields.email, isPrimary: fields.isPrimary, notifyOnAlert: fields.notifyOnAlert, reauthPassword: z.string().optional() }).strict();
-export async function PATCH(request: Request) { try { const s = await requireParentSession(); if (s instanceof Response) return s; const p = patchSchema.safeParse(await request.json()); if (!p.success) throw new SafetyError(400, 'VALIDATION_FAILED', 'Invalid emergency contact update.', p.error.flatten().fieldErrors as Record<string, string[]>); if (p.data.notifyOnAlert === true) throw new SafetyError(503, 'PREFERENCE_UNAVAILABLE', 'Per contact alerts cannot be enabled because the database cannot persist that preference.'); const { household } = await context(s); const { id, reauthPassword, notifyOnAlert: _notify, ...data } = p.data; const existing = await db.select().from(emergencyContacts).where(and(eq(emergencyContacts.id, id), eq(emergencyContacts.householdId, household.id))).limit(1); if (!existing[0]) throw new SafetyError(404, 'NOT_FOUND', 'Emergency contact not found.'); if (data.isPrimary !== undefined || data.phone !== undefined || data.email !== undefined) await reauthenticate(s.sub, reauthPassword); const update: Record<string, unknown> = { updatedAt: new Date() }; if (data.name !== undefined) update.name = data.name; if (data.relation !== undefined) update.relationship = data.relation; if (data.phone !== undefined) update.phone = data.phone; if (data.email !== undefined) update.email = data.email; if (data.isPrimary !== undefined) update.isPrimary = data.isPrimary; const [row] = await db.update(emergencyContacts).set(update).where(and(eq(emergencyContacts.id, id), eq(emergencyContacts.householdId, household.id))).returning(); if (!row) throw new Error('Contact update returned no row'); await audit(s.sub, 'emergency_contact.updated', 'emergency_contact', id, _notify === undefined ? undefined : { alertPreference: false }); return NextResponse.json({ contact: mapEmergencyContact(row), ...(_notify !== undefined ? { message: 'Contact updated. Per contact alerts remain disabled because this database cannot persist that preference and no delivery provider is configured.' } : {}) }); } catch (e) { return safetyErrorResponse(e); } }
-export async function DELETE(request: Request) { try { const s = await requireParentSession(); if (s instanceof Response) return s; const p = z.object({ id: z.string().uuid(), reauthPassword: z.string().optional() }).strict().safeParse(await request.json()); if (!p.success) throw new SafetyError(400, 'VALIDATION_FAILED', 'Invalid contact identifier.'); await reauthenticate(s.sub, p.data.reauthPassword); const { household } = await context(s); const [row] = await db.delete(emergencyContacts).where(and(eq(emergencyContacts.id, p.data.id), eq(emergencyContacts.householdId, household.id))).returning({ id: emergencyContacts.id }); if (!row) throw new SafetyError(404, 'NOT_FOUND', 'Emergency contact not found.'); await audit(s.sub, 'emergency_contact.deleted', 'emergency_contact', row.id); return NextResponse.json({ success: true, message: 'Contact deleted.' }); } catch (e) { return safetyErrorResponse(e); } }
+
+export async function PATCH(request: Request) {
+  try {
+    const session = await requireParentSession();
+    if (session instanceof Response) return session;
+    const parsed = patchSchema.safeParse(await request.json());
+    if (!parsed.success) throw new SafetyError(400, 'VALIDATION_FAILED', 'Invalid emergency contact update.', parsed.error.flatten().fieldErrors as Record<string, string[]>);
+    const { household } = await context(session);
+    const { id, reauthPassword, ...data } = parsed.data;
+    const [existing] = await db.select().from(emergencyContacts).where(and(eq(emergencyContacts.id, id), eq(emergencyContacts.householdId, household.id))).limit(1);
+    if (!existing) throw new SafetyError(404, 'NOT_FOUND', 'Emergency contact not found.');
+    if (data.isPrimary !== undefined || data.phone !== undefined || data.email !== undefined) await reauthenticate(session.sub, reauthPassword);
+    const update: Record<string, unknown> = { updatedAt: new Date() };
+    if (data.name !== undefined) update.name = data.name;
+    if (data.relation !== undefined) update.relationship = data.relation;
+    if (data.email !== undefined) update.email = data.email;
+    if (data.isPrimary !== undefined) update.isPrimary = data.isPrimary;
+    if (data.notifyOnAlert !== undefined || data.phone !== undefined) Object.assign(update, deliveryFields(data.phone ?? existing.phone ?? '', data.notifyOnAlert ?? existing.notifyOnAlert));
+    const [row] = await db.update(emergencyContacts).set(update).where(and(eq(emergencyContacts.id, id), eq(emergencyContacts.householdId, household.id))).returning();
+    if (!row) throw new Error('Contact update returned no row');
+    await audit(session.sub, 'emergency_contact.updated', 'emergency_contact', id, { alertPreference: row.notifyOnAlert, consentConfirmed: Boolean(row.consentGrantedAt) });
+    return NextResponse.json({ contact: mapEmergencyContact(row), message: row.notifyOnAlert ? 'Đã bật cảnh báo khẩn cấp cho liên hệ.' : 'Đã cập nhật liên hệ.' });
+  } catch (error) { return safetyErrorResponse(error); }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const session = await requireParentSession();
+    if (session instanceof Response) return session;
+    const parsed = z.object({ id: z.string().uuid(), reauthPassword: z.string().optional() }).strict().safeParse(await request.json());
+    if (!parsed.success) throw new SafetyError(400, 'VALIDATION_FAILED', 'Invalid contact identifier.');
+    await reauthenticate(session.sub, parsed.data.reauthPassword);
+    const { household } = await context(session);
+    const [row] = await db.delete(emergencyContacts).where(and(eq(emergencyContacts.id, parsed.data.id), eq(emergencyContacts.householdId, household.id))).returning({ id: emergencyContacts.id });
+    if (!row) throw new SafetyError(404, 'NOT_FOUND', 'Emergency contact not found.');
+    await audit(session.sub, 'emergency_contact.deleted', 'emergency_contact', row.id);
+    return NextResponse.json({ success: true, message: 'Contact deleted.' });
+  } catch (error) { return safetyErrorResponse(error); }
+}

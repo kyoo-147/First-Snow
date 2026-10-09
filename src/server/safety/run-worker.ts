@@ -1,10 +1,13 @@
 import { pathToFileURL } from 'node:url';
 import { DatabaseSafetyWorkerRepository } from './worker-repository';
 import { runSafetyJobsOnce, type WorkerAdapters } from './worker';
+import { createTwilioAdapters, readTwilioConfig } from './twilio';
 
 async function loadAdapters(): Promise<WorkerAdapters> {
+  const twilio = readTwilioConfig();
+  const builtIn: WorkerAdapters = twilio ? createTwilioAdapters(twilio) : {};
   const modulePath = process.env.SAFETY_WORKER_ADAPTER_MODULE;
-  if (!modulePath) return {};
+  if (!modulePath) return builtIn;
   try {
     const specifier = modulePath.startsWith('.') || modulePath.includes(':')
       ? pathToFileURL(modulePath).href
@@ -12,10 +15,10 @@ async function loadAdapters(): Promise<WorkerAdapters> {
     const adapterModule = await import(specifier) as { default?: WorkerAdapters; adapters?: WorkerAdapters };
     const adapters = adapterModule.adapters ?? adapterModule.default;
     if (!adapters || typeof adapters !== 'object') throw new Error('Adapter module must export `adapters` or a default WorkerAdapters object.');
-    return adapters;
+    return { ...builtIn, ...adapters };
   } catch (error) {
     console.error('[safety-worker] Adapter module unavailable; export and delivery jobs will be failed truthfully.', error);
-    return {};
+    return builtIn;
   }
 }
 

@@ -5,15 +5,19 @@ import {
   text,
   timestamp,
   boolean,
+  integer,
   pgEnum,
   unique,
 } from 'drizzle-orm/pg-core';
 import { users } from './users';
+import { emergencyContacts } from './privacy';
 
 export const notificationChannelEnum = pgEnum('notification_channel', [
   'email',
   'push',
   'in_app',
+  'sms',
+  'voice',
 ]);
 export const notificationStatusEnum = pgEnum('notification_status', [
   'pending',
@@ -29,6 +33,9 @@ export const notifications = pgTable('notifications', {
   recipientId: uuid('recipient_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  emergencyContactId: uuid('emergency_contact_id').references(() => emergencyContacts.id, {
+    onDelete: 'cascade',
+  }),
   channel: notificationChannelEnum('channel').notNull(),
   subject: varchar('subject', { length: 255 }),
   body: text('body').notNull(),
@@ -36,6 +43,10 @@ export const notifications = pgTable('notifications', {
   sentAt: timestamp('sent_at', { withTimezone: true }),
   deliveredAt: timestamp('delivered_at', { withTimezone: true }),
   failureReason: text('failure_reason'),
+  providerReference: varchar('provider_reference', { length: 80 }),
+  providerStatus: varchar('provider_status', { length: 40 }),
+  attempts: integer('attempts').notNull().default(0),
+  lastAttemptAt: timestamp('last_attempt_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 

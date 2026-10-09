@@ -2,7 +2,7 @@ import { asc, and, eq, inArray, lt } from 'drizzle-orm';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from '@/db/schema';
-import { auditEvents, children, companionMessages, companionSessions, dataDeletionJobs, dataExportJobs, householdMembers, households, lessonAttempts, lessonProgress, notificationPreferences, notifications, retentionPolicies, sessions, users } from '@/db/schema';
+import { auditEvents, children, companionMessages, companionSessions, dataDeletionJobs, dataExportJobs, emergencyContacts, householdMembers, households, lessonAttempts, lessonProgress, notificationPreferences, notifications, retentionPolicies, sessions, users } from '@/db/schema';
 import type { DeletionJob, DeliveryAdapter, ExportJob, ExportRequest, NotificationJob, RetentionPurgeResult, SafetyWorkerRepository } from './worker';
 
 type WorkerDb = ReturnType<typeof drizzle<typeof schema>>;
@@ -175,7 +175,14 @@ export class DatabaseSafetyWorkerRepository implements SafetyWorkerRepository {
   }
 
   async listPendingNotifications(limit: number, retryFailed: boolean): Promise<NotificationJob[]> {
-    return this.db.select({ id: notifications.id, recipientId: notifications.recipientId, channel: notifications.channel, subject: notifications.subject, body: notifications.body }).from(notifications).where(retryFailed ? inArray(notifications.status, ['pending', 'failed']) : eq(notifications.status, 'pending')).orderBy(asc(notifications.createdAt)).limit(limit);
+    return this.db
+      .select({ id: notifications.id, recipientId: notifications.recipientId, channel: notifications.channel, destination: emergencyContacts.phone, subject: notifications.subject, body: notifications.body })
+      .from(notifications)
+      .leftJoin(emergencyContacts, eq(notifications.emergencyContactId, emergencyContacts.id))
+      .where(retryFailed ? and(inArray(notifications.status, ['pending', 'failed']), lt(notifications.attempts, 3)) : eq(notifications.status, 'pending'))
+      .orderBy(asc(notifications.createdAt))
+      .limit(limit)
+      .then((rows) => rows.map((row) => ({ ...row, ...(row.destination ? { destination: row.destination } : {}) })));
   }
 
   async deliverNotification(job: NotificationJob, adapter: DeliveryAdapter | undefined): Promise<'sent' | 'failed' | 'skipped'> {
@@ -183,17 +190,17 @@ export class DatabaseSafetyWorkerRepository implements SafetyWorkerRepository {
       const [locked] = await tx.select().from(notifications).where(eq(notifications.id, job.id)).for('update', { skipLocked: true });
       if (!locked || (locked.status !== 'pending' && locked.status !== 'failed')) return 'skipped';
       if (!adapter) {
-        await tx.update(notifications).set({ status: 'failed', failureReason: `No ${job.channel} delivery adapter is configured.`, sentAt: null } as Partial<typeof notifications.$inferInsert>).where(eq(notifications.id, job.id));
+        await tx.update(notifications).set({ status: 'failed', failureReason: `No ${job.channel} delivery adapter is configured.`, sentAt: null, attempts: locked.attempts + 1, lastAttemptAt: new Date() } as Partial<typeof notifications.$inferInsert>).where(eq(notifications.id, job.id));
         return 'failed';
       }
       try {
-        const acknowledgement = await adapter.send({ recipientId: locked.recipientId, subject: locked.subject, body: locked.body }, locked.id);
+        const acknowledgement = await adapter.send({ recipientId: locked.recipientId, destination: job.destination, subject: locked.subject, body: locked.body }, locked.id);
         if (!acknowledgement || acknowledgement.acknowledged !== true) throw new Error('Provider did not acknowledge delivery.');
-        await tx.update(notifications).set({ status: 'sent', sentAt: new Date(), failureReason: null } as Partial<typeof notifications.$inferInsert>).where(eq(notifications.id, job.id));
+        await tx.update(notifications).set({ status: 'sent', sentAt: new Date(), failureReason: null, providerReference: acknowledgement.providerReference ?? null, providerStatus: acknowledgement.providerStatus ?? 'accepted', attempts: locked.attempts + 1, lastAttemptAt: new Date() } as Partial<typeof notifications.$inferInsert>).where(eq(notifications.id, job.id));
         return 'sent';
       } catch (error) {
         const reason = error instanceof Error ? error.message : 'Notification provider failed.';
-        await tx.update(notifications).set({ status: 'failed', failureReason: reason.slice(0, 2000), sentAt: null } as Partial<typeof notifications.$inferInsert>).where(eq(notifications.id, job.id));
+        await tx.update(notifications).set({ status: 'failed', failureReason: reason.slice(0, 2000), sentAt: null, attempts: locked.attempts + 1, lastAttemptAt: new Date() } as Partial<typeof notifications.$inferInsert>).where(eq(notifications.id, job.id));
         return 'failed';
       }
     });
@@ -208,15 +215,32 @@ export class DatabaseSafetyWorkerRepository implements SafetyWorkerRepository {
 
   private async queueOneFlaggedAlert(messageId: string): Promise<number> {
     return this.db.transaction(async (tx) => {
-      const [message] = await tx.select({ id: companionMessages.id, householdId: children.householdId }).from(companionMessages).innerJoin(children, eq(companionMessages.childId, children.id)).where(and(eq(companionMessages.id, messageId), eq(companionMessages.isFlagged, true))).for('update');
+      const [message] = await tx.select({ id: companionMessages.id, householdId: children.householdId, safetyAlerts: companionMessages.safetyAlerts }).from(companionMessages).innerJoin(children, eq(companionMessages.childId, children.id)).where(and(eq(companionMessages.id, messageId), eq(companionMessages.isFlagged, true))).for('update');
       if (!message) return 0;
       const [existing] = await tx.select({ id: auditEvents.id }).from(auditEvents).where(and(eq(auditEvents.eventType, 'safety_alert.notifications_queued'), eq(auditEvents.resourceType, 'companion_message'), eq(auditEvents.resourceId, messageId))).limit(1);
       if (existing) return 0;
       const owner = await tx.select({ id: users.id }).from(households).innerJoin(users, eq(households.ownerId, users.id)).where(and(eq(households.id, message.householdId), eq(users.isActive, true)));
       const members = await tx.select({ id: users.id }).from(householdMembers).innerJoin(users, eq(householdMembers.userId, users.id)).where(and(eq(householdMembers.householdId, message.householdId), inArray(householdMembers.role, ['owner', 'guardian']), eq(users.isActive, true)));
       const recipientIds = [...new Set([...owner.map((row) => row.id), ...members.map((row) => row.id)])];
-      const prefs = recipientIds.length ? await tx.select({ userId: notificationPreferences.userId, channel: notificationPreferences.channel }).from(notificationPreferences).where(and(inArray(notificationPreferences.userId, recipientIds), inArray(notificationPreferences.channel, ['email', 'push']), eq(notificationPreferences.enabled, true))) : [];
-      const rows = prefs.map((preference) => ({ recipientId: preference.userId, channel: preference.channel, subject: 'A companion safety alert needs review', body: 'A companion message was flagged for safety review. Sign in to review the alert.' }));
+      const prefs = recipientIds.length ? await tx.select({ userId: notificationPreferences.userId, channel: notificationPreferences.channel }).from(notificationPreferences).where(and(inArray(notificationPreferences.userId, recipientIds), inArray(notificationPreferences.channel, ['email', 'push', 'sms', 'voice']), eq(notificationPreferences.enabled, true))) : [];
+      const body = 'Phát hiện cảnh báo an toàn khẩn cấp. Vui lòng đăng nhập AgentKid để kiểm tra ngay.';
+      const rows: Array<typeof notifications.$inferInsert> = prefs
+        .filter((preference) => preference.channel === 'email' || preference.channel === 'push')
+        .map((preference) => ({ recipientId: preference.userId, channel: preference.channel, subject: 'Cảnh báo an toàn AgentKid cần được kiểm tra', body }));
+      let highRisk = false;
+      try {
+        const parsed = JSON.parse(message.safetyAlerts ?? '{}') as { codes?: unknown };
+        highRisk = Array.isArray(parsed.codes) && parsed.codes.some((code) => code === 'self_harm' || code === 'immediate_danger');
+      } catch { /* malformed legacy safety metadata is not eligible for external delivery */ }
+      const externalEnabled = new Set(prefs.filter((preference) => preference.channel === 'sms' || preference.channel === 'voice').map((preference) => `${preference.userId}:${preference.channel}`));
+      if (highRisk) {
+        const contacts = await tx.select().from(emergencyContacts).where(and(eq(emergencyContacts.householdId, message.householdId), eq(emergencyContacts.notifyOnAlert, true)));
+        const ownerId = owner[0]?.id;
+        if (ownerId) for (const contact of contacts) {
+          if (!contact.phone || !contact.consentGrantedAt || !contact.verifiedAt) continue;
+          for (const channel of ['sms', 'voice'] as const) if (externalEnabled.has(`${ownerId}:${channel}`)) rows.push({ recipientId: ownerId, emergencyContactId: contact.id, channel, subject: 'Cảnh báo an toàn khẩn cấp AgentKid', body });
+        }
+      }
       const inserted = rows.length ? await tx.insert(notifications).values(rows as typeof notifications.$inferInsert[]).returning({ id: notifications.id }) : [];
       await tx.insert(auditEvents).values({ actorType: 'system', eventType: 'safety_alert.notifications_queued', resourceType: 'companion_message', resourceId: messageId, metadata: { notificationIds: inserted.map((row) => row.id), recipientCount: new Set(rows.map((row) => row.recipientId)).size } } as typeof auditEvents.$inferInsert);
       return inserted.length;
