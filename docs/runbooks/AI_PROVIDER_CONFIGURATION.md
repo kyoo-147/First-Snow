@@ -22,6 +22,11 @@ If no provider credentials are configured, the server fails closed with `503 PRO
 ---
 
 ## 2. DeepSeek Configuration
+## 2. DeepSeek Configuration
+
+### Production default and latency knobs
+
+For production, set `COMPANION_PROVIDER=deepseek` explicitly so provider choice is deterministic and auditable. The supported explicit values are `deepseek`, `gemini`, and `openai`; without an explicit value, auto-detection remains DeepSeek-first, then Gemini, then OpenAI. Configure `COMPANION_PROVIDER_TIMEOUT_MS`, `COMPANION_PROVIDER_MAX_ATTEMPTS`, `COMPANION_PROVIDER_RETRIES_PER_MODEL`, and the provider-specific model variables in `.env.example`. Never place credentials in source, logs, tests, or chat.
 
 DeepSeek provides an OpenAI-compatible API at `https://api.deepseek.com`.
 

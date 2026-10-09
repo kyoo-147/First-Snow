@@ -252,6 +252,8 @@ export function createOpenAiCompanionProvider(
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              // Keep connections reusable without changing auth or retry semantics.
+              Connection: 'keep-alive',
               Authorization: `Bearer ${config.apiKey}`,
             },
             body: JSON.stringify({ model, messages, stream: false }),

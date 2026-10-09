@@ -263,11 +263,12 @@ export function TalkShell({ childId }: { childId: string }) {
 
   const handleMoodSelect = useCallback(
     (moodKey: Mood, label: string) => {
-      if (!sessionId) return;
+      if (!sessionId || isSending) return;
       const clientKey = `mood-${moodKey}-${Date.now()}`;
-      doSend(`Tôi cảm thấy ${label.toLowerCase()}.`, clientKey);
+      setIsSending(true);
+      void doSend(`Tôi cảm thấy ${label.toLowerCase()}.`, clientKey).finally(() => setIsSending(false));
     },
-    [sessionId, doSend],
+    [sessionId, isSending, doSend],
   );
 
   const handleRetry = useCallback(

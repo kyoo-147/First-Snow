@@ -263,6 +263,8 @@ export function createDeepSeekCompanionProvider(
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              // DeepSeek is OpenAI-compatible; reuse safe persistent connections.
+              Connection: 'keep-alive',
               Authorization: `Bearer ${config.apiKey}`,
             },
             body: JSON.stringify({ model, messages, stream: false }),

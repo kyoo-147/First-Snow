@@ -303,6 +303,7 @@ export function createGeminiCompanionProvider(
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Connection: 'keep-alive',
             },
             body: bodyPayload,
             signal: controller.signal,
