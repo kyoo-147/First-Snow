@@ -397,7 +397,7 @@ export function ParentDashboard() {
             </div>
           </div>
           <Image
-            src="/images/taking_deep_breaths_illustration.png"
+            src="/images/taking_deep_breaths_illustration-transparent.png"
             alt=""
             width={120}
             height={120}
@@ -421,7 +421,7 @@ export function ParentDashboard() {
             </div>
           </div>
           <Image
-            src="/images/snow-connected-care.png"
+            src="/images/snow-connected-care-transparent.png"
             alt=""
             width={120}
             height={120}
