@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/i18n";
 
 import { useEffect, useState } from "react";
 import { Activity, Bot, ClipboardList, Database, FileClock, ShieldCheck, Users } from "lucide-react";
@@ -20,31 +21,31 @@ export function AdminDashboardScreen({ view = "dashboard" }: { view?: AdminView 
       })
       .catch((cause: unknown) => {
         if (!active) return;
-        setError(cause instanceof AdminApiError ? cause.message : "Admin data is temporarily unavailable.");
+        setError(cause instanceof AdminApiError ? cause.message : t("parent", "admin.dashboard.errorFallback"));
       });
     return () => {
       active = false;
     };
   }, []);
 
-  const title = view === "dashboard" ? "System overview" : view === "companion" ? "Companion runtime" : view === "vision" ? "Vision controls" : "System operations";
+  const title = view === "dashboard" ? t("parent", "admin.dashboard.title") : view === "companion" ? t("parent", "admin.dashboard.companionTitle") : view === "vision" ? t("parent", "admin.dashboard.visionTitle") : t("parent", "admin.dashboard.systemTitle");
   const description = view === "dashboard"
-    ? "Review persisted AgentKid activity and operational records. Values are read from the database and never estimated."
+    ? t("parent", "admin.dashboard.desc")
     : view === "companion"
-      ? "Review persisted companion session activity. Provider health is shown only when a recorded probe exists."
+      ? t("parent", "admin.dashboard.companionDesc")
       : view === "vision"
-        ? "Review the persisted operational records available for privacy-sensitive capabilities."
-        : "Review persisted jobs, audit events, and session state for the AgentKid runtime.";
+        ? t("parent", "admin.dashboard.visionDesc")
+        : t("parent", "admin.dashboard.systemDesc");
 
   return (
     <div className="snow-font-ui mx-auto max-w-[var(--page-max)] space-y-[var(--section-gap)]">
       <header>
-        <p className="text-xs font-black uppercase tracking-wide text-snow-primary">AgentKid Pro</p>
+        <p className="text-xs font-black uppercase tracking-wide text-snow-primary">{t("parent", "admin.dashboard.badge")}</p>
         <h1 className="snow-title-compact mt-2 font-black text-snow-primary-dark">{title}</h1>
         <p className="snow-body-copy snow-font-readable mt-2 max-w-[760px] font-semibold text-snow-muted">{description}</p>
       </header>
 
-      {error ? <AdminState title="Unable to load admin data" detail={error} tone="error" /> : !data ? <AdminState title="Loading admin data" detail="Verifying access and reading persisted records…" tone="loading" /> : <AdminContent data={data} view={view} />}
+      {error ? <AdminState title={t("parent", "admin.dashboard.errorTitle")} detail={error} tone="error" /> : !data ? <AdminState title={t("parent", "admin.dashboard.loadingTitle")} detail={t("parent", "admin.dashboard.loadingDetail")} tone="loading" /> : <AdminContent data={data} view={view} />}
     </div>
   );
 }
@@ -54,10 +55,10 @@ function AdminContent({ data, view }: { data: AdminDashboard; view: AdminView })
     return (
       <>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <AdminStatCard label="Users" value={data.counts.users} detail="Persisted user records" icon={<Users className="size-5 text-snow-primary-dark" />} tone="bg-snow-primary-soft" />
-          <AdminStatCard label="Children" value={data.counts.children} detail="Persisted child records" icon={<ShieldCheck className="size-5 text-snow-primary-dark" />} tone="bg-snow-ice" />
-          <AdminStatCard label="Active sessions" value={data.counts.activeSessions} detail="Unrevoked, unexpired sessions" icon={<Activity className="size-5 text-snow-primary-dark" />} tone="bg-snow-lavender" />
-          <AdminStatCard label="Households" value={data.counts.households} detail="Persisted household records" icon={<Database className="size-5 text-snow-primary-dark" />} tone="bg-snow-cream" />
+          <AdminStatCard label={t("parent", "admin.dashboard.metrics.users")} value={data.counts.users} detail={t("parent", "admin.dashboard.metrics.usersDetail")} icon={<Users className="size-5 text-snow-primary-dark" />} tone="bg-snow-primary-soft" />
+          <AdminStatCard label={t("parent", "admin.dashboard.metrics.children")} value={data.counts.children} detail={t("parent", "admin.dashboard.metrics.childrenDetail")} icon={<ShieldCheck className="size-5 text-snow-primary-dark" />} tone="bg-snow-ice" />
+          <AdminStatCard label={t("parent", "admin.dashboard.metrics.activeSessions")} value={data.counts.activeSessions} detail={t("parent", "admin.dashboard.metrics.activeSessionsDetail")} icon={<Activity className="size-5 text-snow-primary-dark" />} tone="bg-snow-lavender" />
+          <AdminStatCard label={t("parent", "admin.dashboard.metrics.households")} value={data.counts.households} detail={t("parent", "admin.dashboard.metrics.householdsDetail")} icon={<Database className="size-5 text-snow-primary-dark" />} tone="bg-snow-cream" />
         </div>
         <div className="grid gap-5 xl:grid-cols-2">
           <AuditCard rows={data.recentAudit} />
@@ -72,12 +73,12 @@ function AdminContent({ data, view }: { data: AdminDashboard; view: AdminView })
     return (
       <div className="grid gap-5 xl:grid-cols-2">
         <SnowCard className="snow-card-pad">
-          <h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">Persisted companion activity</h2>
+          <h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">{t("parent", "admin.dashboard.cards.companionActivity")}</h2>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <MetricRow label="Companion sessions" value={data.counts.companionSessions} />
-            <MetricRow label="Active sessions" value={data.counts.activeSessions} />
-            <MetricRow label="Lesson attempts" value={data.counts.lessonAttempts} />
-            <MetricRow label="Provider health" value="Not recorded" />
+            <MetricRow label={t("parent", "admin.dashboard.metrics.companionSessions")} value={data.counts.companionSessions} />
+            <MetricRow label={t("parent", "admin.dashboard.metrics.activeSessions")} value={data.counts.activeSessions} />
+            <MetricRow label={t("parent", "admin.dashboard.metrics.lessonAttempts")} value={data.counts.lessonAttempts} />
+            <MetricRow label={t("parent", "admin.dashboard.metrics.providerHealth")} value={t("parent", "admin.dashboard.metrics.notRecorded")} />
           </div>
         </SnowCard>
         <ProviderCard />
@@ -89,14 +90,14 @@ function AdminContent({ data, view }: { data: AdminDashboard; view: AdminView })
     return (
       <div className="grid gap-5 xl:grid-cols-2">
         <SnowCard className="snow-card-pad">
-          <h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">Available records</h2>
+          <h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">{t("parent", "admin.dashboard.cards.availableRecords")}</h2>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <MetricRow label="Households" value={data.counts.households} />
-            <MetricRow label="Children" value={data.counts.children} />
-            <MetricRow label="Recent audit events" value={data.recentAudit.length} />
-            <MetricRow label="Provider health" value="Not recorded" />
+            <MetricRow label={t("parent", "admin.dashboard.metrics.households")} value={data.counts.households} />
+            <MetricRow label={t("parent", "admin.dashboard.metrics.children")} value={data.counts.children} />
+            <MetricRow label={t("parent", "admin.dashboard.metrics.recentAuditEvents")} value={data.recentAudit.length} />
+            <MetricRow label={t("parent", "admin.dashboard.metrics.providerHealth")} value={t("parent", "admin.dashboard.metrics.notRecorded")} />
           </div>
-          <p className="snow-body-copy snow-font-readable mt-5 rounded-[var(--radius-md)] bg-snow-surface-soft p-4 font-semibold text-snow-muted">No camera, vision, consent, or provider status is inferred from configuration. Only persisted records are displayed here.</p>
+          <p className="snow-body-copy snow-font-readable mt-5 rounded-[var(--radius-md)] bg-snow-surface-soft p-4 font-semibold text-snow-muted">{t("parent", "admin.dashboard.cards.visionNote")}</p>
         </SnowCard>
         <AuditCard rows={data.recentAudit} />
       </div>
@@ -108,12 +109,12 @@ function AdminContent({ data, view }: { data: AdminDashboard; view: AdminView })
       <JobsCard rows={data.recentJobs} />
       <AuditCard rows={data.recentAudit} />
       <SnowCard className="snow-card-pad">
-        <h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">Operational counts</h2>
+        <h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">{t("parent", "admin.dashboard.cards.operationalCounts")}</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <MetricRow label="Users" value={data.counts.users} />
-          <MetricRow label="Active sessions" value={data.counts.activeSessions} />
-          <MetricRow label="Lesson attempts" value={data.counts.lessonAttempts} />
-          <MetricRow label="Companion sessions" value={data.counts.companionSessions} />
+          <MetricRow label={t("parent", "admin.dashboard.metrics.users")} value={data.counts.users} />
+          <MetricRow label={t("parent", "admin.dashboard.metrics.activeSessions")} value={data.counts.activeSessions} />
+          <MetricRow label={t("parent", "admin.dashboard.metrics.lessonAttempts")} value={data.counts.lessonAttempts} />
+          <MetricRow label={t("parent", "admin.dashboard.metrics.companionSessions")} value={data.counts.companionSessions} />
         </div>
       </SnowCard>
       <ProviderCard />
@@ -141,16 +142,16 @@ function MetricRow({ label, value }: { label: string; value: number | string }) 
 }
 
 function AuditCard({ rows }: { rows: AdminDashboard["recentAudit"] }) {
-  return <SnowCard className="snow-card-pad"><div className="flex items-center gap-2"><ClipboardList className="size-5 text-snow-primary" /><h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">Recent audit events</h2></div>{rows.length === 0 ? <EmptyState detail="No audit events are recorded." /> : <div className="mt-4 space-y-3">{rows.map((row) => <div key={row.id} className="rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft px-4 py-3"><div className="flex flex-wrap items-center justify-between gap-2"><p className="text-sm font-black text-snow-primary-dark">{row.eventType}</p><time className="snow-font-mono text-xs text-snow-muted" dateTime={row.createdAt}>{formatDate(row.createdAt)}</time></div><p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">{[row.actorType, row.resourceType].filter(Boolean).join(" · ") || "Actor/resource not recorded"}</p></div>)}</div>}</SnowCard>;
+  return <SnowCard className="snow-card-pad"><div className="flex items-center gap-2"><ClipboardList className="size-5 text-snow-primary" /><h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">{t("parent", "admin.dashboard.metrics.recentAuditEvents")}</h2></div>{rows.length === 0 ? <EmptyState detail={t("parent", "admin.dashboard.cards.noAudit")} /> : <div className="mt-4 space-y-3">{rows.map((row) => <div key={row.id} className="rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft px-4 py-3"><div className="flex flex-wrap items-center justify-between gap-2"><p className="text-sm font-black text-snow-primary-dark">{row.eventType}</p><time className="snow-font-mono text-xs text-snow-muted" dateTime={row.createdAt}>{formatDate(row.createdAt)}</time></div><p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">{[row.actorType, row.resourceType].filter(Boolean).join(" · ") || t("parent", "admin.dashboard.cards.noActor")}</p></div>)}</div>}</SnowCard>;
 }
 
 function JobsCard({ rows }: { rows: AdminDashboard["recentJobs"] }) {
-  return <SnowCard className="snow-card-pad"><div className="flex items-center gap-2"><FileClock className="size-5 text-snow-primary" /><h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">Recent data jobs</h2></div>{rows.length === 0 ? <EmptyState detail="No export or deletion jobs are recorded." /> : <div className="mt-4 space-y-3">{rows.map((row) => <div key={`${row.kind}-${row.id}`} className="flex items-center justify-between gap-4 rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft px-4 py-3"><div className="min-w-0"><p className="text-sm font-black capitalize text-snow-primary-dark">{row.kind} job</p><p className="snow-font-mono mt-1 truncate text-xs text-snow-muted">{row.id}</p></div><span className="rounded-full bg-snow-primary-soft px-3 py-1 text-xs font-black capitalize text-snow-primary-dark">{row.status}</span></div>)}</div>}</SnowCard>;
+  return <SnowCard className="snow-card-pad"><div className="flex items-center gap-2"><FileClock className="size-5 text-snow-primary" /><h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">{t("parent", "admin.dashboard.metrics.recentDataJobs")}</h2></div>{rows.length === 0 ? <EmptyState detail={t("parent", "admin.dashboard.cards.noJobs")} /> : <div className="mt-4 space-y-3">{rows.map((row) => <div key={`${row.kind}-${row.id}`} className="flex items-center justify-between gap-4 rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft px-4 py-3"><div className="min-w-0"><p className="text-sm font-black capitalize text-snow-primary-dark">{t("parent", "admin.dashboard.cards.jobLabel", { kind: row.kind })}</p><p className="snow-font-mono mt-1 truncate text-xs text-snow-muted">{row.id}</p></div><span className="rounded-full bg-snow-primary-soft px-3 py-1 text-xs font-black capitalize text-snow-primary-dark">{row.status}</span></div>)}</div>}</SnowCard>;
 }
 
 function ProviderCard() {
-  return <SnowCard className="snow-card-pad"><div className="flex items-center gap-2"><Bot className="size-5 text-snow-primary" /><h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">Provider health</h2></div><div className="mt-4 rounded-[var(--radius-md)] bg-snow-surface-soft p-4"><p className="text-sm font-black text-snow-primary-dark">Not recorded</p><p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">No persisted provider-health probe exists in the current schema. Configuration or database availability is not treated as provider health.</p></div></SnowCard>;
+  return <SnowCard className="snow-card-pad"><div className="flex items-center gap-2"><Bot className="size-5 text-snow-primary" /><h2 className="snow-heading text-[1.1rem] font-black text-snow-primary-dark">{t("parent", "admin.dashboard.metrics.providerHealth")}</h2></div><div className="mt-4 rounded-[var(--radius-md)] bg-snow-surface-soft p-4"><p className="text-sm font-black text-snow-primary-dark">{t("parent", "admin.dashboard.metrics.notRecorded")}</p><p className="snow-body-small snow-font-readable mt-1 font-semibold text-snow-muted">{t("parent", "admin.dashboard.cards.providerHealthNote")}</p></div></SnowCard>;
 }
 
 function EmptyState({ detail }: { detail: string }) { return <p className="snow-body-copy snow-font-readable mt-4 rounded-[var(--radius-md)] bg-snow-surface-soft p-4 font-semibold text-snow-muted">{detail}</p>; }
-function formatDate(value: string) { const date = new Date(value); return Number.isNaN(date.getTime()) ? "Unknown time" : date.toLocaleString(); }
+function formatDate(value: string) { const date = new Date(value); return Number.isNaN(date.getTime()) ? t("parent", "admin.dashboard.cards.unknownTime") : date.toLocaleString(); }

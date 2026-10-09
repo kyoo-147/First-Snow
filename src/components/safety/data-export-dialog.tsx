@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/i18n";
 
 import { useEffect, useState } from "react";
 import {
@@ -22,6 +23,7 @@ import {
   requestDataExport,
   SafetyApiError,
 } from "@/lib/safety-client";
+import { formatSnowDate, formatSnowDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export interface DataExportDialogProps {
@@ -34,7 +36,7 @@ export interface DataExportDialogProps {
 function DataExportDialogInner({
   onClose,
   childId,
-  childName = "your child",
+  childName = t("parent", "safety.export.defaultChildName"),
 }: Omit<DataExportDialogProps, "isOpen">) {
   const [exportsList, setExportsList] = useState<DataExportRecord[]>([]);
   const [isLoadingExports, setIsLoadingExports] = useState(true);
@@ -58,9 +60,9 @@ function DataExportDialogInner({
       } catch (err: unknown) {
         if (!isCancelled) {
           if (err instanceof SafetyApiError) {
-            setErrorMessage(`Unable to fetch export history: ${err.message}`);
+            setErrorMessage(t("parent", "safety.export.errorFetchDetail", { message: err.message }));
           } else {
-            setErrorMessage("Unable to fetch export history.");
+            setErrorMessage(t("parent", "safety.export.errorFetch"));
           }
         }
       } finally {
@@ -80,9 +82,9 @@ function DataExportDialogInner({
       setExportsList(records);
     } catch (err: unknown) {
       if (err instanceof SafetyApiError) {
-        setErrorMessage(`Unable to fetch export history: ${err.message}`);
+        setErrorMessage(t("parent", "safety.export.errorFetchDetail", { message: err.message }));
       } else {
-        setErrorMessage("Unable to fetch export history.");
+        setErrorMessage(t("parent", "safety.export.errorFetch"));
       }
     } finally {
       setIsLoadingExports(false);
@@ -92,11 +94,11 @@ function DataExportDialogInner({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!reauthPassword.trim()) {
-      setErrorMessage("Please enter your guardian password to authorize data export.");
+      setErrorMessage(t("parent", "safety.export.errorPassword"));
       return;
     }
     if (!includeTranscripts && !includeEmotionTimeline && !includeLearningProgress) {
-      setErrorMessage("Please select at least one data category to include in the export.");
+      setErrorMessage(t("parent", "safety.export.errorCategory"));
       return;
     }
 
@@ -117,7 +119,7 @@ function DataExportDialogInner({
       // Truthful workflow: distinguishes request creation from verified completion!
       setSuccessNotice(
         result.message ||
-          "Export request queued successfully. The server is preparing your secure archive.",
+          t("parent", "safety.export.successSubmit"),
       );
       setReauthPassword("");
       await loadExports();
@@ -125,7 +127,7 @@ function DataExportDialogInner({
       if (err instanceof SafetyApiError) {
         setErrorMessage(err.message);
       } else {
-        setErrorMessage("Failed to initiate data export. Please try again.");
+        setErrorMessage(t("parent", "safety.export.errorSubmit"));
       }
     } finally {
       setIsSubmitting(false);
@@ -138,28 +140,28 @@ function DataExportDialogInner({
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-snow-ice px-2.5 py-0.5 text-[11px] font-black text-snow-primary">
             <Clock className="size-3" />
-            Queued
+            {t("parent", "safety.export.status.requested")}
           </span>
         );
       case "running":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-snow-lavender px-2.5 py-0.5 text-[11px] font-black text-snow-primary">
             <Loader2 className="size-3 animate-spin" />
-            Packaging Archive
+            {t("parent", "safety.export.status.running")}
           </span>
         );
       case "completed":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-snow-success/15 px-2.5 py-0.5 text-[11px] font-black text-snow-success">
             <CheckCircle2 className="size-3" />
-            Ready for Download
+            {t("parent", "safety.export.status.completed")}
           </span>
         );
       case "failed":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-snow-danger/15 px-2.5 py-0.5 text-[11px] font-black text-snow-danger">
             <AlertCircle className="size-3" />
-            Failed
+            {t("parent", "safety.export.status.failed")}
           </span>
         );
     }
@@ -180,16 +182,16 @@ function DataExportDialogInner({
             </div>
             <div>
               <h2 id="data-export-title" className="text-base font-black text-snow-primary-dark">
-                Export Child Data
+                {t("parent", "safety.export.dialogTitle")}
               </h2>
               <p className="text-xs font-semibold text-snow-muted">
-                Target: {childName}&apos;s learning history &amp; transcripts
+                {t("parent", "safety.export.target", { name: childName })}
               </p>
             </div>
           </div>
           <button
             type="button"
-            aria-label="Close export dialog"
+            aria-label={t("parent", "safety.export.closeAria")}
             onClick={onClose}
             className="snow-focus-ring grid size-8 place-items-center rounded-full text-snow-muted hover:bg-snow-surface-soft hover:text-snow-primary-dark"
           >
@@ -218,7 +220,7 @@ function DataExportDialogInner({
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <p className="text-xs font-black text-snow-primary-dark">Select Records to Include</p>
+              <p className="text-xs font-black text-snow-primary-dark">{t("parent", "safety.export.recordsLabel")}</p>
               <div className="mt-2 space-y-2">
                 <label className="flex items-center gap-3 rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft p-3 text-xs font-semibold text-snow-primary-dark cursor-pointer hover:bg-snow-lavender/30">
                   <input
@@ -228,9 +230,9 @@ function DataExportDialogInner({
                     className="size-4 rounded border-snow-border text-snow-primary"
                   />
                   <div className="flex-1">
-                    <p className="font-bold">Conversation Transcripts</p>
+                    <p className="font-bold">{t("parent", "safety.export.recordsTranscripts")}</p>
                     <p className="text-[11px] text-snow-muted">
-                      Full dialogue history with Snow, timestamps, and lesson associations.
+                      {t("parent", "safety.export.recordsTranscriptsDesc")}
                     </p>
                   </div>
                 </label>
@@ -243,9 +245,9 @@ function DataExportDialogInner({
                     className="size-4 rounded border-snow-border text-snow-primary"
                   />
                   <div className="flex-1">
-                    <p className="font-bold">Emotion Observation Timeline</p>
+                    <p className="font-bold">{t("parent", "safety.export.recordsEmotions")}</p>
                     <p className="text-[11px] text-snow-muted">
-                      Parent-facing calm observation events recorded during sessions.
+                      {t("parent", "safety.export.recordsEmotionsDesc")}
                     </p>
                   </div>
                 </label>
@@ -258,9 +260,9 @@ function DataExportDialogInner({
                     className="size-4 rounded border-snow-border text-snow-primary"
                   />
                   <div className="flex-1">
-                    <p className="font-bold">Learning Milestones &amp; Rewards</p>
+                    <p className="font-bold">{t("parent", "safety.export.recordsLearning")}</p>
                     <p className="text-[11px] text-snow-muted">
-                      Completed lessons, practice attempts, badges, and routine logs.
+                      {t("parent", "safety.export.recordsLearningDesc")}
                     </p>
                   </div>
                 </label>
@@ -268,12 +270,12 @@ function DataExportDialogInner({
             </div>
 
             <div>
-              <p className="text-xs font-black text-snow-primary-dark">Archive Format</p>
+              <p className="text-xs font-black text-snow-primary-dark">{t("parent", "safety.export.formatLabel")}</p>
               <div className="mt-2 grid grid-cols-3 gap-2">
                 {[
-                  { id: "zip", label: "ZIP Archive", icon: Archive, desc: "JSON + CSV files" },
-                  { id: "json", label: "Raw JSON", icon: FileText, desc: "Structured data" },
-                  { id: "csv", label: "Table CSV", icon: FileSpreadsheet, desc: "Spreadsheet friendly" },
+                  { id: "zip", label: t("parent", "safety.export.formatZip"), icon: Archive, desc: t("parent", "safety.export.formatZipDesc") },
+                  { id: "json", label: t("parent", "safety.export.formatJson"), icon: FileText, desc: t("parent", "safety.export.formatJsonDesc") },
+                  { id: "csv", label: t("parent", "safety.export.formatCsv"), icon: FileSpreadsheet, desc: t("parent", "safety.export.formatCsvDesc") },
                 ].map((item) => (
                   <button
                     key={item.id}
@@ -299,7 +301,7 @@ function DataExportDialogInner({
                 htmlFor="export-reauth-password"
                 className="block text-xs font-black text-snow-primary-dark"
               >
-                Guardian Re-Authentication Password
+                {t("parent", "safety.export.passwordLabel")}
               </label>
               <input
                 id="export-reauth-password"
@@ -307,11 +309,11 @@ function DataExportDialogInner({
                 autoComplete="current-password"
                 value={reauthPassword}
                 onChange={(e) => setReauthPassword(e.target.value)}
-                placeholder="Enter guardian password to authorize export"
+                placeholder={t("parent", "safety.export.passwordPlaceholder")}
                 className="snow-focus-ring w-full rounded-[var(--radius-md)] border border-snow-border bg-white px-3 py-2 text-xs font-semibold text-snow-primary-dark placeholder:text-snow-muted/70"
               />
               <p className="text-[11px] text-snow-muted">
-                Required to protect export requests against unauthorized session hijacks.
+                {t("parent", "safety.export.passwordHelp")}
               </p>
             </div>
 
@@ -324,12 +326,12 @@ function DataExportDialogInner({
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                    Submitting Request...
+                    {t("parent", "safety.export.submitting")}
                   </>
                 ) : (
                   <>
                     <Lock className="mr-1.5 size-3.5" />
-                    Request Data Export
+                    {t("parent", "safety.export.submit")}
                   </>
                 )}
               </SnowButton>
@@ -338,7 +340,7 @@ function DataExportDialogInner({
 
           <div className="border-t border-snow-border pt-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-black text-snow-primary-dark">Recent Export History</h3>
+              <h3 className="text-xs font-black text-snow-primary-dark">{t("parent", "safety.export.historyTitle")}</h3>
               <button
                 type="button"
                 onClick={loadExports}
@@ -346,18 +348,18 @@ function DataExportDialogInner({
                 className="snow-focus-ring flex items-center gap-1 text-[11px] font-bold text-snow-primary hover:underline disabled:opacity-50"
               >
                 <RefreshCw className={cn("size-3", isLoadingExports && "animate-spin")} />
-                Refresh Status
+                {t("parent", "safety.export.refresh")}
               </button>
             </div>
 
             {isLoadingExports && exportsList.length === 0 ? (
               <div className="flex items-center gap-2 py-4 text-xs font-semibold text-snow-muted">
                 <Loader2 className="size-4 animate-spin text-snow-primary" />
-                Checking export status...
+                {t("parent", "safety.export.checking")}
               </div>
             ) : exportsList.length === 0 ? (
               <p className="mt-2 text-xs text-snow-muted italic">
-                No exports requested yet. All created exports will be listed here.
+                {t("parent", "safety.export.empty")}
               </p>
             ) : (
               <div className="mt-2 space-y-2">
@@ -369,19 +371,19 @@ function DataExportDialogInner({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-snow-primary-dark">
-                          Archive ({exp.format.toUpperCase()})
+                          {t("parent", "safety.export.archiveLabel", { format: exp.format.toUpperCase() })}
                         </span>
                         {renderStatusBadge(exp.status)}
                       </div>
                       <p className="mt-0.5 text-[11px] text-snow-muted">
-                        Requested: {new Date(exp.requestedAt).toLocaleString()}
+                        {t("parent", "safety.export.requestedAt", { date: formatSnowDateTime(exp.requestedAt) })}
                         {exp.expiresAt
-                          ? ` • Expires: ${new Date(exp.expiresAt).toLocaleDateString()}`
+                          ? ` • ${t("parent", "safety.export.expiresAt", { date: formatSnowDate(exp.expiresAt) })}`
                           : ""}
                       </p>
                       {exp.error ? (
                         <p className="mt-1 text-[11px] font-semibold text-snow-danger">
-                          Error: {exp.error}
+                          {t("parent", "safety.export.errorLabel", { message: exp.error })}
                         </p>
                       ) : null}
                     </div>
@@ -394,11 +396,11 @@ function DataExportDialogInner({
                           className="snow-focus-ring inline-flex items-center gap-1.5 rounded-[var(--radius-full)] bg-snow-primary px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:brightness-105"
                         >
                           <Download className="size-3.5" />
-                          Download
+                          {t("parent", "safety.export.download")}
                         </a>
                       ) : exp.status === "running" ? (
                         <span className="text-[11px] font-semibold text-snow-muted">
-                          Processing on server...
+                          {t("parent", "safety.export.processing")}
                         </span>
                       ) : null}
                     </div>
@@ -415,7 +417,7 @@ function DataExportDialogInner({
             onClick={onClose}
             className="min-h-8 px-4 text-xs font-bold text-snow-muted hover:text-snow-primary-dark"
           >
-            Close
+            {t("parent", "safety.export.close")}
           </SnowButton>
         </div>
       </div>

@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/i18n";
 
 import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, KeyRound, Loader2, Lock, ShieldCheck, X } from "lucide-react";
@@ -82,12 +83,12 @@ function ReauthModalInner({
               <h2 id="reauth-dialog-title" className="text-base font-black text-snow-primary-dark">
                 {title}
               </h2>
-              <p className="text-xs font-semibold text-snow-muted">Parent Security Gate</p>
+              <p className="text-xs font-semibold text-snow-muted">{t("parent", "safety.reauth.parentGate")}</p>
             </div>
           </div>
           <button
             type="button"
-            aria-label="Close dialog"
+            aria-label={t("parent", "safety.reauth.closeAria")}
             disabled={isProcessing}
             onClick={onClose}
             className="snow-focus-ring grid size-8 place-items-center rounded-full text-snow-muted hover:bg-snow-surface-soft hover:text-snow-primary-dark disabled:opacity-50"
@@ -126,7 +127,7 @@ function ReauthModalInner({
                 disabled={isProcessing}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter account password"
+                placeholder={t("parent", "safety.reauth.passwordPlaceholder")}
                 className="snow-focus-ring w-full rounded-[var(--radius-md)] border border-snow-border bg-white px-3.5 py-2.5 pr-10 text-sm font-semibold text-snow-primary-dark placeholder:text-snow-muted/70 focus:border-snow-primary disabled:opacity-60"
               />
               <button
@@ -145,7 +146,7 @@ function ReauthModalInner({
           <div className="rounded-[var(--radius-md)] border border-snow-border bg-snow-surface-soft p-3">
             <div className="flex items-center gap-2 text-xs font-bold text-snow-primary-dark">
               <ShieldCheck className="size-4 text-snow-success" />
-              <span>Zero-compromise governance</span>
+              <span>{t("parent", "safety.reauth.zeroCompromise")}</span>
             </div>
             <p className="mt-1 text-[11px] leading-4 text-snow-muted">
               Credentials are authenticated directly with the backend and never stored in the browser.

@@ -1,4 +1,5 @@
 "use client";
+import { t, tUnchecked } from "@/i18n";
 
 import { useEffect, useState } from "react";
 import {
@@ -21,6 +22,7 @@ import {
   requestDataDeletion,
   SafetyApiError,
 } from "@/lib/safety-client";
+import { formatSnowDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export interface DeletionRequestDialogProps {
@@ -33,7 +35,7 @@ export interface DeletionRequestDialogProps {
 function DeletionRequestDialogInner({
   onClose,
   childId,
-  childName = "your child",
+  childName = t("parent", "safety.deletion.defaultChildName"),
 }: Omit<DeletionRequestDialogProps, "isOpen">) {
   const [deletionsList, setDeletionsList] = useState<DeletionRequestRecord[]>([]);
   const [isLoadingDeletions, setIsLoadingDeletions] = useState(true);
@@ -56,9 +58,9 @@ function DeletionRequestDialogInner({
       } catch (err: unknown) {
         if (!isCancelled) {
           if (err instanceof SafetyApiError) {
-            setErrorMessage(`Unable to fetch deletion history: ${err.message}`);
+            setErrorMessage(t("parent", "safety.deletion.errorFetchDetail", { message: err.message }));
           } else {
-            setErrorMessage("Unable to fetch deletion history.");
+            setErrorMessage(t("parent", "safety.deletion.errorFetch"));
           }
         }
       } finally {
@@ -78,9 +80,9 @@ function DeletionRequestDialogInner({
       setDeletionsList(records);
     } catch (err: unknown) {
       if (err instanceof SafetyApiError) {
-        setErrorMessage(`Unable to fetch deletion history: ${err.message}`);
+        setErrorMessage(t("parent", "safety.deletion.errorFetchDetail", { message: err.message }));
       } else {
-        setErrorMessage("Unable to fetch deletion history.");
+        setErrorMessage(t("parent", "safety.deletion.errorFetch"));
       }
     } finally {
       setIsLoadingDeletions(false);
@@ -90,11 +92,11 @@ function DeletionRequestDialogInner({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!confirmed) {
-      setErrorMessage("Please confirm that you understand this deletion is permanent and cannot be undone.");
+      setErrorMessage(t("parent", "safety.deletion.errorConfirm"));
       return;
     }
     if (!reauthPassword.trim()) {
-      setErrorMessage("Please enter your guardian account password to authorize deletion.");
+      setErrorMessage(t("parent", "safety.deletion.errorPassword"));
       return;
     }
 
@@ -114,7 +116,7 @@ function DeletionRequestDialogInner({
       // Truthful reporting: distinguishes request creation from verified completion!
       setSuccessNotice(
         result.message ||
-          "Deletion request recorded. The server has queued this purge job and will process it through the verification stages.",
+          t("parent", "safety.deletion.successSubmit"),
       );
       setReauthPassword("");
       setConfirmed(false);
@@ -123,7 +125,7 @@ function DeletionRequestDialogInner({
       if (err instanceof SafetyApiError) {
         setErrorMessage(err.message);
       } else {
-        setErrorMessage("Failed to initiate deletion request. Please try again.");
+        setErrorMessage(t("parent", "safety.deletion.errorSubmit"));
       }
     } finally {
       setIsSubmitting(false);
@@ -136,28 +138,28 @@ function DeletionRequestDialogInner({
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-snow-ice px-2.5 py-0.5 text-[11px] font-black text-snow-primary">
             <Clock className="size-3" />
-            Queued for Purge
+            {t("parent", "safety.deletion.status.requested")}
           </span>
         );
       case "running":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-snow-lavender px-2.5 py-0.5 text-[11px] font-black text-snow-primary">
             <Loader2 className="size-3 animate-spin" />
-            Erasing Records
+            {t("parent", "safety.deletion.status.running")}
           </span>
         );
       case "completed":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-snow-success/15 px-2.5 py-0.5 text-[11px] font-black text-snow-success">
             <CheckCircle2 className="size-3" />
-            Permanently Purged
+            {t("parent", "safety.deletion.status.completed")}
           </span>
         );
       case "failed":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-snow-danger/15 px-2.5 py-0.5 text-[11px] font-black text-snow-danger">
             <AlertCircle className="size-3" />
-            Deletion Stalled
+            {t("parent", "safety.deletion.status.failed")}
           </span>
         );
     }
@@ -181,16 +183,16 @@ function DeletionRequestDialogInner({
                 id="deletion-dialog-title"
                 className="text-base font-black text-snow-primary-dark"
               >
-                Request Data Deletion
+                {t("parent", "safety.deletion.dialogTitle")}
               </h2>
               <p className="text-xs font-semibold text-snow-muted">
-                Permanent and verifiable child record removal
+                {t("parent", "safety.deletion.dialogDesc")}
               </p>
             </div>
           </div>
           <button
             type="button"
-            aria-label="Close deletion dialog"
+            aria-label={t("parent", "safety.deletion.closeAria")}
             onClick={onClose}
             className="snow-focus-ring grid size-8 place-items-center rounded-full text-snow-muted hover:bg-snow-surface-soft hover:text-snow-primary-dark"
           >
@@ -221,37 +223,36 @@ function DeletionRequestDialogInner({
             <div className="flex items-start gap-2.5">
               <AlertTriangle className="mt-0.5 size-4 shrink-0 text-snow-warning" />
               <div className="text-xs font-semibold leading-5 text-snow-primary-dark">
-                <strong>Irreversible Operation:</strong> Deletion permanently purges recorded
-                dialogues, audio transcripts, and personalized companion memories. It cannot be
-                undone once executed by the backend.
+                <strong>{t("parent", "safety.deletion.irreversibleTitle")}</strong>{" "}
+                {t("parent", "safety.deletion.irreversibleDesc")}
               </div>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <p className="text-xs font-black text-snow-primary-dark">Select Deletion Scope</p>
+              <p className="text-xs font-black text-snow-primary-dark">{t("parent", "safety.deletion.scopeLabel")}</p>
               <div className="mt-2 space-y-2">
                 {[
                   {
                     id: "child_transcripts",
-                    label: `Clear conversation transcripts only (${childName})`,
-                    detail: "Removes conversation texts and audio logs; keeps progress and avatar milestones.",
+                    label: t("parent", "safety.deletion.scopeTranscripts", { name: childName }),
+                    detail: t("parent", "safety.deletion.scopeTranscriptsDesc"),
                   },
                   {
                     id: "emotion_timeline",
-                    label: `Clear emotion observation events (${childName})`,
-                    detail: "Removes parent observation logs while preserving child's learning history.",
+                    label: t("parent", "safety.deletion.scopeEmotions", { name: childName }),
+                    detail: t("parent", "safety.deletion.scopeEmotionsDesc"),
                   },
                   {
                     id: "all_child_data",
-                    label: `Purge all data for child profile (${childName})`,
-                    detail: "Deletes transcripts, emotion history, lesson completions, and custom settings.",
+                    label: t("parent", "safety.deletion.scopeChild", { name: childName }),
+                    detail: t("parent", "safety.deletion.scopeChildDesc"),
                   },
                   {
                     id: "entire_account",
-                    label: "Purge entire guardian account and all children",
-                    detail: "Completely wipes the household account, guardian profile, and all child data.",
+                    label: t("parent", "safety.deletion.scopeAccount"),
+                    detail: t("parent", "safety.deletion.scopeAccountDesc"),
                   },
                 ].map((item) => (
                   <label
@@ -285,14 +286,14 @@ function DeletionRequestDialogInner({
                 htmlFor="deletion-reason"
                 className="block text-xs font-black text-snow-primary-dark"
               >
-                Optional Reason (Guardian Feedback)
+                {t("parent", "safety.deletion.reasonLabel")}
               </label>
               <textarea
                 id="deletion-reason"
                 rows={2}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                placeholder="Let us know why you are deleting these records..."
+                placeholder={t("parent", "safety.deletion.reasonPlaceholder")}
                 className="snow-focus-ring mt-1 w-full rounded-[var(--radius-md)] border border-snow-border bg-white p-2.5 text-xs font-semibold text-snow-primary-dark placeholder:text-snow-muted/70"
               />
             </div>
@@ -305,7 +306,7 @@ function DeletionRequestDialogInner({
                 className="mt-0.5 size-4 rounded border-snow-border text-snow-danger focus:ring-snow-danger"
               />
               <span className="leading-5">
-                I understand that this action is permanent and request status will be tracked through deletion endpoints.
+                {t("parent", "safety.deletion.confirmNotice")}
               </span>
             </label>
 
@@ -314,7 +315,7 @@ function DeletionRequestDialogInner({
                 htmlFor="deletion-reauth-password"
                 className="block text-xs font-black text-snow-primary-dark"
               >
-                Guardian Re-Authentication Password
+                {t("parent", "safety.deletion.passwordLabel")}
               </label>
               <input
                 id="deletion-reauth-password"
@@ -322,7 +323,7 @@ function DeletionRequestDialogInner({
                 autoComplete="current-password"
                 value={reauthPassword}
                 onChange={(e) => setReauthPassword(e.target.value)}
-                placeholder="Enter guardian password to authorize deletion"
+                placeholder={t("parent", "safety.deletion.passwordPlaceholder")}
                 className="snow-focus-ring w-full rounded-[var(--radius-md)] border border-snow-border bg-white px-3 py-2 text-xs font-semibold text-snow-primary-dark placeholder:text-snow-muted/70"
               />
             </div>
@@ -337,12 +338,12 @@ function DeletionRequestDialogInner({
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                    Submitting Request...
+                    {t("parent", "safety.deletion.submitting")}
                   </>
                 ) : (
                   <>
                     <Lock className="mr-1.5 size-3.5" />
-                    Confirm &amp; Request Deletion
+                    {t("parent", "safety.deletion.submit")}
                   </>
                 )}
               </SnowButton>
@@ -352,7 +353,7 @@ function DeletionRequestDialogInner({
           <div className="border-t border-snow-border pt-4">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-black text-snow-primary-dark">
-                Recent Deletion Requests
+                {t("parent", "safety.deletion.historyTitle")}
               </h3>
               <button
                 type="button"
@@ -361,18 +362,18 @@ function DeletionRequestDialogInner({
                 className="snow-focus-ring flex items-center gap-1 text-[11px] font-bold text-snow-primary hover:underline disabled:opacity-50"
               >
                 <RefreshCw className={cn("size-3", isLoadingDeletions && "animate-spin")} />
-                Refresh Status
+                {t("parent", "safety.deletion.refresh")}
               </button>
             </div>
 
             {isLoadingDeletions && deletionsList.length === 0 ? (
               <div className="flex items-center gap-2 py-4 text-xs font-semibold text-snow-muted">
                 <Loader2 className="size-4 animate-spin text-snow-primary" />
-                Checking deletion requests...
+                {t("parent", "safety.deletion.checking")}
               </div>
             ) : deletionsList.length === 0 ? (
               <p className="mt-2 text-xs text-snow-muted italic">
-                No deletion requests recorded. All scheduled purge operations will appear here.
+                {t("parent", "safety.deletion.empty")}
               </p>
             ) : (
               <div className="mt-2 space-y-2">
@@ -384,12 +385,12 @@ function DeletionRequestDialogInner({
                     <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-snow-primary-dark uppercase">
-                          {del.scope.replace("_", " ")}
+                          {tUnchecked("parent", `safety.deletion.scopeStatus.${del.scope}`)}
                         </span>
                         {renderStatusBadge(del.status)}
                       </div>
                       <span className="text-[10px] font-mono text-snow-muted">
-                        Requested: {new Date(del.requestedAt).toLocaleString()}
+                        {t("parent", "safety.deletion.requestedAt", { date: formatSnowDateTime(del.requestedAt) })}
                       </span>
                     </div>
 
@@ -409,7 +410,7 @@ function DeletionRequestDialogInner({
 
                     {del.error ? (
                       <p className="text-[11px] font-semibold text-snow-danger">
-                        Error: {del.error}
+                        {t("parent", "safety.deletion.errorLabel", { message: del.error })}
                       </p>
                     ) : null}
                   </div>
@@ -425,7 +426,7 @@ function DeletionRequestDialogInner({
             onClick={onClose}
             className="min-h-8 px-4 text-xs font-bold text-snow-muted hover:text-snow-primary-dark"
           >
-            Close
+            {t("parent", "safety.deletion.close")}
           </SnowButton>
         </div>
       </div>

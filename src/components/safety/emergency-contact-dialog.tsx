@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/i18n";
 
 import { useState } from "react";
 import { Loader2, Phone, Trash2, X } from "lucide-react";
@@ -78,12 +79,12 @@ function EmergencyContactDialogInner({
               <h2 id="contact-dialog-title" className="text-base font-black text-snow-primary-dark">
                 {isEditing ? "Edit Emergency Contact" : "Add Emergency Contact"}
               </h2>
-              <p className="text-xs font-semibold text-snow-muted">Parent-only safety escalation</p>
+              <p className="text-xs font-semibold text-snow-muted">{t("parent", "safety.emergency.parentGate")}</p>
             </div>
           </div>
           <button
             type="button"
-            aria-label="Close dialog"
+            aria-label={t("parent", "safety.emergency.closeAria")}
             disabled={isSaving || isDeleting}
             onClick={onClose}
             className="snow-focus-ring grid size-8 place-items-center rounded-full text-snow-muted hover:bg-snow-surface-soft hover:text-snow-primary-dark disabled:opacity-50"
@@ -214,7 +215,7 @@ function EmergencyContactDialogInner({
                   className="size-4 rounded border-snow-border text-snow-primary"
                 />
                 <div>
-                  <span className="font-bold">Mark as Primary Contact</span>
+                  <span className="font-bold">{t("parent", "safety.emergency.markPrimary")}</span>
                   <p className="text-[11px] text-snow-muted">
                     Contacted first during urgent support or safety moments.
                   </p>
