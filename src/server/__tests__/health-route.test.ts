@@ -19,6 +19,9 @@ describe('health endpoint', () => {
     expect(body.checks.database).toBe('ok');
     expect(body.checks.ai_provider).toBeDefined();
     expect(typeof body.checks.ai_provider.configured).toBe('boolean');
+    expect(body.checks.discord_boundary).toBeDefined();
+    expect(typeof body.checks.discord_boundary.configured).toBe('boolean');
+    expect(body.checks.discord_boundary.connected).toBe(false);
     expect(response.headers.get('cache-control')).toBe('no-store');
     expect(mocks.execute).toHaveBeenCalledTimes(1);
   });

@@ -1,4 +1,4 @@
-import type { Provider, ProviderInput } from './contracts';
+import { type Provider, type ProviderInput, isDiscordCredential } from './contracts';
 
 export type GeminiProviderConfig = {
   apiKeys: string[];
@@ -39,7 +39,7 @@ function boundedInteger(value: string | undefined, fallback: number, min: number
   return parsed;
 }
 
-function parseKeys(rawKeys: string | undefined): string[] | null {
+function parseKeys(rawKeys: string | undefined, env?: Readonly<Record<string, string | undefined>>): string[] | null {
   if (!rawKeys || typeof rawKeys !== 'string') return null;
   const trimmed = rawKeys.trim();
   if (!trimmed) return null;
@@ -57,6 +57,11 @@ function parseKeys(rawKeys: string | undefined): string[] | null {
     }
   } else {
     candidates = trimmed.split(',').map((k) => k.trim());
+  }
+
+  // Fail closed if any candidate is a Discord credential
+  if (candidates.some((k) => isDiscordCredential(k, env))) {
+    return null;
   }
 
   const valid = candidates.filter((k) => k.length > 0 && !/[\u0000-\u001f\u007f]/.test(k));
@@ -86,7 +91,7 @@ export function readGeminiProviderConfig(
       : undefined) ||
     env.COMPANION_GEMINI_API_KEY;
 
-  const apiKeys = parseKeys(rawKeys);
+  const apiKeys = parseKeys(rawKeys, env);
   if (!apiKeys || apiKeys.length === 0) return null;
 
   const rawBaseUrl =
@@ -338,8 +343,11 @@ export function createGeminiCompanionProvider(
             lastError = providerError('COMPANION_PROVIDER_TIMEOUT', true, true);
           } else if (rawError instanceof Error) {
             const attemptError = rawError as AttemptError;
+            const secretsToRedact = [...config.apiKeys];
+            if (process.env.DISCORD_BOT_TOKEN) secretsToRedact.push(process.env.DISCORD_BOT_TOKEN);
+            if (process.env.DISCORD_WEBHOOK_URL) secretsToRedact.push(process.env.DISCORD_WEBHOOK_URL);
             lastError = providerError(
-              redactSecrets(attemptError.message, config.apiKeys),
+              redactSecrets(attemptError.message, secretsToRedact),
               attemptError.retrySameKey ?? false,
               attemptError.retryNextKey ?? true,
               attemptError.quotaOrTransient ?? false,

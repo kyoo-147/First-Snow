@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sql } from 'drizzle-orm';
 import { db } from '@/db/client';
-import { getProviderDiagnostics } from '@/server/companion/contracts';
+import { getDiscordDiagnostics, getProviderDiagnostics } from '@/server/companion/contracts';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic';
 // round-trip succeeds, and 503 when it does not. It never guesses "ok".
 // Exposes redacted provider diagnostics indicating configured/unconfigured
 // and provider/model identifiers, without ever leaking secret keys.
+// Also exposes fail-closed discord_boundary status without inventing connectivity.
 export async function GET(): Promise<NextResponse> {
   let databaseOk = false;
   try {
@@ -20,6 +21,7 @@ export async function GET(): Promise<NextResponse> {
   }
 
   const aiProvider = await getProviderDiagnostics();
+  const discordBoundary = getDiscordDiagnostics();
 
   return NextResponse.json(
     {
@@ -27,6 +29,7 @@ export async function GET(): Promise<NextResponse> {
       checks: {
         database: databaseOk ? 'ok' : 'error',
         ai_provider: aiProvider,
+        discord_boundary: discordBoundary,
       },
     },
     {

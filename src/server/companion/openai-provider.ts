@@ -1,4 +1,4 @@
-import type { Provider, ProviderInput } from './contracts';
+import { type Provider, type ProviderInput, isDiscordCredential } from './contracts';
 
 export type ProviderRouting = 'failover' | 'round-robin';
 
@@ -52,7 +52,7 @@ export function readOpenAiProviderConfig(env: Readonly<Record<string, string | u
     env.COMPANION_OPENAI_API_KEY ||
     env.COMPANION_PROVIDER_API_KEY ||
     (env.COMPANION_PROVIDER === 'openai' ? env.OPENAI_API_KEY : undefined);
-  if (!apiKey || typeof apiKey !== 'string' || !apiKey.trim()) return null;
+  if (!apiKey || typeof apiKey !== 'string' || !apiKey.trim() || isDiscordCredential(apiKey, env)) return null;
 
   const rawBaseUrl =
     env.COMPANION_OPENAI_BASE_URL ||
@@ -116,9 +116,14 @@ function providerError(message: string, retrySameModel: boolean, retryNextModel:
   return error;
 }
 
-function redactSecret(message: string, secret: string): string {
-  if (!secret) return message;
-  return message.split(secret).join('[REDACTED]');
+function redactSecrets(message: string, secrets: string[]): string {
+  let redacted = message;
+  for (const secret of secrets) {
+    if (secret) {
+      redacted = redacted.split(secret).join('[REDACTED]');
+    }
+  }
+  return redacted;
 }
 
 function retryPolicyForStatus(status: number): { same: boolean; next: boolean } {
@@ -283,8 +288,11 @@ export function createOpenAiCompanionProvider(
             lastError = providerError('COMPANION_PROVIDER_TIMEOUT', true, true);
           } else if (rawError instanceof Error) {
             const attemptError = rawError as AttemptError;
+            const secretsToRedact = [config.apiKey];
+            if (process.env.DISCORD_BOT_TOKEN) secretsToRedact.push(process.env.DISCORD_BOT_TOKEN);
+            if (process.env.DISCORD_WEBHOOK_URL) secretsToRedact.push(process.env.DISCORD_WEBHOOK_URL);
             lastError = providerError(
-              redactSecret(attemptError.message, config.apiKey),
+              redactSecrets(attemptError.message, secretsToRedact),
               attemptError.retrySameModel ?? true,
               attemptError.retryNextModel ?? true,
             );

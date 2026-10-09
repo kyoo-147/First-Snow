@@ -12,6 +12,94 @@ export function setTestCompanionProvider(provider: Provider | null): void {
 // example after an env update) the provider is rebuilt, resetting routing state.
 let cachedProvider: { key: string; provider: Provider } | null = null;
 
+export function isDiscordCredential(
+  value: string | undefined,
+  env?: Readonly<Record<string, string | undefined>>,
+): boolean {
+  if (!value || typeof value !== 'string') return false;
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+
+  // 1. Check if it matches known Discord env vars if provided
+  if (env) {
+    if (env.DISCORD_BOT_TOKEN && trimmed === env.DISCORD_BOT_TOKEN.trim()) return true;
+    if (env.DISCORD_WEBHOOK_URL && trimmed === env.DISCORD_WEBHOOK_URL.trim()) return true;
+  }
+
+  // 2. Check for Discord Webhook URLs or Discord domains
+  if (/discord(?:app)?\.com\/api\/webhooks/i.test(trimmed)) return true;
+  if (/^https?:\/\/(?:[a-zA-Z0-9-]+\.)*discord(?:app)?\.com/i.test(trimmed)) return true;
+
+  // 3. Check for Discord token keywords / placeholders
+  if (/(?:discord[_-]?bot|discord[_-]?token|discord[_-]?webhook)/i.test(trimmed)) return true;
+
+  // 4. Check for Discord bot token pattern: 3 base64/url-safe segments separated by dots
+  const parts = trimmed.split('.');
+  if (parts.length === 3 && parts.every((p) => /^[A-Za-z0-9_-]+$/.test(p))) {
+    if (parts[0].length >= 18 && parts[1].length >= 6 && parts[2].length >= 20) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+export type DiscordDiagnostics = {
+  configured: boolean;
+  connected: false;
+  status: 'unconfigured' | 'disconnected' | 'credential_mix_rejected';
+  reason?: string;
+};
+
+export function getDiscordDiagnostics(
+  env: Readonly<Record<string, string | undefined>> = process.env,
+): DiscordDiagnostics {
+  // Check for credential mixing in AI key environment variables
+  const aiKeyVars = [
+    'COMPANION_DEEPSEEK_API_KEY',
+    'DEEPSEEK_API_KEY',
+    'GOOGLE_AI_API_KEYS',
+    'COMPANION_GEMINI_API_KEYS',
+    'COMPANION_GOOGLE_AI_API_KEYS',
+    'COMPANION_GEMINI_API_KEY',
+    'GEMINI_API_KEY',
+    'GOOGLE_AI_API_KEY',
+    'COMPANION_OPENAI_API_KEY',
+    'COMPANION_PROVIDER_API_KEY',
+    'OPENAI_API_KEY',
+  ];
+
+  for (const varName of aiKeyVars) {
+    const val = env[varName];
+    if (val && isDiscordCredential(val, env)) {
+      return {
+        configured: false,
+        connected: false,
+        status: 'credential_mix_rejected',
+        reason: 'Discord credentials must not be used as AI provider keys.',
+      };
+    }
+  }
+
+  const hasBotToken = Boolean(env.DISCORD_BOT_TOKEN?.trim());
+  const hasWebhook = Boolean(env.DISCORD_WEBHOOK_URL?.trim());
+
+  if (hasBotToken || hasWebhook) {
+    return {
+      configured: true,
+      connected: false,
+      status: 'disconnected',
+      reason: 'No live Discord boundary is configured in this runtime. Connectivity remains disabled.',
+    };
+  }
+
+  return {
+    configured: false,
+    connected: false,
+    status: 'unconfigured',
+  };
+}
+
 export type ProviderDiagnostics = {
   configured: boolean;
   provider: 'openai' | 'deepseek' | 'gemini' | 'none';
@@ -23,6 +111,13 @@ export async function getProviderDiagnostics(
   env: Readonly<Record<string, string | undefined>> = process.env,
 ): Promise<ProviderDiagnostics> {
   const explicitProvider = env.COMPANION_PROVIDER?.trim().toLowerCase();
+
+  if (explicitProvider === 'discord') {
+    return {
+      configured: false,
+      provider: 'none',
+    };
+  }
 
   if (explicitProvider === 'gemini' || explicitProvider === 'google') {
     const { readGeminiProviderConfig } = await import('./gemini-provider');
@@ -112,6 +207,10 @@ export async function generateReply(input: ProviderInput): Promise<string> {
 
   const env = process.env;
   const explicitProvider = env.COMPANION_PROVIDER?.trim().toLowerCase();
+
+  if (explicitProvider === 'discord') {
+    throw new Error('COMPANION_PROVIDER_UNAVAILABLE');
+  }
 
   // Route based on explicit COMPANION_PROVIDER or auto-detection
   if (explicitProvider === 'gemini' || explicitProvider === 'google') {

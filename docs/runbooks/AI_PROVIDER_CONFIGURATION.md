@@ -22,7 +22,6 @@ If no provider credentials are configured, the server fails closed with `503 PRO
 ---
 
 ## 2. DeepSeek Configuration
-## 2. DeepSeek Configuration
 
 ### Production default and latency knobs
 
@@ -70,7 +69,7 @@ COMPANION_GEMINI_COOLDOWN_MS="60000"
 
 ---
 
-## 4. Production Secret Entry
+## 4. Production Secret Entry & Health Verification
 
 In cloud or container production environments (e.g., Kubernetes secrets, AWS Secrets Manager, Vercel/Fly environment variables):
 
@@ -78,8 +77,9 @@ In cloud or container production environments (e.g., Kubernetes secrets, AWS Sec
 2. Provide the production secret directly via environment variables:
    - For DeepSeek: `COMPANION_DEEPSEEK_API_KEY="<actual-secret-from-secret-vault>"`
    - For Gemini: `GOOGLE_AI_API_KEYS="<key1>,<key2>,<key3>"`
-3. Verify that `NEXT_PUBLIC_*` prefixes are never used for provider keys.
-4. Verify provider health and configuration by querying the redacted health probe:
+   - For OpenAI: `COMPANION_OPENAI_API_KEY="<actual-secret-from-secret-vault>"`
+3. Verify that `NEXT_PUBLIC_*` prefixes are never used for provider keys or Discord tokens.
+4. Verify provider health, model info, and Discord boundary status by querying the redacted health probe:
    ```bash
    curl -s https://<your-service-host>/api/health
    ```
@@ -94,16 +94,29 @@ In cloud or container production environments (e.g., Kubernetes secrets, AWS Sec
          "provider": "gemini",
          "model": "gemini-1.5-flash",
          "models": ["gemini-1.5-flash"]
+       },
+       "discord_boundary": {
+         "configured": false,
+         "connected": false,
+         "status": "unconfigured"
        }
      }
    }
    ```
-   Notice that secrets are completely omitted from the health response.
+   Notice that secret keys and tokens are strictly omitted and redacted from all health responses and error logs.
 
 ---
 
-## 5. Discord Clarification
+## 5. Discord Clarification & Boundary Protection
 
 - Snow is an AI companion for kids in the Snow app.
-- Any Discord integration (such as alert notifications or community bots) must use `DISCORD_BOT_TOKEN` or explicit Discord webhook URLs.
-- **Never use a Discord token or webhook URL as an AI provider key.** Discord tokens cannot generate AI completions and will fail authentication.
+- Any Discord integration (such as alert notifications or community bots) must use `DISCORD_BOT_TOKEN` or explicit Discord webhook URLs (`DISCORD_WEBHOOK_URL`).
+- **CRITICAL SECURITY RULES FOR DISCORD:**
+  - **Never use a Discord token or webhook URL as an AI provider key.** Discord tokens cannot generate AI completions and will fail authentication.
+  - **Fail-Closed Credential Separation:** All AI provider configuration readers (`gemini`, `deepseek`, `openai`) actively detect and reject Discord tokens/webhooks. If an operator accidentally passes a Discord credential in an AI provider variable, the server fails closed with `status: "credential_mix_rejected"` and `503 PROVIDER_UNAVAILABLE`.
+  - **No Invented Live Connectivity:** Without real Discord credentials and a documented runtime client boundary, Discord connectivity remains strictly disconnected (`connected: false`). The application never simulates or fabricates fake live Discord connections.
+  - **Placeholder-Only Local Setup:**
+    ```env
+    DISCORD_BOT_TOKEN="placeholder-discord-bot-token"
+    DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/placeholder-id/placeholder-token"
+    ```
