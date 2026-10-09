@@ -23,7 +23,7 @@ import type { LessonCardData, MoodOption, ParentInsight, SnowNavItem, ParentNavG
 export const childSidebarItems: SnowNavItem[] = [
   { label: "Trang chủ", href: "/session/home", icon: Home, key: "home" },
   { label: "Bài học", href: "/session/lessons", icon: BookOpen, key: "lessons" },
-  { label: "Trợ lý AI", href: "/companion", icon: Sparkles, key: "companion" },
+  { label: "Trợ lý AI", href: "/mia", icon: Sparkles, key: "companion" },
   { label: "Hoạt động", href: "/session/activities", icon: Activity, key: "activities" },
   { label: "Lịch trình", href: "/session/routine", icon: CalendarCheck, key: "routine" },
   { label: "Cài đặt", href: "/session/settings", icon: Settings, key: "settings" },
@@ -31,7 +31,7 @@ export const childSidebarItems: SnowNavItem[] = [
 
 export const topNavItems: SnowNavItem[] = [
   { label: "Trang chủ", href: "/session/home", icon: Home, key: "home" },
-  { label: "Trợ lý", href: "/companion", icon: Sparkles, key: "companion" },
+  { label: "Trợ lý", href: "/mia", icon: Sparkles, key: "companion" },
   { label: "Bài học", href: "/session/lessons", icon: BookOpen, key: "lessons" },
   { label: "Cảm xúc", href: "/session/activities", icon: Heart, key: "feelings" },
   { label: "Lịch trình", href: "/session/routine", icon: CalendarCheck, key: "routine" },
@@ -153,7 +153,7 @@ export const dailyTools = [
 ];
 
 export const routeCards = [
-  { href: "/companion", title: "Trò chuyện cùng AgentKid", subtitle: "Hỏi bất cứ điều gì hoặc cùng nhau luyện tập.", icon: Sparkles },
+  { href: "/mia", title: "Trò chuyện cùng AgentKid", subtitle: "Hỏi bất cứ điều gì hoặc cùng nhau luyện tập.", icon: Sparkles },
   { href: "/session/routine", title: "Lịch trình hôm nay", subtitle: "Xem kế hoạch, nhiệm vụ và mục tiêu của bạn.", icon: CalendarCheck },
   { href: "/session/lessons", title: "Cảm xúc và tâm trạng", subtitle: "Tìm hiểu về cảm xúc và những lựa chọn tử tế.", icon: Heart },
   { href: "/session/activities", title: "Kiểm tra cảm xúc", subtitle: "Cảm nhận ngày hôm nay và chọn bước tiếp theo thật nhẹ nhàng.", icon: Activity },

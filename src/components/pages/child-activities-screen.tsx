@@ -153,7 +153,7 @@ export function ChildActivitiesScreen() {
                 <div className="mt-4 flex flex-wrap gap-3">
                   {selectedMood ? (
                     <Link
-                      href={`/companion?mood=${encodeURIComponent(selectedMood)}`}
+                      href={`/mia?mood=${encodeURIComponent(selectedMood)}`}
                       className="snow-interactive-card snow-focus-ring inline-flex min-h-11 items-center rounded-full bg-snow-primary px-5 text-sm font-black text-white snow-pop-soft"
                     >
                       {t("child", "activities.continueWithSnow")}

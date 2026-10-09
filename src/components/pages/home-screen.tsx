@@ -121,7 +121,7 @@ export function HomeScreen() {
 
   const primaryActions = [
     {
-      href: "/companion",
+      href: "/mia",
       title: t("child", "home.talkAction"),
       subtitle: t("child", "home.startConversation"),
       icon: Sparkles,
@@ -181,7 +181,7 @@ export function HomeScreen() {
         </div>
 
         <Link
-          href="/companion"
+          href="/mia"
           className="snow-interactive-card snow-focus-ring flex min-h-[250px] flex-col justify-between rounded-[var(--radius-xl)] bg-gradient-to-br from-snow-primary to-snow-pink p-6 text-white shadow-[var(--shadow-card)] xl:min-h-full"
         >
           <div>
