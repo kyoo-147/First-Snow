@@ -5,7 +5,10 @@ import { children } from '@/db/schema/children';
 import { companionMessages } from '@/db/schema/companion';
 import { ERRORS } from '@/lib/api/errors';
 import { requireParentSession, getParentHousehold, assertChildBelongsToHousehold } from '@/server/auth';
+import { z } from 'zod';
 import { alertDto } from '@/server/companion/format';
+
+const uuid = z.string().uuid();
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const actor = await requireParentSession();
@@ -15,10 +18,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     if (!household) return ERRORS.forbidden();
     const requestedChild = request.nextUrl.searchParams.get('childId');
     if (requestedChild) {
+      if (!uuid.safeParse(requestedChild).success) {
+        return ERRORS.validationFailed({ childId: 'Invalid child ID.' });
+      }
       const denied = await assertChildBelongsToHousehold(requestedChild, household.id);
       if (denied) return denied as NextResponse;
     }
     const rows = await db.select({ message: companionMessages }).from(companionMessages).innerJoin(children, eq(companionMessages.childId, children.id)).where(requestedChild ? and(eq(children.householdId, household.id), eq(children.id, requestedChild), eq(companionMessages.isFlagged, true)) : and(eq(children.householdId, household.id), eq(companionMessages.isFlagged, true))).orderBy(asc(companionMessages.createdAt));
-    return NextResponse.json({ alerts: rows.map(({ message }) => alertDto(message)) });
+    return NextResponse.json({ alerts: rows.map(({ message }) => alertDto(message)) }, { headers: { 'Cache-Control': 'no-store' } });
   } catch { return ERRORS.internal('Could not load alerts.'); }
 }

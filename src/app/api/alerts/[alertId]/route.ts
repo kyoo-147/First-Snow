@@ -7,6 +7,7 @@ import { ERRORS } from '@/lib/api/errors';
 import { requireParentSession, getParentHousehold, assertChildBelongsToHousehold } from '@/server/auth';
 import { alertDto } from '@/server/companion/format';
 
+
 type Context = { params: Promise<{ alertId: string }> };
 export async function GET(_request: Request, context: Context): Promise<NextResponse> {
   const actor = await requireParentSession();
@@ -19,7 +20,7 @@ export async function GET(_request: Request, context: Context): Promise<NextResp
     if (!row || row.householdId !== household.id || !row.message.isFlagged) return ERRORS.forbidden();
     const denied = await assertChildBelongsToHousehold(row.message.childId, household.id);
     if (denied) return denied as NextResponse;
-    return NextResponse.json(alertDto(row.message));
+    return NextResponse.json(alertDto(row.message), { headers: { 'Cache-Control': 'no-store' } });
   } catch { return ERRORS.internal('Could not load alert.'); }
 }
 export async function PATCH(_request: Request, context: Context): Promise<NextResponse> {
@@ -38,7 +39,7 @@ export async function PATCH(_request: Request, context: Context): Promise<NextRe
     if (!state.readAt) state.readAt = new Date().toISOString();
     const alertState = { safetyAlerts: JSON.stringify(state) } as unknown as Partial<NewCompanionMessage>;
     const [updated] = await db.update(companionMessages).set(alertState).where(eq(companionMessages.id, alertId)).returning();
-    if (!updated) return ERRORS.internal('Could not update alert.');
-    return NextResponse.json(alertDto(updated));
+    if (!updated) return ERRORS.forbidden();
+    return NextResponse.json(alertDto(updated), { headers: { 'Cache-Control': 'no-store' } });
   } catch { return ERRORS.internal('Could not update alert.'); }
 }

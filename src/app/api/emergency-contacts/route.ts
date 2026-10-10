@@ -23,7 +23,11 @@ const fields = {
   name: z.string().trim().min(1).max(255),
   relation: z.string().trim().min(1).max(100),
   phone: z.string().trim().min(3).max(30),
-  email: z.string().trim().email().max(255).optional(),
+  email: z
+    .union([z.string().trim().email().max(255), z.literal('')])
+    .nullable()
+    .optional()
+    .transform((val) => (val && val.length > 0 ? val : null)),
   isPrimary: z.boolean().optional(),
   notifyOnAlert: z.boolean().optional(),
 };

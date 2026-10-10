@@ -119,8 +119,9 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   return body as T;
 }
 
-export async function fetchDashboardSession(): Promise<AuthSession | null> {
-  const data = await request<{ session: AuthSession | null }>("/api/auth/session");
+export async function fetchDashboardSession(actor?: "child" | "parent"): Promise<AuthSession | null> {
+  const url = actor ? `/api/auth/session?actor=${encodeURIComponent(actor)}` : "/api/auth/session";
+  const data = await request<{ session: AuthSession | null }>(url);
   return data.session ?? null;
 }
 

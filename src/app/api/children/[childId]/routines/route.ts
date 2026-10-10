@@ -54,12 +54,12 @@ export async function GET(request: Request, context: { params: Promise<{ childId
     if (parent) {
       const access = await parentOwnedChild(childId);
       if (access instanceof Response) return access;
-      return NextResponse.json({ routines: await listRoutines(childId, date), date });
+      return NextResponse.json({ routines: await listRoutines(childId, date), date }, { headers: { 'Cache-Control': 'no-store' } });
     }
     const childSession = await getChildSession();
     if (childSession) {
       if (childSession.sub !== childId) return ERRORS.forbidden('Child can only access own routines.');
-      return NextResponse.json({ routines: await listRoutines(childId, date, true), date });
+      return NextResponse.json({ routines: await listRoutines(childId, date, true), date }, { headers: { 'Cache-Control': 'no-store' } });
     }
     return ERRORS.unauthorized();
   } catch (error) {

@@ -32,6 +32,7 @@ export async function audit(userId: string, eventType: string, resourceType: str
 
 export function safetyErrorResponse(error: unknown) {
   if (error instanceof SafetyError) return Response.json({ error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } }, { status: error.status });
+  if (error instanceof SyntaxError) return Response.json({ error: { code: 'VALIDATION_FAILED', message: 'Valid JSON is required.' } }, { status: 400 });
   console.error('[safety] database or handler failure', error);
   return Response.json({ error: { code: 'INTERNAL', message: 'Safety service is temporarily unavailable.' } }, { status: 500 });
 }

@@ -49,7 +49,10 @@ export function HomeScreen() {
 
     async function loadData() {
       try {
-        const auth = await fetchDashboardSession();
+        let auth = await fetchDashboardSession("child");
+        if (!auth) {
+          auth = await fetchDashboardSession();
+        }
         if (ignore) return;
         setSession(auth);
 

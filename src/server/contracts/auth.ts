@@ -65,7 +65,11 @@ export const UpdateChildSchema = z
     age: z.number().int().min(3).max(18).nullable().optional(),
     grade: z.string().trim().max(50).nullable().optional(),
     gradeLevel: z.string().trim().max(50).nullable().optional(),
-    avatarUrl: z.string().trim().url('Invalid avatar URL').max(1024).nullable().optional(),
+    avatarUrl: z
+      .union([z.string().trim().url('Invalid avatar URL').max(1024), z.literal('')])
+      .nullable()
+      .optional()
+      .transform((val) => (val === undefined ? undefined : val && val.length > 0 ? val : null)),
     pin: z
       .string()
       .length(4, 'PIN must be exactly 4 digits')

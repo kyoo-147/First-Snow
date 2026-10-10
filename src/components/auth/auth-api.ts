@@ -182,17 +182,71 @@ export async function logoutUser(): Promise<{ success: boolean; message?: string
   }
 }
 
-export async function getAuthSession(): Promise<AuthSessionData> {
+export async function getAuthSession(preferredActor?: "child" | "parent"): Promise<AuthSessionData> {
   try {
-    const res = await fetch("/api/auth/session", {
+    // 1. If child is preferred or unspecified, check child session first
+    if (!preferredActor || preferredActor === "child") {
+      try {
+        const childRes = await fetch("/api/auth/session?actor=child", {
+          method: "GET",
+          headers: { Accept: "application/json" },
+          credentials: "include",
+        });
+        if (childRes.ok) {
+          const childData = await childRes.json().catch(() => null);
+          const childSession = childData?.session;
+          if (childSession?.actorType === "child" && childSession.child) {
+            let parentUser: AuthUser | null = null;
+            try {
+              const parentRes = await fetch("/api/auth/session", {
+                method: "GET",
+                headers: { Accept: "application/json" },
+                credentials: "include",
+              });
+              if (parentRes.ok) {
+                const parentData = await parentRes.json().catch(() => null);
+                if (parentData?.session?.user) {
+                  parentUser = parentData.session.user;
+                }
+              }
+            } catch {}
+
+            return {
+              isAuthenticated: true,
+              child: childSession.child,
+              user: parentUser,
+            };
+          }
+        }
+      } catch {}
+    }
+
+    // 2. Check parent session
+    const parentRes = await fetch("/api/auth/session", {
       method: "GET",
       headers: { Accept: "application/json" },
       credentials: "include",
     });
-    if (res.status === 401) {
-      return { isAuthenticated: false, user: null, child: null };
+    if (parentRes.ok) {
+      const parentData = await parentRes.json().catch(() => null);
+      const parentSession = parentData?.session;
+      if (parentSession?.user) {
+        return {
+          isAuthenticated: true,
+          user: parentSession.user,
+          child: null,
+        };
+      }
+      if (parentSession?.child) {
+        return {
+          isAuthenticated: true,
+          child: parentSession.child,
+          user: null,
+        };
+      }
     }
-    return await handleResponse<AuthSessionData>(res);
+
+    return { isAuthenticated: false, user: null, child: null };
   } catch (err) {
     return safeCatch(err);
   }

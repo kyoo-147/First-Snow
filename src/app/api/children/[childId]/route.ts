@@ -48,7 +48,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ child
     if ('response' in result) return result.response;
     const data = parsed.data;
 
-    if (data.pin) {
+    if (data.pin || data.isActive === false) {
       await db.update(sessions).set({ revokedAt: new Date() }).where(and(eq(sessions.childId, childId), isNull(sessions.revokedAt)));
     }
 

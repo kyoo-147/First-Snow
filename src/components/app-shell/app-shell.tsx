@@ -38,9 +38,15 @@ export function AppShell({ activeNav, children, rightPanel, backHref }: AppShell
 
   useEffect(() => {
     let cancelled = false;
-    fetchDashboardSession()
-      .then((session) => {
-        if (!cancelled && session?.actorType === "child") setChildName(session.child.name);
+    fetchDashboardSession("child")
+      .then((childSess) => {
+        if (!cancelled && childSess?.actorType === "child") {
+          setChildName(childSess.child.name);
+          return;
+        }
+        return fetchDashboardSession().then((session) => {
+          if (!cancelled && session?.actorType === "child") setChildName(session.child.name);
+        });
       })
       .catch(() => {
         if (!cancelled) setChildName(null);

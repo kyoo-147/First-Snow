@@ -105,6 +105,7 @@ const authMock = vi.hoisted(() => ({
 
 vi.mock('@/server/auth', () => ({
   requireParentSession: vi.fn(async () => authMock.session),
+  getParentSession: vi.fn(async () => authMock.session),
   getParentHousehold: vi.fn(async () => authMock.household),
   assertChildBelongsToHousehold: vi.fn(async (childId: string, householdId: string) => {
     if (childId === '11111111-1111-4111-8111-111111111111' && householdId === 'hh-123') {
@@ -478,6 +479,269 @@ describe('Parent CRUD Contracts, Validation, and Safety Audits', () => {
       const json = await res.json();
       expect(json.success).toBe(true);
       expect(json.message).toBe('Contact deleted.');
+    });
+
+    it('POST /api/emergency-contacts accepts null and empty email converting to null', async () => {
+      const { POST } = await import('@/app/api/emergency-contacts/route');
+      const now = new Date();
+      dbState.selectQueue = [
+        [{ id: 'hh-123', ownerId: 'parent-123', name: 'Nguyen Family' }],
+      ];
+      dbState.insertQueue = [
+        [
+          {
+            id: 'ec-2',
+            householdId: 'hh-123',
+            name: 'Grandma Mai',
+            relationship: 'Grandmother',
+            phone: '+84901234568',
+            email: null,
+            isPrimary: false,
+            notifyOnAlert: false,
+            createdAt: now,
+            updatedAt: now,
+          },
+        ],
+      ];
+
+      const req = new Request('http://localhost/api/emergency-contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Grandma Mai',
+          relation: 'Grandmother',
+          phone: '+84901234568',
+          email: null,
+        }),
+      });
+
+      const res = await POST(req);
+      expect(res.status).toBe(201);
+      const json = await res.json();
+      expect(json.contact.email).toBeUndefined();
+    });
+  });
+
+  describe('Child Deactivation and Avatar Updates in PATCH /api/children/[childId]', () => {
+    const validChildId = '11111111-1111-4111-8111-111111111111';
+
+    it('PATCH /api/children/[childId] revokes active sessions when child is deactivated (isActive: false)', async () => {
+      const { PATCH } = await import('@/app/api/children/[childId]/route');
+      const now = new Date();
+      dbState.selectQueue = [
+        [
+          {
+            id: validChildId,
+            displayName: 'Linh',
+            age: 7,
+            gradeLevel: 'Grade 2',
+            avatarUrl: null,
+            isActive: true,
+            createdAt: now,
+            updatedAt: now,
+          },
+        ],
+      ];
+      dbState.updateQueue = [
+        [], // session revocation
+        [
+          {
+            id: validChildId,
+            displayName: 'Linh',
+            age: 7,
+            gradeLevel: 'Grade 2',
+            avatarUrl: null,
+            isActive: false,
+            createdAt: now,
+            updatedAt: now,
+          },
+        ],
+      ];
+
+      const req = new Request('http://localhost/api/children/' + validChildId, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: false }),
+      });
+
+      const res = await PATCH(req, { params: Promise.resolve({ childId: validChildId }) });
+      expect(res.status).toBe(200);
+      expect(
+        dbState.updatedSessions.some(
+          (s) => typeof s === 'object' && s !== null && 'revokedAt' in (s as Record<string, unknown>),
+        ),
+      ).toBe(true);
+    });
+
+    it('PATCH /api/children/[childId] allows clearing avatar URL with empty string', async () => {
+      const { PATCH } = await import('@/app/api/children/[childId]/route');
+      const now = new Date();
+      dbState.selectQueue = [
+        [
+          {
+            id: validChildId,
+            displayName: 'Linh',
+            age: 7,
+            gradeLevel: 'Grade 2',
+            avatarUrl: 'https://example.com/avatar.png',
+            isActive: true,
+            createdAt: now,
+            updatedAt: now,
+          },
+        ],
+      ];
+      dbState.updateQueue = [
+        [
+          {
+            id: validChildId,
+            displayName: 'Linh',
+            age: 7,
+            gradeLevel: 'Grade 2',
+            avatarUrl: null,
+            isActive: true,
+            createdAt: now,
+            updatedAt: now,
+          },
+        ],
+      ];
+
+      const req = new Request('http://localhost/api/children/' + validChildId, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatarUrl: '' }),
+      });
+
+      const res = await PATCH(req, { params: Promise.resolve({ childId: validChildId }) });
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.child.avatarUrl).toBeNull();
+    });
+  });
+
+  describe('Parent Safety Handlers: Malformed JSON and Validation Audits', () => {
+    it('PATCH /api/privacy safely rejects malformed JSON with 400', async () => {
+      const { PATCH } = await import('@/app/api/privacy/route');
+      const req = new Request('http://localhost/api/privacy', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: 'invalid-json{',
+      });
+      const res = await PATCH(req);
+      expect(res.status).toBe(400);
+      const json = await res.json();
+      expect(json.error.code).toBe('VALIDATION_FAILED');
+    });
+
+    it('POST /api/consents safely rejects malformed JSON with 400', async () => {
+      const { POST } = await import('@/app/api/consents/route');
+      const req = new Request('http://localhost/api/consents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: 'invalid-json{',
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(400);
+      const json = await res.json();
+      expect(json.error.code).toBe('VALIDATION_FAILED');
+    });
+
+    it('GET /api/consents rejects foreign or non-existent childId with 403 (anti-enumeration)', async () => {
+      const { GET } = await import('@/app/api/consents/route');
+      dbState.selectQueue = [
+        [{ id: 'hh-123', ownerId: 'parent-123', name: 'Nguyen Family' }],
+        [], // child not found in household
+      ];
+      const req = new Request('http://localhost/api/consents?childId=99999999-9999-4999-8999-999999999999');
+      const res = await GET(req);
+      expect(res.status).toBe(403);
+      const json = await res.json();
+      expect(json.error.code).toBe('FORBIDDEN');
+    });
+
+    it('PATCH /api/notification-preferences safely rejects malformed JSON with 400', async () => {
+      const { PATCH } = await import('@/app/api/notification-preferences/route');
+      const req = new Request('http://localhost/api/notification-preferences', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: 'invalid-json{',
+      });
+      const res = await PATCH(req);
+      expect(res.status).toBe(400);
+      const json = await res.json();
+      expect(json.error.code).toBe('VALIDATION_FAILED');
+    });
+
+    it('POST /api/data-exports safely rejects malformed JSON with 400', async () => {
+      const { POST } = await import('@/app/api/data-exports/route');
+      const req = new Request('http://localhost/api/data-exports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: 'invalid-json{',
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(400);
+      const json = await res.json();
+      expect(json.error.code).toBe('VALIDATION_FAILED');
+    });
+
+    it('POST /api/deletion-requests safely rejects malformed JSON with 400', async () => {
+      const { POST } = await import('@/app/api/deletion-requests/route');
+      const req = new Request('http://localhost/api/deletion-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: 'invalid-json{',
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(400);
+      const json = await res.json();
+      expect(json.error.code).toBe('VALIDATION_FAILED');
+    });
+  });
+
+  describe('Parent Alerts and Routines Validation & Privacy Headers', () => {
+    it('GET and PATCH /api/alerts/[alertId] reject foreign or missing alertId with 403 (anti-enumeration)', async () => {
+      const { GET, PATCH } = await import('@/app/api/alerts/[alertId]/route');
+      dbState.selectQueue = [
+        [], // no alert found
+      ];
+      const getRes = await GET(new Request('http://localhost/api/alerts/missing-id'), {
+        params: Promise.resolve({ alertId: 'missing-id' }),
+      });
+      expect(getRes.status).toBe(403);
+      const getJson = await getRes.json();
+      expect(getJson.error.code).toBe('FORBIDDEN');
+
+      dbState.selectQueue = [
+        [], // no alert found
+      ];
+      const patchRes = await PATCH(new Request('http://localhost/api/alerts/missing-id', { method: 'PATCH' }), {
+        params: Promise.resolve({ alertId: 'missing-id' }),
+      });
+      expect(patchRes.status).toBe(403);
+      const patchJson = await patchRes.json();
+      expect(patchJson.error.code).toBe('FORBIDDEN');
+    });
+
+    it('GET /api/alerts rejects foreign childId query param with 403 (anti-enumeration)', async () => {
+      const { GET } = await import('@/app/api/alerts/route');
+      const req = new NextRequest('http://localhost/api/alerts?childId=99999999-9999-4999-8999-999999999999');
+      const res = await GET(req);
+      expect(res.status).toBe(403);
+      const json = await res.json();
+      expect(json.error.code).toBe('FORBIDDEN');
+    });
+
+    it('GET /api/children/[childId]/routines returns Cache-Control: no-store', async () => {
+      const { GET } = await import('@/app/api/children/[childId]/routines/route');
+      const validChildId = '11111111-1111-4111-8111-111111111111';
+      dbState.selectQueue = [
+        [{ id: validChildId }], // parentOwnedChild check
+        [], // listRoutines query
+      ];
+      const req = new Request(`http://localhost/api/children/${validChildId}/routines`);
+      const res = await GET(req, { params: Promise.resolve({ childId: validChildId }) });
+      expect(res.status).toBe(200);
+      expect(res.headers.get('Cache-Control')).toBe('no-store');
     });
   });
 });

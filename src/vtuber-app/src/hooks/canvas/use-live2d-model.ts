@@ -114,9 +114,12 @@ export const useLive2DModel = ({
     const sdkScale = (window as any).LAppDefine?.CurrentKScale;
     const modelScale = modelInfo?.kScale !== undefined ? Number(modelInfo.kScale) : undefined;
 
-    const needsUpdate = currentUrl &&
-                        (currentUrl !== prevModelUrlRef.current ||
-                         (sdkScale !== undefined && modelScale !== undefined && sdkScale !== modelScale));
+    // Production may intentionally run without a configured Live2D model. Do not
+    // pass undefined model parts into the SDK, which would trigger a 404 request.
+    if (!currentUrl) return;
+
+    const needsUpdate = currentUrl !== prevModelUrlRef.current ||
+                        (sdkScale !== undefined && modelScale !== undefined && sdkScale !== modelScale);
 
     if (needsUpdate) {
       prevModelUrlRef.current = currentUrl;
@@ -124,7 +127,7 @@ export const useLive2DModel = ({
       try {
         const { baseUrl, modelDir, modelFileName } = parseModelUrl(currentUrl);
 
-        if (baseUrl && modelDir) {
+        if (baseUrl && modelDir && modelFileName) {
           updateModelConfig(baseUrl, modelDir, modelFileName, Number(modelInfo.kScale));
 
           setTimeout(() => {
