@@ -22,6 +22,11 @@ The interface is designed for young and neurodiverse learners who benefit from s
 
 > **Project status:** `main` contains the integrated Snow beta: database-backed authentication and authorization, household-owned learning and routine workflows, companion and safety APIs, privacy jobs, an authenticated WebSocket gateway, and real-data parent/admin surfaces. Deployment still requires PostgreSQL migrations and environment configuration. External AI, ASR/TTS, object storage, email, push, and Live2D model availability remain environment-dependent and fail closed when absent.
 
+## Current release
+
+`v0.1.0` is the current GitHub release for the integrated Snow beta. It includes parent/child CRUD hardening, fail-closed Live2D configuration guards, malformed safety-payload handling, and the verified standalone static-asset packaging path.
+
+## Product preview
 ## Product preview
 
 ### Child learning home
@@ -92,11 +97,28 @@ Some legacy design-reference modules remain under `src/data/mock-*.ts`, but prod
 ### Clone and run
 
 ```bash
-git clone https://github.com/kyoo-147/agentkid_snow.git
-cd agentkid_snow
+git clone https://github.com/kyoo-147/First-Snow.git
+cd First-Snow
 npm install
 npm run dev
 ```
+
+To use the released revision instead of the moving branch:
+
+```bash
+git checkout v0.1.0
+```
+
+To update an existing checkout to the latest GitHub `main`:
+
+```bash
+git checkout main
+git pull --ff-only origin main
+npm ci
+```
+
+For a production-like local setup, configure `.env` from `.env.example`, then run
+`npm run db:migrate`, `npm run db:seed`, `npm run build`, and `npm run start`.
 
 Open <http://localhost:3000>. The root route redirects to the parent dashboard.
 
