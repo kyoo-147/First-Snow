@@ -52,8 +52,8 @@ export function getCompanionSessionStorageKey(childId: string): string {
   return `companion:sessionId:${encodeURIComponent(childId)}`;
 }
 
-const POLL_INTERVAL_MS = 3000;
-const SEND_TIMEOUT_MS = 30000;
+const POLL_INTERVAL_MS = 4000;
+const SEND_TIMEOUT_MS = 20000;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -77,6 +77,8 @@ export function TalkShell({ childId }: { childId: string }) {
   const clientIdMapRef = useRef<Map<string, string>>(new Map());
   // Last seen message ID for polling afterId
   const lastMsgIdRef = useRef<string | undefined>(undefined);
+  // Single-flight poll in-progress guard
+  const isPollingRef = useRef<boolean>(false);
   // Poll interval handle
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   // Message list scroll ref
@@ -148,6 +150,8 @@ export function TalkShell({ childId }: { childId: string }) {
     if (!sessionId) return;
 
     pollTimerRef.current = setInterval(async () => {
+      if (isPollingRef.current) return;
+      isPollingRef.current = true;
       try {
         const newMsgs = await getMessages(sessionId, lastMsgIdRef.current);
         if (newMsgs.length > 0) {
@@ -161,6 +165,8 @@ export function TalkShell({ childId }: { childId: string }) {
         }
       } catch {
         // Poll errors are silent — UI will recover on next interval
+      } finally {
+        isPollingRef.current = false;
       }
     }, POLL_INTERVAL_MS);
 
@@ -228,15 +234,24 @@ export function TalkShell({ childId }: { childId: string }) {
       try {
         const sent = await sendMessage(sessionId, clientMessageId, content);
         clearTimeout(timeoutId);
-        setMessages((prev) =>
-          prev.map((m) =>
+        const directReply = sent.reply ?? sent.assistant;
+        setMessages((prev) => {
+          const updated = prev.map((m) =>
             m._clientKey === clientKey
               ? { ...sent, _status: "sent" as MessageStatus, _clientKey: clientKey }
               : m,
-          ),
-        );
-        // Update lastMsgId so polling doesn't re-fetch this message
-        if (sent.id) lastMsgIdRef.current = sent.id;
+          );
+          if (directReply && !updated.some((m) => m.id === directReply.id)) {
+            return [...updated, directReply];
+          }
+          return updated;
+        });
+        // Update lastMsgId to the direct assistant reply if present, or sent message
+        if (directReply?.id) {
+          lastMsgIdRef.current = directReply.id;
+        } else if (sent.id) {
+          lastMsgIdRef.current = sent.id;
+        }
       } catch (e) {
         clearTimeout(timeoutId);
         setMessages((prev) =>

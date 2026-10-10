@@ -332,6 +332,112 @@ export function checkSafety(content: string): { flagged: boolean; reason: string
   return { flagged: codesArr.length > 0, reason: codesArr.length ? 'Potential safety concern detected.' : null, codes: codesArr };
 }
 
+// Patterns identifying content that carries potential risk signals and must NOT be classified as clearly safe.
+const RISK_PATTERNS: RegExp[] = [
+  // Danger, weapons, violence, injury
+  /(^|[^\p{L}])(chết|chet|giết|giet|máu|mau|chảy máu|chay mau|vết thương|vet thuong|dao|súng|sung|bầm|bam|gãy|gay|đau|dau|đánh|danh|bạo|bao)([^\p{L}]|$)/ui,
+  // Strangers, secrets, abduction, isolation, suspicious contact
+  /(^|[^\p{L}])(người lạ|nguoi la|chú lạ|chu la|kẻ lạ|ke la|lạ mặt|la mat|bí mật|bi mat|giữ kín|giu kin|đừng nói|dung noi|nhìn trộm|nhin trom|theo dõi|theo doi|rủ|ru|dẫn đi|dan di|bắt cóc|bat coc|nhốt|nhot)([^\p{L}]|$)/ui,
+  // Distress, fear, severe negative affect
+  /(^|[^\p{L}])(sợ|so|sợ hãi|so hai|kinh hãi|kinh hai|hoảng|hoang|buồn|buon|buồn bã|buon ba|khóc|khoc|tuyệt vọng|tuyet vong|cô đơn|co don|hận|han|ghét mình|ghet minh)([^\p{L}]|$)/ui,
+  // Substances, pills, poison
+  /(^|[^\p{L}])(thuốc|thuoc|viên thuốc|vien thuoc|uống nhầm|uong nham|độc|doc|chất độc|chat doc|rượu|ruou|bia)([^\p{L}]|$)/ui,
+  // English risk terms
+  /\b(kill|die|death|hurt|pain|bleed|blood|wound|weapon|gun|knife|stranger|secret|scared|fear|afraid|sad|cry|alone|pills|medicine|poison)\b/i,
+];
+
+/**
+ * Deterministic check: returns true ONLY when content is affirmatively proven
+ * clearly safe (contains 0 flagged safety codes, 0 risk indicators, and within benign length).
+ */
+export function isClearlySafe(content: string): boolean {
+  if (!content || typeof content !== 'string') return false;
+  const trimmed = content.trim().toLowerCase();
+  if (trimmed.length === 0 || trimmed.length > 300) return false;
+
+  // 1. If deterministic safety filter flags danger, it is NOT safe.
+  const deterministic = checkSafety(trimmed);
+  if (deterministic.flagged) return false;
+
+  // 2. If any risk pattern is detected, it requires semantic inspection.
+  for (const pattern of RISK_PATTERNS) {
+    if (pattern.test(trimmed)) return false;
+  }
+
+  return true;
+}
+
+export type SemanticSafetyResult = {
+  flagged: boolean;
+  reason: string | null;
+  codes: string[];
+};
+
+export type SemanticSafetyProvider = (content: string) => Promise<SemanticSafetyResult>;
+
+let testSemanticSafetyProvider: SemanticSafetyProvider | null = null;
+
+export function setTestSemanticSafetyProvider(provider: SemanticSafetyProvider | null): void {
+  testSemanticSafetyProvider = provider;
+}
+
+/**
+ * Evaluates semantic safety: skips the expensive semantic AI check when deterministic
+ * checks prove content is clearly safe, and preserves fail-closed danger handling if an error occurs.
+ */
+export async function checkSemanticSafety(
+  content: string,
+  provider?: SemanticSafetyProvider,
+): Promise<SemanticSafetyResult> {
+  // 1. Fast deterministic safety precheck: fail closed immediately on hard danger.
+  const deterministic = checkSafety(content);
+  if (deterministic.flagged) {
+    return deterministic;
+  }
+
+  // 2. Deterministic bypass: if proven clearly safe, skip semantic AI check entirely.
+  if (isClearlySafe(content)) {
+    return { flagged: false, reason: null, codes: [] };
+  }
+
+  // 3. Ambiguous / risk-bearing input: execute semantic evaluation.
+  const activeProvider = provider ?? testSemanticSafetyProvider;
+  if (activeProvider) {
+    try {
+      const result = await activeProvider(content);
+      return result;
+    } catch {
+      // Fail closed on semantic evaluation failure or timeout
+      return {
+        flagged: true,
+        reason: 'Semantic safety evaluation failed.',
+        codes: ['safety_evaluation_failed'],
+      };
+    }
+  }
+
+  // Fallback heuristic evaluation when no semantic AI provider is active in runtime:
+  // Fail-closed if suspicious patterns combine contact + secrecy or substances
+  const text = content.toLowerCase();
+  const suspiciousSignals = [
+    { pattern: /(người lạ|nguoi la|stranger).*(bí mật|bi mat|secret|rủ|đi theo|dẫn)/i, code: 'suspicious_contact' },
+    { pattern: /(thuốc|viên thuốc|uống|pills|medicine).*(ép|lạ|chóng mặt|đau)/i, code: 'substance_risk' },
+    { pattern: /(chảy máu|chay mau|vết thương|dao|súng|knife|gun|weapon)/i, code: 'physical_harm_risk' },
+  ];
+
+  for (const signal of suspiciousSignals) {
+    if (signal.pattern.test(text)) {
+      return {
+        flagged: true,
+        reason: 'Potential risk signal detected.',
+        codes: [signal.code],
+      };
+    }
+  }
+
+  return { flagged: false, reason: null, codes: [] };
+}
+
 export type Ticket = { token: string; childId: string; sessionId: string; origin: string; expiresAt: number };
 export interface TicketStore { put(ticket: Ticket): Promise<void>; consume(token: string, origin: string, now?: number): Promise<Ticket | null> }
 

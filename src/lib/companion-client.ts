@@ -18,6 +18,8 @@ export type CompanionMessage = {
   role: "child" | "assistant";
   content: string;
   createdAt: string;
+  reply?: CompanionMessage | null;
+  assistant?: CompanionMessage | null;
 };
 
 export type ApiAlert = {

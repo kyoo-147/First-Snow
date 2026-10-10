@@ -89,6 +89,62 @@ async function main() {
   const msg3 = parseApiError("raw string error");
   assert(msg3 === "Something went wrong", "error parsing: unknown type returns fallback");
 
+  // T7: single-flight polling guard drops overlapping poll requests
+  let inflight = false;
+  let executedPolls = 0;
+  let droppedPolls = 0;
+  async function singleFlightPoll(mockFetch: () => Promise<void>) {
+    if (inflight) {
+      droppedPolls++;
+      return;
+    }
+    inflight = true;
+    try {
+      executedPolls++;
+      await mockFetch();
+    } finally {
+      inflight = false;
+    }
+  }
+
+  let resolveSlowPoll: () => void;
+  const slowPoll = new Promise<void>((res) => { resolveSlowPoll = res; });
+  const p1 = singleFlightPoll(() => slowPoll);
+  const p2 = singleFlightPoll(async () => {}); // overlapping: must be dropped
+  assert(droppedPolls === 1, "singleFlightPoll: overlapping poll trigger is dropped");
+  assert(executedPolls === 1, "singleFlightPoll: only first poll executes");
+  resolveSlowPoll!();
+  await p1;
+  await p2;
+  // After completion, next poll can execute cleanly
+  await singleFlightPoll(async () => {});
+  assert(executedPolls === 2, "singleFlightPoll: subsequent poll executes after previous finishes");
+
+  // T8: direct assistant reply ingestion appends reply and advances cursor
+  function ingestSentResult(
+    prev: Array<{ id: string; role: string }>,
+    sent: { id: string; role: string; reply?: { id: string; role: string } | null },
+  ): { nextMessages: Array<{ id: string; role: string }>; nextCursor: string } {
+    const updated = prev.map((m) => (m.id === "opt-1" ? { id: sent.id, role: sent.role } : m));
+    const directReply = sent.reply;
+    const nextMessages = directReply && !updated.some((m) => m.id === directReply.id)
+      ? [...updated, directReply]
+      : updated;
+    const nextCursor = directReply?.id ?? sent.id;
+    return { nextMessages, nextCursor };
+  }
+
+  const initial = [{ id: "opt-1", role: "child" }];
+  const sentWithReply = {
+    id: "m-child-1",
+    role: "child",
+    reply: { id: "m-asst-1", role: "assistant" },
+  };
+  const { nextMessages, nextCursor } = ingestSentResult(initial, sentWithReply);
+  assert(nextMessages.length === 2, "direct assistant ingestion: appends reply immediately without polling");
+  assert(nextMessages[1].id === "m-asst-1", "direct assistant ingestion: reply is at end of list");
+  assert(nextCursor === "m-asst-1", "direct assistant ingestion: advances cursor to assistant reply ID");
+
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);
 }

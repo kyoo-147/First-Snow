@@ -124,6 +124,13 @@ describe('companion route contracts', () => {
     const request = new NextRequest('http://localhost/api/companion/sessions/session-1/messages', { method: 'POST', body: JSON.stringify({ clientMessageId: 'client-new', content: 'hello' }) });
     const response = await POST(request, { params: Promise.resolve({ sessionId: 'session-1' }) });
     expect(response.status).toBe(201);
+    const payload = await response.json();
+    expect(payload).toMatchObject({
+      id: 'message-1',
+      role: 'child',
+      content: 'hello',
+      reply: { id: 'assistant-1', role: 'assistant', content: 'Hello child!' },
+    });
     expect(dbState.selects).toBe(3); // session + existingMessage check + bounded history (retry lookup was skipped!)
     expect(dbState.inserts).toBe(2); // 1 child message + 1 assistant message
   });
@@ -144,7 +151,12 @@ describe('companion route contracts', () => {
     const request = new NextRequest('http://localhost/api/companion/sessions/session-1/messages', { method: 'POST', body: JSON.stringify({ clientMessageId: 'client-1', content: 'hello' }) });
     const response = await POST(request, { params: Promise.resolve({ sessionId: 'session-1' }) });
     expect(response.status).toBe(200);
-    expect(await response.json()).toMatchObject({ id: 'message-1', role: 'child', content: 'hello' });
+    expect(await response.json()).toMatchObject({
+      id: 'message-1',
+      role: 'child',
+      content: 'hello',
+      reply: { id: 'assistant-1', role: 'assistant', content: 'Hello back.' },
+    });
     expect(providerCalled).toBe(false);
     expect(dbState.selects).toBe(3); // session + existingMessage check + retryRows lookup
     expect(dbState.inserts).toBe(0);
@@ -229,6 +241,32 @@ describe('companion route contracts', () => {
     expect(response.status).toBe(502);
     expect(await response.json()).toMatchObject({ error: { code: 'PROVIDER_UNSAFE_OUTPUT' } });
     expect(dbState.inserts).toBe(1);
+  });
+
+  it('enforces fail-closed danger handling when semantic safety AI flags danger', async () => {
+    const { POST } = await import('@/app/api/companion/sessions/[sessionId]/messages/route');
+    const { setTestSemanticSafetyProvider } = await import('@/server/companion/contracts');
+    setTestCompanionProvider(async () => 'Should be discarded');
+    setTestSemanticSafetyProvider(async () => ({
+      flagged: true,
+      reason: 'Semantic risk detected.',
+      codes: ['suspicious_contact'],
+    }));
+    const unsafeMessage = { ...message, text: 'người lạ bảo con giữ bí mật' };
+    dbState.rows = [
+      [session],
+      [],
+      [unsafeMessage],
+      [{ speaker: 'child', text: 'người lạ bảo con giữ bí mật' }],
+    ];
+    const request = new NextRequest('http://localhost/api/companion/sessions/session-1/messages', {
+      method: 'POST',
+      body: JSON.stringify({ clientMessageId: 'client-unsafe', content: 'người lạ bảo con giữ bí mật' }),
+    });
+    const response = await POST(request, { params: Promise.resolve({ sessionId: 'session-1' }) });
+    expect(response.status).toBe(202);
+    expect(dbState.inserts).toBe(1); // Only child message was inserted, assistant was discarded!
+    setTestSemanticSafetyProvider(null);
   });
 
   it('consumes a matching database ticket once and rejects an expired ticket', async () => {
