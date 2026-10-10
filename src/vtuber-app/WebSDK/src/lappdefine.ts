@@ -39,6 +39,19 @@ export let ModelFileNames: string[] = []; // New array to store model file names
 
 // Function to update model configuration with both directory and file name
 export function updateModelConfig(resourcePath: string, modelDirectory: string, modelFileName: string, kScale?: number) {
+  // Keep malformed runtime config from reaching the SDK URL builder. The
+  // values originate outside this module at runtime despite the TS types.
+  if (
+    typeof resourcePath !== 'string' || !resourcePath.trim() ||
+    typeof modelDirectory !== 'string' || !modelDirectory.trim() ||
+    typeof modelFileName !== 'string' || !modelFileName.trim()
+  ) {
+    ResourcesPath = '';
+    ModelDir = [];
+    ModelFileNames = [];
+    return;
+  }
+
   console.log('Updating model config:', { resourcePath, modelDirectory, modelFileName, kScale });
   ResourcesPath = resourcePath;
   ModelDir = [modelDirectory];
