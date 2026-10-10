@@ -192,15 +192,20 @@ export class LAppLive2DManager {
 
     // Use the directory name and file name from our configuration
     const model: string = LAppDefine.ModelDir[index];
+
+    // Do not let an incomplete configuration become an invalid model request;
+    // the caller renders its honest fallback while a model is unavailable.
+    const configuredFileName = LAppDefine.ModelFileNames?.[index] || model;
+    if (
+      typeof model !== 'string' || !model.trim() ||
+      typeof configuredFileName !== 'string' || !configuredFileName.trim() ||
+      typeof LAppDefine.ResourcesPath !== 'string' || !LAppDefine.ResourcesPath.trim()
+    ) {
+      return;
+    }
+
     const modelPath: string = LAppDefine.ResourcesPath + model + '/';
-    
-    // Use ModelFileNames if available, otherwise fall back to ModelDir
-    let modelJsonName: string = LAppDefine.ModelFileNames && 
-                                LAppDefine.ModelFileNames[index] ? 
-                                LAppDefine.ModelFileNames[index] : 
-                                LAppDefine.ModelDir[index];
-                                
-    modelJsonName += '.model3.json';
+    const modelJsonName: string = configuredFileName + '.model3.json';
 
     if (LAppDefine.DebugLogEnable) {
       LAppPal.printMessage(`[APP]model path: ${modelPath}${modelJsonName}`);
