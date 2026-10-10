@@ -5,7 +5,7 @@ import { db } from '@/db/client';
 import { companionMessages, companionSessions, type NewCompanionMessage } from '@/db/schema/companion';
 import { ERRORS } from '@/lib/api/errors';
 import { requireChildSession } from '@/server/auth';
-import { checkSafety, classifySafetyIntent, generateReply } from '@/server/companion/contracts';
+import { checkSafety, checkSemanticSafety, classifySafetyIntent, generateReply, isClearlySafe } from '@/server/companion/contracts';
 import { messageDto } from '@/server/companion/format';
 import {
   CompanionTelemetryCollector,
@@ -127,12 +127,13 @@ export async function POST(request: NextRequest, context: Context): Promise<Next
       // Retry idempotency lookup is executed ONLY for the pre-existing replay path.
       if (userMessage.createdAt) {
         const retryLookupStarted = markCompanionPhase();
-        const retryRows = await db.select().from(companionMessages).where(and(eq(companionMessages.sessionId, sessionId), eq(companionMessages.speaker, 'snow'), gt(companionMessages.createdAt, userMessage.createdAt))).orderBy(asc(companionMessages.createdAt), asc(companionMessages.id)).limit(1);
+        const retryRows = await db.select().from(companionMessages).where(and(eq(companionMessages.sessionId, sessionId), eq(companionMessages.speaker, 'snow'), or(gt(companionMessages.createdAt, userMessage.createdAt), and(eq(companionMessages.createdAt, userMessage.createdAt), gt(companionMessages.id, userMessage.id))))).orderBy(asc(companionMessages.createdAt), asc(companionMessages.id)).limit(1);
         collector.recordPhase('db_history', retryLookupStarted, 'ok');
         const assistantAfterRetry = (retryRows as Array<typeof userMessage>).find((row) => row.speaker === 'snow');
         if (assistantAfterRetry) {
           collector.flush('ok');
-          return withCompanionCorrelation(NextResponse.json(messageDto(userMessage)), correlationId);
+          const assistantDto = messageDto(assistantAfterRetry);
+          return withCompanionCorrelation(NextResponse.json({ ...messageDto(userMessage), reply: assistantDto, assistant: assistantDto }), correlationId);
         }
       }
     } else {
@@ -168,9 +169,28 @@ export async function POST(request: NextRequest, context: Context): Promise<Next
     collector.recordPhase('db_history', phaseStarted, 'ok');
 
     phaseStarted = markCompanionPhase();
+    const clearlySafe = isClearlySafe(userMessage.text);
+    collector.recordPhase('safety_precheck', phaseStarted, 'ok');
+
     let reply: string;
+    let semanticSafety = { flagged: false, reason: null as string | null, codes: [] as string[] };
+
+    phaseStarted = markCompanionPhase();
     try {
-      reply = (await generateReply({ content: userMessage.text, history: boundedHistory.filter((m) => m.speaker === 'child' || m.speaker === 'snow').map((m) => ({ role: m.speaker === 'snow' ? 'assistant' as const : 'child' as const, content: m.text })) })).trim();
+      const historyContext = boundedHistory
+        .filter((m) => m.speaker === 'child' || m.speaker === 'snow')
+        .map((m) => ({ role: m.speaker === 'snow' ? ('assistant' as const) : ('child' as const), content: m.text }));
+
+      if (clearlySafe) {
+        reply = (await generateReply({ content: userMessage.text, history: historyContext })).trim();
+      } else {
+        const [generated, evaluatedSafety] = await Promise.all([
+          generateReply({ content: userMessage.text, history: historyContext }),
+          checkSemanticSafety(userMessage.text),
+        ]);
+        reply = generated.trim();
+        semanticSafety = evaluatedSafety;
+      }
       collector.recordPhase('provider', phaseStarted, 'ok');
     } catch (error) {
       collector.recordPhase('provider', phaseStarted, 'error');
@@ -178,6 +198,15 @@ export async function POST(request: NextRequest, context: Context): Promise<Next
       if (error instanceof Error && error.message === 'COMPANION_PROVIDER_UNAVAILABLE') return withCompanionCorrelation(NextResponse.json({ error: { code: 'PROVIDER_UNAVAILABLE', message: 'Companion responses are temporarily unavailable.' } }, { status: 503 }), correlationId);
       return withCompanionCorrelation(NextResponse.json({ error: { code: 'PROVIDER_ERROR', message: 'Companion could not respond. Please retry.' } }, { status: 502 }), correlationId);
     }
+    if (semanticSafety.flagged) {
+      collector.recordPhase('safety_precheck', markCompanionPhase(), 'blocked');
+      collector.flush('blocked');
+      return withCompanionCorrelation(
+        NextResponse.json({ ...messageDto(userMessage), isFlagged: true, flagReason: semanticSafety.reason }, { status: 202 }),
+        correlationId,
+      );
+    }
+
     if (!reply) {
       collector.recordPhase('provider', phaseStarted, 'error');
       collector.flush('error');
@@ -203,7 +232,8 @@ export async function POST(request: NextRequest, context: Context): Promise<Next
     collector.recordPhase('persistence', phaseStarted, 'ok');
     collector.recordPhase('render', markCompanionPhase(), 'ok');
     collector.flush('ok');
-    return withCompanionCorrelation(NextResponse.json(messageDto(userMessage), { status: 201 }), correlationId);
+    const assistantDto = messageDto(assistant);
+    return withCompanionCorrelation(NextResponse.json({ ...messageDto(userMessage), reply: assistantDto, assistant: assistantDto }, { status: 201 }), correlationId);
   } catch {
     collector.recordPhase('persistence', phaseStarted, 'error');
     collector.flush('error');

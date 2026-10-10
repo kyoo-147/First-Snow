@@ -50,9 +50,12 @@ export function EmergencyAlertOverlay() {
   }, []);
 
   useEffect(() => {
-    void refresh();
+    const initialTimer = window.setTimeout(() => void refresh(), 0);
     const timer = window.setInterval(() => void refresh(), POLL_MS);
-    return () => window.clearInterval(timer);
+    return () => {
+      window.clearTimeout(initialTimer);
+      window.clearInterval(timer);
+    };
   }, [refresh]);
 
   if (!alert || pathname.startsWith("/parent/alerts")) return null;

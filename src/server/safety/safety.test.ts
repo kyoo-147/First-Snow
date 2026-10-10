@@ -98,7 +98,7 @@ describe('safety service', () => {
   });
 
   it('omits unverified email, unknown push device count, and timestamp without stored preferences', async () => {
-    const { mapNotificationPreferences } = await import('@/app/api/notification-preferences/route');
+    const { mapNotificationPreferences } = await import('@/server/safety/parent-data-presenter');
     const preferences = mapNotificationPreferences([]);
     expect(preferences).not.toHaveProperty('verifiedEmail');
     expect(preferences).not.toHaveProperty('pushDeviceCount');
@@ -113,7 +113,7 @@ describe('safety service', () => {
   });
 
   it('does not fabricate a contact priority and defaults legacy alert preference to false', async () => {
-    const { mapEmergencyContact } = await import('@/app/api/emergency-contacts/route');
+    const { mapEmergencyContact } = await import('@/server/safety/parent-data-presenter');
     const contact = mapEmergencyContact({ id: 'contact-a', name: 'Caregiver', relationship: 'Parent', phone: '555-0100', email: null, isPrimary: false, createdAt: new Date('2026-01-01T00:00:00Z'), updatedAt: new Date('2026-01-01T00:00:00Z') } as never);
     expect(contact.notifyOnAlert).toBe(false);
     expect(contact).not.toHaveProperty('priority');

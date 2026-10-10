@@ -5,19 +5,10 @@ import { notificationPreferences } from '@/db/schema';
 import { requireParentSession } from '@/server/auth';
 import { audit, context, SafetyError, safetyErrorResponse } from '@/server/safety';
 import { readTwilioConfig } from '@/server/safety/twilio';
+import { mapNotificationPreferences } from '@/server/safety/parent-data-presenter';
 import { z } from 'zod';
 
 const channels = ['email', 'push', 'in_app', 'sms', 'voice'] as const;
-export function mapNotificationPreferences(rows: Array<typeof notificationPreferences.$inferSelect>) {
-  const enabled = (channel: typeof channels[number]) => rows.find((row) => row.channel === channel)?.enabled ?? false;
-  const emailAlerts = enabled('email');
-  const pushAlerts = enabled('push');
-  const weeklyReport = enabled('in_app');
-  const emergencySmsAlerts = enabled('sms') && enabled('voice');
-  const channel = emailAlerts && pushAlerts ? 'both' : emailAlerts ? 'email' : pushAlerts ? 'push' : 'none';
-  const updatedAt = rows.reduce<Date | undefined>((latest, row) => !latest || row.updatedAt > latest ? row.updatedAt : latest, undefined);
-  return { emailAlerts, pushAlerts, weeklyReport, emergencySmsAlerts, reportCadence: 'weekly' as const, deliveryPreference: { channel, frequency: 'immediate' as const, quietHoursEnabled: false }, ...(updatedAt ? { updatedAt: updatedAt.toISOString() } : {}) };
-}
 async function read(userId: string) { return mapNotificationPreferences(await db.select().from(notificationPreferences).where(eq(notificationPreferences.userId, userId))); }
 
 export async function GET() {
