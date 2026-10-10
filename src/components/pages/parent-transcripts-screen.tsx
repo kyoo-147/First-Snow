@@ -19,6 +19,7 @@ import { SnowButton } from "@/components/ui/snow-button";
 import { SnowCard } from "@/components/ui/snow-card";
 import { getTranscripts, CompanionApiError } from "@/lib/companion-client";
 import type { ApiTranscriptMessage } from "@/lib/companion-client";
+import { fetchHouseholdChildren } from "@/lib/dashboard-client";
 import { formatSnowDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -83,13 +84,14 @@ function ParentTranscriptsContent({
   initialSessionId?: string;
 }) {
   const searchParams = useSearchParams();
-  const sessionParam = initialSessionId ?? searchParams?.get("session") ?? null;
+  const sessionParam = initialSessionId ?? searchParams?.get("session") ?? searchParams?.get("sessionId") ?? null;
 
   const [status, setStatus] = useState<"loading" | "error" | "ready">("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [allMessages, setAllMessages] = useState<ApiTranscriptMessage[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [childName, setChildName] = useState<string | null>(null);
 
   const handleFetch = async () => {
     if (!childId || !childId.trim()) {
@@ -124,6 +126,16 @@ function ParentTranscriptsContent({
 
   useEffect(() => {
     let cancelled = false;
+
+    if (childId && childId.trim()) {
+      fetchHouseholdChildren()
+        .then((children) => {
+          if (cancelled) return;
+          const match = children.find((c) => c.id === childId);
+          if (match) setChildName(match.name);
+        })
+        .catch(() => {});
+    }
 
     async function loadTranscripts() {
       if (!childId || !childId.trim()) {
@@ -216,7 +228,7 @@ function ParentTranscriptsContent({
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatusTile
           label={t("parent", "transcripts.childProfile")}
-          value={childId ? `${t("parent", "transcripts.child")} (${childId})` : t("parent", "transcripts.unspecified")}
+          value={childName || (childId ? t("parent", "transcripts.child") : t("parent", "transcripts.unspecified"))}
           detail={t("parent", "transcripts.routeProfile")}
           icon={<ShieldCheck className="size-5 text-snow-primary" />}
         />

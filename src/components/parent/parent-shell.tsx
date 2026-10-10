@@ -23,6 +23,18 @@ import { EmergencyAlertOverlay } from "@/components/safety/emergency-alert-overl
 
 const SIDEBAR_STORAGE_KEY = "agentkid:parent-sidebar-collapsed";
 
+const GROUP_NAV_KEY_MAP: Record<string, string> = {
+  "Chính": "main",
+  "An toàn": "safety",
+  "Hệ thống": "system",
+};
+
+export function getParentNavGroupTitle(groupName: string): string {
+  const mappedKey = GROUP_NAV_KEY_MAP[groupName] ?? groupName.replace(/\s+/g, "").toLowerCase();
+  const translated = tUnchecked("parent", `nav.${mappedKey}`);
+  return translated.startsWith("parent:nav.") ? groupName : translated;
+}
+
 export function ParentShell({
   activeNav,
   children,
@@ -124,11 +136,13 @@ export function ParentShell({
 
           <nav aria-label={t("parent", "aria.parentNav")} className="agentkid-nav-scrollbar min-h-0 flex-1 overflow-y-auto px-2 py-4">
             <div className="space-y-5">
-              {parentNavGroups.map((group) => (
-                <section key={tUnchecked("parent", `nav.${group.group.replace(' ', '').replace(' ', '').toLowerCase()}`)} aria-label={tUnchecked("parent", `nav.${group.group.replace(' ', '').replace(' ', '').toLowerCase()}`)}>
-                  <p className={cn("mb-1.5 px-2 text-[10px] font-medium uppercase tracking-[0.08em] text-snow-muted transition-opacity", !showLabels && "md:sr-only")}>
-                    {tUnchecked("parent", `nav.${group.group.replace(' ', '').replace(' ', '').toLowerCase()}`)}
-                  </p>
+              {parentNavGroups.map((group) => {
+                const groupTitle = getParentNavGroupTitle(group.group);
+                return (
+                  <section key={groupTitle} aria-label={groupTitle}>
+                    <p className={cn("mb-1.5 px-2 text-[10px] font-medium uppercase tracking-[0.08em] text-snow-muted transition-opacity", !showLabels && "md:sr-only")}>
+                      {groupTitle}
+                    </p>
                   <div className="space-y-0.5">
                     {group.items.map((item) => {
                       const Icon = item.icon;
@@ -160,7 +174,8 @@ export function ParentShell({
                     })}
                   </div>
                 </section>
-              ))}
+              );
+            })}
             </div>
           </nav>
 

@@ -34,7 +34,7 @@ type Mood = "Happy" | "Worried" | "Angry" | "Excited" | "Sleepy";
 
 type MessageStatus = "pending" | "sent" | "error";
 
-type OptimisticMessage = CompanionMessage & {
+export type OptimisticMessage = CompanionMessage & {
   _status?: MessageStatus;
   _error?: string;
   _clientKey?: string;
@@ -65,11 +65,21 @@ function parseApiError(e: unknown): string {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function TalkShell({ childId }: { childId: string }) {
-  const [sessionId, setSessionId] = useState<string | null>(null);
+export interface TalkShellProps {
+  childId: string;
+  initialSessionId?: string | null;
+  initialMessages?: OptimisticMessage[];
+}
+
+export function TalkShell({
+  childId,
+  initialSessionId = null,
+  initialMessages = [],
+}: TalkShellProps) {
+  const [sessionId, setSessionId] = useState<string | null>(initialSessionId);
   const [sessionError, setSessionError] = useState<string | null>(null);
-  const [sessionLoading, setSessionLoading] = useState(true);
-  const [messages, setMessages] = useState<OptimisticMessage[]>([]);
+  const [sessionLoading, setSessionLoading] = useState(initialSessionId ? false : true);
+  const [messages, setMessages] = useState<OptimisticMessage[]>(initialMessages);
   const [inputText, setInputText] = useState("");
   const [isSending, setIsSending] = useState(false);
 
@@ -246,7 +256,6 @@ export function TalkShell({ childId }: { childId: string }) {
           }
           return updated;
         });
-        // Update lastMsgId to the direct assistant reply if present, or sent message
         if (directReply?.id) {
           lastMsgIdRef.current = directReply.id;
         } else if (sent.id) {
@@ -459,7 +468,7 @@ export function TalkShell({ childId }: { childId: string }) {
                         isChild && status === "error" && "opacity-70",
                       )}
                     >
-                      {msg.content}
+                      {msg.content?.trim() || (!isChild ? t("companion", "error.noResponse") : msg.content)}
                     </div>
 
                     {/* Error + retry */}
@@ -480,7 +489,13 @@ export function TalkShell({ childId }: { childId: string }) {
                     )}
 
                     {/* AgentKid suggested actions — kept from original */}
-                    {!isChild && msg.content.includes("breathing exercise") && (
+                    {!isChild &&
+                      Boolean(
+                        msg.content &&
+                          (msg.content.toLowerCase().includes("breathing exercise") ||
+                            msg.content.toLowerCase().includes("bài tập thở") ||
+                            msg.content.toLowerCase().includes("hít thở")),
+                      ) && (
                       <div className="mt-4 flex flex-wrap gap-3">
                         <button
                           type="button"

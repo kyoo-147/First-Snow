@@ -100,6 +100,11 @@ const PRIVACY_ITEMS: PrivacyItemConfig[] = [
   },
 ];
 
+export function getPrivacyItemTitle(key: keyof PrivacySettingsData): string {
+  const item = PRIVACY_ITEMS.find((i) => i.key === key);
+  return item ? t("parent", `privacy.${item.titleKey}`) : String(key);
+}
+
 export function ParentPrivacyScreen() {
   const [settings, setSettings] = useState<PrivacySettingsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -170,7 +175,7 @@ export function ParentPrivacyScreen() {
       const updated = await updatePrivacySettings({ [key]: nextValue });
       // Update with server response (no fake success)
       setSettings(updated);
-      setSaveSuccessMessage(t("parent", "privacy.updateSuccess", { key: String(key) }));
+      setSaveSuccessMessage(t("parent", "privacy.updateSuccess", { key: getPrivacyItemTitle(key) }));
       setTimeout(() => setSaveSuccessMessage(null), 3000);
     } catch (err: unknown) {
       // Rollback optimistic update on error
@@ -185,7 +190,7 @@ export function ParentPrivacyScreen() {
         setErrorCode(err.code);
         setRequestId(err.requestId);
       } else {
-        setErrorMessage(t("parent", "privacy.updateFailed", { key: String(key) }));
+        setErrorMessage(t("parent", "privacy.updateFailed", { key: getPrivacyItemTitle(key) }));
       }
     } finally {
       setMutatingKey(null);
@@ -201,9 +206,9 @@ export function ParentPrivacyScreen() {
       setSettings(updated);
       setIsReauthOpen(false);
       setPendingPrivacyAction(null);
-      setSaveSuccessMessage(t("parent", "privacy.updateSuccess", { key: String(pendingPrivacyAction.key) }));
+      setSaveSuccessMessage(t("parent", "privacy.updateSuccess", { key: getPrivacyItemTitle(pendingPrivacyAction.key) }));
     } catch (err: unknown) {
-      setErrorMessage(err instanceof SafetyApiError ? err.message : t("parent", "privacy.updateFailed", { key: String(pendingPrivacyAction.key) }));
+      setErrorMessage(err instanceof SafetyApiError ? err.message : t("parent", "privacy.updateFailed", { key: getPrivacyItemTitle(pendingPrivacyAction.key) }));
     } finally {
       setIsReauthProcessing(false);
       setMutatingKey(null);

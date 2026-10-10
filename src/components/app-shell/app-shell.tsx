@@ -64,7 +64,7 @@ export function AppShell({ activeNav, children, rightPanel, backHref }: AppShell
                 <SnowLogo />
               </Link>
             </div>
-            <nav aria-label={t("common", "search")} className="hidden flex-1 items-center justify-center gap-7 md:flex">
+            <nav aria-label={t("child", "nav.childAppNav")} className="hidden flex-1 items-center justify-center gap-7 md:flex">
                 {topNavItems.map((item) => {
                   const Icon = item.icon;
                   const active = activeNav === item.key || (activeNav === "activities" && item.key === "feelings");
@@ -104,7 +104,7 @@ export function AppShell({ activeNav, children, rightPanel, backHref }: AppShell
                 <Image src="/images/snow-avatar-v2.png" alt="" aria-hidden="true" width={40} height={40} className="rounded-full object-cover" />
                 <span className="hidden text-sm leading-tight sm:block">
                   <strong className="block font-black text-snow-primary-dark">{childName ?? t("common", "childProfile")}</strong>
-                  <span className="font-bold text-snow-muted">{ t("common", "success") }</span>
+                  <span className="font-bold text-snow-muted">{ t("child", "nav.signedIn") }</span>
                 </span>
                 <Settings className="hidden size-4 text-snow-muted sm:block" />
               </Link>
@@ -116,7 +116,7 @@ export function AppShell({ activeNav, children, rightPanel, backHref }: AppShell
             {rightPanel ? <aside className="hidden lg:block pt-4 md:pt-0">{rightPanel}</aside> : null}
           </div>
 
-          <nav aria-label={t("common", "search")} className="fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-around border-t border-snow-border bg-white/90 backdrop-blur-xl pb-safe pt-1 md:hidden">
+          <nav aria-label={t("child", "nav.childAppNav")} className="fixed bottom-0 left-0 right-0 z-50 flex h-20 items-center justify-around border-t border-snow-border bg-white/90 backdrop-blur-xl pb-safe pt-1 md:hidden">
               {topNavItems.map((item) => {
                 const Icon = item.icon;
                 const active = activeNav === item.key || (activeNav === "activities" && item.key === "feelings");

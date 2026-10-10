@@ -17,14 +17,29 @@ import {
 } from "@/lib/dashboard-client";
 import { formatSnowDate, formatSnowTime } from "@/lib/format";
 
-export function ParentAlertDetailScreen({ alertId }: { alertId: string }) {
-  const [alert, setAlert] = useState<DashboardAlert | null>(null);
-  const [child, setChild] = useState<DashboardChild | null>(null);
-  const [loading, setLoading] = useState(true);
+const SEVERITY_LABELS: Record<string, string> = {
+  high: "Cao",
+  medium: "Trung bình",
+  low: "Thấp",
+};
+
+export function ParentAlertDetailScreen({
+  alertId,
+  initialAlert,
+  initialChild,
+}: {
+  alertId: string;
+  initialAlert?: DashboardAlert | null;
+  initialChild?: DashboardChild | null;
+}) {
+  const [alert, setAlert] = useState<DashboardAlert | null>(initialAlert ?? null);
+  const [child, setChild] = useState<DashboardChild | null>(initialChild ?? null);
+  const [loading, setLoading] = useState(!initialAlert || !initialChild);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initialAlert && initialChild) return;
     let cancelled = false;
     Promise.all([fetchDashboardAlert(alertId), fetchHouseholdChildren()])
       .then(([foundAlert, children]) => {
@@ -85,7 +100,7 @@ export function ParentAlertDetailScreen({ alertId }: { alertId: string }) {
       />
 
       <div className="grid gap-4 md:grid-cols-3">
-        <StatusTile label={t("parent", "alertDetail.priority")} value={alert.severity} detail={alert.readAt ? t("parent", "alertDetail.reviewed") : t("parent", "alertDetail.needsReview")} icon={<ShieldAlert className="size-5 text-snow-primary" />} />
+        <StatusTile label={t("parent", "alertDetail.priority")} value={SEVERITY_LABELS[alert.severity] ?? alert.severity} detail={alert.readAt ? t("parent", "alertDetail.reviewed") : t("parent", "alertDetail.needsReview")} icon={<ShieldAlert className="size-5 text-snow-primary" />} />
         <StatusTile label={t("parent", "alertDetail.child")} value={child.name} detail={[child.age ? `${t("parent", "alertDetail.age")} ${child.age}` : null, child.grade].filter(Boolean).join(" · ") || t("parent", "alertDetail.profileUnavailable")} icon={<Bell className="size-5 text-snow-primary" />} tone="bg-snow-ice" />
         <StatusTile label={t("parent", "alertDetail.logged")} value={formatSnowDate(alert.createdAt)} detail={formatSnowTime(alert.createdAt)} icon={<CalendarClock className="size-5 text-snow-primary" />} tone="bg-snow-lavender" />
       </div>
@@ -110,7 +125,7 @@ export function ParentAlertDetailScreen({ alertId }: { alertId: string }) {
                 <CheckCircle2 className="mr-2 size-4" /> {alert.readAt ? t("parent", "alertDetail.reviewed") : saving ? t("parent", "alertDetail.saving") : t("parent", "alertDetail.markReviewed")}
               </SnowButton>
               {alert.linkedSessionId ? (
-                <Link href={`/parent/children/${encodeURIComponent(child.id)}/transcripts?sessionId=${encodeURIComponent(alert.linkedSessionId)}`} className="snow-focus-ring block rounded-full border border-snow-border bg-snow-surface-soft px-4 py-3 text-center text-sm font-black text-snow-primary-dark">
+                <Link href={`/parent/children/${encodeURIComponent(child.id)}/transcripts?session=${encodeURIComponent(alert.linkedSessionId)}`} className="snow-focus-ring block rounded-full border border-snow-border bg-snow-surface-soft px-4 py-3 text-center text-sm font-black text-snow-primary-dark">
                   {t("parent", "alertDetail.openTranscript")}
                 </Link>
               ) : <p className="text-xs font-semibold text-snow-muted">{t("parent", "alertDetail.noTranscript")}</p>}

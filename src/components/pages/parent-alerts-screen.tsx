@@ -29,6 +29,12 @@ type ExtendedAlert = ApiAlert & {
   isUpdating?: boolean;
 };
 
+const SEVERITY_LABELS: Record<string, string> = {
+  high: "Cao",
+  medium: "Trung bình",
+  low: "Thấp",
+};
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 export function formatAlertStatusTiles(
@@ -272,8 +278,8 @@ export function ParentAlertsScreen() {
                         <p className="text-xs font-bold text-snow-muted">
                           {formatSnowDateTime(alert.createdAt)}
                         </p>
-                        <span className="mt-2 inline-flex rounded-full bg-snow-primary-soft px-3 py-1 text-xs font-black capitalize text-snow-primary-dark">
-                          {alert.severity} {t("parent", "alertsScreen.priority")}
+                        <span className="mt-2 inline-flex rounded-full bg-snow-primary-soft px-3 py-1 text-xs font-black text-snow-primary-dark">
+                          {t("parent", "alertsScreen.priority")} {SEVERITY_LABELS[alert.severity]?.toLowerCase() ?? alert.severity}
                         </span>
                       </div>
                     </div>
