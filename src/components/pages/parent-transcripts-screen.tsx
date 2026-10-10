@@ -334,7 +334,7 @@ function ParentTranscriptsContent({
                       </span>
                     </span>
                     <span className="snow-body-small snow-font-readable font-semibold text-snow-muted">
-                      {t("parent", "transcripts.sessionId", { id: session.id.slice(-8) })}
+                      {t("parent", "transcripts.conversationLabel")}
                     </span>
                     <span
                       className={cn(
@@ -364,7 +364,7 @@ function ParentTranscriptsContent({
                         {formatSnowDateTime(activeSession.firstAt)}
                       </h2>
                       <p className="snow-body-small snow-font-readable font-semibold text-snow-muted">
-                        {t("parent", "transcripts.sessionIdFull", { id: activeSession.id })}
+                        {t("parent", "transcripts.conversationLabel")}
                       </p>
                     </div>
                   </div>

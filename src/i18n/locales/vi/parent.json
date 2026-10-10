@@ -671,6 +671,7 @@
     "sessionList": "Danh sách phiên",
     "recordsCount": "{{count}} bản ghi",
     "chooseSession": "Chọn một cuộc trò chuyện để kiểm tra.",
+    "conversationLabel": "Cuộc trò chuyện",
     "sessionId": "ID phiên: …{{id}}",
     "messagesCount": "{{count}} tin nhắn",
     "sessionIdFull": "ID phiên: {{id}}",
