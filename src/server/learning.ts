@@ -280,7 +280,7 @@ export async function saveLessonAnswer(
     let gradingResult: ReturnType<typeof gradeStepAnswer> | undefined;
 
     if (authoredStep && authoredStep.questionType) {
-      gradingResult = gradeStepAnswer(authoredStep as any, answer);
+      gradingResult = gradeStepAnswer(authoredStep as unknown as import('@/lib/lesson-engine/types').LessonQuestionStep, answer);
       isCorrect = gradingResult.isCorrect;
     } else {
       const serialized = typeof answer === 'string' ? answer : JSON.stringify(answer);

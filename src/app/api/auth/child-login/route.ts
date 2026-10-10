@@ -12,7 +12,7 @@ import { ChildLoginSchema } from '@/server/contracts/auth';
 import { ERRORS } from '@/lib/api/errors';
 import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
-import { eq, or } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 // POST /api/auth/child-login
 // Body: { childId, pin }

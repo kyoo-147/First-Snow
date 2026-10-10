@@ -34,7 +34,8 @@ export function readTwilioConfig(env: NodeJS.ProcessEnv = process.env): TwilioCo
   return { accountSid, apiKey, apiSecret, authToken, fromNumber, messagingServiceSid, statusCallbackUrl };
 }
 
-export function normalizeE164(value: string): string | null {
+export function normalizeE164(value: string | undefined | null): string | null {
+  if (!value || typeof value !== 'string') return null;
   const compact = value.replace(/[\s().-]/g, '');
   if (E164.test(compact)) return compact;
   if (/^0\d{9}$/.test(compact)) return `+84${compact.slice(1)}`;

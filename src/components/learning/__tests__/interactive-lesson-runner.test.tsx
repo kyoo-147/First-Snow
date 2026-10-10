@@ -4,12 +4,15 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { InteractiveLessonRunner } from '../interactive-lesson-runner';
 import * as learningClient from '@/lib/learning-client';
 
-// Mock next/image and next/link
+// Mock next/image, next/link, and next/navigation
 vi.mock('next/image', () => ({
-  default: (props: any) => <img {...props} />,
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img alt="" {...props} />,
 }));
 vi.mock('next/link', () => ({
-  default: ({ children, href, ...rest }: any) => <a href={href} {...rest}>{children}</a>,
+  default: ({ children, href, ...rest }: { children?: React.ReactNode; href?: string; [key: string]: unknown }) => <a href={href} {...rest}>{children}</a>,
+}));
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
 }));
 
 describe('InteractiveLessonRunner static rendering and semantic structure', () => {

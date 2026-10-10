@@ -5,7 +5,7 @@ import { Camera, CheckCircle2, Eye, Loader2, Mic, Monitor, ShieldAlert, XCircle 
 import { SnowButton } from "@/components/ui/snow-button";
 import type { ConsentRecord, ConsentScope } from "@/lib/safety-client";
 import { cn } from "@/lib/utils";
-import { t } from "@/i18n";
+import { t, tUnchecked } from "@/i18n";
 import { formatSnowDateTime } from "@/lib/format";
 
 const SCOPE_ICONS: Record<ConsentScope, LucideIcon> = {
@@ -33,9 +33,9 @@ export function ConsentScopeCard({
   const status = record?.status ?? (isGranted ? "granted" : "revoked");
   const policyVersion = record?.policyVersion ?? "v1.2";
 
-  const title = t("parent", `safety.consentScopeCard.scopes.${scope}.title` as any);
-  const description = t("parent", `safety.consentScopeCard.scopes.${scope}.description` as any);
-  const governanceNote = t("parent", `safety.consentScopeCard.scopes.${scope}.governanceNote` as any);
+  const title = tUnchecked("parent", `safety.consentScopeCard.scopes.${scope}.title`);
+  const description = tUnchecked("parent", `safety.consentScopeCard.scopes.${scope}.description`);
+  const governanceNote = tUnchecked("parent", `safety.consentScopeCard.scopes.${scope}.governanceNote`);
 
   return (
     <div

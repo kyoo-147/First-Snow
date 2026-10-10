@@ -10,8 +10,6 @@ import {
   type ChildSessionPayload,
   PARENT_COOKIE_NAME,
   CHILD_COOKIE_NAME,
-  PARENT_COOKIE_OPTIONS,
-  CHILD_COOKIE_OPTIONS,
 } from '@/lib/auth/session';
 import { ERRORS } from '@/lib/api/errors';
 import { and, eq } from 'drizzle-orm';

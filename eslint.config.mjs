@@ -11,11 +11,20 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "dist/**",
     "next-env.d.ts",
     // Open LLM VTuber Web wrapper is vendored upstream code. Keep it isolated
     // so Snow-owned lint remains strict without rewriting the companion app.
     "src/vtuber-app/**",
+    "public/**",
+    "*.js",
   ]),
+  {
+    files: ["**/*.test.ts", "**/*.test.tsx", "**/__tests__/**"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

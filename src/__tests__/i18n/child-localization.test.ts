@@ -183,7 +183,7 @@ describe("Wave 2 Child UI Localization Catalog", () => {
     const content = fs.readFileSync(filePath, "utf-8");
 
     expect(content).toContain('aria-label={t("learning", "runner.audioPromptAria")}');
-    expect(content).toContain('aria-pressed={isSelected}');
+    expect(content).toContain('aria-checked={isSelected}');
     expect(content).toContain('{t("learning", "runner.checkAnswer")}');
     expect(content).toContain('{t("learning", "runner.finish")}');
   });

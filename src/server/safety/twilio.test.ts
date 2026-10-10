@@ -23,10 +23,13 @@ describe('Twilio emergency delivery', () => {
     expect(readTwilioConfig(env)).toMatchObject({ fromNumber: '+12025550123' });
   });
 
-  it('normalizes Vietnamese mobile numbers to E.164', () => {
+  it('normalizes Vietnamese mobile numbers to E.164 and handles non-string edge cases', () => {
     expect(normalizeE164('0941 836 793')).toBe('+84941836793');
     expect(normalizeE164('+84941836793')).toBe('+84941836793');
     expect(normalizeE164('not-a-phone')).toBeNull();
+    expect(normalizeE164(undefined)).toBeNull();
+    expect(normalizeE164(null)).toBeNull();
+    expect(normalizeE164('')).toBeNull();
   });
 
   it('validates Twilio webhook signatures using the configured public URL', () => {

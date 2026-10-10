@@ -194,7 +194,7 @@ describe('Google Gemini text companion provider adapter', () => {
     });
 
     it('throws COMPANION_PROVIDER_POOL_EXHAUSTED when all keys are in cooldown', async () => {
-      let nowTime = 1000;
+      const nowTime = 1000;
       const mockFetch: typeof fetch = async () =>
         new Response(JSON.stringify({ error: 'Rate limit' }), { status: 429 });
 

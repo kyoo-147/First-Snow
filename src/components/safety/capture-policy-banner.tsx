@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Camera, ChevronDown, ChevronUp, Eye, Lock, Mic, Monitor, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { t } from "@/i18n";
+import { t, tUnchecked } from "@/i18n";
 
 export function CapturePolicyBanner({ className }: { className?: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -15,9 +15,9 @@ export function CapturePolicyBanner({ className }: { className?: string }) {
       badge: t("parent", "safety.capturePolicy.policies.microphone.badge"),
       summary: t("parent", "safety.capturePolicy.policies.microphone.summary"),
       details: [
-        t("parent", "safety.capturePolicy.policies.microphone.details.0" as any),
-        t("parent", "safety.capturePolicy.policies.microphone.details.1" as any),
-        t("parent", "safety.capturePolicy.policies.microphone.details.2" as any),
+        tUnchecked("parent", "safety.capturePolicy.policies.microphone.details.0"),
+        tUnchecked("parent", "safety.capturePolicy.policies.microphone.details.1"),
+        tUnchecked("parent", "safety.capturePolicy.policies.microphone.details.2"),
       ],
     },
     {
@@ -26,9 +26,9 @@ export function CapturePolicyBanner({ className }: { className?: string }) {
       badge: t("parent", "safety.capturePolicy.policies.camera.badge"),
       summary: t("parent", "safety.capturePolicy.policies.camera.summary"),
       details: [
-        t("parent", "safety.capturePolicy.policies.camera.details.0" as any),
-        t("parent", "safety.capturePolicy.policies.camera.details.1" as any),
-        t("parent", "safety.capturePolicy.policies.camera.details.2" as any),
+        tUnchecked("parent", "safety.capturePolicy.policies.camera.details.0"),
+        tUnchecked("parent", "safety.capturePolicy.policies.camera.details.1"),
+        tUnchecked("parent", "safety.capturePolicy.policies.camera.details.2"),
       ],
     },
     {
@@ -37,9 +37,9 @@ export function CapturePolicyBanner({ className }: { className?: string }) {
       badge: t("parent", "safety.capturePolicy.policies.vision.badge"),
       summary: t("parent", "safety.capturePolicy.policies.vision.summary"),
       details: [
-        t("parent", "safety.capturePolicy.policies.vision.details.0" as any),
-        t("parent", "safety.capturePolicy.policies.vision.details.1" as any),
-        t("parent", "safety.capturePolicy.policies.vision.details.2" as any),
+        tUnchecked("parent", "safety.capturePolicy.policies.vision.details.0"),
+        tUnchecked("parent", "safety.capturePolicy.policies.vision.details.1"),
+        tUnchecked("parent", "safety.capturePolicy.policies.vision.details.2"),
       ],
     },
     {
@@ -48,9 +48,9 @@ export function CapturePolicyBanner({ className }: { className?: string }) {
       badge: t("parent", "safety.capturePolicy.policies.screen.badge"),
       summary: t("parent", "safety.capturePolicy.policies.screen.summary"),
       details: [
-        t("parent", "safety.capturePolicy.policies.screen.details.0" as any),
-        t("parent", "safety.capturePolicy.policies.screen.details.1" as any),
-        t("parent", "safety.capturePolicy.policies.screen.details.2" as any),
+        tUnchecked("parent", "safety.capturePolicy.policies.screen.details.0"),
+        tUnchecked("parent", "safety.capturePolicy.policies.screen.details.1"),
+        tUnchecked("parent", "safety.capturePolicy.policies.screen.details.2"),
       ],
     },
   ];

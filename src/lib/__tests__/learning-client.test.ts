@@ -1,7 +1,6 @@
 import { test, describe, afterEach } from "node:test";
 import assert from "node:assert/strict";
-const clientPath = "../learning-client.ts";
-const {
+import {
   fetchLessons,
   fetchLesson,
   createOrResumeAttempt,
@@ -12,7 +11,7 @@ const {
   LearningApiError,
   parseApiError,
   normalizeLessonSteps,
-} = await import(clientPath);
+} from "../learning-client";
 
 describe("learning-client contract tests", () => {
   const originalFetch = globalThis.fetch;

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
@@ -39,6 +40,7 @@ interface InteractiveLessonRunnerProps {
 }
 
 export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerProps) {
+  const router = useRouter();
   const [lesson, setLesson] = useState<LessonDetail | null>(null);
   const [attempt, setAttempt] = useState<LessonAttempt | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -269,7 +271,7 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
           description={t("learning", "runner.stepsNotAvailableDesc")}
           actionLabel={t("learning", "runner.returnToLessons")}
           onAction={() => {
-            window.location.href = "/session/lessons";
+            router.push("/session/lessons");
           }}
         />
       </div>
@@ -352,7 +354,6 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
 
   const options = Array.isArray(currentStep?.options) ? currentStep.options : [];
   const hasOptions = options.length > 0;
-  const selectedOption = options.find((opt) => opt.id === currentAnswer);
 
   return (
     <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-4 pb-8 snow-enter-soft">
@@ -494,7 +495,6 @@ export function InteractiveLessonRunner({ lessonId }: InteractiveLessonRunnerPro
                             type="button"
                             role="radio"
                             aria-checked={isSelected}
-                            aria-pressed={isSelected}
                             onClick={() => handleSelectOption(opt.id)}
                             className={cn(
                               "snow-interactive-card snow-focus-ring flex min-h-[84px] w-full items-center gap-4 rounded-[var(--radius-lg)] border p-4 text-left transition-all",

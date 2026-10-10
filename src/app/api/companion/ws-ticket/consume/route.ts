@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/client';
@@ -9,6 +9,11 @@ import { resolveCompanionPublicOrigin } from '@/server/companion/contracts';
 
 const TICKET_PATH = '/api/companion/ws';
 const digest = (token: string) => createHash('sha256').update(token).digest('hex');
+
+function constantTimeHexEqual(a: string | undefined, b: string | undefined): boolean {
+  if (!a || !b || a.length !== b.length) return false;
+  return timingSafeEqual(Buffer.from(a, 'hex'), Buffer.from(b, 'hex'));
+}
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const actor = await requireChildSession();
@@ -35,7 +40,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     try { metadata = JSON.parse(session.metadata ?? '{}') as Record<string, unknown>; }
     catch { return ERRORS.unauthorized('Ticket is invalid or expired.'); }
     const ticket = metadata.companionWsTicket as { hash?: string; childId?: string; origin?: string; expiresAt?: number; path?: string } | undefined;
-    if (!ticket || ticket.hash !== digest(values.ticket) || ticket.childId !== actor.sub || ticket.origin !== requestOrigin || ticket.path !== TICKET_PATH || !ticket.expiresAt || ticket.expiresAt <= Date.now()) {
+    if (!ticket || !constantTimeHexEqual(ticket.hash, digest(values.ticket)) || ticket.childId !== actor.sub || ticket.origin !== requestOrigin || ticket.path !== TICKET_PATH || !ticket.expiresAt || ticket.expiresAt <= Date.now()) {
       return ERRORS.unauthorized('Ticket is invalid or expired.');
     }
 

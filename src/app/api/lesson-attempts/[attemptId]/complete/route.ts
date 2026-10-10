@@ -14,9 +14,12 @@ export async function POST(_request: Request, context: { params: Promise<{ attem
   try {
     const attempt = await completeLessonAttempt(session.sub, attemptId);
     return attempt ? NextResponse.json({ attempt }) : ERRORS.notFound('Attempt not found.');
-  } catch (error: any) {
-    if (error?.code === 'INCOMPLETE_ATTEMPT' || error?.name === 'IncompleteLessonAttemptError') {
-      return ERRORS.conflict(error.message || 'Cannot complete attempt: required steps remain unanswered.');
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && ('code' in error || 'name' in error)) {
+      const err = error as { code?: string; name?: string; message?: string };
+      if (err.code === 'INCOMPLETE_ATTEMPT' || err.name === 'IncompleteLessonAttemptError') {
+        return ERRORS.conflict(err.message || 'Cannot complete attempt: required steps remain unanswered.');
+      }
     }
     console.error('[lesson-attempts/complete/POST]', error);
     return ERRORS.internal();

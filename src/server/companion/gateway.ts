@@ -87,7 +87,15 @@ function normalizeIp(address: string): string {
 function isWildcardHost(host: string): boolean { return host === '0.0.0.0' || host === '::'; }
 
 function redactedLogger(level: 'info' | 'warn' | 'error', event: string, fields: Record<string, string | number | boolean> = {}): void {
-  process.stdout.write(`${JSON.stringify({ timestamp: new Date().toISOString(), level, event, ...fields })}\n`);
+  const sanitized: Record<string, string | number | boolean> = {};
+  for (const [k, v] of Object.entries(fields)) {
+    if (typeof v === 'string' && /secret|token|ticket|password|apikey/i.test(k) && !/^(code|event|status|level)$/i.test(k)) {
+      sanitized[k] = '[REDACTED]';
+    } else {
+      sanitized[k] = v;
+    }
+  }
+  process.stdout.write(`${JSON.stringify({ timestamp: new Date().toISOString(), level, event, ...sanitized })}\n`);
 }
 
 export function createPostgresTicketAdapter(connectionString: string): GatewayTicketAdapter {

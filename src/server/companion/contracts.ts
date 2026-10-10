@@ -305,7 +305,10 @@ export async function classifySafetyIntent(content: string): Promise<SafetyInten
   }
 }
 
-export function checkSafety(content: string): { flagged: boolean; reason: string | null; codes: string[] } {
+export function checkSafety(content: string | undefined | null): { flagged: boolean; reason: string | null; codes: string[] } {
+  if (!content || typeof content !== 'string' || !content.trim()) {
+    return { flagged: false, reason: null, codes: [] };
+  }
   const text = content.toLowerCase();
 
   const codes = new Set<string>();

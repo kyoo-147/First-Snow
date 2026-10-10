@@ -55,4 +55,16 @@ describe('env validation', () => {
     expect(env.CHILD_SESSION_SECRET).toBeDefined();
     expect(env.NODE_ENV).toBe('test');
   });
+
+  it('uses build phase placeholders when NEXT_PHASE is phase-production-build even if env vars are unset', async () => {
+    delete process.env.DATABASE_URL;
+    delete process.env.SESSION_SECRET;
+    delete process.env.CHILD_SESSION_SECRET;
+    process.env.NEXT_PHASE = 'phase-production-build';
+
+    const { env } = await import('../env');
+    expect(env.DATABASE_URL).toBe('postgresql://build-placeholder:build-placeholder@localhost:5432/build');
+    expect(env.SESSION_SECRET.length).toBeGreaterThanOrEqual(32);
+    expect(env.CHILD_SESSION_SECRET.length).toBeGreaterThanOrEqual(32);
+  });
 });
