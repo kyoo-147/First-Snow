@@ -286,7 +286,7 @@ export function createGeminiCompanionProvider(
 
     const bodyPayload = JSON.stringify({
       system_instruction: {
-        parts: [{ text: SYSTEM_PROMPT }],
+        parts: [{ text: input.systemPrompt ?? SYSTEM_PROMPT }],
       },
       contents,
     });

@@ -5,7 +5,7 @@ import { db } from '@/db/client';
 import { companionMessages, companionSessions, type NewCompanionMessage } from '@/db/schema/companion';
 import { ERRORS } from '@/lib/api/errors';
 import { requireChildSession } from '@/server/auth';
-import { checkSafety, generateReply } from '@/server/companion/contracts';
+import { checkSafety, classifySafetyIntent, generateReply } from '@/server/companion/contracts';
 import { messageDto } from '@/server/companion/format';
 import {
   CompanionTelemetryCollector,
@@ -137,8 +137,12 @@ export async function POST(request: NextRequest, context: Context): Promise<Next
       }
     } else {
       phaseStarted = markCompanionPhase();
-      const safety = checkSafety(normalizedContent);
-      collector.recordPhase('safety_precheck', phaseStarted, safety.flagged ? 'blocked' : 'ok');
+      const deterministicSafety = checkSafety(normalizedContent);
+      collector.recordPhase('safety_precheck', phaseStarted, deterministicSafety.flagged ? 'blocked' : 'ok');
+      const intentStarted = markCompanionPhase();
+      const intent = deterministicSafety.flagged ? { flagged: false, confidence: 'high' as const, rationale: 'Deterministic safety rule already flagged this message.' } : await classifySafetyIntent(normalizedContent);
+      const safety = deterministicSafety.flagged ? deterministicSafety : { flagged: intent.flagged, reason: intent.flagged ? 'Potential self-harm or immediate-danger intent detected.' : null, codes: intent.flagged ? ['self_harm'] : [] };
+      collector.recordPhase('safety_intent', intentStarted, safety.flagged ? 'blocked' : 'ok');
       const newMessage = { sessionId, childId: actor.sub, clientMessageId, speaker: 'child' as const, text: normalizedContent, isFlagged: safety.flagged, flagReason: safety.reason, safetyScore: safety.flagged ? 25 : 0, safetyAlerts: safety.flagged ? JSON.stringify({ codes: safety.codes, readAt: null }) : null } as unknown as NewCompanionMessage;
       phaseStarted = markCompanionPhase();
       [userMessage] = await db.insert(companionMessages).values(newMessage).onConflictDoNothing().returning();

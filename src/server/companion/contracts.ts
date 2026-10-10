@@ -1,4 +1,4 @@
-export type ProviderInput = { content: string; history: Array<{ role: 'child' | 'assistant'; content: string }> };
+export type ProviderInput = { content: string; history: Array<{ role: 'child' | 'assistant'; content: string }>; systemPrompt?: string };
 export type Provider = (input: ProviderInput) => Promise<string>;
 
 let testProvider: Provider | null = null;
@@ -284,6 +284,25 @@ export async function generateReply(input: ProviderInput): Promise<string> {
   }
 
   throw new Error('COMPANION_PROVIDER_UNAVAILABLE');
+}
+
+export type SafetyIntentAssessment = { flagged: boolean; confidence: 'high' | 'medium' | 'low' | 'unknown'; rationale: string };
+
+const SAFETY_INTENT_PROMPT = `You are AgentKid's safety intent classifier. Analyze only the child's latest message. Detect implied intent, not just exact keywords. Return JSON only, with no markdown: {"risk":"high"|"medium"|"none"|"unknown","confidence":"high"|"medium"|"low","rationale":"brief redacted reason"}. Use high when the child expresses or strongly implies wanting to die, suicide, self-harm, hurt themselves, or immediate danger, including indirect, euphemistic, misspelled, Vietnamese, or English statements. Use medium for ambiguous distress without a self-harm or immediate-danger intent. Never provide advice or a conversational response.`;
+
+export async function classifySafetyIntent(content: string): Promise<SafetyIntentAssessment> {
+  try {
+    const raw = await Promise.race([
+      generateReply({ content, history: [], systemPrompt: SAFETY_INTENT_PROMPT }),
+      new Promise<string>((_, reject) => setTimeout(() => reject(new Error('SAFETY_INTENT_TIMEOUT')), 2500)),
+    ]);
+    const parsed = JSON.parse(raw.replace(/^```json\s*/i, '').replace(/```$/i, '').trim()) as { risk?: unknown; confidence?: unknown; rationale?: unknown };
+    const risk = parsed.risk === 'high' || parsed.risk === 'medium' || parsed.risk === 'none' || parsed.risk === 'unknown' ? parsed.risk : 'unknown';
+    const confidence = parsed.confidence === 'high' || parsed.confidence === 'medium' || parsed.confidence === 'low' ? parsed.confidence : 'unknown';
+    return { flagged: risk === 'high', confidence, rationale: typeof parsed.rationale === 'string' ? parsed.rationale.slice(0, 240) : 'AI safety classifier result' };
+  } catch {
+    return { flagged: false, confidence: 'unknown', rationale: 'AI safety classifier unavailable; deterministic safety checks remain active.' };
+  }
 }
 
 export function checkSafety(content: string): { flagged: boolean; reason: string | null; codes: string[] } {

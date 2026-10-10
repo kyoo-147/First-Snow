@@ -244,7 +244,7 @@ export function createDeepSeekCompanionProvider(
     const normalizedBaseUrl = config.baseUrl.endsWith('/v1') ? config.baseUrl : `${config.baseUrl}/v1`;
     const endpoint = `${normalizedBaseUrl}/chat/completions`;
     const messages = [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'system', content: input.systemPrompt ?? SYSTEM_PROMPT },
       ...input.history.slice(-MAX_HISTORY_MESSAGES).map((item) => ({
         role: item.role === 'child' ? 'user' : 'assistant',
         content: item.content.slice(0, MAX_MESSAGE_CHARS),

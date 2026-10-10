@@ -5,6 +5,7 @@ export type CompanionPhase =
   | 'session_auth'
   | 'db_history'
   | 'safety_precheck'
+  | 'safety_intent'
   | 'provider'
   | 'output_safety'
   | 'persistence'

@@ -233,7 +233,7 @@ export function createOpenAiCompanionProvider(
   return async function openAiCompanionProvider(input: ProviderInput): Promise<string> {
     const endpoint = `${config.baseUrl}/chat/completions`;
     const messages = [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'system', content: input.systemPrompt ?? SYSTEM_PROMPT },
       ...input.history.slice(-MAX_HISTORY_MESSAGES).map((item) => ({
         role: item.role === 'child' ? 'user' : 'assistant',
         content: item.content.slice(0, MAX_MESSAGE_CHARS),

@@ -3,6 +3,7 @@ import { sql } from 'drizzle-orm';
 import { db } from '@/db/client';
 import { getDiscordDiagnostics, getProviderDiagnostics } from '@/server/companion/contracts';
 import { readTwilioConfig } from '@/server/safety/twilio';
+import { readMailConfig } from '@/server/safety/email';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,6 +25,7 @@ export async function GET(): Promise<NextResponse> {
   const aiProvider = await getProviderDiagnostics();
   const discordBoundary = getDiscordDiagnostics();
   const twilio = readTwilioConfig();
+  const email = readMailConfig();
   const emergencyDelivery = twilio
     ? { configured: true, enabled: true, sms: true, voice: true, callback: 'configured' }
     : { configured: false, enabled: process.env.TWILIO_ENABLED === 'true', sms: false, voice: false, callback: 'unavailable' };
@@ -36,6 +38,7 @@ export async function GET(): Promise<NextResponse> {
         ai_provider: aiProvider,
         discord_boundary: discordBoundary,
         emergency_delivery: emergencyDelivery,
+        email_delivery: { configured: Boolean(email), provider: email ? 'smtp' : 'none' },
       },
     },
     {

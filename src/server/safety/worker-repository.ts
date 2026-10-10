@@ -1,4 +1,4 @@
-import { asc, and, eq, inArray, lt } from 'drizzle-orm';
+import { asc, and, eq, inArray, lt, sql } from 'drizzle-orm';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from '@/db/schema';
@@ -176,9 +176,10 @@ export class DatabaseSafetyWorkerRepository implements SafetyWorkerRepository {
 
   async listPendingNotifications(limit: number, retryFailed: boolean): Promise<NotificationJob[]> {
     return this.db
-      .select({ id: notifications.id, recipientId: notifications.recipientId, channel: notifications.channel, destination: emergencyContacts.phone, subject: notifications.subject, body: notifications.body })
+      .select({ id: notifications.id, recipientId: notifications.recipientId, channel: notifications.channel, destination: sql<string | null>`case when ${notifications.channel} = 'email' then coalesce(${emergencyContacts.email}, ${users.email}) else ${emergencyContacts.phone} end`, subject: notifications.subject, body: notifications.body })
       .from(notifications)
       .leftJoin(emergencyContacts, eq(notifications.emergencyContactId, emergencyContacts.id))
+      .innerJoin(users, eq(notifications.recipientId, users.id))
       .where(retryFailed ? and(inArray(notifications.status, ['pending', 'failed']), lt(notifications.attempts, 3)) : eq(notifications.status, 'pending'))
       .orderBy(asc(notifications.createdAt))
       .limit(limit)
@@ -227,6 +228,11 @@ export class DatabaseSafetyWorkerRepository implements SafetyWorkerRepository {
       const rows: Array<typeof notifications.$inferInsert> = prefs
         .filter((preference) => preference.channel === 'email' || preference.channel === 'push')
         .map((preference) => ({ recipientId: preference.userId, channel: preference.channel, subject: 'Cảnh báo an toàn AgentKid cần được kiểm tra', body }));
+      const configuredAlertRecipients = (process.env.AGENTKID_ALERT_EMAIL_TO ?? '').split(',').map((value) => value.trim()).filter((value) => value.includes('@'));
+      const ownerId = owner[0]?.id;
+      if (ownerId && configuredAlertRecipients.length > 0 && !rows.some((row) => row.recipientId === ownerId && row.channel === 'email')) {
+        rows.push({ recipientId: ownerId, channel: 'email', subject: 'Cảnh báo an toàn AgentKid cần được kiểm tra', body });
+      }
       let highRisk = false;
       try {
         const parsed = JSON.parse(message.safetyAlerts ?? '{}') as { codes?: unknown };
@@ -235,7 +241,6 @@ export class DatabaseSafetyWorkerRepository implements SafetyWorkerRepository {
       const externalEnabled = new Set(prefs.filter((preference) => preference.channel === 'sms' || preference.channel === 'voice').map((preference) => `${preference.userId}:${preference.channel}`));
       if (highRisk) {
         const contacts = await tx.select().from(emergencyContacts).where(and(eq(emergencyContacts.householdId, message.householdId), eq(emergencyContacts.notifyOnAlert, true)));
-        const ownerId = owner[0]?.id;
         if (ownerId) for (const contact of contacts) {
           if (!contact.phone || !contact.consentGrantedAt || !contact.verifiedAt) continue;
           for (const channel of ['sms', 'voice'] as const) if (externalEnabled.has(`${ownerId}:${channel}`)) rows.push({ recipientId: ownerId, emergencyContactId: contact.id, channel, subject: 'Cảnh báo an toàn khẩn cấp AgentKid', body });

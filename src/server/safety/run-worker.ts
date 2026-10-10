@@ -2,10 +2,12 @@ import { pathToFileURL } from 'node:url';
 import { DatabaseSafetyWorkerRepository } from './worker-repository';
 import { runSafetyJobsOnce, type WorkerAdapters } from './worker';
 import { createTwilioAdapters, readTwilioConfig } from './twilio';
+import { createEmailAdapter, readMailConfig } from './email';
 
 async function loadAdapters(): Promise<WorkerAdapters> {
   const twilio = readTwilioConfig();
-  const builtIn: WorkerAdapters = twilio ? createTwilioAdapters(twilio) : {};
+  const mail = readMailConfig();
+  const builtIn: WorkerAdapters = { ...(mail ? { email: createEmailAdapter(mail) } : {}), ...(twilio ? createTwilioAdapters(twilio) : {}) };
   const modulePath = process.env.SAFETY_WORKER_ADAPTER_MODULE;
   if (!modulePath) return builtIn;
   try {

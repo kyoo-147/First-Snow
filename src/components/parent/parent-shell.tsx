@@ -19,6 +19,7 @@ import { SnowLogo } from "@/components/ui/snow-logo";
 import { cn } from "@/lib/utils";
 import { t, tUnchecked } from "@/i18n";
 import { fetchDashboardSession, fetchHouseholdChildren, type DashboardChild } from "@/lib/dashboard-client";
+import { EmergencyAlertOverlay } from "@/components/safety/emergency-alert-overlay";
 
 const SIDEBAR_STORAGE_KEY = "agentkid:parent-sidebar-collapsed";
 
@@ -75,6 +76,7 @@ export function ParentShell({
 
   return (
     <div className="snow-page-bg h-[100dvh] overflow-hidden text-snow-foreground">
+      <EmergencyAlertOverlay />
       <div className="flex h-full overflow-hidden bg-snow-surface">
         {isMobileMenuOpen ? (
           <button

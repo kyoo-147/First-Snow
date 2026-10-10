@@ -1,7 +1,7 @@
 import { afterEach, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { alertDto } from '@/server/companion/format';
-import { checkSafety, generateReply, MemoryTicketStore, secureWebSocketRequest, setTestCompanionProvider } from '@/server/companion/contracts';
+import { checkSafety, classifySafetyIntent, generateReply, MemoryTicketStore, secureWebSocketRequest, setTestCompanionProvider } from '@/server/companion/contracts';
 
 afterEach(() => setTestCompanionProvider(null));
 
@@ -45,6 +45,21 @@ describe('companion backend contracts', () => {
     assert.equal(checkSafety('phan banh nay danh con').flagged, false);
     assert.ok(checkSafety('chu danh con').codes.includes('abuse_disclosure'));
     assert.ok(checkSafety('em bi ho danh').codes.includes('abuse_disclosure'));
+  });
+
+  it('uses AI intent, not only exact phrases, to flag implied self-harm risk', async () => {
+    setTestCompanionProvider(async ({ systemPrompt }) => systemPrompt?.includes('safety intent classifier') ? JSON.stringify({ risk: 'high', confidence: 'high', rationale: 'indirect desire to die' }) : 'safe reply');
+    const vi = await classifySafetyIntent('Con không muốn thức dậy vào ngày mai nữa.');
+    const en = await classifySafetyIntent('I have been saying goodbye to everyone because I cannot keep going.');
+    assert.equal(vi.flagged, true);
+    assert.equal(en.flagged, true);
+    assert.equal(vi.confidence, 'high');
+  });
+
+  it('preserves deterministic safety checks when the AI intent classifier is unavailable', async () => {
+    const assessment = await classifySafetyIntent('I feel sad about homework.');
+    assert.equal(assessment.flagged, false);
+    assert.equal(assessment.confidence, 'unknown');
   });
 
   it('maps linked safety messages into household alert DTOs with persisted read state', () => {
