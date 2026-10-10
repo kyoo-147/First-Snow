@@ -449,6 +449,7 @@
         "recentJobs": "Công việc dữ liệu gần đây",
         "noJobs": "Không có công việc xuất dữ liệu hoặc xóa nào được ghi nhận.",
         "jobLabel": "Công việc {{kind}}",
+        "jobStatus": "Trạng thái: {{status}}", 
         "providerHealth": "Sức khỏe nhà cung cấp",
         "providerHealthNote": "Không có hồ sơ kiểm tra sức khỏe nhà cung cấp nào tồn tại trong cấu trúc hiện tại. Cấu hình hoặc tính khả dụng của cơ sở dữ liệu không được coi là sức khỏe nhà cung cấp.",
         "unknownTime": "Thời gian không xác định"
