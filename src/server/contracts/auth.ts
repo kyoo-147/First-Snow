@@ -8,8 +8,8 @@ import { z } from 'zod';
  */
 export const RegisterParentSchema = z
   .object({
-    name: z.string().min(2, 'Name must be at least 2 characters').max(255).trim().optional(),
-    displayName: z.string().min(2, 'Display name must be at least 2 characters').max(255).trim().optional(),
+    name: z.string().trim().min(2, 'Name must be at least 2 characters').max(255).optional(),
+    displayName: z.string().trim().min(2, 'Display name must be at least 2 characters').max(255).optional(),
     email: z
       .string()
       .email({ message: 'Valid email required' })
@@ -39,21 +39,41 @@ export const LoginParentSchema = z.object({
  */
 export const CreateChildSchema = z
   .object({
-    name: z.string().min(1, 'Name is required').max(255).trim().optional(),
-    displayName: z.string().min(1, 'Display name is required').max(255).trim().optional(),
+    name: z.string().trim().min(1, 'Name is required').max(255).optional(),
+    displayName: z.string().trim().min(1, 'Display name is required').max(255).optional(),
     pin: z
       .string()
       .length(4, 'PIN must be exactly 4 digits')
       .regex(/^\d{4}$/, 'PIN must be 4 numeric digits'),
     age: z.number().int().min(3).max(18).optional(),
-    grade: z.string().max(50).optional(),
-    gradeLevel: z.string().max(50).optional(),
+    grade: z.string().trim().max(50).optional(),
+    gradeLevel: z.string().trim().max(50).optional(),
     comfortStyle: z.string().max(100).optional(),
   })
   .refine((data) => Boolean(data.name || data.displayName), {
     message: 'Name is required',
     path: ['name'],
   });
+
+/**
+ * PATCH /api/children/[childId] — UI sends partial child updates.
+ */
+export const UpdateChildSchema = z
+  .object({
+    name: z.string().trim().min(1, 'Name cannot be empty').max(255).optional(),
+    displayName: z.string().trim().min(1, 'Display name cannot be empty').max(255).optional(),
+    age: z.number().int().min(3).max(18).nullable().optional(),
+    grade: z.string().trim().max(50).nullable().optional(),
+    gradeLevel: z.string().trim().max(50).nullable().optional(),
+    avatarUrl: z.string().trim().url('Invalid avatar URL').max(1024).nullable().optional(),
+    pin: z
+      .string()
+      .length(4, 'PIN must be exactly 4 digits')
+      .regex(/^\d{4}$/, 'PIN must be 4 numeric digits')
+      .optional(),
+    isActive: z.boolean().optional(),
+  })
+  .refine((value) => Object.keys(value).length > 0, 'At least one field is required');
 
 /**
  * POST /api/auth/child-login — UI sends { childId, pin }.
@@ -129,6 +149,7 @@ export const ChildrenListResponseSchema = z.object({
 export type RegisterParentInput = z.infer<typeof RegisterParentSchema>;
 export type LoginParentInput = z.infer<typeof LoginParentSchema>;
 export type CreateChildInput = z.infer<typeof CreateChildSchema>;
+export type UpdateChildInput = z.infer<typeof UpdateChildSchema>;
 export type ChildLoginInput = z.infer<typeof ChildLoginSchema>;
 export type ApiErrorShape = z.infer<typeof ApiErrorSchema>;
 export type SessionResponseShape = z.infer<typeof SessionResponseSchema>;

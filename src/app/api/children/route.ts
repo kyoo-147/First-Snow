@@ -35,13 +35,16 @@ export async function GET(): Promise<NextResponse> {
       .from(children)
       .where(and(eq(children.householdId, household.id), eq(children.isActive, true)));
 
-    return NextResponse.json({
-      children: householdChildren.map((c) => ({
-        ...c,
-        name: c.displayName,
-        grade: c.gradeLevel,
-      })),
-    });
+    return NextResponse.json(
+      {
+        children: householdChildren.map((c) => ({
+          ...c,
+          name: c.displayName,
+          grade: c.gradeLevel,
+        })),
+      },
+      { headers: { 'Cache-Control': 'no-store' } },
+    );
   } catch (err) {
     console.error('[children/GET] Error:', err);
     return ERRORS.internal();
@@ -62,7 +65,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return ERRORS.notFound('Household not found for parent.');
     }
 
-    const body = await req.json();
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return ERRORS.validationFailed({ body: 'Valid JSON is required.' });
+    }
     const parsed = CreateChildSchema.safeParse(body);
 
     if (!parsed.success) {
@@ -73,6 +81,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const { pin, age, grade, gradeLevel } = parsed.data;
 
     const pinHash = await hashPin(pin);
+    const rawGrade = (gradeLevel ?? grade)?.trim();
+    const resolvedGrade = rawGrade && rawGrade.length > 0 ? rawGrade : null;
 
     const [child] = await db
       .insert(children)
@@ -81,7 +91,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         displayName: resolvedName,
         pinHash,
         age: age ?? null,
-        gradeLevel: (gradeLevel ?? grade)?.trim() ?? null,
+        gradeLevel: resolvedGrade,
       } as unknown as typeof children.$inferInsert)
       .returning({
         id: children.id,
@@ -116,7 +126,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           createdAt: child.createdAt,
         },
       },
-      { status: 201 },
+      { status: 201, headers: { 'Cache-Control': 'no-store' } },
     );
   } catch (err) {
     console.error('[children/POST] Error:', err);
